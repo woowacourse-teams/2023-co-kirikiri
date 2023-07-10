@@ -1,0 +1,14 @@
+= Co-KiriKiri API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: Co-Kirikiri API Docs
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
