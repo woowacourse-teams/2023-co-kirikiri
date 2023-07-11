@@ -21,9 +21,12 @@ module.exports = {
     node: true,
   },
   settings: {
-    'import/resolver': {
-      typescript: {},
-    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "paths": ["src"]
+      }
+    }
   },
   rules: {
     'import/extensions': [
