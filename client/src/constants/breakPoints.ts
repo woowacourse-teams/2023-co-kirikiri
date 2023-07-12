@@ -1,6 +1,7 @@
 const BREAK_POINTS = {
-  MOBILE: '480px',
-  DESKTOP: '1137px',
+  MOBILE: 480,
+  TABLET: 768,
+  DESKTOP: 1137,
 };
 
 export default BREAK_POINTS;
