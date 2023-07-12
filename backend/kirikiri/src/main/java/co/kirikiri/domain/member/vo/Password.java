@@ -1,15 +1,10 @@
 package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.AuthenticationException;
-import jakarta.persistence.Column;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Password {
 
-    @Column(name = "password", nullable = false)
-    private String value;
+    private final String value;
 
     public Password(final String value) {
         validate(value);
@@ -29,5 +24,13 @@ public class Password {
     private boolean isNotValidPattern(final String value) {
         final String regex = "^(?=.*[a-z])(?=.*\\d)[a-z\\d!@#\\$%\\^&\\*\\(\\)~]+$";
         return !value.matches(regex);
+    }
+
+    public int length() {
+        return value.length();
+    }
+
+    public byte[] getBytes() {
+        return value.getBytes();
     }
 }
