@@ -2,11 +2,14 @@ package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.AuthenticationException;
 import jakarta.persistence.Column;
+import java.util.Objects;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class Nickname {
 
     @Column(name = "nickname", length = 15, nullable = false)
-    private final String value;
+    private String value;
 
     public Nickname(final String value) {
         validate(value);
@@ -23,4 +26,20 @@ public class Nickname {
         return value.length() < 2 || value.length() > 8;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Nickname nickname = (Nickname) o;
+        return Objects.equals(value, nickname.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
 }

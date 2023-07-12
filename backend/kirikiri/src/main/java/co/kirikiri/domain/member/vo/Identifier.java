@@ -2,6 +2,7 @@ package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.AuthenticationException;
 import jakarta.persistence.Column;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -29,5 +30,22 @@ public class Identifier {
     private boolean isNotValidPattern(final String value) {
         final String regex = "^[a-z0-9]+$";
         return !value.matches(regex);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Identifier that = (Identifier) o;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }
