@@ -73,6 +73,13 @@ module.exports = {
         use: ['json-loader'],
         type: 'javascript/auto',
       },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg|otf)(\?v=\d+\.\d+\.\d+)?$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/fonts/[hash][ext][query]',
+        },
+      },
     ],
   },
 
