@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-cd client
-npm run lint-fix
+cd client && echo 👩🏿‍💻FE 👩🏿‍💻 pre-commit rules applying... &&  npm run lint-fix
