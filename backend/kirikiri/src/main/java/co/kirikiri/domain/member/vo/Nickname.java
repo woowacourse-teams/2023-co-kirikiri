@@ -1,9 +1,11 @@
 package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.AuthenticationException;
+import jakarta.persistence.Column;
 
 public class Nickname {
 
+    @Column(name = "nickname", length = 15, nullable = false)
     private final String value;
 
     public Nickname(final String value) {

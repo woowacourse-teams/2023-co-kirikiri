@@ -1,4 +1,4 @@
-package co.kirikiri.domain.member;
+package co.kirikiri.domain.member.vo;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
