@@ -90,5 +90,6 @@ module.exports = {
     ],
     'no-shadow': 'off',
     'import/prefer-default-export': 'warn',
+    "global-require": "warn",
   },
 };
