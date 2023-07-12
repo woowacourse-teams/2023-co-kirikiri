@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import BREAK_POINTS from '@constants/breakPoints';
+import BREAK_POINTS from '@constants/common/breakPoints';
 
 const GlobalStyle = createGlobalStyle`
   /*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */

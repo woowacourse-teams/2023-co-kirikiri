@@ -1,5 +1,5 @@
 import { css } from 'styled-components';
-import BREAK_POINTS from '@constants/breakPoints';
+import BREAK_POINTS from '@constants/common/breakPoints';
 
 /*
     Usage:
