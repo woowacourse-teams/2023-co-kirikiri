@@ -25,6 +25,10 @@ module.exports = {
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"],
         "paths": ["src"]
+      },
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".ts", ".tsx", ".js", ".jsx", ".json"]
       }
     }
   },
