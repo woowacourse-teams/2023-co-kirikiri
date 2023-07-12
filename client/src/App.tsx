@@ -1,19 +1,23 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import GlobalStyle from '@/styles/GlobalStyle';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path='/'
-          element={
-            <div>
-              <input />
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <GlobalStyle />
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              <div>
+                <input />
+              </div>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 };
 
