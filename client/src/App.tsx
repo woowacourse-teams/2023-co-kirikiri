@@ -16,7 +16,8 @@ const App = () => {
               path='/'
               element={
                 <div>
-                  <input />
+                  <p>한글이라네 자네</p>
+                  <p>here comes Eng</p>
                 </div>
               }
             />

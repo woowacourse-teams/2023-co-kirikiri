@@ -48,6 +48,20 @@ const GlobalStyle = createGlobalStyle`
     padding: 0
   }
 
+  /* global styles */
+
+  @font-face {
+    font-family: 'Noto Sans KR';
+    src: url(${require('../assets/fonts/NotoSansKR-Regular.otf')}) format('opentype');
+  }
+
+  @font-face {
+    font-family: 'SF Pro';
+    font-display: swap;
+    src: url(${require('../assets/fonts/SF-Pro.ttf')}) format('truetype');
+    unicode-range: U+0041-005A, U+0061-007A;
+  }
+
   :root {
     font-size: 24px; /* for mobile devices */
 
@@ -58,6 +72,10 @@ const GlobalStyle = createGlobalStyle`
     @media (min-width: ${BREAK_POINTS.DESKTOP}px) {
       font-size: 16px; /* for desktop devices */
     }
+  }
+
+  body {
+    font-family: 'SF Pro', 'Noto Sans KR', sans-serif;
   }
 `;
 
