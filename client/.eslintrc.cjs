@@ -88,5 +88,6 @@ module.exports = {
       'warn',
       {devDependencies: false, optionalDependencies: false, peerDependencies: false},
     ],
+    'no-shadow': 'off',
   },
 };
