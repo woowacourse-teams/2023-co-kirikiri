@@ -1,0 +1,10 @@
+|===
+|Parameter|Type|Description|Range|Required
+{{#parameters}}
+|{{#tableCellContent}}`+{{name}}+`{{/tableCellContent}}
+|{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{description}}{{/tableCellContent}}
+|{{#tableCellContent}}{{^range}}제한 없음{{/range}}{{#range}}{{.}}{{/range}}{{/tableCellContent}}
+|{{#tableCellContent}}{{^optional}}true{{/optional}}{{#optional}}false{{/optional}}{{/tableCellContent}}
+{{/parameters}}
+|===

@@ -1,0 +1,30 @@
+= Roadmap API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: Roadmap API Docs
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
+
+// [[Roadmap-API]]
+// = *Roadmap API*
+
+[[로드맵목록조회-API]]
+== *1. 로드맵 목록 조회 API*
+
+=== *1-1* 성공
+
+operation::roadmap-controller-test/로드맵_목록을_조건에_따라_조회한다[snippets='http-request,http-response,response-fields']
+
+---
+
+=== *1-2* 실패 - 카테고리 아이디가 유효하지 않음
+
+operation::roadmap-controller-test/로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,response-fields']
