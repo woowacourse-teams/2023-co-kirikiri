@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import java.util.Objects;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class Nickname {
 
     private void validate(final String value) {
         if (isNotValidLength(value)) {
-            throw new AuthenticationException("제약 조건에 맞지 않는 닉네임입니다.");
+            throw new BadRequestException("제약 조건에 맞지 않는 닉네임입니다.");
         }
     }
 

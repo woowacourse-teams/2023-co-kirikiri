@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberProfileRepository extends JpaRepository<MemberProfile, Long> {
 
-    Optional<MemberProfile> findByNickname(Nickname nickname);
+    Optional<MemberProfile> findByNickname(final Nickname nickname);
 }

@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.RestDocsHelper;
-import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
@@ -60,7 +60,7 @@ class MemberControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
 
         //when
-        doThrow(new AuthenticationException("제약 조건에 맞지 않는 아이디입니다."))
+        doThrow(new BadRequestException("제약 조건에 맞지 않는 아이디입니다."))
             .when(memberService)
             .join(any());
 
@@ -69,7 +69,7 @@ class MemberControllerTest extends RestDocsHelper {
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
-            .andExpect(status().isUnauthorized())
+            .andExpect(status().isBadRequest())
             .andDo(print());
     }
 
@@ -81,7 +81,7 @@ class MemberControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
 
         //when
-        doThrow(new AuthenticationException("제약 조건에 맞지 않는 비밀번호입니다."))
+        doThrow(new BadRequestException("제약 조건에 맞지 않는 비밀번호입니다."))
             .when(memberService)
             .join(any());
 
@@ -90,7 +90,7 @@ class MemberControllerTest extends RestDocsHelper {
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
-            .andExpect(status().isUnauthorized())
+            .andExpect(status().isBadRequest())
             .andDo(print());
     }
 
@@ -102,7 +102,7 @@ class MemberControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
 
         //when
-        doThrow(new AuthenticationException("제약 조건에 맞지 않는 닉네임입니다."))
+        doThrow(new BadRequestException("제약 조건에 맞지 않는 닉네임입니다."))
             .when(memberService)
             .join(any());
 
@@ -111,7 +111,7 @@ class MemberControllerTest extends RestDocsHelper {
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
-            .andExpect(status().isUnauthorized())
+            .andExpect(status().isBadRequest())
             .andDo(print());
     }
 

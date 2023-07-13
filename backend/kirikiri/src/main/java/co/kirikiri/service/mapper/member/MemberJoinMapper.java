@@ -1,5 +1,6 @@
 package co.kirikiri.service.mapper.member;
 
+import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -13,7 +14,7 @@ public class MemberJoinMapper {
 
     public static MemberJoinDto convert(final MemberJoinRequest request) {
         return new MemberJoinDto(new Identifier(request.identifier()), new Password(request.password()),
-            new Nickname(request.nickname()), request.phoneNumber(), request.genderType().getGender(),
+            new Nickname(request.nickname()), request.phoneNumber(), Gender.valueOf(request.genderType().name()),
             request.birthday());
     }
 }

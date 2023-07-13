@@ -10,7 +10,7 @@ import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.mapper.member.JoinMemberMapper;
+import co.kirikiri.service.mapper.member.MemberJoinMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ public class MemberService {
     private final MemberProfileRepository memberProfileRepository;
 
     public void join(final MemberJoinRequest memberJoinRequest) {
-        final MemberJoinDto memberJoinDto = JoinMemberMapper.convert(memberJoinRequest);
+        final MemberJoinDto memberJoinDto = MemberJoinMapper.convert(memberJoinRequest);
         checkDuplicate(memberJoinDto.identifier(), memberJoinDto.nickname());
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.birthday(),

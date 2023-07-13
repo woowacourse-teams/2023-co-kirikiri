@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.exception.BadRequestException;
 
 public class Password {
 
@@ -17,7 +17,7 @@ public class Password {
 
     private void validate(final String value) {
         if (isNotValidLength(value) || isNotValidPattern(value)) {
-            throw new AuthenticationException("제약 조건에 맞지 않는 비밀번호입니다.");
+            throw new BadRequestException("제약 조건에 맞지 않는 비밀번호입니다.");
         }
     }
 
