@@ -1,11 +1,7 @@
 package co.kirikiri.service.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+public record ErrorResponse(
+    String message
+) {
 
-@Getter
-@NoArgsConstructor
-public class ErrorResponse {
-
-    private String message;
 }
