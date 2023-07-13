@@ -90,14 +90,8 @@ module.exports = {
       },
     ],
     'react-hooks/exhaustive-deps': 'off',
-    'import/no-extraneous-dependencies': [
-      'warn',
-      {
-        devDependencies: false,
-        optionalDependencies: false,
-        peerDependencies: false,
-      },
-    ],
+
+
     'no-shadow': 'off',
     'import/prefer-default-export': 'warn',
     "global-require": "warn",
