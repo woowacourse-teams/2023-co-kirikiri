@@ -11,10 +11,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -32,4 +34,15 @@ public class Member extends BaseTimeEntity {
         orphanRemoval = true)
     @JoinColumn(name = "member_profile_id", nullable = false, unique = true)
     private MemberProfile memberProfile;
+
+    public Member(final String identifier, final String password, final MemberProfile memberProfile) {
+        this(null, identifier, password, memberProfile);
+    }
+
+    public Member(final Long id, final String identifier, final String password, final MemberProfile memberProfile) {
+        this.id = id;
+        this.identifier = identifier;
+        this.password = password;
+        this.memberProfile = memberProfile;
+    }
 }

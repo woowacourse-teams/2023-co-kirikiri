@@ -14,10 +14,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class MemberProfile extends BaseTimeEntity {
 
     @Id
@@ -42,4 +44,13 @@ public class MemberProfile extends BaseTimeEntity {
         orphanRemoval = true)
     @JoinColumn(name = "member_profile_image_id")
     private MemberProfileImage image;
+
+    public MemberProfile(final Gender gender, final LocalDate birthday, final String nickname, final String phoneNumber,
+                         final MemberProfileImage image) {
+        this.gender = gender;
+        this.birthday = birthday;
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.image = image;
+    }
 }
