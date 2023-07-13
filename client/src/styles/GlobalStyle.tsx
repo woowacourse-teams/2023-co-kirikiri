@@ -63,14 +63,14 @@ const GlobalStyle = createGlobalStyle`
   }
 
   :root {
-    font-size: 24px; /* for mobile devices */
+    font-size: 41.6%; /* for mobile devices */
 
     @media (min-width: ${BREAK_POINTS.TABLET}px) {
-      font-size: 18px; /* for tablet devices */
+      font-size: 55%; /* for tablet devices */
     }
 
     @media (min-width: ${BREAK_POINTS.DESKTOP}px) {
-      font-size: 16px; /* for desktop devices */
+      font-size: 62.5%; /* for desktop devices */
     }
   }
 
