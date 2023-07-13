@@ -37,7 +37,7 @@ module.exports = {
           ["@mocks", "./src/mocks"],
           ["@pages", "./src/pages"],
           ["@styles", "./src/styles"],
-          ["@types", "./src/types"],
+          ["@myTypes", "./src/myTypes"],
           ["@utils", "./src/utils"]
         ],
         "extensions": [".ts", ".tsx", ".js", ".jsx", ".json"]
@@ -101,5 +101,8 @@ module.exports = {
     'no-shadow': 'off',
     'import/prefer-default-export': 'warn',
     "global-require": "warn",
+    "import/no-extraneous-dependencies": "off",
+    'no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': ['error', {"ignoreTypeReferences": true}]
   },
 };

@@ -25,7 +25,7 @@ module.exports = {
       '@mocks': path.resolve(__dirname, 'src/mocks'),
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@styles': path.resolve(__dirname, 'src/styles'),
-      '@types': path.resolve(__dirname, 'src/types'),
+      '@myTypes': path.resolve(__dirname, 'src/myTypes'),
       '@utils': path.resolve(__dirname, 'src/utils'),
     },
   },
