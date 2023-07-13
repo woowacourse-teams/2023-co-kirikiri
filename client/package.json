@@ -29,6 +29,7 @@
     "ajv": "^8.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.14.1",
     "styled-components": "^6.0.0"
   },
