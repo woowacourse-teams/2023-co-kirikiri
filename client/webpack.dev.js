@@ -4,6 +4,8 @@ const common = require('./webpack.common');
 
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
+require('dotenv').config();
+
 module.exports = merge(common, {
   mode: 'development',
   devtool: 'eval',

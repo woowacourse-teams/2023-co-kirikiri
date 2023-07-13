@@ -6,8 +6,6 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-require('dotenv').config();
-
 module.exports = merge(common, {
   mode: 'production',
 
