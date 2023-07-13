@@ -26,11 +26,12 @@
   },
   "homepage": "https://github.com/woowacourse-teams/2023-co-kirikiri#readme",
   "dependencies": {
+    "@tanstack/react-query": "^4.29.19",
+    "@tanstack/react-query-devtools": "^4.29.19",
     "ajv": "^8.12.0",
     "axios": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-query": "^3.39.3",
     "react-router-dom": "^6.14.1",
     "styled-components": "^6.0.0"
   },
