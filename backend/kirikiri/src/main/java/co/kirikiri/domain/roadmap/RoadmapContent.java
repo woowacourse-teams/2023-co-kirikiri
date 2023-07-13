@@ -12,12 +12,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class RoadmapContent extends BaseTimeEntity {
 
     @Id
@@ -34,10 +32,6 @@ public class RoadmapContent extends BaseTimeEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "roadmapContent")
     private List<RoadmapNode> nodes;
 
-    public RoadmapContent(final String content, final List<RoadmapNode> nodes) {
-        this(null, content, nodes);
-    }
-
     public RoadmapContent(final Long id, final String content, final List<RoadmapNode> nodes) {
         this.id = id;
         this.content = content;
@@ -52,5 +46,9 @@ public class RoadmapContent extends BaseTimeEntity {
         if (!roadmap.getContents().contains(this)) {
             roadmap.getContents().add(this);
         }
+    }
+
+    public Roadmap getRoadmap() {
+        return roadmap;
     }
 }

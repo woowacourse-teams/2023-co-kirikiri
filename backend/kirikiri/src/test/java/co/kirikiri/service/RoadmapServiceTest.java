@@ -58,7 +58,7 @@ class RoadmapServiceTest {
         final PageRequest pageRequest = PageRequest.of(1, 10);
 
         // when, then
-        assertThatThrownBy(() -> roadmapService.getRoadmapsByFilterType(categoryId, filterType, pageRequest))
+        assertThatThrownBy(() -> roadmapService.findRoadmapsByFilterType(categoryId, filterType, pageRequest))
             .isInstanceOf(NotFoundException.class);
     }
 
@@ -70,7 +70,7 @@ class RoadmapServiceTest {
 
         when(roadmapCategoryRepository.findById(any()))
             .thenReturn(Optional.of(new RoadmapCategory("여행")));
-        when(roadmapRepository.getRoadmapPagesByCond(any(), any(), any()))
+        when(roadmapRepository.findRoadmapPagesByCond(any(), any(), any()))
             .thenReturn(roadmapPages);
 
         final Long categoryId = 1L;
@@ -78,7 +78,7 @@ class RoadmapServiceTest {
         final PageRequest pageRequest = PageRequest.of(1, 10);
 
         // when
-        final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.getRoadmapsByFilterType(categoryId,
+        final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(categoryId,
             filterType, pageRequest);
 
         // then
@@ -103,7 +103,7 @@ class RoadmapServiceTest {
 
         when(roadmapCategoryRepository.findById(any()))
             .thenReturn(Optional.of(new RoadmapCategory("여행")));
-        when(roadmapRepository.getRoadmapPagesByCond(any(), any(), any()))
+        when(roadmapRepository.findRoadmapPagesByCond(any(), any(), any()))
             .thenReturn(roadmapPages);
 
         final Long categoryId = 1L;
@@ -111,7 +111,7 @@ class RoadmapServiceTest {
         final PageRequest pageRequest = PageRequest.of(1, 10);
 
         // when
-        final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.getRoadmapsByFilterType(categoryId,
+        final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(categoryId,
             filterType, pageRequest);
 
         // then

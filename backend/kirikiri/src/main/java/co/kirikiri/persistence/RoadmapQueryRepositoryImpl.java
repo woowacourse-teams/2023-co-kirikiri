@@ -26,8 +26,8 @@ public class RoadmapQueryRepositoryImpl implements RoadmapQueryRepository {
     }
 
     @Override
-    public Page<Roadmap> getRoadmapPagesByCond(final RoadmapCategory category, final RoadmapOrderType orderType,
-                                               final Pageable pageable) {
+    public Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapOrderType orderType,
+                                                final Pageable pageable) {
         final List<Roadmap> roadmaps = factory
             .selectFrom(roadmap)
             .innerJoin(roadmap.category, roadmapCategory)

@@ -27,14 +27,14 @@ public class RoadmapService {
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
-    public PageResponse<RoadmapResponse> getRoadmapsByFilterType(final Long categoryId,
-                                                                 final RoadmapFilterType filterType,
-                                                                 final Pageable pageRequest) {
+    public PageResponse<RoadmapResponse> findRoadmapsByFilterType(final Long categoryId,
+                                                                  final RoadmapFilterType filterType,
+                                                                  final Pageable pageRequest) {
         final PageRequest pageRequestAppliedOffset = generatePageRequestAppliedOffset(pageRequest);
-        final RoadmapCategory category = getCategoryById(categoryId);
+        final RoadmapCategory category = findCategoryById(categoryId);
         final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
 
-        final Page<Roadmap> roadmapPages = roadmapRepository.getRoadmapPagesByCond(category, orderType,
+        final Page<Roadmap> roadmapPages = roadmapRepository.findRoadmapPagesByCond(category, orderType,
             pageRequestAppliedOffset);
         return RoadmapMapper.convertRoadmapPageResponse(roadmapPages, pageRequest);
     }
@@ -45,7 +45,7 @@ public class RoadmapService {
         return PageRequest.of(pageNumber, pageSize);
     }
 
-    private RoadmapCategory getCategoryById(final Long categoryId) {
+    private RoadmapCategory findCategoryById(final Long categoryId) {
         if (categoryId == null) {
             return null;
         }

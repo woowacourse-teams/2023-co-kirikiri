@@ -21,11 +21,11 @@ public class RoadmapController {
     private final RoadmapService roadmapService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<RoadmapResponse>> getRoadmapsByFilterType(
+    public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
         @RequestParam(value = "categoryId", required = false) final Long categoryId,
         @RequestParam(value = "filterCond", required = false) final RoadmapFilterType roadmapFilterType,
         @PageableDefault(page = 1) final Pageable pageable) {
-        final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.getRoadmapsByFilterType(categoryId,
+        final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(categoryId,
             roadmapFilterType, pageable);
         return ResponseEntity.ok(roadmapPageResponse);
     }

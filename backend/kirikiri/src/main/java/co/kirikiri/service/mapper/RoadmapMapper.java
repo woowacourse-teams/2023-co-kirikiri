@@ -11,10 +11,14 @@ import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterType;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public class RoadmapMapper {
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class RoadmapMapper {
 
     public static RoadmapOrderType convertRoadmapOrderType(final RoadmapFilterType filterType) {
         if (filterType == null) {

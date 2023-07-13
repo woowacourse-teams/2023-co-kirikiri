@@ -8,6 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface RoadmapQueryRepository {
 
-    Page<Roadmap> getRoadmapPagesByCond(final RoadmapCategory category, final RoadmapOrderType orderType,
-                                        final Pageable pageable);
+    Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapOrderType orderType,
+                                         final Pageable pageable);
 }

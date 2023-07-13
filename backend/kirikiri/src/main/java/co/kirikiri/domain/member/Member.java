@@ -11,12 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -44,5 +42,13 @@ public class Member extends BaseTimeEntity {
         this.identifier = identifier;
         this.password = password;
         this.memberProfile = memberProfile;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public MemberProfile getMemberProfile() {
+        return memberProfile;
     }
 }

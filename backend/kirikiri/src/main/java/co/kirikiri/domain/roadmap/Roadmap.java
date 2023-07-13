@@ -16,12 +16,10 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class Roadmap {
 
     @Id
@@ -81,5 +79,41 @@ public class Roadmap {
         if (content.getRoadmap() != this) {
             content.updateRoadmap(this);
         }
+    }
+
+    public Member getCreator() {
+        return creator;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public RoadmapCategory getCategory() {
+        return category;
+    }
+
+    public List<RoadmapContent> getContents() {
+        return contents;
+    }
+
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public Integer getRequiredPeriod() {
+        return requiredPeriod;
+    }
+
+    public RoadmapDifficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public RoadmapStatus getStatus() {
+        return status;
     }
 }

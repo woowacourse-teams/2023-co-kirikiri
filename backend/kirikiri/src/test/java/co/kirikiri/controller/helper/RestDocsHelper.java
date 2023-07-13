@@ -2,6 +2,7 @@ package co.kirikiri.controller.helper;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -23,6 +24,7 @@ public class RestDocsHelper {
     protected static final String API_PREFIX = "/api";
 
     protected MockMvc mockMvc;
+    protected ObjectMapper objectMapper = new ObjectMapper();
     protected RestDocumentationResultHandler documentationResultHandler;
 
     @BeforeEach

@@ -53,8 +53,9 @@ class RoadmapRepositoryTest extends RepositoryTest {
         final PageRequest secondPage = PageRequest.of(1, 2);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.getRoadmapPagesByCond(category, orderType, firstPage);
-        final Page<Roadmap> secondPageRoadmaps = roadmapRepository.getRoadmapPagesByCond(category, orderType,
+        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
+            firstPage);
+        final Page<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
             secondPage);
 
         // then
@@ -95,7 +96,7 @@ class RoadmapRepositoryTest extends RepositoryTest {
         final PageRequest firstPage = PageRequest.of(0, 10);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.getRoadmapPagesByCond(gameCategory, orderType,
+        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(gameCategory, orderType,
             firstPage);
 
         // then
