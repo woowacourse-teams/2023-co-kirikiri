@@ -21,9 +21,28 @@ module.exports = {
     node: true,
   },
   settings: {
-    'import/resolver': {
-      typescript: {},
-    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "paths": ["src"]
+      },
+      "alias": {
+        "map": [
+          ["@", "./src"],
+          ["@apis", "./src/apis"],
+          ["@assets", "./src/assets"],
+          ["@components", "./src/components"],
+          ["@constants", "./src/constants"],
+          ["@hooks", "./src/hooks"],
+          ["@mocks", "./src/mocks"],
+          ["@pages", "./src/pages"],
+          ["@styles", "./src/styles"],
+          ["@types", "./src/types"],
+          ["@utils", "./src/utils"]
+        ],
+        "extensions": [".ts", ".tsx", ".js", ".jsx", ".json"]
+      }
+    }
   },
   rules: {
     'import/extensions': [
@@ -39,7 +58,13 @@ module.exports = {
     'prettier/prettier': 'error',
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    ],
+    "space-before-blocks": ["error", "always"],
     'react/button-has-type': 'off',
     '@typescript-eslint/no-unused-vars': [
       'warn',
@@ -67,7 +92,14 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'off',
     'import/no-extraneous-dependencies': [
       'warn',
-      { devDependencies: false, optionalDependencies: false, peerDependencies: false },
+      {
+        devDependencies: false,
+        optionalDependencies: false,
+        peerDependencies: false,
+      },
     ],
+    'no-shadow': 'off',
+    'import/prefer-default-export': 'warn',
+    "global-require": "warn",
   },
 };

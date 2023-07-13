@@ -1,29 +1,30 @@
-import styled from 'styled-components';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Counter from './Counter';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 
-const Container = styled.div`
-  position: fixed;
-  display: flex;
-`;
+import GlobalStyle from '@styles/GlobalStyle';
+import theme from '@styles/theme';
+import ResponsiveContainer from '@components/_common/responsiveContainer/ResponsiveContainer';
 
 const App = () => {
   return (
-    <Container>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path='/'
-            element={
-              <div>
-                <Counter />
-                <input />
-              </div>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </Container>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <ResponsiveContainer>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path='/'
+              element={
+                <div>
+                  <p>한글이라네 자네</p>
+                  <p>here comes Eng</p>
+                </div>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </ResponsiveContainer>
+    </ThemeProvider>
   );
 };
 
