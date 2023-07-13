@@ -13,19 +13,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EncryptedPassword {
 
-    @Column(name = "password", nullable = false)
-    private String value;
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String salt;
 
     public EncryptedPassword(final Password unencryptedPassword) {
         try {
-            this.value = encrypt(unencryptedPassword);
+            this.salt = generateSalt(unencryptedPassword.length());
+            this.password = encrypt(unencryptedPassword, salt);
         } catch (final NoSuchAlgorithmException exception) {
             throw new AuthenticationException(exception.getMessage());
         }
     }
 
-    private String encrypt(final Password unencryptedPassword) throws NoSuchAlgorithmException {
-        final String salt = generateSalt(unencryptedPassword.length());
+    private String encrypt(final Password unencryptedPassword, final String salt) throws NoSuchAlgorithmException {
         final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update(salt.getBytes());
         messageDigest.update(unencryptedPassword.getBytes());
@@ -35,9 +38,9 @@ public class EncryptedPassword {
 
     private String generateSalt(final int length) {
         final SecureRandom secureRandom = new SecureRandom();
-        final byte[] salt = new byte[length];
-        secureRandom.nextBytes(salt);
-        return Base64.getEncoder().encodeToString(salt);
+        final byte[] value = new byte[length];
+        secureRandom.nextBytes(value);
+        return Base64.getEncoder().encodeToString(value);
     }
 
     @Override
@@ -49,11 +52,11 @@ public class EncryptedPassword {
             return false;
         }
         final EncryptedPassword that = (EncryptedPassword) o;
-        return Objects.equals(value, that.value);
+        return Objects.equals(password, that.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(password);
     }
 }
