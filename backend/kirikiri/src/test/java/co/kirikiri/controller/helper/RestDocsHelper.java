@@ -1,4 +1,4 @@
-package co.kirikiri;
+package co.kirikiri.controller.helper;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
@@ -18,22 +18,24 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @ExtendWith(RestDocumentationExtension.class)
 public class RestDocsHelper {
 
+    protected static final String API_PREFIX = "/api";
+
     protected MockMvc mockMvc;
     protected RestDocumentationResultHandler documentationResultHandler;
 
     @BeforeEach
     void setUp(final WebApplicationContext webApplicationContext,
-               final RestDocumentationContextProvider restDocumentationContextProvider) {
+        final RestDocumentationContextProvider restDocumentationContextProvider) {
         this.documentationResultHandler = MockMvcRestDocumentation.document(
-                "{class-name}/{method-name}",
-                Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-                Preprocessors.preprocessResponse(Preprocessors.prettyPrint()));
+            "{class-name}/{method-name}",
+            Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+            Preprocessors.preprocessResponse(Preprocessors.prettyPrint()));
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilter(new CharacterEncodingFilter("UTF-8", true))
-                .alwaysDo(MockMvcResultHandlers.print())
-                .alwaysDo(documentationResultHandler)
-                .apply(documentationConfiguration(restDocumentationContextProvider))
-                .build();
+            .addFilter(new CharacterEncodingFilter("UTF-8", true))
+            .alwaysDo(MockMvcResultHandlers.print())
+            .alwaysDo(documentationResultHandler)
+            .apply(documentationConfiguration(restDocumentationContextProvider))
+            .build();
     }
 }
