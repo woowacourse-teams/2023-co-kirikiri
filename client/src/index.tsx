@@ -1,5 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import theme from '@styles/theme';
+import GlobalStyle from '@styles/GlobalStyle';
+import ResponsiveContainer from '@components/_common/responsiveContainer/ResponsiveContainer';
+import { ThemeProvider } from 'styled-components';
 import App from './App';
 
 const rootElement = document.getElementById('root');
@@ -8,6 +12,11 @@ const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <ResponsiveContainer>
+        <App />
+      </ResponsiveContainer>
+    </ThemeProvider>
   </React.StrictMode>
 );
