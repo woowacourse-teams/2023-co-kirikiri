@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Nickname {
 
+    private static final int MIN_LENGTH = 2;
+    private static final int MAX_LENGTH = 8;
+
     @Column(name = "nickname", length = 15, nullable = false)
     private String value;
 
@@ -23,7 +26,7 @@ public class Nickname {
     }
 
     private boolean isNotValidLength(final String value) {
-        return value.length() < 2 || value.length() > 8;
+        return value.length() < MIN_LENGTH || value.length() > MAX_LENGTH;
     }
 
     @Override

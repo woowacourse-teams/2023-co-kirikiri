@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Identifier {
 
+    private static final int MIN_LENGTH = 4;
+    private static final int MAX_LENGTH = 20;
+    private static final String REGEX = "^[a-z0-9]+$";
+
     @Column(name = "identifier", length = 50, unique = true, nullable = false)
     private String value;
 
@@ -24,12 +28,11 @@ public class Identifier {
     }
 
     private boolean isNotValidLength(final String value) {
-        return value.length() < 4 || value.length() > 20;
+        return value.length() < MIN_LENGTH || value.length() > MAX_LENGTH;
     }
 
     private boolean isNotValidPattern(final String value) {
-        final String regex = "^[a-z0-9]+$";
-        return !value.matches(regex);
+        return !value.matches(REGEX);
     }
 
     @Override

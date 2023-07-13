@@ -17,7 +17,7 @@ public record MemberJoinRequest(
     String nickname,
 
     @NotBlank(message = "전화번호는 빈 값일 수 없습니다.")
-    @Pattern(regexp = "^\\d{3}-\\d{4}-\\d{4}$", message = "전화번호 형식이 맞지 않습니다.")
+    @Pattern(regexp = "^010-\\d{4}-\\d{4}$", message = "전화번호 형식이 맞지 않습니다.")
     String phoneNumber,
 
     GenderType genderType,

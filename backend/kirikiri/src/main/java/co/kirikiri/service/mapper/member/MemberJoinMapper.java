@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class JoinMemberMapper {
+public class MemberJoinMapper {
 
     public static MemberJoinDto convert(final MemberJoinRequest request) {
         return new MemberJoinDto(new Identifier(request.identifier()), new Password(request.password()),

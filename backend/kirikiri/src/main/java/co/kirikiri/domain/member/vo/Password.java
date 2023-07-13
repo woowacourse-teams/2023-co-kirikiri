@@ -4,6 +4,10 @@ import co.kirikiri.exception.AuthenticationException;
 
 public class Password {
 
+    private static final int MIN_LENGTH = 8;
+    private static final int MAX_LENGTH = 15;
+    private static final String REGEX = "^(?=.*[a-z])(?=.*\\d)[a-z\\d!@#\\$%\\^&\\*\\(\\)~]+$";
+
     private final String value;
 
     public Password(final String value) {
@@ -18,12 +22,11 @@ public class Password {
     }
 
     private boolean isNotValidLength(final String value) {
-        return value.length() < 8 || value.length() > 15;
+        return value.length() < MIN_LENGTH || value.length() > MAX_LENGTH;
     }
 
     private boolean isNotValidPattern(final String value) {
-        final String regex = "^(?=.*[a-z])(?=.*\\d)[a-z\\d!@#\\$%\\^&\\*\\(\\)~]+$";
-        return !value.matches(regex);
+        return !value.matches(REGEX);
     }
 
     public int length() {
