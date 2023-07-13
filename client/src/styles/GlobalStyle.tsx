@@ -52,13 +52,13 @@ const GlobalStyle = createGlobalStyle`
 
   @font-face {
     font-family: 'Noto Sans KR';
-    src: url(${require('../assets/fonts/NotoSansKR-Regular.otf')}) format('opentype');
+    src: url(${require('../assets/fonts/NotoSansKR-Regular.woff')}) format('woff');
   }
 
   @font-face {
-    font-family: 'SF Pro';
+    font-family: 'Noto Sans';
     font-display: swap;
-    src: url(${require('../assets/fonts/SF-Pro.ttf')}) format('truetype');
+    src: url(${require('../assets/fonts/NotoSans-Regular.woff')}) format('woff');
     unicode-range: U+0041-005A, U+0061-007A;
   }
 
@@ -75,7 +75,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'SF Pro', 'Noto Sans KR', sans-serif;
+    font-family: 'Noto Sans', 'Noto Sans KR', sans-serif;
   }
 `;
 
