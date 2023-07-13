@@ -1,6 +1,14 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useFetchUser } from '@hooks/queries/user';
+import { useEffect } from 'react';
 
 const App = () => {
+  const { user } = useFetchUser();
+
+  useEffect(() => {
+    console.log(user, 'userInfo');
+  }, [user]);
+
   return (
     <BrowserRouter>
       <Routes>
