@@ -1,8 +1,9 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.member.Member;
-import jakarta.persistence.CascadeType;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,14 +13,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
 public class Roadmap {
+
+    private static final int TITLE_MIN_LENGTH = 1;
+    private static final int TITLE_MAX_LENGTH = 40;
+    private static final int INTRODUCTION_MIN_LENGTH = 1;
+    private static final int INTRODUCTION_MAX_LENGTH = 150;
+    private static final int REQUIRED_MIN_PERIOD = 0;
+    private static final int REQUIRED_MAX_PERIOD = 1000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +60,41 @@ public class Roadmap {
     @JoinColumn(name = "category_id", nullable = false)
     private RoadmapCategory category;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmap")
-    @Column(nullable = false)
-    private List<RoadmapContent> content;
+    @Embedded
+    private RoadmapContents contents;
+
+    public Roadmap(final String title, final String introduction, final int requiredPeriod,
+                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category,
+                   final RoadmapContent content) {
+        validate(title, introduction, requiredPeriod);
+        this.title = title;
+        this.introduction = introduction;
+        this.requiredPeriod = requiredPeriod;
+        this.difficulty = difficulty;
+        this.status = RoadmapStatus.CREATED;
+        this.creator = creator;
+        this.category = category;
+        this.contents = new RoadmapContents();
+        addRoadmapContent(content);
+    }
+
+    private void validate(final String title, final String introduction, final int requiredPeriod) {
+        if (title.length() < TITLE_MIN_LENGTH || title.length() > TITLE_MAX_LENGTH) {
+            throw new BadRequestException(
+                    "로드맵 제목의 길이는 최소 " + TITLE_MIN_LENGTH + "글자, 최대 " + TITLE_MAX_LENGTH + "글자입니다.");
+        }
+        if (introduction.length() < INTRODUCTION_MIN_LENGTH || introduction.length() > INTRODUCTION_MAX_LENGTH) {
+            throw new BadRequestException(
+                    "로드맵 소개글의 길이는 최소 " + INTRODUCTION_MIN_LENGTH + "글자, 최대 " + INTRODUCTION_MAX_LENGTH + "글자입니다.");
+        }
+        if (requiredPeriod < REQUIRED_MIN_PERIOD || requiredPeriod > REQUIRED_MAX_PERIOD) {
+            throw new BadRequestException(
+                    "로드맵 추천 소요 기간은 최소 " + REQUIRED_MIN_PERIOD + "일, 최대 " + REQUIRED_MAX_PERIOD + "일입니다.");
+        }
+    }
+
+    private void addRoadmapContent(final RoadmapContent content) {
+        this.contents.add(content);
+        content.setRoadmap(this);
+    }
 }
