@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import BREAK_POINTS from '@constants/common/breakPoints';
-import px2vw from '@utils/common/px2vw';
+import BREAK_POINTS from '@constants/_common/breakPoints';
+import px2vw from '@utils/_common/px2vw';
 
 export const Container = styled.div`
   width: 100%;

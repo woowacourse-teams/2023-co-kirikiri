@@ -1,4 +1,4 @@
-import BREAK_POINTS from '@constants/common/breakPoints';
+import BREAK_POINTS from '@constants/_common/breakPoints';
 
 const getBasePixel = () => {
   const viewportWidth = window.innerWidth;

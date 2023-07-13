@@ -3,7 +3,7 @@ import { ThemeProvider } from 'styled-components';
 
 import GlobalStyle from '@styles/GlobalStyle';
 import theme from '@styles/theme';
-import ResponsiveContainer from '@components/@common/responsiveContainer/ResponsiveContainer';
+import ResponsiveContainer from '@components/_common/responsiveContainer/ResponsiveContainer';
 
 const App = () => {
   return (
