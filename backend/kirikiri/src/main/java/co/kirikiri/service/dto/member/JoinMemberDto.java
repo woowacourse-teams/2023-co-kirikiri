@@ -5,22 +5,14 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-public class JoinMemberDto {
+public record JoinMemberDto(
+    Identifier identifier,
+    Password password,
+    Nickname nickname,
+    String phoneNumber,
+    Gender gender,
+    LocalDate birthday
+) {
 
-    private Identifier identifier;
-
-    private Password password;
-
-    private Nickname nickname;
-
-    private String phoneNumber;
-
-    private Gender gender;
-
-    private LocalDate birthday;
 }
