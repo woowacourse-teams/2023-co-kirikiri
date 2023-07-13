@@ -58,7 +58,13 @@ module.exports = {
     'prettier/prettier': 'error',
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'react/jsx-filename-extension': [1, {extensions: ['.js', '.jsx', '.ts', '.tsx']}],
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    ],
+    "space-before-blocks": ["error", "always"],
     'react/button-has-type': 'off',
     '@typescript-eslint/no-unused-vars': [
       'warn',
@@ -86,7 +92,11 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'off',
     'import/no-extraneous-dependencies': [
       'warn',
-      {devDependencies: false, optionalDependencies: false, peerDependencies: false},
+      {
+        devDependencies: false,
+        optionalDependencies: false,
+        peerDependencies: false,
+      },
     ],
     'no-shadow': 'off',
     'import/prefer-default-export': 'warn',
