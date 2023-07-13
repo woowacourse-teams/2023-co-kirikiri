@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.exception.ServerException;
 import jakarta.persistence.Column;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,7 +24,7 @@ public class EncryptedPassword {
             this.salt = generateSalt(unencryptedPassword.length());
             this.password = encrypt(unencryptedPassword, salt);
         } catch (final NoSuchAlgorithmException exception) {
-            throw new AuthenticationException(exception.getMessage());
+            throw new ServerException(exception.getMessage());
         }
     }
 
