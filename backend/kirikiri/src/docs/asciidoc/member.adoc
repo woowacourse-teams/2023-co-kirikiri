@@ -1,4 +1,5 @@
 = Member API
+:toc-title: Member API Docs
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs

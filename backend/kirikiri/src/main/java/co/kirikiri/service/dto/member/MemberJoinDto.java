@@ -6,7 +6,7 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import java.time.LocalDate;
 
-public record JoinMemberDto(
+public record MemberJoinDto(
     Identifier identifier,
     Password password,
     Nickname nickname,

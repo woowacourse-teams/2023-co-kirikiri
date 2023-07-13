@@ -4,7 +4,7 @@ import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.dto.ErrorResponse;
-import java.util.Objects;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,10 +33,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+    public ResponseEntity<List<ErrorResponse>> handleMethodArgumentNotValidException(
         final MethodArgumentNotValidException exception) {
-        final String message = Objects.requireNonNull(exception.getFieldError()).getDefaultMessage();
-        final ErrorResponse errorResponse = new ErrorResponse(message);
-        return ResponseEntity.badRequest().body(errorResponse);
+        final List<ErrorResponse> errorResponses = makeErrorResponses(exception);
+        return ResponseEntity.badRequest().body(errorResponses);
+    }
+
+    private List<ErrorResponse> makeErrorResponses(final MethodArgumentNotValidException exception) {
+        return exception.getFieldErrors()
+            .stream()
+            .map(it -> new ErrorResponse(it.getDefaultMessage()))
+            .toList();
     }
 }

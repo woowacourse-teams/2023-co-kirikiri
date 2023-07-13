@@ -3,7 +3,6 @@ package co.kirikiri.domain.member;
 import co.kirikiri.domain.BaseTimeEntity;
 import co.kirikiri.domain.member.vo.EncryptedPassword;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -40,13 +39,5 @@ public class Member extends BaseTimeEntity {
         this.identifier = identifier;
         this.password = password;
         this.memberProfile = memberProfile;
-    }
-
-    public Identifier getIdentifier() {
-        return identifier;
-    }
-
-    public Nickname getNickName() {
-        return memberProfile.getNickname();
     }
 }

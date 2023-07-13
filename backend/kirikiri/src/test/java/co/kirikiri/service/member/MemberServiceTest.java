@@ -15,7 +15,7 @@ import co.kirikiri.exception.ConflictException;
 import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.GenderType;
-import co.kirikiri.service.dto.member.request.JoinMemberRequest;
+import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class MemberServiceTest {
     @Test
     void 회원가입을_한다() {
         //given
-        final JoinMemberRequest request = new JoinMemberRequest("identifier1", "password1!", "nickname",
+        final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
             "010-1234-5678", GenderType.MALE, LocalDate.now());
 
         given(memberRepository.findByIdentifier(any()))
@@ -54,7 +54,7 @@ class MemberServiceTest {
     @Test
     void 회원가입_시_이미_존재하는_아이디가_존재할때_예외를_던진다() {
         //given
-        final JoinMemberRequest request = new JoinMemberRequest("identifier1", "password1!", "nickname",
+        final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
             "010-1234-5678", GenderType.MALE, LocalDate.now());
         final Identifier identifier = new Identifier("identifier1");
         final Password password = new Password("password1!");
@@ -75,7 +75,7 @@ class MemberServiceTest {
     @Test
     void 회원가입_시_이미_존재하는_닉네임_존재할때_예외를_던진다() {
         //given
-        final JoinMemberRequest request = new JoinMemberRequest("identifier1", "password1!", "nickname",
+        final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
             "010-1234-5678", GenderType.MALE, LocalDate.now());
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";

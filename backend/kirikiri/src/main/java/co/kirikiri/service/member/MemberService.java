@@ -8,8 +8,8 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.dto.member.JoinMemberDto;
-import co.kirikiri.service.dto.member.request.JoinMemberRequest;
+import co.kirikiri.service.dto.member.MemberJoinDto;
+import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.mapper.member.JoinMemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,13 +23,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
 
-    public void join(final JoinMemberRequest joinMemberRequest) {
-        final JoinMemberDto joinMemberDto = JoinMemberMapper.convert(joinMemberRequest);
-        checkDuplicate(joinMemberDto.identifier(), joinMemberDto.nickname());
-        final EncryptedPassword encryptedPassword = new EncryptedPassword(joinMemberDto.password());
-        final MemberProfile memberProfile = new MemberProfile(joinMemberDto.gender(), joinMemberDto.birthday(),
-            joinMemberDto.nickname(), joinMemberDto.phoneNumber());
-        final Member member = new Member(joinMemberDto.identifier(), encryptedPassword, memberProfile);
+    public void join(final MemberJoinRequest memberJoinRequest) {
+        final MemberJoinDto memberJoinDto = JoinMemberMapper.convert(memberJoinRequest);
+        checkDuplicate(memberJoinDto.identifier(), memberJoinDto.nickname());
+        final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
+        final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.birthday(),
+            memberJoinDto.nickname(), memberJoinDto.phoneNumber());
+        final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberProfile);
         memberRepository.save(member);
     }
 

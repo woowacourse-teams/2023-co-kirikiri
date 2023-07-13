@@ -1,6 +1,6 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.service.dto.member.request.JoinMemberRequest;
+import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.member.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<Void> join(@RequestBody @Valid final JoinMemberRequest request) {
+    public ResponseEntity<Void> join(@RequestBody @Valid final MemberJoinRequest request) {
         memberService.join(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
