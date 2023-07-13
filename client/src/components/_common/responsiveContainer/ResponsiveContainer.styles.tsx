@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import BREAK_POINTS from '@constants/_common/breakPoints';
-import px2vw from '@utils/_common/px2vw';
+import pxToVw from '@utils/_common/pxToVw';
 
 export const Container = styled.div`
   width: 100%;
@@ -9,14 +9,14 @@ export const Container = styled.div`
   background: red;
 
   @media (min-width: ${BREAK_POINTS.MOBILE}px) {
-    max-width: ${px2vw(BREAK_POINTS.MOBILE)};
+    max-width: ${pxToVw(BREAK_POINTS.MOBILE)};
   }
 
   @media (min-width: ${BREAK_POINTS.TABLET}px) {
-    max-width: ${px2vw(BREAK_POINTS.TABLET)};
+    max-width: ${pxToVw(BREAK_POINTS.TABLET)};
   }
 
   @media (min-width: ${BREAK_POINTS.DESKTOP}px) {
-    max-width: ${px2vw(BREAK_POINTS.DESKTOP)};
+    max-width: ${pxToVw(BREAK_POINTS.DESKTOP)};
   }
 `;
