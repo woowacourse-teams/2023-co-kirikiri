@@ -42,7 +42,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @ParameterizedTest
@@ -56,7 +56,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test
@@ -70,7 +70,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CONFLICT.value());
     }
 
     @ParameterizedTest
@@ -84,7 +84,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @ParameterizedTest
@@ -98,7 +98,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @ParameterizedTest
@@ -112,7 +112,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @ParameterizedTest
@@ -126,7 +126,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @ParameterizedTest
@@ -140,7 +140,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> response = 회원가입을_한다(request);
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     private ExtractableResponse<Response> 회원가입을_한다(final JoinMemberRequest request) {

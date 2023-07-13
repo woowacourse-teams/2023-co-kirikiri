@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.RestDocsHelper;
 import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.JoinMemberRequest;
 import co.kirikiri.service.member.MemberService;
@@ -40,7 +41,6 @@ class MemberControllerTest extends RestDocsHelper {
         final JoinMemberRequest joinMemberRequest = new JoinMemberRequest("identifier1", "password1!",
             "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
         final String jsonRequest = objectMapper.writeValueAsString(joinMemberRequest);
-        System.out.println(jsonRequest);
 
         //when
         //then
@@ -59,17 +59,17 @@ class MemberControllerTest extends RestDocsHelper {
             "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
         final String jsonRequest = objectMapper.writeValueAsString(joinMemberRequest);
 
+        //when
         doThrow(new AuthenticationException("제약 조건에 맞지 않는 아이디입니다."))
             .when(memberService)
             .join(any());
 
-        //when
         //then
         mockMvc.perform(post("/api/member/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
-            .andExpect(status().isBadRequest())
+            .andExpect(status().isUnauthorized())
             .andDo(print());
     }
 
@@ -80,17 +80,17 @@ class MemberControllerTest extends RestDocsHelper {
             "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
         final String jsonRequest = objectMapper.writeValueAsString(joinMemberRequest);
 
+        //when
         doThrow(new AuthenticationException("제약 조건에 맞지 않는 비밀번호입니다."))
             .when(memberService)
             .join(any());
 
-        //when
         //then
         mockMvc.perform(post("/api/member/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
-            .andExpect(status().isBadRequest())
+            .andExpect(status().isUnauthorized())
             .andDo(print());
     }
 
@@ -101,17 +101,17 @@ class MemberControllerTest extends RestDocsHelper {
             "a", "010-1234-5678", GenderType.MALE, LocalDate.now());
         final String jsonRequest = objectMapper.writeValueAsString(joinMemberRequest);
 
+        //when
         doThrow(new AuthenticationException("제약 조건에 맞지 않는 닉네임입니다."))
             .when(memberService)
             .join(any());
 
-        //when
         //then
         mockMvc.perform(post("/api/member/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
-            .andExpect(status().isBadRequest())
+            .andExpect(status().isUnauthorized())
             .andDo(print());
     }
 
@@ -129,6 +129,48 @@ class MemberControllerTest extends RestDocsHelper {
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
             .andExpect(status().isBadRequest())
+            .andDo(print());
+    }
+
+    @Test
+    void 회원가입_시_중복된_아이디일_때() throws Exception {
+        //given
+        final JoinMemberRequest joinMemberRequest = new JoinMemberRequest("identifier1", "password1!",
+            "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(joinMemberRequest);
+
+        //when
+        doThrow(new ConflictException("이미 존재하는 아이디입니다."))
+            .when(memberService)
+            .join(any());
+
+        //then
+        mockMvc.perform(post("/api/member/join")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+                .contextPath(API_PREFIX))
+            .andExpect(status().isConflict())
+            .andDo(print());
+    }
+
+    @Test
+    void 회원가입_시_중복된_닉네임일_때() throws Exception {
+        //given
+        final JoinMemberRequest joinMemberRequest = new JoinMemberRequest("identifier1", "password1!",
+            "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(joinMemberRequest);
+
+        //when
+        doThrow(new ConflictException("이미 존재하는 닉네임입니다."))
+            .when(memberService)
+            .join(any());
+
+        //then
+        mockMvc.perform(post("/api/member/join")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+                .contextPath(API_PREFIX))
+            .andExpect(status().isConflict())
             .andDo(print());
     }
 }

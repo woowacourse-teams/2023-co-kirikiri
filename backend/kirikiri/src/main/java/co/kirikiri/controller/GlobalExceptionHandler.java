@@ -2,10 +2,10 @@ package co.kirikiri.controller;
 
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.BusinessException;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.dto.ErrorResponse;
 import java.util.Objects;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,19 +23,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(final AuthenticationException exception) {
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflictException(final ConflictException exception) {
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
-
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException exception) {
-        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
