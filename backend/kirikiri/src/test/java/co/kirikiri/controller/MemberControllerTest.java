@@ -44,7 +44,7 @@ class MemberControllerTest extends RestDocsHelper {
 
         //when
         //then
-        mockMvc.perform(post(API_PREFIX + "/member/join")
+        mockMvc.perform(post(API_PREFIX + "/members/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
@@ -65,7 +65,7 @@ class MemberControllerTest extends RestDocsHelper {
             .join(any());
 
         //then
-        mockMvc.perform(post("/api/member/join")
+        mockMvc.perform(post(API_PREFIX + "/members/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
@@ -86,7 +86,7 @@ class MemberControllerTest extends RestDocsHelper {
             .join(any());
 
         //then
-        mockMvc.perform(post("/api/member/join")
+        mockMvc.perform(post(API_PREFIX + "/members/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
@@ -107,7 +107,7 @@ class MemberControllerTest extends RestDocsHelper {
             .join(any());
 
         //then
-        mockMvc.perform(post("/api/member/join")
+        mockMvc.perform(post(API_PREFIX + "/members/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
@@ -124,7 +124,7 @@ class MemberControllerTest extends RestDocsHelper {
 
         //when
         //then
-        mockMvc.perform(post("/api/member/join")
+        mockMvc.perform(post(API_PREFIX + "/members/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
@@ -145,7 +145,7 @@ class MemberControllerTest extends RestDocsHelper {
             .join(any());
 
         //then
-        mockMvc.perform(post("/api/member/join")
+        mockMvc.perform(post(API_PREFIX + "/members/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))
@@ -166,7 +166,7 @@ class MemberControllerTest extends RestDocsHelper {
             .join(any());
 
         //then
-        mockMvc.perform(post("/api/member/join")
+        mockMvc.perform(post(API_PREFIX + "/members/join")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .contextPath(API_PREFIX))

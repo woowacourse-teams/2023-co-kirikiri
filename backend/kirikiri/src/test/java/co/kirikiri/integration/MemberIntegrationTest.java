@@ -148,7 +148,7 @@ class MemberIntegrationTest extends IntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
             .body(request)
-            .post("/api/member/join")
+            .post("/api/members/join")
             .then()
             .log().all()
             .extract();
