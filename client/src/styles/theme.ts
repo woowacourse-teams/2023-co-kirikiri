@@ -1,13 +1,5 @@
 import { DefaultTheme } from 'styled-components';
 
-declare module 'styled-components' {
-  export interface DefaultTheme {
-    colors: {
-      [key: string]: string;
-    };
-  }
-}
-
 const theme: DefaultTheme = {
   colors: {
     main_light: '#C8EE44',
