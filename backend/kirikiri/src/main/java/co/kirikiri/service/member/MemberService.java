@@ -10,7 +10,7 @@ import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.mapper.member.MemberJoinMapper;
+import co.kirikiri.service.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +24,9 @@ public class MemberService {
     private final MemberProfileRepository memberProfileRepository;
 
     public void join(final MemberJoinRequest memberJoinRequest) {
-        final MemberJoinDto memberJoinDto = MemberJoinMapper.convert(memberJoinRequest);
-        checkDuplicate(memberJoinDto.identifier(), memberJoinDto.nickname());
+        final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
+        checkIdentifierDuplicate(memberJoinDto.identifier());
+        checkNicknameDuplicate(memberJoinDto.nickname());
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.birthday(),
             memberJoinDto.nickname(), memberJoinDto.phoneNumber());
@@ -33,12 +34,15 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    private void checkDuplicate(final Identifier identifier, final Nickname nickname) {
-        if (memberRepository.findByIdentifier(identifier).isPresent()) {
-            throw new ConflictException("이미 존재하는 아이디입니다.");
-        }
+    private void checkNicknameDuplicate(final Nickname nickname) {
         if (memberProfileRepository.findByNickname(nickname).isPresent()) {
             throw new ConflictException("이미 존재하는 닉네임입니다.");
+        }
+    }
+
+    private void checkIdentifierDuplicate(final Identifier identifier) {
+        if (memberRepository.findByIdentifier(identifier).isPresent()) {
+            throw new ConflictException("이미 존재하는 아이디입니다.");
         }
     }
 }
