@@ -1,16 +1,16 @@
 package co.kirikiri.controller;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.RestDocsHelper;
 import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.RoadmapCategoryResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,33 +25,14 @@ class RoadmapControllerTest extends RestDocsHelper {
     @Test
     void 로드맵_카테고리_목록을_조회한다() throws Exception {
         // given
+        final List<RoadmapCategoryResponse> expected = 로드맵_카테고리_응답_리스트를_반환한다();
         when(roadmapService.getAllRoadmapCategories())
-            .thenReturn(로드맵_카테고리_응답_리스트를_반환한다());
+            .thenReturn(expected);
 
-        // when, then
-        mockMvc.perform(
+        // when
+        final String response = mockMvc.perform(
                 get("/api/roadmaps/categories")
                     .contextPath(API_PREFIX))
-            .andExpectAll(
-                status().isOk(),
-                jsonPath("$.[0].id").value(1L),
-                jsonPath("$.[0].name").value("어학"),
-                jsonPath("$.[1].id").value(2L),
-                jsonPath("$.[1].name").value("IT"),
-                jsonPath("$.[2].id").value(3L),
-                jsonPath("$.[2].name").value("시험"),
-                jsonPath("$.[3].id").value(4L),
-                jsonPath("$.[3].name").value("운동"),
-                jsonPath("$.[4].id").value(5L),
-                jsonPath("$.[4].name").value("게임"),
-                jsonPath("$.[5].id").value(6L),
-                jsonPath("$.[5].name").value("음악"),
-                jsonPath("$.[6].id").value(7L),
-                jsonPath("$.[6].name").value("라이프"),
-                jsonPath("$.[7].id").value(8L),
-                jsonPath("$.[7].name").value("여가"),
-                jsonPath("$.[8].id").value(9L),
-                jsonPath("$.[8].name").value("기타"))
             .andDo(
                 documentationResultHandler.document(
                     responseFields(
@@ -59,7 +40,19 @@ class RoadmapControllerTest extends RestDocsHelper {
                         fieldWithPath("[0].name").description("카테고리 이름")
                     )
                 )
-            );
+            )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        // then
+        final List<RoadmapCategoryResponse> roadmapCategoryResponses = objectMapper.readValue(response,
+            new TypeReference<>() {
+            });
+
+        assertThat(roadmapCategoryResponses)
+            .usingRecursiveComparison()
+            .isEqualTo(expected);
     }
 
     private List<RoadmapCategoryResponse> 로드맵_카테고리_응답_리스트를_반환한다() {
