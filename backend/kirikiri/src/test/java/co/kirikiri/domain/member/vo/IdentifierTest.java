@@ -20,7 +20,7 @@ class IdentifierTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"abc", "abcdefghijklmnopqrst1"})
-    void 아이디_길이가_틀릴_경우_예외를_던진다(final String identifier) {
+    void 아이디_길이가_4미만_20초과일_경우_예외를_던진다(final String identifier) {
         //given
         //when
         //then
@@ -29,8 +29,18 @@ class IdentifierTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"abc!", "Abcd", "!@#$%^", "123!", "ab cd"})
-    void 아이디가_허용되지_않는_문자인_경우_예외를_던진다(final String identifier) {
+    @ValueSource(strings = {"Abcd", "ABCd", "abcdefG", "abcDefgHi", "abcdefghijklmnopqrsT"})
+    void 아이디에_대문자가_있을_경우(final String identifier) {
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> new Identifier(identifier))
+            .isInstanceOf(BadRequestException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"abc~", "~!@#$%^&*()", "abcdef!"})
+    void 아이디에_특수문자가_있을_경우(final String identifier) {
         //given
         //when
         //then

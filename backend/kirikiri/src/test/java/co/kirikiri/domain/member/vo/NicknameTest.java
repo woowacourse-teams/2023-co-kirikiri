@@ -11,7 +11,7 @@ class NicknameTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"ab", "abcdefgh", "AB", "ABCDEFGH", "~!", "~!@#$%^&"})
-    void 정상적으로_닉네임를_생성한다(final String nickname) {
+    void 정상적으로_닉네임을_생성한다(final String nickname) {
         //given
         //when
         //then

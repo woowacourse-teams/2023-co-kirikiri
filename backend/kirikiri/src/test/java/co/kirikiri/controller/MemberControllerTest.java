@@ -12,28 +12,17 @@ import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.member.MemberService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestConstructor;
-import org.springframework.test.context.TestConstructor.AutowireMode;
 
 @WebMvcTest(MemberController.class)
-@TestConstructor(autowireMode = AutowireMode.ALL)
 class MemberControllerTest extends RestDocsHelper {
-
-    private final ObjectMapper objectMapper;
 
     @MockBean
     private MemberService memberService;
-
-
-    MemberControllerTest(final ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     @Test
     void 정상적으로_회원가입에_성공한다() throws Exception {

@@ -37,4 +37,44 @@ class PasswordTest {
         assertThatThrownBy(() -> new Password(password))
             .isInstanceOf(BadRequestException.class);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Abcdef!", "Abcdefghijklm1@"})
+    void 비밀번호에_대문자가_들어올_경우_예외를_던진다(final String password) {
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> new Password(password))
+            .isInstanceOf(BadRequestException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Abcdef₩", "bcdefghijklm1♂"})
+    void 비밀번호에_허용되지_않은_특수문자가_들어올_경우_예외를_던진다(final String password) {
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> new Password(password))
+            .isInstanceOf(BadRequestException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"abcdefg", "sdfdsfs♂"})
+    void 비밀번호에_영소문자만_들어올_경우_예외를_던진다(final String password) {
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> new Password(password))
+            .isInstanceOf(BadRequestException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"12345678", "1234♂"})
+    void 비밀번호에_숫자만_들어올_경우_예외를_던진다(final String password) {
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> new Password(password))
+            .isInstanceOf(BadRequestException.class);
+    }
 }

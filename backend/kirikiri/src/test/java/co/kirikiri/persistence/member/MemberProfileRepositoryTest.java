@@ -46,10 +46,18 @@ class MemberProfileRepositoryTest extends RepositoryTest {
         memberRepository.save(member);
 
         //when
-        final Optional<MemberProfile> OptionalMemberProfile = memberProfileRepository.findByNickname(
+        final Optional<MemberProfile> optionalMemberProfile = memberProfileRepository.findByNickname(
             new Nickname("nickname"));
 
         //then
-        assertThat(OptionalMemberProfile).isNotEmpty();
+        assertThat(optionalMemberProfile).isNotEmpty();
+        final MemberProfile memberProfile = optionalMemberProfile.get();
+        final Nickname nickname = new Nickname("nickname");
+        final String phoneNumber = "010-1234-5678";
+        final MemberProfile expectedMemberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), nickname,
+            phoneNumber);
+        assertThat(memberProfile).usingRecursiveComparison()
+            .ignoringFields("id", "createdAt", "updatedAt")
+            .isEqualTo(expectedMemberProfile);
     }
 }

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class EncryptedPassword {
 
     private static final String ALGORITHM = "SHA-256";
-    
+
     @Column(nullable = false)
     private String password;
 
@@ -30,19 +30,19 @@ public class EncryptedPassword {
         }
     }
 
+    private String generateSalt(final int length) {
+        final SecureRandom secureRandom = new SecureRandom();
+        final byte[] value = new byte[length];
+        secureRandom.nextBytes(value);
+        return Base64.getEncoder().encodeToString(value);
+    }
+
     private String encrypt(final Password unencryptedPassword, final String salt) throws NoSuchAlgorithmException {
         final MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
         messageDigest.update(salt.getBytes());
         messageDigest.update(unencryptedPassword.getBytes());
         final byte[] hashedPassword = messageDigest.digest();
         return Base64.getEncoder().encodeToString(hashedPassword);
-    }
-
-    private String generateSalt(final int length) {
-        final SecureRandom secureRandom = new SecureRandom();
-        final byte[] value = new byte[length];
-        secureRandom.nextBytes(value);
-        return Base64.getEncoder().encodeToString(value);
     }
 
     @Override

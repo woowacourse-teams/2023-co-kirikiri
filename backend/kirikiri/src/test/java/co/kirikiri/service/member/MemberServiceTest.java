@@ -18,6 +18,7 @@ import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import java.time.LocalDate;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,9 +47,8 @@ class MemberServiceTest {
             .willReturn(Optional.empty());
 
         //when
-        memberService.join(request);
-
         //then
+        Assertions.assertDoesNotThrow(() -> memberService.join(request));
     }
 
     @Test
