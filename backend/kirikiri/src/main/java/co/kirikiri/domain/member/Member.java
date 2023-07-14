@@ -28,8 +28,14 @@ public class Member extends BaseTimeEntity {
     private String password;
 
     @OneToOne(fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-        orphanRemoval = true)
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     @JoinColumn(name = "member_profile_id", nullable = false, unique = true)
     private MemberProfile memberProfile;
+
+    public Member(final String identifier, final String password, final MemberProfile memberProfile) {
+        this.identifier = identifier;
+        this.password = password;
+        this.memberProfile = memberProfile;
+    }
 }

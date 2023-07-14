@@ -38,8 +38,17 @@ public class MemberProfile extends BaseTimeEntity {
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-        orphanRemoval = true)
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     @JoinColumn(name = "member_profile_image_id")
     private MemberProfileImage image;
+
+    public MemberProfile(final Gender gender, final LocalDate birthday, final String nickname, final String phoneNumber,
+                         final MemberProfileImage image) {
+        this.gender = gender;
+        this.birthday = birthday;
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.image = image;
+    }
 }
