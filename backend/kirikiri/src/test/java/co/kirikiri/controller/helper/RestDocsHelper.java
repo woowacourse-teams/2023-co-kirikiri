@@ -5,6 +5,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
@@ -18,14 +20,17 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @ActiveProfiles("test")
+@Import(TestObjectMapperConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 public class RestDocsHelper {
 
     protected static final String API_PREFIX = "/api";
 
     protected MockMvc mockMvc;
-    protected ObjectMapper objectMapper = new ObjectMapper();
     protected RestDocumentationResultHandler documentationResultHandler;
+    @Autowired
+    protected ObjectMapper objectMapper;
+
 
     @BeforeEach
     void setUp(final WebApplicationContext webApplicationContext,
