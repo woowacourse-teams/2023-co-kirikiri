@@ -18,4 +18,13 @@ public class RoadmapCategory {
 
     @Column(length = 15, nullable = false)
     private String name;
+
+    public RoadmapCategory(final String name) {
+        this(null, name);
+    }
+
+    public RoadmapCategory(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
