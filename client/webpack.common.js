@@ -1,6 +1,9 @@
 const path = require('path');
 
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+require('dotenv').config();
 
 module.exports = {
   entry: './src/index.tsx',
@@ -25,7 +28,7 @@ module.exports = {
       '@mocks': path.resolve(__dirname, 'src/mocks'),
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@styles': path.resolve(__dirname, 'src/styles'),
-      '@types': path.resolve(__dirname, 'src/types'),
+      '@myTypes': path.resolve(__dirname, 'src/myTypes'),
       '@utils': path.resolve(__dirname, 'src/utils'),
     },
   },
@@ -93,6 +96,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
       // favicon: './public/favicon.ico',
+    }),
+    new webpack.DefinePlugin({
+      'process.env.PROD_SERVER': JSON.stringify(process.env.PROD_SERVER),
+      'process.env.API_TEST_SERVER': JSON.stringify(process.env.API_TEST_SERVER),
     }),
   ],
 };

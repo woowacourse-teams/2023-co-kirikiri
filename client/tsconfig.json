@@ -34,7 +34,7 @@
       "@mocks/*": ["src/mocks/*"],
       "@pages/*": ["src/pages/*"],
       "@styles/*": ["src/styles/*"],
-      "@types/*": ["src/types/*"],
+      "@myTypes/*": ["src/myTypes/*"],
       "@utils/*": ["src/utils/*"]
     }
   },
