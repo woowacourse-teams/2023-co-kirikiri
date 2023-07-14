@@ -1,6 +1,7 @@
 package co.kirikiri.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.ImageContentType;
@@ -25,27 +26,41 @@ class RoadmapRepositoryTest extends RepositoryTest {
 
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
+    private final RoadmapNodeRepository roadmapNodeRepository;
     private final MemberRepository memberRepository;
 
     public RoadmapRepositoryTest(final RoadmapRepository roadmapRepository,
                                  final RoadmapCategoryRepository roadmapCategoryRepository,
+                                 final RoadmapContentRepository roadmapContentRepository,
+                                 final RoadmapNodeRepository roadmapNodeRepository,
                                  final MemberRepository memberRepository) {
         this.roadmapRepository = roadmapRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.roadmapContentRepository = roadmapContentRepository;
+        this.roadmapNodeRepository = roadmapNodeRepository;
         this.memberRepository = memberRepository;
     }
 
     @Test
     void 로드맵을_저장한다() {
+        // given
         final Member creator = 크리에이터를_생성한다();
         final RoadmapCategory category = 카테고리를_생성한다();
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
         final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
+
+        // when
         final Roadmap savedRoadmap = roadmapRepository.save(
                 new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
                         creator, category, roadmapContent));
 
-        assertThat(savedRoadmap.getId()).isPositive();
+        // then
+        assertAll(
+                () -> assertThat(savedRoadmap.getId()).isPositive(),
+                () -> assertThat(roadmapContentRepository.findAll()).hasSize(1),
+                () -> assertThat(roadmapNodeRepository.findAll()).hasSize(2)
+        );
     }
 
     private Member 크리에이터를_생성한다() {
