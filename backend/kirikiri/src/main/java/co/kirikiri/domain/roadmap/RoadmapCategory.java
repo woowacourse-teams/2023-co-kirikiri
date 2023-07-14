@@ -6,12 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class RoadmapCategory {
 
     @Id
@@ -20,4 +18,13 @@ public class RoadmapCategory {
 
     @Column(length = 15, nullable = false)
     private String name;
+
+    public RoadmapCategory(final String name) {
+        this(null, name);
+    }
+
+    public RoadmapCategory(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

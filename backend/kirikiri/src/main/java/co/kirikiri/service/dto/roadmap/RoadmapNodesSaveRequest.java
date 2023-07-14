@@ -1,12 +1,13 @@
 package co.kirikiri.service.dto.roadmap;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record RoadmapNodesSaveRequest(
-        @NotBlank(message = "로드맵 노드의 제목을 입력해주세요.")
+
+        @NotNull(message = "로드맵 노드의 제목을 입력해주세요.")
         String title,
 
-        @NotBlank(message = "로드맵 노드 설명을 입력해주세요.")
+        @NotNull(message = "로드맵 노드 설명을 입력해주세요.")
         String content
 ) {
 

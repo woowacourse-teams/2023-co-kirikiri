@@ -9,7 +9,7 @@ public record RoadmapSaveDto(
         String introduction,
         String content,
         RoadmapDifficulty difficulty,
-        int requiredPeriod,
+        Integer requiredPeriod,
         List<RoadmapNodesSaveDto> roadmapNodes
 ) {
 
