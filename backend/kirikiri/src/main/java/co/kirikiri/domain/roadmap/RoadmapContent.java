@@ -40,12 +40,16 @@ public class RoadmapContent extends BaseTimeEntity {
 
     public void updateRoadmap(final Roadmap roadmap) {
         if (this.roadmap != null) {
-            this.roadmap.getContents().remove(this);
+            this.roadmap.removeContent(this);
         }
         this.roadmap = roadmap;
-        if (!roadmap.getContents().contains(this)) {
-            roadmap.getContents().add(this);
+        if (roadmap.notContainsContent(this)) {
+            roadmap.addContent(this);
         }
+    }
+
+    public boolean isNotSameRoadmap(final Roadmap roadmap) {
+        return this.roadmap != null && !this.roadmap.equals(roadmap);
     }
 
     public Roadmap getRoadmap() {

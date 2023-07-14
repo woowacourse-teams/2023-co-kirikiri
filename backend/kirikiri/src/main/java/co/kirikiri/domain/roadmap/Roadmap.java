@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -76,9 +77,34 @@ public class Roadmap {
 
     public void addContent(final RoadmapContent content) {
         contents.add(content);
-        if (content.getRoadmap() != this) {
+        if (content.isNotSameRoadmap(this)) {
             content.updateRoadmap(this);
         }
+    }
+
+    public void removeContent(final RoadmapContent content) {
+        contents.remove(content);
+    }
+
+    public boolean notContainsContent(final RoadmapContent content) {
+        return !contents.contains(content);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Roadmap roadmap = (Roadmap) o;
+        return Objects.equals(id, roadmap.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Member getCreator() {
@@ -111,9 +137,5 @@ public class Roadmap {
 
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
-    }
-
-    public RoadmapStatus getStatus() {
-        return status;
     }
 }
