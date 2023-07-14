@@ -5,6 +5,7 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.dto.RoadmapOrderType;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
@@ -14,7 +15,6 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -32,8 +32,8 @@ public final class RoadmapMapper {
     }
 
     public static PageResponse<RoadmapResponse> convertRoadmapPageResponse(final Page<Roadmap> roadmapPages,
-                                                                           final Pageable pageable) {
-        final int currentPage = pageable.getPageNumber();
+                                                                           final CustomPageRequest pageRequest) {
+        final int currentPage = pageRequest.getOriginPage();
         final int totalPages = roadmapPages.getTotalPages();
         final List<RoadmapResponse> roadmapResponses = roadmapPages.getContent()
             .stream().map(RoadmapMapper::convertRoadmapResponse)

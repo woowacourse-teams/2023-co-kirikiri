@@ -18,6 +18,7 @@ import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.RoadmapCategoryRepository;
 import co.kirikiri.persistence.RoadmapRepository;
+import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
@@ -55,7 +56,7 @@ class RoadmapServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterType filterType = RoadmapFilterType.LATEST;
-        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when, then
         assertThatThrownBy(() -> roadmapService.findRoadmapsByFilterType(categoryId, filterType, pageRequest))
@@ -75,7 +76,7 @@ class RoadmapServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterType filterType = null;
-        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
         final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(categoryId,
@@ -108,7 +109,7 @@ class RoadmapServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterType filterType = RoadmapFilterType.LATEST;
-        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
         final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(categoryId,

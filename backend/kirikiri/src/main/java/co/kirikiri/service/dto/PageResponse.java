@@ -8,4 +8,9 @@ public record PageResponse<T>(
     List<T> data
 ) {
 
+    public PageResponse(final int currentPage, final int totalPage, final List<T> data) {
+        this.currentPage = currentPage;
+        this.totalPage = totalPage;
+        this.data = data;
+    }
 }
