@@ -2,13 +2,13 @@ package co.kirikiri.service;
 
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.dto.RoadmapOrderType;
+import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.RoadmapCategoryRepository;
 import co.kirikiri.persistence.RoadmapRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterType;
+import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +26,10 @@ public class RoadmapService {
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
     public PageResponse<RoadmapResponse> findRoadmapsByFilterType(final Long categoryId,
-                                                                  final RoadmapFilterType filterType,
+                                                                  final RoadmapFilterTypeDto filterType,
                                                                   final CustomPageRequest pageRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
-        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
+        final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
 
         final PageRequest generatedPageRequest = PageRequest.of(pageRequest.page(), pageRequest.size());
         final Page<Roadmap> roadmapPages = roadmapRepository.findRoadmapPagesByCond(category, orderType,

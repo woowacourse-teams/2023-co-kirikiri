@@ -18,7 +18,7 @@ import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterType;
+import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
@@ -43,7 +43,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String 응답값 = mockMvc.perform(
                 get(API_PREFIX + "/roadmaps")
                     .param("categoryId", "1")
-                    .param("filterCond", RoadmapFilterType.LATEST.name())
+                    .param("filterCond", RoadmapFilterTypeDto.LATEST.name())
                     .param("page", "1")
                     .param("size", "10")
                     .contextPath(API_PREFIX))
@@ -91,7 +91,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         mockMvc.perform(
                 get(API_PREFIX + "/roadmaps")
                     .param("categoryId", "1")
-                    .param("filterCond", RoadmapFilterType.LATEST.name())
+                    .param("filterCond", RoadmapFilterTypeDto.LATEST.name())
                     .param("page", "1")
                     .param("size", "10")
                     .contextPath(API_PREFIX))

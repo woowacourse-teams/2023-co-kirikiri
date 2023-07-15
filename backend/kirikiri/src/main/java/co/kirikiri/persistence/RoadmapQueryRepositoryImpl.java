@@ -6,7 +6,7 @@ import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
-import co.kirikiri.domain.roadmap.dto.RoadmapOrderType;
+import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -26,7 +26,7 @@ public class RoadmapQueryRepositoryImpl implements RoadmapQueryRepository {
     }
 
     @Override
-    public Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapOrderType orderType,
+    public Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
                                                 final Pageable pageable) {
         final List<Roadmap> roadmaps = factory
             .selectFrom(roadmap)
@@ -58,7 +58,7 @@ public class RoadmapQueryRepositoryImpl implements RoadmapQueryRepository {
         return roadmap.category.eq(category);
     }
 
-    private OrderSpecifier<?> sortCond(final RoadmapOrderType orderType) {
+    private OrderSpecifier<?> sortCond(final RoadmapFilterType orderType) {
         return roadmap.id.desc();
     }
 }

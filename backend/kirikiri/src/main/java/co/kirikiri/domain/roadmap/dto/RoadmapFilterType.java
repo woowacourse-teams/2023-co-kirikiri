@@ -1,5 +1,5 @@
 package co.kirikiri.domain.roadmap.dto;
 
-public enum RoadmapOrderType {
+public enum RoadmapFilterType {
     LATEST, GOAL_ROOM_COUNT, PARTICIPANT_COUNT
 }

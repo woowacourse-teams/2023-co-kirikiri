@@ -3,13 +3,13 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.dto.RoadmapOrderType;
+import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterType;
+import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import java.util.List;
 import lombok.AccessLevel;
@@ -20,12 +20,12 @@ import org.springframework.data.domain.Page;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
 
-    public static RoadmapOrderType convertRoadmapOrderType(final RoadmapFilterType filterType) {
+    public static RoadmapFilterType convertRoadmapOrderType(final RoadmapFilterTypeDto filterType) {
         if (filterType == null) {
-            return RoadmapOrderType.LATEST;
+            return RoadmapFilterType.LATEST;
         }
         try {
-            return RoadmapOrderType.valueOf(filterType.name());
+            return RoadmapFilterType.valueOf(filterType.name());
         } catch (final IllegalArgumentException e) {
             throw new NotFoundException("존재하지 않는 정렬 조건입니다. filterType = " + filterType);
         }

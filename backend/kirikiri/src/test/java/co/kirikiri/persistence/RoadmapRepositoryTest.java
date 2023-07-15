@@ -12,7 +12,7 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
-import co.kirikiri.domain.roadmap.dto.RoadmapOrderType;
+import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import java.time.LocalDate;
 import java.util.List;
@@ -48,7 +48,7 @@ class RoadmapRepositoryTest extends RepositoryTest {
         roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, travelRoadmap));
 
         final RoadmapCategory category = null;
-        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
         final PageRequest firstPage = PageRequest.of(0, 2);
         final PageRequest secondPage = PageRequest.of(1, 2);
 
@@ -92,7 +92,7 @@ class RoadmapRepositoryTest extends RepositoryTest {
 
         roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, deletedGameRoadmap));
 
-        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
         final PageRequest firstPage = PageRequest.of(0, 10);
 
         // when
