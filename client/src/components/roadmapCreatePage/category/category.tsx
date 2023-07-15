@@ -1,11 +1,5 @@
 import { useSelect } from '@/hooks/_common/useSelect';
-import {
-  Description,
-  Label,
-  Option,
-  OptionGroup,
-  SelectBox,
-} from '../selector/selectBox';
+import { Select, SelectBox } from '../selector/selectBox';
 import { S } from './category.style';
 
 // 임시 더미데이터
@@ -30,27 +24,27 @@ const Category = () => {
 
   return (
     <SelectBox defaultOpen externalSelectState={selectOption}>
-      <Label asChild>
+      <Select.Label asChild>
         <S.CategoryLabel>
           카테고리<p>*</p>
         </S.CategoryLabel>
-      </Label>
-      <Description asChild>
+      </Select.Label>
+      <Select.Description asChild>
         <S.CategoryDescription>
           컨텐츠에 어울리는 카테고리를 선택해주세요.
         </S.CategoryDescription>
-      </Description>
-      <OptionGroup asChild>
+      </Select.Description>
+      <Select.OptionGroup asChild>
         <S.Wrapper>
           {Object.keys(DummyCategory).map((categoryId) => {
             return (
-              <Option id={Number(categoryId)} asChild>
+              <Select.Option id={Number(categoryId)} asChild>
                 <S.CategoryBox>{DummyCategory[Number(categoryId)]}</S.CategoryBox>
-              </Option>
+              </Select.Option>
             );
           })}
         </S.Wrapper>
-      </OptionGroup>
+      </Select.OptionGroup>
     </SelectBox>
   );
 };

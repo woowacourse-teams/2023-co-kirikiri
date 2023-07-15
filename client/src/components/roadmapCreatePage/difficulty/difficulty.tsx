@@ -1,13 +1,5 @@
 import { useSelect } from '@/hooks/_common/useSelect';
-import {
-  Description,
-  Indicator,
-  Label,
-  Option,
-  OptionGroup,
-  SelectBox,
-  Trigger,
-} from '../selector/selectBox';
+import { Select, SelectBox } from '../selector/selectBox';
 import { S } from './difficulty.style';
 
 // 임시 더미데이터
@@ -27,35 +19,35 @@ const Difficulty = () => {
   const { selectOption } = useSelect<number>();
   return (
     <SelectBox externalSelectState={selectOption}>
-      <Label asChild>
+      <Select.Label asChild>
         <S.DifficultyLabel>
           난이도<p>*</p>
         </S.DifficultyLabel>
-      </Label>
-      <Description asChild>
+      </Select.Label>
+      <Select.Description asChild>
         <S.DifficultyDescription>
           컨텐츠의 달성 난이도를 선택해주세요
         </S.DifficultyDescription>
-      </Description>
-      <Trigger asChild>
+      </Select.Description>
+      <Select.Trigger asChild>
         <S.TriggerButton />
-      </Trigger>
-      <OptionGroup asChild>
+      </Select.Trigger>
+      <Select.OptionGroup asChild>
         <S.Wrapper>
           {Object.keys(DummyDifficulty).map((difficultyId) => {
             return (
-              <Option id={Number(difficultyId)} asChild>
+              <Select.Option id={Number(difficultyId)} asChild>
                 <S.DifficultyOption>
-                  <Indicator id={Number(difficultyId)} asChild>
+                  <Select.Indicator id={Number(difficultyId)} asChild>
                     <S.OptionIndicator />
-                  </Indicator>
+                  </Select.Indicator>
                   {DummyDifficulty[Number(difficultyId)]}
                 </S.DifficultyOption>
-              </Option>
+              </Select.Option>
             );
           })}
         </S.Wrapper>
-      </OptionGroup>
+      </Select.OptionGroup>
     </SelectBox>
   );
 };
