@@ -1,9 +1,8 @@
-[[overview]]
+[[Overview]]
 = *Overview*
 
 == [[overview-error-message]]
-
-=== Error Message
+== ErrorMessage
 
 |===
 | ErrorMessage | Description
@@ -11,11 +10,36 @@
 | 존재하지 않는 카테고리입니다. categoryId = 1
 | 카테고리가 존재하지 않을 때 발생
 
+| 아이디는 빈 값일 수 없습니다.
+| 아이디에 빈 값이 들어올 떄(공백만 들어와도 안됨)
+
+| 비밀번호는 빈 값일 수 없습니다.
+| 비밀번호에 빈 값이 들어올 떄(공백만 들어와도 안됨)
+
+| 닉네임은 빈 값일 수 없습니다.
+| 닉네임에 빈 값이 들어올 떄(공백만 들어와도 안됨)
+
+| 전화번호는 빈 값일 수 없습니다.
+| 전화번호에 빈 값이 들어올 떄(공백만 들어와도 안됨)
+
+| 전화번호 형식이 맞지 않습니다.
+| 전화번호 형식이 xxx-xxxx-xxx가 아닐 때
+
+| 제약 조건에 맞지 않는 아이디입니다.
+| 정해진 제약 조건에 맞지 않는 아이디일 때
+
+| 제약 조건에 맞지 않는 비밀번호입니다.
+| 정해진 제약 조건에 맞지 않는 비밀번호일 때
+
+| 제약 조건에 맞지 않는 닉네임입니다.
+| 정해진 제약 조건에 맞지 않는 닉네임일 때
+
+
+
 |===
 
-== [[overview-error-response]]
-
-=== Page Response Data
+[[overview-error-response]]
+== *Page Response Data*
 
 |===
 | Field Name | Type | Description
@@ -34,9 +58,8 @@
 
 |===
 
-== [[overview-error-response]]
-
-=== Error Response Data
+[[overview-error-response]]
+== *Error Response Data*
 
 |===
 | Field Name | Type | Description
