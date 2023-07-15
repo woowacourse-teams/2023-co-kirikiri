@@ -18,13 +18,13 @@ import BREAK_POINTS from '@constants/_common/breakPoints';
 
 const media = {
   mobile: (styles: TemplateStringsArray) => css`
-    @media (max-width: ${BREAK_POINTS.MOBILE}) {
+    @media (max-width: ${BREAK_POINTS.MOBILE}px) {
       ${styles}
     }
   `,
 
   desktop: (styles: TemplateStringsArray) => css`
-    @media (max-width: ${BREAK_POINTS.DESKTOP}) {
+    @media (max-width: ${BREAK_POINTS.DESKTOP}px) {
       ${styles}
     }
   `,
