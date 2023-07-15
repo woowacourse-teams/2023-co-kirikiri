@@ -12,4 +12,6 @@ public interface TokenProvider {
     boolean validateToken(final String token);
 
     LocalDateTime findTokenExpiredAt(final String token);
+
+    String findSubject(String token);
 }

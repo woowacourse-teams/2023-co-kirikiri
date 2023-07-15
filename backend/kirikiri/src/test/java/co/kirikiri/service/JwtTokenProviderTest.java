@@ -110,4 +110,18 @@ class JwtTokenProviderTest {
                         .parseClaimsJws(accessToken)
                         .getBody());
     }
+
+    @Test
+    void 토큰에서_Subject를_가져온다() {
+        //given
+        final String subject = "subject";
+        final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
+        final String accessToken = tokenProvider.createAccessToken(subject, claims);
+
+        //when
+        final String result = tokenProvider.findSubject(accessToken);
+
+        //then
+        assertThat(result).isEqualTo(subject);
+    }
 }

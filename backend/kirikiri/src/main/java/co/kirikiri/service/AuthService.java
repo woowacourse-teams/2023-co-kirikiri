@@ -28,6 +28,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
 
+    @Transactional
     public AuthenticationResponse login(final LoginRequest loginRequest) {
         final LoginDto loginDto = AuthMapper.convertToLoginDto(loginRequest);
         final Member member = findMember(loginDto);
@@ -64,12 +65,13 @@ public class AuthService {
         return tokenProvider.validateToken(token);
     }
 
+    @Transactional
     public AuthenticationResponse reissueToken(final ReissueTokenRequest reissueTokenRequest) {
         checkTokenValid(reissueTokenRequest.refreshToken());
         final EncryptedToken clientRefreshToken = AuthMapper.convertToEncryptedToken(reissueTokenRequest);
         final RefreshToken refreshToken = findRefreshToken(clientRefreshToken);
         checkExpired(refreshToken);
-        final Member member = refreshToken.getMember(); // todo: n+1문제 point
+        final Member member = refreshToken.getMember();
         return makeAuthenticationResponse(member);
     }
 
@@ -88,5 +90,9 @@ public class AuthService {
         if (refreshToken.isExpired()) {
             throw new AuthenticationException("Expired Token");
         }
+    }
+
+    public String findMemberIdentifier(final String token) {
+        return tokenProvider.findSubject(token);
     }
 }

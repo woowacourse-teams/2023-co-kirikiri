@@ -3,6 +3,7 @@ package co.kirikiri.controller;
 import co.kirikiri.controller.helper.RestDocsHelper;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
+import co.kirikiri.service.AuthService;
 import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.GenderType;
@@ -29,6 +30,8 @@ class MemberControllerTest extends RestDocsHelper {
 
     @MockBean
     private MemberService memberService;
+    @MockBean
+    private AuthService authService;
 
     @Test
     void 정상적으로_회원가입에_성공한다() throws Exception {

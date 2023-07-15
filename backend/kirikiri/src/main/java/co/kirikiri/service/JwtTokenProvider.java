@@ -88,4 +88,11 @@ public class JwtTokenProvider implements TokenProvider {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
     }
+
+    @Override
+    public String findSubject(final String token) {
+        final Jws<Claims> claimsJws = parseToClaimsJws(token);
+        return claimsJws.getBody()
+                .getSubject();
+    }
 }
