@@ -11,9 +11,7 @@ public record RoadmapDetailResponse(
         String content,
         String difficulty,
         int recommendedRoadmapPeriod,
-        List<RoadmapNodeResponse> nodes,
-        int recruitingGoalNumber,
-        int completedUserNumber
+        List<RoadmapNodeResponse> nodes
 ) {
 
 }

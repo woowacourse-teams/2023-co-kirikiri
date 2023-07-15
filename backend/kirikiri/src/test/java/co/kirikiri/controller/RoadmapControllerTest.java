@@ -76,7 +76,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 new RoadmapNodeResponse("2번 노드", "2번 노드 설명", Collections.emptyList())
         );
         final RoadmapDetailResponse roadmapDetail = new RoadmapDetailResponse(category, "제목", "소개글", creator, "본문",
-                "EASY", 100, nodes, 25, 250);
+                "EASY", 100, nodes);
 
         return new SingleRoadmapResponse(roadmapDetail);
     }
