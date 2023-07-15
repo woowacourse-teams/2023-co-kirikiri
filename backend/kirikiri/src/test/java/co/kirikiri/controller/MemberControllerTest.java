@@ -4,15 +4,20 @@ import co.kirikiri.controller.helper.RestDocsHelper;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.MemberService;
+import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -114,12 +119,148 @@ class MemberControllerTest extends RestDocsHelper {
 
         //when
         //then
-        mockMvc.perform(post(API_PREFIX + "/members/join")
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/members/join")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .contextPath(API_PREFIX))
                 .andExpect(status().isBadRequest())
-                .andDo(print());
+                .andDo(print())
+                .andReturn();
+
+        final ErrorResponse expectedResponse = new ErrorResponse("전화번호 형식이 맞지 않습니다.");
+        final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).usingRecursiveComparison().isEqualTo(List.of(expectedResponse));
+    }
+
+    @Test
+    void 회원가입_시_아이디에_빈값이_들어올_때() throws Exception {
+        //given
+        final MemberJoinRequest memberJoinRequest = new MemberJoinRequest("", "password1!",
+                "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
+
+        //when
+        //then
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/members/join")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andReturn();
+
+        final ErrorResponse expectedResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
+        final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).usingRecursiveComparison().isEqualTo(List.of(expectedResponse));
+    }
+
+    @Test
+    void 회원가입_시_비밀번호에_빈값이_들어올_때() throws Exception {
+        //given
+        final MemberJoinRequest memberJoinRequest = new MemberJoinRequest("identifier", "",
+                "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
+
+        //when
+        //then
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/members/join")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andReturn();
+
+        final ErrorResponse expectedResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
+        final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).usingRecursiveComparison().isEqualTo(List.of(expectedResponse));
+    }
+
+    @Test
+    void 회원가입_시_닉네임에_빈값이_들어올_때() throws Exception {
+        //given
+        final MemberJoinRequest memberJoinRequest = new MemberJoinRequest("identifier", "identifier1!",
+                "", "010-1234-5678", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
+
+        //when
+        //then
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/members/join")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andReturn();
+
+        final ErrorResponse expectedResponse = new ErrorResponse("닉네임은 빈 값일 수 없습니다.");
+        final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).usingRecursiveComparison().isEqualTo(List.of(expectedResponse));
+    }
+
+    @Test
+    void 회원가입_시_전화번호에_빈값이_들어올_때() throws Exception {
+        //given
+        final MemberJoinRequest memberJoinRequest = new MemberJoinRequest("identifier", "password1!",
+                "nickname", "", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
+
+        //when
+        //then
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/members/join")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andReturn();
+
+        final ErrorResponse blankResponse = new ErrorResponse("전화번호는 빈 값일 수 없습니다.");
+        final ErrorResponse patternResponse = new ErrorResponse("전화번호 형식이 맞지 않습니다.");
+        final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(List.of(patternResponse, blankResponse));
+    }
+
+    @Test
+    void 회원가입_시_아이디_비밀번호_닉네임_전화번호_필드에_빈값이_들어올_때() throws Exception {
+        //given
+        final MemberJoinRequest memberJoinRequest = new MemberJoinRequest("", "",
+                "", "", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
+
+        //when
+        //then
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/members/join")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andReturn();
+
+        final ErrorResponse identifierResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
+        final ErrorResponse passwordResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
+        final ErrorResponse nicknameResponse = new ErrorResponse("닉네임은 빈 값일 수 없습니다.");
+        final ErrorResponse phoneNumberBlankResponse = new ErrorResponse("전화번호는 빈 값일 수 없습니다.");
+        final ErrorResponse phoneNumberPatternResponse = new ErrorResponse("전화번호 형식이 맞지 않습니다.");
+        final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(List.of(identifierResponse, passwordResponse, nicknameResponse, phoneNumberBlankResponse, phoneNumberPatternResponse));
     }
 
     @Test
