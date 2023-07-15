@@ -19,6 +19,7 @@ public class RoadmapService {
     public SingleRoadmapResponse findSingleRoadmap(final Long roadmapId) {
         final Roadmap roadmap = roadmapRepository.findById(roadmapId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + roadmapId));
+
         return RoadmapMapper.convertSingleRoadmapResponse(roadmap);
     }
 }

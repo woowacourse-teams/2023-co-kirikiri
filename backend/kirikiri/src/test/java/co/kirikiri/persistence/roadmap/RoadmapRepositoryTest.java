@@ -35,32 +35,20 @@ class RoadmapRepositoryTest extends RepositoryTest {
 
     @Test
     void 단일_로드맵을_조회한다() {
-        final Roadmap roadmap = 로드맵을_생성한다();
-        final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
+        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
         final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
 
         assertThat(expectedRoadmap).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(roadmap);
+                .isEqualTo(savedRoadmap);
     }
 
     private Roadmap 로드맵을_생성한다() {
         final Member creator = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
-
-        final List<RoadmapNodeImage> nodeImages = List.of(
-                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
-                        ImageContentType.PNG)
-        );
-
-        final List<RoadmapNode> nodes = List.of(
-                new RoadmapNode("1단계", "준비운동", nodeImages),
-                new RoadmapNode("2단계", "턱걸이", nodeImages)
-        );
+        final RoadmapContent content = new RoadmapContent(로드맵_노드들을_생성한다());
 
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
                 RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
-        final RoadmapContent content = new RoadmapContent(nodes);
         roadmap.addContent(content);
 
         return roadmap;
@@ -79,5 +67,19 @@ class RoadmapRepositoryTest extends RepositoryTest {
     private RoadmapCategory 로드맵_카테고리를_생성한다() {
         final RoadmapCategory category = new RoadmapCategory("운동");
         return roadmapCategoryRepository.save(category);
+    }
+
+    private List<RoadmapNode> 로드맵_노드들을_생성한다() {
+        return List.of(
+                new RoadmapNode("1단계", "준비운동", 노드_이미지들을_생성한다()),
+                new RoadmapNode("2단계", "턱걸이", 노드_이미지들을_생성한다())
+        );
+    }
+
+    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
+        return List.of(
+                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
+                        ImageContentType.PNG)
+        );
     }
 }

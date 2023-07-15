@@ -92,6 +92,16 @@ class RoadmapServiceTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
+    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
+        final RoadmapContent content = new RoadmapContent(로드맵_노드들을_생성한다());
+
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
+                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        roadmap.addContent(content);
+
+        return roadmap;
+    }
+
     private Member 사용자를_생성한다() {
         final MemberProfileImage profileImage = new MemberProfileImage("sunshot_image.webp",
                 "sunshot-profile-save-path", ImageContentType.WEBP);
@@ -105,23 +115,17 @@ class RoadmapServiceTest {
         return new RoadmapCategory(1L, title);
     }
 
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final List<RoadmapNodeImage> nodeImages = List.of(
+    private List<RoadmapNode> 로드맵_노드들을_생성한다() {
+        return List.of(
+                new RoadmapNode("1단계", "준비운동", 노드_이미지들을_생성한다()),
+                new RoadmapNode("2단계", "턱걸이", 노드_이미지들을_생성한다())
+        );
+    }
+
+    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
+        return List.of(
                 new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
                         ImageContentType.PNG)
         );
-
-        final List<RoadmapNode> nodes = List.of(
-                new RoadmapNode("1단계", "준비운동", nodeImages),
-                new RoadmapNode("2단계", "턱걸이", nodeImages)
-        );
-
-        final RoadmapContent content = new RoadmapContent(nodes);
-
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100,
-                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
-        roadmap.addContent(content);
-
-        return roadmap;
     }
 }
