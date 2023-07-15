@@ -2,7 +2,7 @@ package co.kirikiri.service.dto.member;
 
 public record MemberResponse(
         long id,
-        String nickName
+        String nickname
 ) {
 
 }
