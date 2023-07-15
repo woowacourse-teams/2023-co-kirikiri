@@ -10,8 +10,8 @@ import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.dto.auth.request.AuthenticateResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,11 +74,11 @@ class AuthServiceTest {
                 .willReturn(LocalDateTime.now());
 
         //when
-        final AuthenticateResponse authenticateResponse = authService.login(loginRequest);
+        final AuthenticationResponse authenticationResponse = authService.login(loginRequest);
 
         //then
-        assertThat(authenticateResponse.accessToken()).isEqualTo(accessToken);
-        assertThat(authenticateResponse.refreshToken()).isEqualTo(refreshToken);
+        assertThat(authenticationResponse.accessToken()).isEqualTo(accessToken);
+        assertThat(authenticationResponse.refreshToken()).isEqualTo(refreshToken);
     }
 
     @Test

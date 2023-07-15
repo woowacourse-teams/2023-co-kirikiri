@@ -1,8 +1,8 @@
 package co.kirikiri.controller;
 
 import co.kirikiri.service.AuthService;
-import co.kirikiri.service.dto.auth.request.AuthenticateResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticateResponse> login(@RequestBody @Valid final LoginRequest request) {
-        final AuthenticateResponse response = authService.login(request);
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid final LoginRequest request) {
+        final AuthenticationResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
 }

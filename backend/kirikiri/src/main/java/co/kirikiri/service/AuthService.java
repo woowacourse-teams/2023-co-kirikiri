@@ -8,8 +8,8 @@ import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.LoginDto;
-import co.kirikiri.service.dto.auth.request.AuthenticateResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
 
-    public AuthenticateResponse login(final LoginRequest loginRequest) {
+    public AuthenticationResponse login(final LoginRequest loginRequest) {
         final LoginDto loginDto = AuthMapper.convertToLoginDto(loginRequest);
         final Member member = findMember(loginDto);
         checkPassword(loginDto.password(), member);

@@ -4,8 +4,8 @@ import co.kirikiri.controller.helper.RestDocsHelper;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.auth.request.AuthenticateResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,7 +32,7 @@ class AuthControllerTest extends RestDocsHelper {
     void 정상적으로_로그인에_성공한다() throws Exception {
         //given
         final LoginRequest request = new LoginRequest("identifier1", "password1!");
-        final AuthenticateResponse expectedResponse = new AuthenticateResponse("refreshToken", "accessToken");
+        final AuthenticationResponse expectedResponse = new AuthenticationResponse("refreshToken", "accessToken");
         final String jsonRequest = objectMapper.writeValueAsString(request);
         given(authService.login(request))
                 .willReturn(expectedResponse);
@@ -47,7 +47,7 @@ class AuthControllerTest extends RestDocsHelper {
                 .andDo(print())
                 .andReturn();
 
-        final AuthenticateResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
