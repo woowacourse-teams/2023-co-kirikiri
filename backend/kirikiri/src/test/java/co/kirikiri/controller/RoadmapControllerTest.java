@@ -38,7 +38,8 @@ class RoadmapControllerTest extends RestDocsHelper {
         //TODO: RestDocs 설정 추가해주기
         //when
         final String response = mockMvc.perform(get(API_PREFIX + "/roadmaps/1")
-                        .content(MediaType.APPLICATION_JSON_VALUE))
+                        .content(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -63,7 +64,8 @@ class RoadmapControllerTest extends RestDocsHelper {
         // when
         // then
         mockMvc.perform(get(API_PREFIX + "/roadmaps/2")
-                        .content(MediaType.APPLICATION_JSON_VALUE))
+                        .content(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("존재하지 않는 로드맵입니다. roadmapId = 2"));
     }
