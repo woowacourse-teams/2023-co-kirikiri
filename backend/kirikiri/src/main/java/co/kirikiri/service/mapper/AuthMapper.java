@@ -1,4 +1,4 @@
-package co.kirikiri.service.mapper.auth;
+package co.kirikiri.service.mapper;
 
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Password;

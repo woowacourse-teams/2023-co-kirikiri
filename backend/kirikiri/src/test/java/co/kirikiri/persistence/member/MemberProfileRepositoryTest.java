@@ -1,7 +1,5 @@
 package co.kirikiri.persistence.member;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
@@ -10,10 +8,13 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.RepositoryTest;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberProfileRepositoryTest extends RepositoryTest {
 
@@ -24,7 +25,7 @@ class MemberProfileRepositoryTest extends RepositoryTest {
     private final MemberRepository memberRepository;
 
     public MemberProfileRepositoryTest(final MemberProfileRepository memberProfileRepository,
-        final MemberRepository memberRepository) {
+                                       final MemberRepository memberRepository) {
         this.memberProfileRepository = memberProfileRepository;
         this.memberRepository = memberRepository;
     }
@@ -47,7 +48,7 @@ class MemberProfileRepositoryTest extends RepositoryTest {
 
         //when
         final Optional<MemberProfile> optionalMemberProfile = memberProfileRepository.findByNickname(
-            new Nickname("nickname"));
+                new Nickname("nickname"));
 
         //then
         assertThat(optionalMemberProfile).isNotEmpty();
@@ -55,9 +56,9 @@ class MemberProfileRepositoryTest extends RepositoryTest {
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
         final MemberProfile expectedMemberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), nickname,
-            phoneNumber);
+                phoneNumber);
         assertThat(memberProfile).usingRecursiveComparison()
-            .ignoringFields("id", "createdAt", "updatedAt")
-            .isEqualTo(expectedMemberProfile);
+                .ignoringFields("id", "createdAt", "updatedAt")
+                .isEqualTo(expectedMemberProfile);
     }
 }

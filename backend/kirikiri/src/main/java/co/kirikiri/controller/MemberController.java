@@ -1,7 +1,7 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.member.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

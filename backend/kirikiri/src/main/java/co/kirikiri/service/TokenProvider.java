@@ -1,4 +1,4 @@
-package co.kirikiri.service.auth;
+package co.kirikiri.service;
 
 import java.time.LocalDateTime;
 import java.util.Map;

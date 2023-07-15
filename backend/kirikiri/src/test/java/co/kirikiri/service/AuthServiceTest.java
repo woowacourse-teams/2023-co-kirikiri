@@ -1,4 +1,4 @@
-package co.kirikiri.service.auth;
+package co.kirikiri.service;
 
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;

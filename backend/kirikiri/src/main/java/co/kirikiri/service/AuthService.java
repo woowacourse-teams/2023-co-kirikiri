@@ -1,4 +1,4 @@
-package co.kirikiri.service.auth;
+package co.kirikiri.service;
 
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.auth.vo.EncryptedToken;
@@ -10,7 +10,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.LoginDto;
 import co.kirikiri.service.dto.auth.request.AuthenticateResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.mapper.auth.AuthMapper;
+import co.kirikiri.service.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

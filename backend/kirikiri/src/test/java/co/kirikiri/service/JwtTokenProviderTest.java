@@ -1,15 +1,16 @@
-package co.kirikiri.service.auth;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+package co.kirikiri.service;
 
 import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class JwtTokenProviderTest {
 
@@ -28,7 +29,7 @@ class JwtTokenProviderTest {
 
         //then
         final Claims result = assertDoesNotThrow(() ->      // 예외가 터진다면 서명이 유효하지 않거나 만료기간 지난 토큰
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(accessToken).getBody());
+                Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(accessToken).getBody());
 
         assertThat(result.getSubject()).isEqualTo(subject);         // subject 확인
         for (final String claimKey : claims.keySet()) {             // custom claim 확인
@@ -50,7 +51,7 @@ class JwtTokenProviderTest {
 
         //then
         final Claims result = assertDoesNotThrow(() ->      // 예외가 터진다면 서명이 유효하지 않거나 만료기간 지난 토큰
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(accessToken).getBody());
+                Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(accessToken).getBody());
 
         assertThat(result.getSubject()).isEqualTo(subject);         // subject 확인
         for (final String claimKey : claims.keySet()) {             // custom claim 확인
@@ -86,8 +87,8 @@ class JwtTokenProviderTest {
         //when
         //then
         assertThatThrownBy(() -> tokenProvider.validateToken(accessToken))
-            .isInstanceOf(AuthenticationException.class)
-            .hasMessage("Expired Token");
+                .isInstanceOf(AuthenticationException.class)
+                .hasMessage("Expired Token");
     }
 
     @Test
@@ -98,7 +99,7 @@ class JwtTokenProviderTest {
         //when
         //then
         assertThatThrownBy(() -> tokenProvider.validateToken(accessToken))
-            .isInstanceOf(AuthenticationException.class)
-            .hasMessage("Invalid Token");
+                .isInstanceOf(AuthenticationException.class)
+                .hasMessage("Invalid Token");
     }
 }
