@@ -9,6 +9,7 @@ import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.LoginDto;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,14 @@ public class AuthService {
         final LoginDto loginDto = AuthMapper.convertToLoginDto(loginRequest);
         final Member member = findMember(loginDto);
         checkPassword(loginDto.password(), member);
-        final String rawRefreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
-        saveRefreshToken(member, rawRefreshToken);
+        return makeAuthenticationResponse(member);
+    }
+
+    private AuthenticationResponse makeAuthenticationResponse(final Member member) {
+        final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
+        saveRefreshToken(member, refreshToken);
         final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
-        return AuthMapper.convertToAuthenticateResponse(rawRefreshToken, accessToken);
+        return AuthMapper.convertToAuthenticateResponse(refreshToken, accessToken);
     }
 
     private Member findMember(final LoginDto loginDto) {
@@ -57,5 +62,31 @@ public class AuthService {
 
     public boolean certify(final String token) {
         return tokenProvider.validateToken(token);
+    }
+
+    public AuthenticationResponse reissueToken(final ReissueTokenRequest reissueTokenRequest) {
+        final EncryptedToken clientRefreshToken = AuthMapper.convertToEncryptedToken(reissueTokenRequest);
+        checkTokenValid(clientRefreshToken);
+        final RefreshToken refreshToken = findRefreshToken(clientRefreshToken);
+        checkExpired(refreshToken);
+        final Member member = refreshToken.getMember(); // todo: n+1문제 point
+        return makeAuthenticationResponse(member);
+    }
+
+    private void checkTokenValid(final EncryptedToken clientRefreshToken) {
+        if (!tokenProvider.validateToken(clientRefreshToken.getValue())) {
+            throw new AuthenticationException("Invalid Token");
+        }
+    }
+
+    private RefreshToken findRefreshToken(final EncryptedToken clientRefreshToken) {
+        return refreshTokenRepository.findByTokenAndIsRevokedFalse(clientRefreshToken)
+                .orElseThrow(() -> new AuthenticationException("Invalid Token"));
+    }
+
+    private void checkExpired(final RefreshToken refreshToken) {
+        if (refreshToken.isExpired()) {
+            throw new AuthenticationException("Expired Token");
+        }
     }
 }

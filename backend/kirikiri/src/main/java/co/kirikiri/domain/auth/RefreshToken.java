@@ -2,18 +2,11 @@ package co.kirikiri.domain.auth;
 
 import co.kirikiri.domain.auth.vo.EncryptedToken;
 import co.kirikiri.domain.member.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -42,7 +35,15 @@ public class RefreshToken {
         this.member = member;
     }
 
+    public boolean isExpired() {
+        return expiredAt.isBefore(LocalDateTime.now());
+    }
+
     public EncryptedToken getToken() {
         return token;
+    }
+
+    public Member getMember() {
+        return member;
     }
 }

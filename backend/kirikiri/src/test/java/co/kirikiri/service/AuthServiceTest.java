@@ -1,5 +1,7 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.auth.RefreshToken;
+import co.kirikiri.domain.auth.vo.EncryptedToken;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
@@ -11,6 +13,7 @@ import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -105,6 +108,80 @@ class AuthServiceTest {
         //when
         //then
         assertThatThrownBy(() -> authService.login(loginRequest))
+                .isInstanceOf(AuthenticationException.class);
+    }
+
+    @Test
+    void 정상적으로_토큰을_재발행한다() {
+        //given
+        final String rawAccessToken = "accessToken";
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest("refreshToken");
+        final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MAX, member);
+        given(tokenProvider.validateToken(any()))
+                .willReturn(true);
+        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
+                .willReturn(Optional.of(refreshToken));
+        given(tokenProvider.createAccessToken(any(), any()))
+                .willReturn(rawAccessToken);
+        given(tokenProvider.createRefreshToken(any(), any()))
+                .willReturn(rawRefreshToken);
+        given(tokenProvider.findTokenExpiredAt(anyString()))
+                .willReturn(LocalDateTime.now());
+
+
+        //when
+        final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
+
+        //then
+        assertThat(authenticationResponse.refreshToken()).isEqualTo(rawRefreshToken);
+        assertThat(authenticationResponse.accessToken()).isEqualTo(rawAccessToken);
+    }
+
+    @Test
+    void 리프레시_토큰이_유효하지_않을_경우_예외를_던진다() {
+        //given
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        given(tokenProvider.validateToken(any()))
+                .willReturn(false);
+
+        //when
+        //then
+        assertThatThrownBy(() -> authService.reissueToken(reissueTokenRequest))
+                .isInstanceOf(AuthenticationException.class);
+    }
+
+    @Test
+    void 리프레시_토큰이_존재하지_않을_경우_예외를_던진다() {
+        //given
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        given(tokenProvider.validateToken(any()))
+                .willReturn(true);
+        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
+                .willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThatThrownBy(() -> authService.reissueToken(reissueTokenRequest))
+                .isInstanceOf(AuthenticationException.class);
+    }
+
+    @Test
+    void 리프레시_토큰이_만료_됐을_경우_예외를_던진다() {
+        //given
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MIN, member);
+        given(tokenProvider.validateToken(any()))
+                .willReturn(true);
+        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
+                .willReturn(Optional.of(refreshToken));
+
+        //when
+        //then
+        assertThatThrownBy(() -> authService.reissueToken(reissueTokenRequest))
                 .isInstanceOf(AuthenticationException.class);
     }
 }
