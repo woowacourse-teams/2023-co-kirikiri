@@ -54,7 +54,7 @@ class AuthControllerTest extends RestDocsHelper {
     }
 
     @Test
-    void 아이디에_빈값이_들어올_때_예외를_던진다() throws Exception {
+    void 로그인_시_아이디에_빈값이_들어올_때_예외를_던진다() throws Exception {
         //given
         final LoginRequest request = new LoginRequest("", "password1!");
         final String jsonRequest = objectMapper.writeValueAsString(request);
@@ -77,7 +77,7 @@ class AuthControllerTest extends RestDocsHelper {
     }
 
     @Test
-    void 비밀번호_빈값이_들어올_때_예외를_던진다() throws Exception {
+    void 로그인_시_비밀번호_빈값이_들어올_때_예외를_던진다() throws Exception {
         //given
         final LoginRequest request = new LoginRequest("identifier1!", "");
         final String jsonRequest = objectMapper.writeValueAsString(request);
@@ -100,7 +100,7 @@ class AuthControllerTest extends RestDocsHelper {
     }
 
     @Test
-    void 아이디와_비밀번호_모두_빈값이_들어올_때_예외를_던진다() throws Exception {
+    void 로그인_시_아이디와_비밀번호_모두_빈값이_들어올_때_예외를_던진다() throws Exception {
         //given
         final LoginRequest request = new LoginRequest("", "");
         final String jsonRequest = objectMapper.writeValueAsString(request);
@@ -126,7 +126,7 @@ class AuthControllerTest extends RestDocsHelper {
     }
 
     @Test
-    void 아이디에_해당하는_회원이_없을_때_예외를_던진다() throws Exception {
+    void 로그인_시_아이디에_해당하는_회원이_없을_때_예외를_던진다() throws Exception {
         //given
         final LoginRequest request = new LoginRequest("identifier1", "password1!");
         final String jsonRequest = objectMapper.writeValueAsString(request);
@@ -153,7 +153,7 @@ class AuthControllerTest extends RestDocsHelper {
     }
 
     @Test
-    void 비밀번호가_맞지_않을_때_예외를_던진다() throws Exception {
+    void 로그인_시_비밀번호가_맞지_않을_때_예외를_던진다() throws Exception {
         //given
         final LoginRequest request = new LoginRequest("identifier1", "password1!");
         final String jsonRequest = objectMapper.writeValueAsString(request);
