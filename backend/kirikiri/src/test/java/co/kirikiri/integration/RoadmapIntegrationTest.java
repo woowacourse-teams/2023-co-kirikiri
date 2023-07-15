@@ -25,30 +25,30 @@ import io.restassured.common.mapper.TypeRef;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class RoadmapIntegrationTest extends IntegrationTest {
 
-    private final MemberRepository memberRepository;
-    private final RoadmapRepository roadmapRepository;
-    private final RoadmapCategoryRepository roadmapCategoryRepository;
-
-    public RoadmapIntegrationTest(final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
-                                  final RoadmapCategoryRepository roadmapCategoryRepository) {
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.roadmapCategoryRepository = roadmapCategoryRepository;
-    }
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private RoadmapRepository roadmapRepository;
+    @Autowired
+    private RoadmapCategoryRepository roadmapCategoryRepository;
 
     @Test
-    void 로드맵_목록을_필터링하여_조회한다() {
+    void 카테고리_아이디와_정렬_조건에_따라_로드맵_목록을_조회한다() {
         // given
         final Member creator = 크리에이터를_생성한다();
         final RoadmapCategory travelCategory = 로드맵_카테고리를_저장한다("여행");
+        final RoadmapCategory gameCategory = 로드맵_카테고리를_저장한다("게임");
 
         final Roadmap firstRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "첫 번째 로드맵");
         final Roadmap secondRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "두 번째 로드맵");
+        final Roadmap thirdRoadmap = 제목별로_로드맵을_생성한다(creator, gameCategory, "세 번째 로드맵");
         final Roadmap savedFirstRoadmap = roadmapRepository.save(firstRoadmap);
         final Roadmap savedSecondRoadmap = roadmapRepository.save(secondRoadmap);
+        roadmapRepository.save(thirdRoadmap);
 
         // when
         final PageResponse<RoadmapResponse> pageResponse = given()
@@ -62,14 +62,140 @@ public class RoadmapIntegrationTest extends IntegrationTest {
             });
 
         // then
-        final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(savedSecondRoadmap.getId(), "두 번째 로드맵",
+        final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(savedFirstRoadmap.getId(), "첫 번째 로드맵",
             "로드맵 소개글", "NORMAL", 10,
-            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1, "여행"));
-        final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(savedFirstRoadmap.getId(), "첫 번째 로드맵",
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+        final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(savedSecondRoadmap.getId(), "두 번째 로드맵",
             "로드맵 소개글", "NORMAL", 10,
-            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1, "여행"));
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
-            List.of(firstRoadmapResponse, secondRoadmapResponse));
+            List.of(secondRoadmapResponse, firstRoadmapResponse));
+
+        assertThat(pageResponse)
+            .usingRecursiveComparison()
+            .isEqualTo(expected);
+    }
+
+    @Test
+    void 카테고리_아이디에_따라_로드맵_목록을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final RoadmapCategory travelCategory = 로드맵_카테고리를_저장한다("여행");
+        final RoadmapCategory gameCategory = 로드맵_카테고리를_저장한다("게임");
+
+        final Roadmap firstRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "첫 번째 로드맵");
+        final Roadmap secondRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "두 번째 로드맵");
+        final Roadmap thirdRoadmap = 제목별로_로드맵을_생성한다(creator, gameCategory, "세 번째 로드맵");
+        final Roadmap savedFirstRoadmap = roadmapRepository.save(firstRoadmap);
+        final Roadmap savedSecondRoadmap = roadmapRepository.save(secondRoadmap);
+        roadmapRepository.save(thirdRoadmap);
+
+        // when
+        final PageResponse<RoadmapResponse> pageResponse = given()
+            .log().all()
+            .when()
+            .get("/api/roadmaps?page=1&size=10&categoryId=" + travelCategory.getId())
+            .then().log().all()
+            .extract()
+            .response()
+            .as(new TypeRef<>() {
+            });
+
+        // then
+        final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(savedFirstRoadmap.getId(), "첫 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+        final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(savedSecondRoadmap.getId(), "두 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+        final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
+            List.of(secondRoadmapResponse, firstRoadmapResponse));
+
+        assertThat(pageResponse)
+            .usingRecursiveComparison()
+            .isEqualTo(expected);
+    }
+
+    @Test
+    void 정렬_조건에_따라_로드맵_목록을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final RoadmapCategory travelCategory = 로드맵_카테고리를_저장한다("여행");
+        final RoadmapCategory gameCategory = 로드맵_카테고리를_저장한다("게임");
+
+        final Roadmap firstRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "첫 번째 로드맵");
+        final Roadmap secondRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "두 번째 로드맵");
+        final Roadmap thirdRoadmap = 제목별로_로드맵을_생성한다(creator, gameCategory, "세 번째 로드맵");
+        final Roadmap savedFirstRoadmap = roadmapRepository.save(firstRoadmap);
+        final Roadmap savedSecondRoadmap = roadmapRepository.save(secondRoadmap);
+        final Roadmap thirdSecondRoadmap = roadmapRepository.save(thirdRoadmap);
+
+        // when
+        final PageResponse<RoadmapResponse> pageResponse = given()
+            .log().all()
+            .when()
+            .get("/api/roadmaps?page=1&size=10&filterType=LATEST")
+            .then().log().all()
+            .extract()
+            .response()
+            .as(new TypeRef<>() {
+            });
+
+        // then
+        final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(savedFirstRoadmap.getId(), "첫 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+        final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(savedSecondRoadmap.getId(), "두 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+        final RoadmapResponse thirdRoadmapResponse = new RoadmapResponse(thirdSecondRoadmap.getId(), "세 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(gameCategory.getId(), "게임"));
+        final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
+            List.of(thirdRoadmapResponse, secondRoadmapResponse, firstRoadmapResponse));
+
+        assertThat(pageResponse)
+            .usingRecursiveComparison()
+            .isEqualTo(expected);
+    }
+
+    @Test
+    void 아무_조건_없이_로드맵_목록을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final RoadmapCategory travelCategory = 로드맵_카테고리를_저장한다("여행");
+        final RoadmapCategory gameCategory = 로드맵_카테고리를_저장한다("게임");
+
+        final Roadmap firstRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "첫 번째 로드맵");
+        final Roadmap secondRoadmap = 제목별로_로드맵을_생성한다(creator, travelCategory, "두 번째 로드맵");
+        final Roadmap thirdRoadmap = 제목별로_로드맵을_생성한다(creator, gameCategory, "세 번째 로드맵");
+        final Roadmap savedFirstRoadmap = roadmapRepository.save(firstRoadmap);
+        final Roadmap savedSecondRoadmap = roadmapRepository.save(secondRoadmap);
+        final Roadmap thirdSecondRoadmap = roadmapRepository.save(thirdRoadmap);
+
+        // when
+        final PageResponse<RoadmapResponse> pageResponse = given()
+            .log().all()
+            .when()
+            .get("/api/roadmaps?page=1&size=10")
+            .then().log().all()
+            .extract()
+            .response()
+            .as(new TypeRef<>() {
+            });
+
+        // then
+        final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(savedFirstRoadmap.getId(), "첫 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+        final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(savedSecondRoadmap.getId(), "두 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+        final RoadmapResponse thirdRoadmapResponse = new RoadmapResponse(thirdSecondRoadmap.getId(), "세 번째 로드맵",
+            "로드맵 소개글", "NORMAL", 10,
+            new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(gameCategory.getId(), "게임"));
+        final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
+            List.of(thirdRoadmapResponse, secondRoadmapResponse, firstRoadmapResponse));
 
         assertThat(pageResponse)
             .usingRecursiveComparison()
