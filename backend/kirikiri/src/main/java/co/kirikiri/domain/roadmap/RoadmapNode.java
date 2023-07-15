@@ -9,6 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -35,15 +38,14 @@ public class RoadmapNode {
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     private RoadmapContent roadmapContent;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "roadmap_node_id")
-//    private List<RoadmapNodeImage> images = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "roadmap_node_id")
+    private List<RoadmapNodeImage> images = new ArrayList<>();
 
     public RoadmapNode(final String title, final String content) {
         validate(title, content);
         this.title = title;
         this.content = content;
-//        this.images = images;
     }
 
     private void validate(final String title, final String content) {
