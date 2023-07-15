@@ -1,0 +1,41 @@
+= Auth API
+:toc-title: Auth API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
+
+[[로그인-API]]
+== *1. 로그인*
+
+=== *1-1* 성공
+
+operation::auth-controller-test/정상적으로_로그인에_성공한다[snippets='http-request,http-response']
+
+=== *1-2* 실패 - 아이디에 해당하는 회원이 없을때
+
+operation::auth-controller-test/아이디에_해당하는_회원이_없을_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-3* 실패 - 비밀번호가 맞지 않을 때
+
+operation::auth-controller-test/비밀번호가_맞지_않을_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-4* 실패 - 아이디에 빈값이 들어올 때
+
+operation::auth-controller-test/아이디에_빈값이_들어올_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-5* 실패 - 비밀번호 빈값이 들어올 때
+
+operation::auth-controller-test/비밀번호_빈값이_들어올_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-6* 실패 - 아이디와 비밀번호 모두 빈값이 들어올 때
+
+operation::auth-controller-test/아이디와_비밀번호_모두_빈값이_들어올_때_예외를_던진다[snippets='http-request,http-response']
