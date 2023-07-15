@@ -1,0 +1,27 @@
+= Roadmap API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: Roadmap API Docs
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
+
+[[로드맵조회-API]]
+== *1. 로드맵 조회 API*
+
+=== *1-1* 성공
+
+operation::roadmap-controller-test/단일_로드맵_정보를_조회한다[snippets='http-request,http-response,response-fields']
+
+---
+
+=== *1-2* 실패 - 로드맵 아이디가 유효하지 않음
+
+operation::roadmap-controller-test/존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다[snippets='http-request,http-response']
