@@ -13,11 +13,13 @@ import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -51,5 +53,9 @@ public class AuthService {
         final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
         final RefreshToken refreshToken = new RefreshToken(encryptedToken, expiredAt, member);
         refreshTokenRepository.save(refreshToken);
+    }
+
+    public boolean certify(final String token) {
+        return tokenProvider.validateToken(token);
     }
 }
