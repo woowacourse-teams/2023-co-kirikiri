@@ -26,11 +26,10 @@ public class RestDocsHelper {
 
     protected static final String API_PREFIX = "/api";
 
-    protected MockMvc mockMvc;
-    protected RestDocumentationResultHandler documentationResultHandler;
     @Autowired
     protected ObjectMapper objectMapper;
-
+    protected MockMvc mockMvc;
+    protected RestDocumentationResultHandler documentationResultHandler;
 
     @BeforeEach
     void setUp(final WebApplicationContext webApplicationContext,

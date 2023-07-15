@@ -3,8 +3,10 @@ package co.kirikiri.controller;
 import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,5 +31,11 @@ public class RoadmapController {
         final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(categoryId,
             roadmapFilterTypeDto, pageRequest);
         return ResponseEntity.ok(roadmapPageResponse);
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<RoadmapCategoryResponse>> getAllRoadmapCategories() {
+        final List<RoadmapCategoryResponse> roadmapCategoryResponses = roadmapService.getAllRoadmapCategories();
+        return ResponseEntity.ok(roadmapCategoryResponses);
     }
 }

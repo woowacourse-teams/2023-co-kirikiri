@@ -108,11 +108,58 @@ class RoadmapControllerTest extends RestDocsHelper {
                 responseFields(fieldWithPath("message").description("예외 메시지"))));
     }
 
+    @Test
+    void 로드맵_카테고리_목록을_조회한다() throws Exception {
+        // given
+        final List<RoadmapCategoryResponse> expected = 로드맵_카테고리_응답_리스트를_반환한다();
+        when(roadmapService.getAllRoadmapCategories())
+            .thenReturn(expected);
+
+        // when
+        final String response = mockMvc.perform(
+                get("/api/roadmaps/categories")
+                    .contextPath(API_PREFIX))
+            .andDo(
+                documentationResultHandler.document(
+                    responseFields(
+                        fieldWithPath("[0].id").description("카테고리 아이디"),
+                        fieldWithPath("[0].name").description("카테고리 이름")
+                    )
+                )
+            )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        // then
+        final List<RoadmapCategoryResponse> roadmapCategoryResponses = objectMapper.readValue(response,
+            new TypeReference<>() {
+            });
+
+        assertThat(roadmapCategoryResponses)
+            .usingRecursiveComparison()
+            .isEqualTo(expected);
+    }
+
     private PageResponse<RoadmapResponse> 로드맵_페이지_응답을_생성한다() {
         final RoadmapResponse roadmapResponse1 = new RoadmapResponse(1L, "로드맵 제목1", "로드맵 소개글1", "NORMAL", 10,
             new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1L, "여행"));
         final RoadmapResponse roadmapResponse2 = new RoadmapResponse(2L, "로드맵 제목2", "로드맵 소개글2", "DIFFICULT", 7,
             new MemberResponse(2L, "끼리코"), new RoadmapCategoryResponse(2L, "IT"));
         return new PageResponse<>(1, 2, List.of(roadmapResponse1, roadmapResponse2));
+    }
+
+    private List<RoadmapCategoryResponse> 로드맵_카테고리_응답_리스트를_반환한다() {
+        final RoadmapCategoryResponse category1 = new RoadmapCategoryResponse(1L, "어학");
+        final RoadmapCategoryResponse category2 = new RoadmapCategoryResponse(2L, "IT");
+        final RoadmapCategoryResponse category3 = new RoadmapCategoryResponse(3L, "시험");
+        final RoadmapCategoryResponse category4 = new RoadmapCategoryResponse(4L, "운동");
+        final RoadmapCategoryResponse category5 = new RoadmapCategoryResponse(5L, "게임");
+        final RoadmapCategoryResponse category6 = new RoadmapCategoryResponse(6L, "음악");
+        final RoadmapCategoryResponse category7 = new RoadmapCategoryResponse(7L, "라이프");
+        final RoadmapCategoryResponse category8 = new RoadmapCategoryResponse(8L, "여가");
+        final RoadmapCategoryResponse category9 = new RoadmapCategoryResponse(9L, "기타");
+        return List.of(category1, category2, category3, category4, category5, category6, category7, category8,
+            category9);
     }
 }

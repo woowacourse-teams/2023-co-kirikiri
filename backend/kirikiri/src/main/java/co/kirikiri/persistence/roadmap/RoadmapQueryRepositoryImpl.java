@@ -1,4 +1,4 @@
-package co.kirikiri.persistence;
+package co.kirikiri.persistence.roadmap;
 
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;

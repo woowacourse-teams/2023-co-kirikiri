@@ -4,13 +4,15 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.RoadmapCategoryRepository;
-import co.kirikiri.persistence.RoadmapRepository;
+import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
+import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,5 +45,10 @@ public class RoadmapService {
         }
         return roadmapCategoryRepository.findById(categoryId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
+    }
+
+    public List<RoadmapCategoryResponse> getAllRoadmapCategories() {
+        final List<RoadmapCategory> roadmapCategories = roadmapCategoryRepository.findAll();
+        return RoadmapMapper.convertRoadmapCategoryResponses(roadmapCategories);
     }
 }

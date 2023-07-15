@@ -1,8 +1,10 @@
 package co.kirikiri.domain.member;
 
 import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.member.vo.EncryptedPassword;
+import co.kirikiri.domain.member.vo.Identifier;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,11 +23,11 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50, unique = true, nullable = false)
-    private String identifier;
+    @Embedded
+    private Identifier identifier;
 
-    @Column(nullable = false)
-    private String password;
+    @Embedded
+    private EncryptedPassword password;
 
     @OneToOne(fetch = FetchType.LAZY,
         cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
@@ -33,11 +35,12 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "member_profile_id", nullable = false, unique = true)
     private MemberProfile memberProfile;
 
-    public Member(final String identifier, final String password, final MemberProfile memberProfile) {
+    public Member(final Identifier identifier, final EncryptedPassword password, final MemberProfile memberProfile) {
         this(null, identifier, password, memberProfile);
     }
 
-    public Member(final Long id, final String identifier, final String password, final MemberProfile memberProfile) {
+    public Member(final Long id, final Identifier identifier, final EncryptedPassword password,
+                  final MemberProfile memberProfile) {
         this.id = id;
         this.identifier = identifier;
         this.password = password;

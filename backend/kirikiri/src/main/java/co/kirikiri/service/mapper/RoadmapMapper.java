@@ -54,4 +54,11 @@ public final class RoadmapMapper {
             roadmap.getDifficulty().name(), roadmap.getRequiredPeriod(),
             creatorResponse, categoryResponse);
     }
+
+    public static List<RoadmapCategoryResponse> convertRoadmapCategoryResponses(
+        final List<RoadmapCategory> roadmapCategories) {
+        return roadmapCategories.stream()
+            .map(category -> new RoadmapCategoryResponse(category.getId(), category.getName()))
+            .toList();
+    }
 }
