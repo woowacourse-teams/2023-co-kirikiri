@@ -9,12 +9,10 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class RoadmapContents {
 
     private static final int ROADMAP_CONTENTS_MIN_SIZE = 1;
@@ -36,5 +34,9 @@ public class RoadmapContents {
 
     public void add(final RoadmapContent content) {
         this.contents.add(content);
+    }
+
+    public List<RoadmapContent> getContents() {
+        return contents;
     }
 }

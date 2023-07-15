@@ -15,13 +15,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Getter
 public class Roadmap {
 
     private static final int TITLE_MIN_LENGTH = 1;
@@ -96,5 +94,13 @@ public class Roadmap {
     private void addRoadmapContent(final RoadmapContent content) {
         this.contents.add(content);
         content.setRoadmap(this);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public RoadmapContents getContents() {
+        return contents;
     }
 }

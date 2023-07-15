@@ -1,8 +1,5 @@
 package co.kirikiri.domain.member;
 
-import lombok.Getter;
-
-@Getter
 public enum ImageContentType {
 
     JPG("image/jpg"),
