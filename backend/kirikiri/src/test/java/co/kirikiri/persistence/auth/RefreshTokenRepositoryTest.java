@@ -56,8 +56,7 @@ class RefreshTokenRepositoryTest extends RepositoryTest {
         refreshTokenRepository.save(refreshToken);
 
         //when
-        final Optional<RefreshToken> result = refreshTokenRepository.findByTokenAndIsRevokedFalse(
-                encryptedToken);
+        final Optional<RefreshToken> result = refreshTokenRepository.findByTokenAndIsRevokedFalse(encryptedToken);
 
         //then
         assertThat(result).isNotEmpty();

@@ -26,7 +26,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             if (authorizationHeader == null || !authorizationHeader.startsWith(TYPE)) {
                 return false;
             }
-            final String token = authorizationHeader.substring(7);
+            final String token = authorizationHeader.substring(TYPE.length());
             return authService.certify(token);
         }
         return true;
