@@ -45,4 +45,8 @@ public class Nickname {
     public int hashCode() {
         return Objects.hash(value);
     }
+
+    public String getValue() {
+        return value;
+    }
 }

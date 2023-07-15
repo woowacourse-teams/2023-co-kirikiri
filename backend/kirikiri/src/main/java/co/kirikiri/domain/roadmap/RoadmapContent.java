@@ -31,4 +31,28 @@ public class RoadmapContent extends BaseTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "roadmapContent")
     private List<RoadmapNode> nodes;
+
+    public RoadmapContent(final Long id, final String content, final List<RoadmapNode> nodes) {
+        this.id = id;
+        this.content = content;
+        this.nodes = nodes;
+    }
+
+    public void updateRoadmap(final Roadmap roadmap) {
+        if (this.roadmap != null) {
+            this.roadmap.removeContent(this);
+        }
+        this.roadmap = roadmap;
+        if (roadmap.notContainsContent(this)) {
+            roadmap.addContent(this);
+        }
+    }
+
+    public boolean isNotSameRoadmap(final Roadmap roadmap) {
+        return this.roadmap != null && !this.roadmap.equals(roadmap);
+    }
+
+    public Roadmap getRoadmap() {
+        return roadmap;
+    }
 }

@@ -1,4 +1,4 @@
-package co.kirikiri.service.mapper.member;
+package co.kirikiri.service.mapper;
 
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.vo.Identifier;

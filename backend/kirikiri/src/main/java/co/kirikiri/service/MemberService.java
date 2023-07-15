@@ -1,4 +1,4 @@
-package co.kirikiri.service.member;
+package co.kirikiri.service;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
@@ -10,7 +10,7 @@ import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.mapper.member.MemberMapper;
+import co.kirikiri.service.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

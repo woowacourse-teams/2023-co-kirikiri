@@ -15,8 +15,10 @@ endif::[]
 
 include::overview.adoc[Overview]
 
----
+== *회원 API*
 
-= *로드맵 API*
+* link:member.html[Member API]
+
+== *로드맵 API*
 
 * link:roadmap.html[Roadmap API]

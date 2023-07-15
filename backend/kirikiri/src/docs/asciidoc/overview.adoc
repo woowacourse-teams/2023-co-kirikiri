@@ -2,7 +2,8 @@
 = *Overview*
 
 == [[overview-error-message]]
-== ErrorMessage
+
+=== *ErrorMessage*
 
 |===
 | ErrorMessage | Description
@@ -38,8 +39,8 @@
 
 |===
 
-[[overview-error-response]]
-== *Page Response Data*
+[[overview-page-response]]
+=== *Page Response Data*
 
 |===
 | Field Name | Type | Description
@@ -59,15 +60,13 @@
 |===
 
 [[overview-error-response]]
-== *Error Response Data*
+=== *Error Response Data*
 
 |===
 | Field Name | Type | Description
 
-
 | message
 | String
 | 에러 메시지
-
 
 |===

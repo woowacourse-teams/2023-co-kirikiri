@@ -1,4 +1,4 @@
-package co.kirikiri.service.member;
+package co.kirikiri.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

@@ -1,4 +1,4 @@
-package co.kirikiri.service.dto;
+package co.kirikiri.service.dto.roadmap;
 
 public record RoadmapCategoryResponse(
     long id,

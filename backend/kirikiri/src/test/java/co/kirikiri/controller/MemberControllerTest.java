@@ -9,9 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.kirikiri.controller.helper.RestDocsHelper;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
+import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.member.MemberService;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

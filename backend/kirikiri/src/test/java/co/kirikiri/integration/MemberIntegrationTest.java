@@ -3,6 +3,7 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;

@@ -26,16 +26,14 @@ public class RestDocsHelper {
 
     protected static final String API_PREFIX = "/api";
 
+    @Autowired
+    protected ObjectMapper objectMapper;
     protected MockMvc mockMvc;
     protected RestDocumentationResultHandler documentationResultHandler;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-
     @BeforeEach
     void setUp(final WebApplicationContext webApplicationContext,
-        final RestDocumentationContextProvider restDocumentationContextProvider) {
+               final RestDocumentationContextProvider restDocumentationContextProvider) {
         this.documentationResultHandler = MockMvcRestDocumentation.document(
             "{class-name}/{method-name}",
             Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),

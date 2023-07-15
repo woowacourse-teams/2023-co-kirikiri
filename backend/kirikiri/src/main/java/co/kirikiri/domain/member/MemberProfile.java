@@ -46,10 +46,20 @@ public class MemberProfile extends BaseTimeEntity {
     private MemberProfileImage image;
 
     public MemberProfile(final Gender gender, final LocalDate birthday, final Nickname nickname,
-        final String phoneNumber) {
+                         final String phoneNumber) {
+        this(gender, birthday, nickname, phoneNumber, null);
+    }
+
+    public MemberProfile(final Gender gender, final LocalDate birthday, final Nickname nickname,
+                         final String phoneNumber, final MemberProfileImage image) {
         this.gender = gender;
         this.birthday = birthday;
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
+        this.image = image;
+    }
+
+    public String getNickname() {
+        return nickname.getValue();
     }
 }
