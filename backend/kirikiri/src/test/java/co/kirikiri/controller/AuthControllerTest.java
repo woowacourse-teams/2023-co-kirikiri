@@ -5,6 +5,7 @@ import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.List;
 
@@ -38,19 +40,15 @@ class AuthControllerTest extends RestDocsHelper {
                 .willReturn(expectedResponse);
 
         //when
+        final MvcResult mvcResult = login(jsonRequest, status().isOk());
+
         //then
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/auth/login")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
 
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
-        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertThat(response).usingRecursiveComparison()
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -60,20 +58,16 @@ class AuthControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
+        final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
+
         //then
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/auth/login")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isBadRequest())
-                .andDo(print())
-                .andReturn();
 
         final ErrorResponse expectedResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
         final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
-        assertThat(responses).usingRecursiveComparison().isEqualTo(List.of(expectedResponse));
+        assertThat(responses).usingRecursiveComparison()
+                .isEqualTo(List.of(expectedResponse));
     }
 
     @Test
@@ -83,20 +77,16 @@ class AuthControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
+        final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
+
         //then
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/auth/login")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isBadRequest())
-                .andDo(print())
-                .andReturn();
 
         final ErrorResponse expectedResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
         final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
-        assertThat(responses).usingRecursiveComparison().isEqualTo(List.of(expectedResponse));
+        assertThat(responses).usingRecursiveComparison()
+                .isEqualTo(List.of(expectedResponse));
     }
 
     @Test
@@ -106,14 +96,9 @@ class AuthControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
+        final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
+
         //then
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/auth/login")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isBadRequest())
-                .andDo(print())
-                .andReturn();
 
         final ErrorResponse passwordResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
         final ErrorResponse identifierResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
@@ -135,14 +120,9 @@ class AuthControllerTest extends RestDocsHelper {
                 .login(request);
 
         //when
+        final MvcResult mvcResult = login(jsonRequest, status().isUnauthorized());
+
         //then
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/auth/login")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isUnauthorized())
-                .andDo(print())
-                .andReturn();
 
         final ErrorResponse expectedResponse = new ErrorResponse("존재하지 않는 아이디입니다.");
         final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
@@ -162,20 +142,110 @@ class AuthControllerTest extends RestDocsHelper {
                 .login(request);
 
         //when
-        //then
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/auth/login")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isUnauthorized())
-                .andDo(print())
-                .andReturn();
+        final MvcResult mvcResult = login(jsonRequest, status().isUnauthorized());
 
+        //then
         final ErrorResponse expectedResponse = new ErrorResponse("비밀번호가 일치하지 않습니다.");
         final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
         assertThat(responses).usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 토큰을_정상적으로_재발행한다() throws Exception {
+        //given
+        final ReissueTokenRequest request = new ReissueTokenRequest("refreshToken");
+        final AuthenticationResponse expectedResponse = new AuthenticationResponse("reIssuedRefreshToken", "reIssuedAccessToken");
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        given(authService.reissueToken(request))
+                .willReturn(expectedResponse);
+
+        //when
+        final MvcResult mvcResult = reissue(jsonRequest, status().isOk());
+
+        //then
+        final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).usingRecursiveComparison()
+                .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 토큰_재발행_시_리프레시_토큰이_빈값일_때_예외를_던진다() throws Exception {
+        //given
+        final ReissueTokenRequest request = new ReissueTokenRequest("");
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        //when
+        final MvcResult mvcResult = reissue(jsonRequest, status().isBadRequest());
+
+        //then
+        final ErrorResponse errorResponse = new ErrorResponse("리프레시 토큰은 빈 값일 수 없습니다.");
+        final List<ErrorResponse> response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).usingRecursiveComparison()
+                .isEqualTo(List.of(errorResponse));
+    }
+
+    @Test
+    void 토큰_재발행_시_토큰이_유효하지_않을_때_예외를_던진다() throws Exception {
+        //given
+        final ReissueTokenRequest request = new ReissueTokenRequest("refreshToken");
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new AuthenticationException("Invalid Token"))
+                .when(authService)
+                .reissueToken(request);
+
+        //when
+        final MvcResult mvcResult = reissue(jsonRequest, status().isUnauthorized());
+
+        //then
+        final ErrorResponse errorResponse = new ErrorResponse("Invalid Token");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).usingRecursiveComparison()
+                .isEqualTo(errorResponse);
+    }
+
+    @Test
+    void 토큰_재발행_시_토큰이_만료_됐을_때_예외를_던진다() throws Exception {
+        //given
+        final ReissueTokenRequest request = new ReissueTokenRequest("refreshToken");
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new AuthenticationException("Expired Token"))
+                .when(authService)
+                .reissueToken(request);
+
+        //when
+        final MvcResult mvcResult = reissue(jsonRequest, status().isUnauthorized());
+
+        //then
+        final ErrorResponse errorResponse = new ErrorResponse("Expired Token");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).usingRecursiveComparison()
+                .isEqualTo(errorResponse);
+    }
+
+    private MvcResult login(final String jsonRequest, final ResultMatcher result) throws Exception {
+        return mockMvc.perform(post(API_PREFIX + "/auth/login")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(result)
+                .andDo(print())
+                .andReturn();
+    }
+
+    private MvcResult reissue(final String jsonRequest, final ResultMatcher result) throws Exception {
+        return mockMvc.perform(post(API_PREFIX + "/auth/reissue")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(result)
+                .andDo(print())
+                .andReturn();
     }
 }
