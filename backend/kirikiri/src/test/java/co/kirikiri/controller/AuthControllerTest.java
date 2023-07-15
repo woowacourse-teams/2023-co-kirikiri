@@ -43,7 +43,6 @@ class AuthControllerTest extends RestDocsHelper {
         final MvcResult mvcResult = login(jsonRequest, status().isOk());
 
         //then
-
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
@@ -61,7 +60,6 @@ class AuthControllerTest extends RestDocsHelper {
         final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
 
         //then
-
         final ErrorResponse expectedResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
         final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
         });
@@ -80,7 +78,6 @@ class AuthControllerTest extends RestDocsHelper {
         final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
 
         //then
-
         final ErrorResponse expectedResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
         final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
         });
@@ -99,7 +96,6 @@ class AuthControllerTest extends RestDocsHelper {
         final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
 
         //then
-
         final ErrorResponse passwordResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
         final ErrorResponse identifierResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
         final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
@@ -123,7 +119,6 @@ class AuthControllerTest extends RestDocsHelper {
         final MvcResult mvcResult = login(jsonRequest, status().isUnauthorized());
 
         //then
-
         final ErrorResponse expectedResponse = new ErrorResponse("존재하지 않는 아이디입니다.");
         final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
         });

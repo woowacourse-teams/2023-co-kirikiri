@@ -26,7 +26,7 @@ import java.io.UnsupportedEncodingException;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
 @ActiveProfiles("test")
-@Import({TestObjectMapperConfig.class})
+@Import(TestObjectMapperConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 public class RestDocsHelper {
 
