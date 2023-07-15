@@ -2,6 +2,7 @@ package co.kirikiri.integration;
 
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
@@ -33,14 +34,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, PASSWORD);
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(로그인_요청)
-                .post("/api/auth/login")
-                .then()
-                .log().all()
-                .extract();
+        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -56,14 +50,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, PASSWORD);
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(로그인_요청)
-                .post("/api/auth/login")
-                .then()
-                .log().all()
-                .extract();
+        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -79,14 +66,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, "wrongpassword1!");
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(로그인_요청)
-                .post("/api/auth/login")
-                .then()
-                .log().all()
-                .extract();
+        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -101,20 +81,13 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         final LoginRequest 로그인_요청 = new LoginRequest("", "");
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(로그인_요청)
-                .post("/api/auth/login")
-                .then()
-                .log().all()
-                .extract();
+        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
         final String responseBody = 로그인_응답.asString();
-        final List<ErrorResponse> 로그인_응답_바디 = jsonToClass(responseBody, new TypeReference<List<ErrorResponse>>() {
+        final List<ErrorResponse> 로그인_응답_바디 = jsonToClass(responseBody, new TypeReference<>() {
         });
         final ErrorResponse 아이디_빈값_오류_메세지 = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
         final ErrorResponse 비밀번호_빈값_오류_메세지 = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
@@ -122,6 +95,80 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         assertThat(로그인_응답_바디).usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(List.of(아이디_빈값_오류_메세지, 비밀번호_빈값_오류_메세지));
+    }
+
+    @Test
+    void 정상적으로_토큰_재발행을_힌다() {
+        //given
+        회원가입();
+        final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, "password1!");
+        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
+        final AuthenticationResponse 로그인_응답_바디 = 로그인_응답.as(AuthenticationResponse.class);
+        final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest(로그인_응답_바디.refreshToken());
+
+        //when
+        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(토큰_재발행_요청)
+                .post(API_PREFIX + "/auth/reissue")
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        assertThat(토큰_재발행_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        final AuthenticationResponse 토큰_재발행_응답_바디 = 토큰_재발행_응답.as(AuthenticationResponse.class);
+        assertThat(토큰_재발행_응답_바디.accessToken()).isNotEmpty();
+        assertThat(토큰_재발행_응답_바디.refreshToken()).isNotEmpty();
+    }
+
+    @Test
+    void 토큰_재발행_시_빈값을_보낼때() throws UnsupportedEncodingException, JsonProcessingException {
+        //given
+        final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest("");
+
+        //when
+        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(토큰_재발행_요청)
+                .post(API_PREFIX + "/auth/reissue")
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        assertThat(토큰_재발행_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+
+        final ErrorResponse errorResponse = new ErrorResponse("리프레시 토큰은 빈 값일 수 없습니다.");
+        final List<ErrorResponse> 에러_메세지_바디 = jsonToClass(토큰_재발행_응답.asString(), new TypeReference<>() {
+        });
+        assertThat(에러_메세지_바디).usingRecursiveComparison()
+                .isEqualTo(List.of(errorResponse));
+    }
+
+    @Test
+    void 토큰_재발행_시_유효하지_않은_리프레시_토큰을_보낼때() {
+        //given
+        final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest("anyString");
+
+        //when
+        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(토큰_재발행_요청)
+                .post(API_PREFIX + "/auth/reissue")
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        assertThat(토큰_재발행_응답.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+
+        final ErrorResponse 에러_메세지_바디 = 토큰_재발행_응답.as(ErrorResponse.class);
+        assertThat(에러_메세지_바디.message()).isEqualTo("Invalid Token");
     }
 
     void 회원가입() {
@@ -132,7 +179,18 @@ class AuthenticationIntegrationTest extends IntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .body(회원가입_요청)
-                .post("/api/members/join")
+                .post(API_PREFIX + "/members/join")
+                .then()
+                .log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> 로그인(final LoginRequest 로그인_요청) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(로그인_요청)
+                .post(API_PREFIX + "/auth/login")
                 .then()
                 .log().all()
                 .extract();

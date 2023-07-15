@@ -65,16 +65,16 @@ public class AuthService {
     }
 
     public AuthenticationResponse reissueToken(final ReissueTokenRequest reissueTokenRequest) {
+        checkTokenValid(reissueTokenRequest.refreshToken());
         final EncryptedToken clientRefreshToken = AuthMapper.convertToEncryptedToken(reissueTokenRequest);
-        checkTokenValid(clientRefreshToken);
         final RefreshToken refreshToken = findRefreshToken(clientRefreshToken);
         checkExpired(refreshToken);
         final Member member = refreshToken.getMember(); // todo: n+1문제 point
         return makeAuthenticationResponse(member);
     }
 
-    private void checkTokenValid(final EncryptedToken clientRefreshToken) {
-        if (!tokenProvider.validateToken(clientRefreshToken.getValue())) {
+    private void checkTokenValid(final String token) {
+        if (!certify(token)) {
             throw new AuthenticationException("Invalid Token");
         }
     }
