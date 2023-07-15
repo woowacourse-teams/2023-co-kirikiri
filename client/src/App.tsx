@@ -4,6 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import GlobalStyle from '@styles/GlobalStyle';
 import theme from '@styles/theme';
 import ResponsiveContainer from '@components/_common/responsiveContainer/ResponsiveContainer';
+import RoadmapCreatePage from './pages/roadmapCreatePage/roadmapCreatePage';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
                 </div>
               }
             />
+            <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
           </Routes>
         </BrowserRouter>
       </ResponsiveContainer>
