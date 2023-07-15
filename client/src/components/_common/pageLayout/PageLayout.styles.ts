@@ -2,6 +2,7 @@ import { styled } from 'styled-components';
 import media from '@styles/media';
 
 export const Layout = styled.div`
+  display: flex;
   width: 100%;
 `;
 
@@ -14,4 +15,8 @@ export const NavBar = styled.nav`
   ${media.mobile`
     display: none;
   `}
+`;
+
+export const ChildrenLayout = styled.div`
+  padding: 0 18px;
 `;
