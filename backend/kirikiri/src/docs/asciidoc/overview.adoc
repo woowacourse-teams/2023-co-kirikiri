@@ -1,7 +1,7 @@
 [[Overview]]
 = *Overview*
 
-[[overview-http-status-codes]]
+== [[overview-error-message]]
 == ErrorMessage
 
 |===

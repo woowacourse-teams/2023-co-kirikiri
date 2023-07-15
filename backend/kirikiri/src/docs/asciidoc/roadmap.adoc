@@ -1,0 +1,22 @@
+= Roadmap API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: Roadmap API Docs
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
+
+[[로드맵카테고리목록조회-API]]
+== *1. 로드맵 카테고리 목록 조회 API*
+
+=== *1-1* 성공
+
+operation::roadmap-controller-test/로드맵_카테고리_목록을_조회한다[snippets='http-request,http-response,response-fields']
+
