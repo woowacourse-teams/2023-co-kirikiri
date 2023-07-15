@@ -1,8 +1,10 @@
 package co.kirikiri.service.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.util.HashMap;
@@ -57,5 +59,46 @@ class JwtTokenProviderTest {
         }
 
         assertDoesNotThrow(result::getExpiration);
+    }
+
+    @Test
+    void 정상적인_토큰의_유효성을_검사한다() {
+        //given
+        final String subject = "subject";
+        final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
+        final String accessToken = tokenProvider.createAccessToken(subject, claims);
+
+        //when
+        final boolean result = tokenProvider.validateToken(accessToken);
+
+        //then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 만료된_토큰의_유효성을_검사한다() {
+        //given
+        final String subject = "subject";
+        final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
+        final TokenProvider tokenProvider = new JwtTokenProvider(secretKey, 0L, 0L);
+        final String accessToken = tokenProvider.createAccessToken(subject, claims);
+
+        //when
+        //then
+        assertThatThrownBy(() -> tokenProvider.validateToken(accessToken))
+            .isInstanceOf(AuthenticationException.class)
+            .hasMessage("Expired Token");
+    }
+
+    @Test
+    void 유효하지_않은_토큰의_유효성을_검사한다() {
+        //given
+        final String accessToken = "Invalid Token";
+
+        //when
+        //then
+        assertThatThrownBy(() -> tokenProvider.validateToken(accessToken))
+            .isInstanceOf(AuthenticationException.class)
+            .hasMessage("Invalid Token");
     }
 }

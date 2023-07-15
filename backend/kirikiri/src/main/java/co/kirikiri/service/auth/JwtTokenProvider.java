@@ -1,5 +1,8 @@
 package co.kirikiri.service.auth;
 
+import co.kirikiri.exception.AuthenticationException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -36,9 +39,14 @@ public class JwtTokenProvider implements TokenProvider {
 
     private String createToken(final Long accessTokenValidityInSeconds, final String subject,
         final Map<String, Object> claims) {
-        final SecretKey key = createKey();
+        final SecretKey signingKey = createKey();
         final Date expiration = createExpiration(accessTokenValidityInSeconds);
-        return Jwts.builder().signWith(key).setClaims(claims).setSubject(subject).setExpiration(expiration).compact();
+        return Jwts.builder()
+            .signWith(signingKey)
+            .setClaims(claims)
+            .setSubject(subject)
+            .setExpiration(expiration)
+            .compact();
     }
 
     private SecretKey createKey() {
@@ -53,6 +61,21 @@ public class JwtTokenProvider implements TokenProvider {
 
     @Override
     public boolean validateToken(final String token) {
-        return false;
+        final SecretKey signingKey = createKey();
+        try {
+            checkTokenValid(token, signingKey);
+        } catch (final ExpiredJwtException expiredJwtException) {
+            throw new AuthenticationException("Expired Token");
+        } catch (final JwtException jwtException) {
+            throw new AuthenticationException("Invalid Token");
+        }
+        return true;
+    }
+
+    private void checkTokenValid(final String token, final SecretKey signingKey) {
+        Jwts.parserBuilder()
+            .setSigningKey(signingKey)
+            .build()
+            .parseClaimsJws(token);
     }
 }
