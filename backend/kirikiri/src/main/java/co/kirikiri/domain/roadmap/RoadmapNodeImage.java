@@ -9,12 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class RoadmapNodeImage {
 
     @Id
@@ -42,5 +40,9 @@ public class RoadmapNodeImage {
         this.originalFileName = originalFileName;
         this.serverFilePath = serverFilePath;
         this.imageContentType = imageContentType;
+    }
+
+    public String getServerFilePath() {
+        return serverFilePath;
     }
 }

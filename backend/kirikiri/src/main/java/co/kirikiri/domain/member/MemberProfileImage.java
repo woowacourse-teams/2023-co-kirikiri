@@ -34,4 +34,8 @@ public class MemberProfileImage {
         this.serverFilePath = serverFilePath;
         this.imageContentType = imageContentType;
     }
+
+    public String getServerFilePath() {
+        return serverFilePath;
+    }
 }

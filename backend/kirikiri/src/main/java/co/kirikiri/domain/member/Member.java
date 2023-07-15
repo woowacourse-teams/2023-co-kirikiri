@@ -34,8 +34,21 @@ public class Member extends BaseTimeEntity {
     private MemberProfile memberProfile;
 
     public Member(final String identifier, final String password, final MemberProfile memberProfile) {
+        this(null, identifier, password, memberProfile);
+    }
+
+    public Member(final Long id, final String identifier, final String password, final MemberProfile memberProfile) {
+        this.id = id;
         this.identifier = identifier;
         this.password = password;
         this.memberProfile = memberProfile;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public MemberProfile getMemberProfile() {
+        return memberProfile;
     }
 }
