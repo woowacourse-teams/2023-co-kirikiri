@@ -41,4 +41,8 @@ public class RefreshToken {
         this.expiredAt = expiredAt;
         this.member = member;
     }
+
+    public EncryptedToken getToken() {
+        return token;
+    }
 }

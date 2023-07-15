@@ -2,13 +2,14 @@ package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.ServerException;
 import jakarta.persistence.Column;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Objects;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EncryptedPassword {
@@ -22,12 +23,8 @@ public class EncryptedPassword {
     private String salt;
 
     public EncryptedPassword(final Password unencryptedPassword) {
-        try {
-            this.salt = generateSalt(unencryptedPassword.length());
-            this.password = encrypt(unencryptedPassword, salt);
-        } catch (final NoSuchAlgorithmException exception) {
-            throw new ServerException(exception.getMessage());
-        }
+        this.salt = generateSalt(unencryptedPassword.length());
+        this.password = encrypt(unencryptedPassword, salt);
     }
 
     private String generateSalt(final int length) {
@@ -37,12 +34,25 @@ public class EncryptedPassword {
         return Base64.getEncoder().encodeToString(value);
     }
 
-    private String encrypt(final Password unencryptedPassword, final String salt) throws NoSuchAlgorithmException {
-        final MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
+    private String encrypt(final Password unencryptedPassword, final String salt) {
+        final MessageDigest messageDigest = findMessageDigest();
         messageDigest.update(salt.getBytes());
         messageDigest.update(unencryptedPassword.getBytes());
         final byte[] hashedPassword = messageDigest.digest();
         return Base64.getEncoder().encodeToString(hashedPassword);
+    }
+
+    private MessageDigest findMessageDigest() {
+        try {
+            return MessageDigest.getInstance(ALGORITHM);
+        } catch (final NoSuchAlgorithmException exception) {
+            throw new ServerException(exception.getMessage());
+        }
+    }
+
+    public boolean isNotMatch(final Password password) {
+        final String encrypted = encrypt(password, this.salt);
+        return !encrypted.equals(this.password);
     }
 
     @Override

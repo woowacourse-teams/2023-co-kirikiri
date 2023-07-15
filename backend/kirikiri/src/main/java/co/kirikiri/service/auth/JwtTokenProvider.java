@@ -1,16 +1,17 @@
 package co.kirikiri.service.auth;
 
 import co.kirikiri.exception.AuthenticationException;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.util.Date;
-import java.util.Map;
-import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider implements TokenProvider {
@@ -20,8 +21,8 @@ public class JwtTokenProvider implements TokenProvider {
     private final Long refreshTokenValidityInSeconds;
 
     public JwtTokenProvider(@Value("jwt.secret-key") final String secretKey,
-        @Value("jwt.access-token-validity-in-seconds") final Long accessTokenValidityInSeconds,
-        @Value("jwt.refresh-token-validity-in-seconds") final Long refreshTokenValidityInSeconds) {
+                            @Value("#{T(Long).parseLong('${jwt.access-token-validity-in-seconds}')}") final Long accessTokenValidityInSeconds,
+                            @Value("#{T(Long).parseLong('${jwt.refresh-token-validity-in-seconds}')}") final Long refreshTokenValidityInSeconds) {
         this.secretKey = secretKey;
         this.accessTokenValidityInSeconds = accessTokenValidityInSeconds;
         this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds;
@@ -38,15 +39,15 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     private String createToken(final Long accessTokenValidityInSeconds, final String subject,
-        final Map<String, Object> claims) {
+                               final Map<String, Object> claims) {
         final SecretKey signingKey = createKey();
         final Date expiration = createExpiration(accessTokenValidityInSeconds);
         return Jwts.builder()
-            .signWith(signingKey)
-            .setClaims(claims)
-            .setSubject(subject)
-            .setExpiration(expiration)
-            .compact();
+                .signWith(signingKey)
+                .setClaims(claims)
+                .setSubject(subject)
+                .setExpiration(expiration)
+                .compact();
     }
 
     private SecretKey createKey() {
@@ -61,9 +62,8 @@ public class JwtTokenProvider implements TokenProvider {
 
     @Override
     public boolean validateToken(final String token) {
-        final SecretKey signingKey = createKey();
         try {
-            checkTokenValid(token, signingKey);
+            parseToClaimsJws(token);
         } catch (final ExpiredJwtException expiredJwtException) {
             throw new AuthenticationException("Expired Token");
         } catch (final JwtException jwtException) {
@@ -72,10 +72,21 @@ public class JwtTokenProvider implements TokenProvider {
         return true;
     }
 
-    private void checkTokenValid(final String token, final SecretKey signingKey) {
-        Jwts.parserBuilder()
-            .setSigningKey(signingKey)
-            .build()
-            .parseClaimsJws(token);
+    private Jws<Claims> parseToClaimsJws(final String token) {
+        final SecretKey signingKey = createKey();
+        return Jwts.parserBuilder()
+                .setSigningKey(signingKey)
+                .build()
+                .parseClaimsJws(token);
+    }
+
+    @Override
+    public LocalDateTime findTokenExpiredAt(final String token) {
+        final Jws<Claims> claimsJws = parseToClaimsJws(token);
+        final Date expiration = claimsJws.getBody()
+                .getExpiration();
+        return expiration.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
     }
 }

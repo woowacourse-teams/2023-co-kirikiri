@@ -1,5 +1,6 @@
 package co.kirikiri.service.auth;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public interface TokenProvider {
@@ -9,4 +10,6 @@ public interface TokenProvider {
     String createRefreshToken(final String subject, final Map<String, Object> claims);
 
     boolean validateToken(final String token);
+
+    LocalDateTime findTokenExpiredAt(final String token);
 }
