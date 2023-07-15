@@ -2,12 +2,12 @@ package co.kirikiri.service;
 
 import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -20,7 +20,7 @@ public class JwtTokenProvider implements TokenProvider {
     private final Long accessTokenValidityInSeconds;
     private final Long refreshTokenValidityInSeconds;
 
-    public JwtTokenProvider(@Value("jwt.secret-key") final String secretKey,
+    public JwtTokenProvider(@Value("${jwt.secret-key}") final String secretKey,
                             @Value("#{T(Long).parseLong('${jwt.access-token-validity-in-seconds}')}") final Long accessTokenValidityInSeconds,
                             @Value("#{T(Long).parseLong('${jwt.refresh-token-validity-in-seconds}')}") final Long refreshTokenValidityInSeconds) {
         this.secretKey = secretKey;
@@ -38,10 +38,9 @@ public class JwtTokenProvider implements TokenProvider {
         return createToken(refreshTokenValidityInSeconds, subject, claims);
     }
 
-    private String createToken(final Long accessTokenValidityInSeconds, final String subject,
-                               final Map<String, Object> claims) {
+    private String createToken(final Long tokenValidityInSeconds, final String subject, final Map<String, Object> claims) {
         final SecretKey signingKey = createKey();
-        final Date expiration = createExpiration(accessTokenValidityInSeconds);
+        final Date expiration = createExpiration(tokenValidityInSeconds);
         return Jwts.builder()
                 .signWith(signingKey)
                 .setClaims(claims)
@@ -51,8 +50,8 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     private SecretKey createKey() {
-        final byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        final byte[] secretKeyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(secretKeyBytes);
     }
 
     private Date createExpiration(final Long validity) {

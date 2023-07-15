@@ -3,6 +3,7 @@ package co.kirikiri.service;
 import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class JwtTokenProviderTest {
 
-    private static final String secretKey = "abcdefghijklmnopqrstuvwzyzabcdefghijklmnopqrstuvwzyz";
+    private static final String secretKey = "9zrOjg1kDd2gUp6KBbElGJj5GHP5BnneDs3nXEhdztHAUjKBX7l69JXUErBovPLn7TVWV0UCfejYZyxIjIMC5KPfSvBzo9C1gJ2";
     TokenProvider tokenProvider = new JwtTokenProvider(secretKey, 1_800_000L, 86_400_000L);
 
 
@@ -28,8 +29,7 @@ class JwtTokenProviderTest {
         final String accessToken = tokenProvider.createAccessToken(subject, claims);
 
         //then
-        final Claims result = assertDoesNotThrow(() ->      // 예외가 터진다면 서명이 유효하지 않거나 만료기간 지난 토큰
-                Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(accessToken).getBody());
+        final Claims result = getClaims(accessToken);
 
         assertThat(result.getSubject()).isEqualTo(subject);         // subject 확인
         for (final String claimKey : claims.keySet()) {             // custom claim 확인
@@ -50,8 +50,7 @@ class JwtTokenProviderTest {
         final String accessToken = tokenProvider.createRefreshToken(subject, claims);
 
         //then
-        final Claims result = assertDoesNotThrow(() ->      // 예외가 터진다면 서명이 유효하지 않거나 만료기간 지난 토큰
-                Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(accessToken).getBody());
+        final Claims result = getClaims(accessToken);
 
         assertThat(result.getSubject()).isEqualTo(subject);         // subject 확인
         for (final String claimKey : claims.keySet()) {             // custom claim 확인
@@ -101,5 +100,14 @@ class JwtTokenProviderTest {
         assertThatThrownBy(() -> tokenProvider.validateToken(accessToken))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Invalid Token");
+    }
+
+    private Claims getClaims(final String accessToken) {
+        return assertDoesNotThrow(() ->      // 예외가 터진다면 서명이 유효하지 않거나 만료기간 지난 토큰
+                Jwts.parserBuilder()
+                        .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                        .build()
+                        .parseClaimsJws(accessToken)
+                        .getBody());
     }
 }
