@@ -1,0 +1,72 @@
+name: Co-KiriKiri Backend Pull Request Workflow
+
+on:
+  pull_request:
+    branches:
+      - develop-backend
+    paths: backend/kirikiri/**
+
+defaults:
+  run:
+    working-directory: backend/kirikiri
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        shell: bash
+
+      - name: Build with gradle
+        run: ./gradlew clean build
+        shell: bash
+
+      - name: Register test results as comments in pull request
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: '**/build/test-results/test/TEST-*.xml'
+
+      - name: Register a check comment in the failed code line when test failed
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          token: ${{ github.token }}
+
+      - name: Register a comment about test coverage
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          title: 🪄 Test Coverage Report
+          paths: ${{ github.workspace }}/test-kirikiri/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ github.token }}
+          min-coverage-overall: 90
+          min-coverage-changed-files: 90
+
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: '${{ job.status }}' === 'success' ? `✔ [Backend] PULL REQUEST SUCCESS!\n ${{github.base_ref}} ⬅️ ${{github.head_ref}} \n${process.env.AS_JOB} (${process.env.AS_COMMIT}) by ${process.env.AS_AUTHOR}` 
+            : `❌ [Backend] PULL REQUEST FAIL!\n ${{github.base_ref}} ⬅️ ${{github.head_ref}} \n${process.env.AS_JOB} (${process.env.AS_COMMIT}) by ${process.env.AS_AUTHOR}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
