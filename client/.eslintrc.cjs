@@ -90,13 +90,13 @@ module.exports = {
       },
     ],
     'react-hooks/exhaustive-deps': 'off',
-
-
     'no-shadow': 'off',
     'import/prefer-default-export': 'warn',
     "global-require": "warn",
     "import/no-extraneous-dependencies": "off",
     'no-use-before-define': 'off',
-    '@typescript-eslint/no-use-before-define': ['error', {"ignoreTypeReferences": true}]
+    '@typescript-eslint/no-use-before-define': ['error', {"ignoreTypeReferences": true}],
+    'no-plusplus': 'off',
+    'no-param-reassign': 'off',
   },
 };
