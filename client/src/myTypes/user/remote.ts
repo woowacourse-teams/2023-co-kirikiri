@@ -1,17 +1,18 @@
-export type UserResponse = {
-  data: Data;
-  support: Support;
+export type MemberJoinRequest = {
+  identifier: string;
+  password: string;
+  nickname: string;
+  phoneNumber: string;
+  genderType: string;
+  birthDate: string;
 };
 
-export type Data = {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  avatar: string;
+export type UserLoginRequest = {
+  identifier: string;
+  password: string;
 };
 
-export type Support = {
-  url: string;
-  text: string;
+export type UserLoginResponse = {
+  accessToken: string;
+  refreshToken: string;
 };
