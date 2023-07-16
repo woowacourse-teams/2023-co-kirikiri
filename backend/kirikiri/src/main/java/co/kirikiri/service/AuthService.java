@@ -71,6 +71,7 @@ public class AuthService {
         final EncryptedToken clientRefreshToken = AuthMapper.convertToEncryptedToken(reissueTokenRequest);
         final RefreshToken refreshToken = findRefreshToken(clientRefreshToken);
         checkExpired(refreshToken);
+        refreshTokenRepository.delete(refreshToken);
         final Member member = refreshToken.getMember();
         return makeAuthenticationResponse(member);
     }
