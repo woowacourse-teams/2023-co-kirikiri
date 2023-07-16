@@ -26,11 +26,13 @@ public class MemberIdentifierArgumentResolver implements HandlerMethodArgumentRe
     }
 
     @Override
-    public String resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer, final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) throws Exception {
+    public String resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer,
+                                  final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) {
         final String authorizationHeader = webRequest.getHeader((HttpHeaders.AUTHORIZATION));
         if (authorizationHeader == null || !authorizationHeader.startsWith(TYPE)) {
             throw new AuthenticationException("Authorization Header Is Empty.");
         }
-        return authService.findMemberIdentifier(authorizationHeader);
+        final String token = authorizationHeader.substring(TYPE.length());
+        return authService.findMemberIdentifier(token);
     }
 }
