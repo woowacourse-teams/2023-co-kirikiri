@@ -3,6 +3,8 @@ import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
 import { ThemeProvider } from 'styled-components';
 import ResponsiveContainer from '@components/_common/responsiveContainer/ResponsiveContainer';
+import SignUpPage from '@pages/signUpPage/SignUpPage';
+import LoginPage from '@pages/loginPage/LoginPage';
 
 const App = () => {
   return (
@@ -20,6 +22,8 @@ const App = () => {
                 </div>
               }
             />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/join' element={<SignUpPage />} />
           </Routes>
         </BrowserRouter>
       </ResponsiveContainer>
