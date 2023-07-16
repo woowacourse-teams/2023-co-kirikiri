@@ -1,10 +1,14 @@
-import { client } from '@apis/axios/client';
-import type { UserResponse } from '@myTypes/user/remote';
+import client from '@apis/axios/client';
+import type {
+  MemberJoinRequest,
+  UserLoginRequest,
+  UserLoginResponse,
+} from '@myTypes/user/remote';
 
-const getUser = async () => {
-  const { data } = await client.get<UserResponse>('/users/2');
-
-  return data;
+export const signUp = (body: MemberJoinRequest) => {
+  return client.post('/member/join', body);
 };
 
-export default getUser;
+export const login = (body: UserLoginRequest) => {
+  return client.post<UserLoginResponse>('/auth/login', body);
+};
