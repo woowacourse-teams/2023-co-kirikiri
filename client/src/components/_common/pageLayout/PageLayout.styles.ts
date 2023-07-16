@@ -3,6 +3,7 @@ import media from '@styles/media';
 
 export const Layout = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
 `;
 
@@ -18,5 +19,10 @@ export const NavBar = styled.nav`
 `;
 
 export const ChildrenLayout = styled.div`
+  margin-left: 15rem;
   padding: 0 18px;
+
+  ${media.mobile`
+    margin-left: 0;
+  `}
 `;
