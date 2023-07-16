@@ -4,7 +4,6 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
@@ -24,11 +23,7 @@ public final class RoadmapMapper {
         if (filterType == null) {
             return RoadmapFilterType.LATEST;
         }
-        try {
-            return RoadmapFilterType.valueOf(filterType.name());
-        } catch (final IllegalArgumentException e) {
-            throw new NotFoundException("존재하지 않는 정렬 조건입니다. filterType = " + filterType);
-        }
+        return RoadmapFilterType.valueOf(filterType.name());
     }
 
     public static PageResponse<RoadmapResponse> convertRoadmapPageResponse(final Page<Roadmap> roadmapPages,
