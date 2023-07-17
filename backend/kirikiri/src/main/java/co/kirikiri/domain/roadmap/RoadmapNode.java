@@ -56,14 +56,14 @@ public class RoadmapNode {
     private void validateTitleLength(final String title) {
         if (title.length() < TITLE_MIN_LENGTH || title.length() > TITLE_MAX_LENGTH) {
             throw new BadRequestException(
-                    "로드맵 노드의 제목의 길이는 최소 " + TITLE_MIN_LENGTH + "글자, 최대 " + TITLE_MAX_LENGTH + "글자입니다.");
+                    String.format("로드맵 노드의 제목의 길이는 최소 %d글자, 최대 %d글자입니다.", TITLE_MIN_LENGTH, TITLE_MAX_LENGTH));
         }
     }
 
     private void validateContentLength(final String content) {
         if (content.length() < CONTENT_MIN_LENGTH || content.length() > CONTENT_MAX_LENGTH) {
             throw new BadRequestException(
-                    "로드맵 노드의 설명의 길이는 최소 " + CONTENT_MIN_LENGTH + "글자, 최대 " + CONTENT_MAX_LENGTH + "글자입니다.");
+                    String.format("로드맵 노드의 설명의 길이는 최소 %d글자, 최대 %d글자입니다.", CONTENT_MIN_LENGTH, CONTENT_MAX_LENGTH));
         }
     }
 
