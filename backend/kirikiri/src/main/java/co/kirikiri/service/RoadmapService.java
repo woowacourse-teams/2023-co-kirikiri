@@ -15,21 +15,17 @@ import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class RoadmapService {
 
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
-
-    public RoadmapService(final RoadmapRepository roadmapRepository,
-                          final RoadmapCategoryRepository roadmapCategoryRepository) {
-        this.roadmapRepository = roadmapRepository;
-        this.roadmapCategoryRepository = roadmapCategoryRepository;
-    }
 
     @Transactional
     public Long create(final RoadmapSaveRequest request, final Member member) {
