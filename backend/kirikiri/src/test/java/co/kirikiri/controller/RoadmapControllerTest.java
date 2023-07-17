@@ -43,7 +43,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willReturn(1L);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isCreated());
+        로드맵_생성_요청(jsonRequest, status().isCreated());
     }
 
     @Test
@@ -59,7 +59,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new NotFoundException("존재하지 않는 카테고리입니다. categoryId=10"));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isNotFound());
+        로드맵_생성_요청(jsonRequest, status().isNotFound());
     }
 
     @Test
@@ -72,7 +72,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -88,7 +88,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new BadRequestException("로드맵 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -101,7 +101,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -117,7 +117,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new BadRequestException("로드맵 소개글의 길이는 최소 1글자, 최대 150글자입니다."));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -130,7 +130,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -146,7 +146,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 150글자 입니다."));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -159,7 +159,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -175,7 +175,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new BadRequestException("로드맵 추천 소요 기간은 최소 0일, 최대 1000일입니다."));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -191,7 +191,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new BadRequestException("로드맵 추천 소요 기간은 최소 0일, 최대 1000일입니다."));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -204,7 +204,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -220,7 +220,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new BadRequestException("로드맵 노드의 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -233,7 +233,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -249,7 +249,7 @@ class RoadmapControllerTest extends RestDocsHelper {
                 .willThrow(new BadRequestException("로드맵 노드의 설명의 길이는 최소 1글자, 최대 200글자입니다."));
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -262,7 +262,7 @@ class RoadmapControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -273,16 +273,12 @@ class RoadmapControllerTest extends RestDocsHelper {
                 RoadmapDifficultyType.DIFFICULT, 30, roadmapNodes);
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        // expect
-        requestCreateRoadmap(jsonRequest, status().isBadRequest());
-    }
-
-    private void requestCreateRoadmap(final String jsonRequest, final ResultMatcher request) throws Exception {
+    private void 로드맵_생성_요청(final String jsonRequest, final ResultMatcher httpStatus) throws Exception {
         mockMvc.perform(post(API_PREFIX + "/roadmaps")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(jsonRequest)
                         .contextPath(API_PREFIX))
-                .andExpect(request)
+                .andExpect(httpStatus)
                 .andDo(print());
     }
 
