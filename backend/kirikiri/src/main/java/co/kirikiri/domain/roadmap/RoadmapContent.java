@@ -46,6 +46,10 @@ public class RoadmapContent extends BaseTimeEntity {
         if (Objects.isNull(content)) {
             return;
         }
+        validateContentLength(content);
+    }
+
+    private void validateContentLength(final String content) {
         if (content.length() > CONTENT_MAX_LENGTH) {
             throw new BadRequestException("로드맵 본문의 길이는 최대 " + CONTENT_MAX_LENGTH + "글자 입니다.");
         }

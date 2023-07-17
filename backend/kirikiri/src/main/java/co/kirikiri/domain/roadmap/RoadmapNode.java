@@ -49,10 +49,18 @@ public class RoadmapNode {
     }
 
     private void validate(final String title, final String content) {
+        validateTitleLength(title);
+        validateContentLength(content);
+    }
+
+    private void validateTitleLength(final String title) {
         if (title.length() < TITLE_MIN_LENGTH || title.length() > TITLE_MAX_LENGTH) {
             throw new BadRequestException(
                     "로드맵 노드의 제목의 길이는 최소 " + TITLE_MIN_LENGTH + "글자, 최대 " + TITLE_MAX_LENGTH + "글자입니다.");
         }
+    }
+
+    private void validateContentLength(final String content) {
         if (content.length() < CONTENT_MIN_LENGTH || content.length() > CONTENT_MAX_LENGTH) {
             throw new BadRequestException(
                     "로드맵 노드의 설명의 길이는 최소 " + CONTENT_MIN_LENGTH + "글자, 최대 " + CONTENT_MAX_LENGTH + "글자입니다.");

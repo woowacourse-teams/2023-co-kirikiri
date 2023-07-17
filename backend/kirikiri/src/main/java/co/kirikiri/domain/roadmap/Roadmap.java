@@ -74,14 +74,26 @@ public class Roadmap {
     }
 
     private void validate(final String title, final String introduction, final int requiredPeriod) {
+        validateTitleLength(title);
+        validateIntroductionLength(introduction);
+        validateRequiredPeriod(requiredPeriod);
+    }
+
+    private void validateTitleLength(final String title) {
         if (title.length() < TITLE_MIN_LENGTH || title.length() > TITLE_MAX_LENGTH) {
             throw new BadRequestException(
                     "로드맵 제목의 길이는 최소 " + TITLE_MIN_LENGTH + "글자, 최대 " + TITLE_MAX_LENGTH + "글자입니다.");
         }
+    }
+
+    private void validateIntroductionLength(final String introduction) {
         if (introduction.length() < INTRODUCTION_MIN_LENGTH || introduction.length() > INTRODUCTION_MAX_LENGTH) {
             throw new BadRequestException(
                     "로드맵 소개글의 길이는 최소 " + INTRODUCTION_MIN_LENGTH + "글자, 최대 " + INTRODUCTION_MAX_LENGTH + "글자입니다.");
         }
+    }
+
+    private void validateRequiredPeriod(final int requiredPeriod) {
         if (requiredPeriod < REQUIRED_MIN_PERIOD || requiredPeriod > REQUIRED_MAX_PERIOD) {
             throw new BadRequestException(
                     "로드맵 추천 소요 기간은 최소 " + REQUIRED_MIN_PERIOD + "일, 최대 " + REQUIRED_MAX_PERIOD + "일입니다.");
