@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -48,7 +49,7 @@ public class Roadmap {
 
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
-    private RoadmapStatus status;
+    private RoadmapStatus status = RoadmapStatus.CREATED;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -59,21 +60,17 @@ public class Roadmap {
     private RoadmapCategory category;
 
     @Embedded
-    private RoadmapContents contents;
+    private RoadmapContents contents = new RoadmapContents();
 
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
-                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category,
-                   final RoadmapContent content) {
+                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
         validate(title, introduction, requiredPeriod);
         this.title = title;
         this.introduction = introduction;
         this.requiredPeriod = requiredPeriod;
         this.difficulty = difficulty;
-        this.status = RoadmapStatus.CREATED;
         this.creator = creator;
         this.category = category;
-        this.contents = new RoadmapContents();
-        addRoadmapContent(content);
     }
 
     private void validate(final String title, final String introduction, final int requiredPeriod) {
@@ -91,9 +88,11 @@ public class Roadmap {
         }
     }
 
-    private void addRoadmapContent(final RoadmapContent content) {
-        this.contents.add(content);
-        content.setRoadmap(this);
+    public void addContent(final RoadmapContent content) {
+        contents.add(content);
+        if (content.isNotSameRoadmap(this)) {
+            content.updateRoadmap(this);
+        }
     }
 
     public Long getId() {
@@ -102,5 +101,22 @@ public class Roadmap {
 
     public RoadmapContents getContents() {
         return contents;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Roadmap roadmap = (Roadmap) o;
+        return Objects.equals(id, roadmap.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

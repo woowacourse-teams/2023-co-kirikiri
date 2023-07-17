@@ -34,54 +34,69 @@ class RoadmapTest {
 
         @Test
         void 로드맵이_성공적으로_생성된다() {
+            // expect
             assertDoesNotThrow(() -> new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT,
-                    creator, category, roadmapContent));
+                    creator, category));
         }
 
         @Test
-        void 로드맵이_처음_생성될_때_하나의_본문을_갖는다() {
-            final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT,
-                    creator, category, roadmapContent);
-            assertThat(roadmap.getContents().getContents()).hasSize(1);
+        void 로드맵에_본문을_추가한다() {
+            // given
+            final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creator, category);
+
+            // when
+            roadmap.addContent(roadmapContent);
+
+            // then
+            final RoadmapContents contents = roadmap.getContents();
+            assertThat(contents.getContents()).hasSize(1);
         }
 
         @Test
         void 로드맵_제목의_길이가_1보다_작으면_예외가_발생한다() {
+            // given
             final String title = "";
-            assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT,
-                    creator, category, roadmapContent))
+
+            // expect
+            assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT, creator, category))
                     .isInstanceOf(BadRequestException.class);
         }
 
         @Test
         void 로드맵_제목의_길이가_40보다_크면_예외가_발생한다() {
+            // given
             final String title = "a".repeat(41);
-            assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT,
-                    creator, category, roadmapContent))
+
+            // expect
+            assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT, creator, category))
                     .isInstanceOf(BadRequestException.class);
         }
 
         @Test
         void 로드맵_소개글의_길이가_1보다_작으면_예외가_발생한다() {
+            // given
             final String introduction = "";
-            assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT,
-                    creator, category, roadmapContent))
+
+            // expect
+            assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT, creator, category))
                     .isInstanceOf(BadRequestException.class);
         }
 
         @Test
         void 로드맵_소개글의_길이가_150보다_크면_예외가_발생한다() {
+            // given
             final String introduction = "a".repeat(151);
-            assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT,
-                    creator, category, roadmapContent))
+
+            // expect
+            assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT, creator, category))
                     .isInstanceOf(BadRequestException.class);
         }
 
         @ParameterizedTest
         @ValueSource(ints = {-1, 1001})
         void 로드맵_추천_소요_기간이_0보다_작고_1000보다_크면_예외가_발생한다(final int requiredPeriod) {
-            assertThatThrownBy(() -> new Roadmap("로드맵 제목", "로드맵 소개글", requiredPeriod, DIFFICULT,
-                    creator, category, roadmapContent))
+            // expect
+            assertThatThrownBy(() -> new Roadmap("로드맵 제목", "로드맵 소개글", requiredPeriod, DIFFICULT, creator, category))
                     .isInstanceOf(BadRequestException.class);
         }
 
@@ -104,7 +119,9 @@ class RoadmapTest {
         }
 
         private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-            return new RoadmapContent("로드맵 본문", new RoadmapNodes(roadmapNodes));
+            final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
+            roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
+            return roadmapContent;
         }
     }
 }

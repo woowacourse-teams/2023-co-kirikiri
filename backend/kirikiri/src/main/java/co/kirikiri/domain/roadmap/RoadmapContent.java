@@ -14,9 +14,11 @@ import jakarta.persistence.ManyToOne;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class RoadmapContent extends BaseTimeEntity {
 
     private static final int CONTENT_MAX_LENGTH = 150;
@@ -33,16 +35,14 @@ public class RoadmapContent extends BaseTimeEntity {
     private Roadmap roadmap;
 
     @Embedded
-    private RoadmapNodes nodes;
+    private final RoadmapNodes nodes = new RoadmapNodes();
 
-    public RoadmapContent(final String content, final RoadmapNodes nodes) {
+    public RoadmapContent(final String content) {
         validate(content);
         this.content = content;
-        this.nodes = new RoadmapNodes();
-        updateRoadmapNodes(nodes);
     }
 
-    public void validate(final String content) {
+    private void validate(final String content) {
         if (Objects.isNull(content)) {
             return;
         }
@@ -51,14 +51,20 @@ public class RoadmapContent extends BaseTimeEntity {
         }
     }
 
-    private void updateRoadmapNodes(final RoadmapNodes nodes) {
-        for (final RoadmapNode node : nodes.getRoadmapNodes()) {
-            this.nodes.add(node);
-            node.setRoadmapContent(this);
-        }
+    public void addNodes(final RoadmapNodes nodes) {
+        this.nodes.addAll(nodes);
+        nodes.updateAllRoadmapContent(this);
     }
 
-    public void setRoadmap(final Roadmap roadmap) {
+    public boolean isNotSameRoadmap(final Roadmap roadmap) {
+        return this.roadmap == null || !this.roadmap.equals(roadmap);
+    }
+
+    public void updateRoadmap(final Roadmap roadmap) {
         this.roadmap = roadmap;
+    }
+
+    public RoadmapNodes getNodes() {
+        return nodes;
     }
 }

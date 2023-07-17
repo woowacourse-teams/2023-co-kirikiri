@@ -51,9 +51,11 @@ class RoadmapRepositoryTest extends RepositoryTest {
         final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
 
         // when
-        final Roadmap savedRoadmap = roadmapRepository.save(
-                new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
-                        creator, category, roadmapContent));
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
+                creator, category);
+        roadmap.addContent(roadmapContent);
+
+        final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
 
         // then
         assertAll(
@@ -84,6 +86,8 @@ class RoadmapRepositoryTest extends RepositoryTest {
     }
 
     private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-        return new RoadmapContent("로드맵 본문", new RoadmapNodes(roadmapNodes));
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
+        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
+        return roadmapContent;
     }
 }

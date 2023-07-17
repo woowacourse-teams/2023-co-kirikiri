@@ -1,10 +1,8 @@
 package co.kirikiri.domain.roadmap;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import co.kirikiri.exception.BadRequestException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -15,16 +13,33 @@ import org.junit.jupiter.api.Test;
 class RoadmapNodesTest {
 
     @Test
-    void 로드맵의_노드_1개보다_적으면_예외가_발생한다() {
-        assertThatThrownBy(() -> new RoadmapNodes(emptyList()))
-                .isInstanceOf(BadRequestException.class);
+    void 로드맵_노드를_추가한다() {
+        // given
+        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(new RoadmapNode("로드맵 노드 제목", "로드맵 노드 내용")));
+
+        // when
+        roadmapNodes.add(new RoadmapNode("로드맵 노드 제목", "로드맵 노드 내용"));
+
+        // then
+        assertThat(roadmapNodes.getRoadmapNodes()).hasSize(2);
     }
 
     @Test
-    void 로드맵_노드를_추가한다() {
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(new RoadmapNode("로드맵 노드 제목", "로드맵 노드 내용")));
-        roadmapNodes.add(new RoadmapNode("로드맵 노드 제목", "로드맵 노드 내용"));
+    void 로드맵_노드들의_로드맵_본문을_업데이트한다() {
+        // given
+        final RoadmapNodes roadmapNodes = new RoadmapNodes(
+                List.of(new RoadmapNode("로드맵 노드 제목1", "로드맵 노드 내용1"), new RoadmapNode("로드맵 노드 제목2", "로드맵 노드 내용2")));
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
 
-        assertThat(roadmapNodes.getRoadmapNodes()).hasSize(2);
+        // when
+        roadmapNodes.updateAllRoadmapContent(roadmapContent);
+
+        // then
+        final List<RoadmapNode> nodes = roadmapNodes.getRoadmapNodes();
+        assertAll(
+                () -> assertThat(nodes.get(0).getRoadmapContent()).isEqualTo(roadmapContent),
+                () -> assertThat(nodes.get(1).getRoadmapContent()).isEqualTo(roadmapContent)
+        );
     }
+
 }

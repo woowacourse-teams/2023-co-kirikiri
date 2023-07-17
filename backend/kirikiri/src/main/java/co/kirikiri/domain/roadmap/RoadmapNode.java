@@ -40,7 +40,7 @@ public class RoadmapNode {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_node_id")
-    private List<RoadmapNodeImage> images = new ArrayList<>();
+    private final List<RoadmapNodeImage> images = new ArrayList<>();
 
     public RoadmapNode(final String title, final String content) {
         validate(title, content);
@@ -59,7 +59,15 @@ public class RoadmapNode {
         }
     }
 
-    public void setRoadmapContent(final RoadmapContent roadmapContent) {
+    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
+        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
+    }
+
+    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
         this.roadmapContent = roadmapContent;
+    }
+
+    public RoadmapContent getRoadmapContent() {
+        return roadmapContent;
     }
 }
