@@ -29,74 +29,58 @@ operation::roadmap-controller-test/로드맵_생성시_유효하지_않은_카�
 
 operation::roadmap-controller-test/로드맵_생성시_카테고리_아이디를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.3 로드맵 제목의 길이가 1보다 작은 경우
-
-operation::roadmap-controller-test/로드맵_생성시_로드맵_제목의_길이가_1보다_작으면_예외가_발생한다[snippets='http-request,http-response']
-
-=== 2.4 로드맵 제목의 길이가 40보다 큰 경우
+=== 2.3 로드맵 제목의 길이가 40보다 큰 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_제목의_길이가_40보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.5 로드맵 제목을 입력하지 않은 경우
+=== 2.4 로드맵 제목을 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_제목을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.6 로드맵 소개글의 길이가 1보다 작은 경우
-
-operation::roadmap-controller-test/로드맵_생성시_로드맵_소개글의_길이가_1보다_작으면_예외가_발생한다[snippets='http-request,http-response']
-
-=== 2.7 로드맵 소개글의 길이가 150보다 큰 경우
+=== 2.5 로드맵 소개글의 길이가 150보다 큰 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_소개글의_길이가_150보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.8 로드맵 소개글을 입력하지 않은 경우
+=== 2.6 로드맵 소개글을 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_소개글을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.9 로드맵 본문의 길이가 150보다 큰 경우
+=== 2.7 로드맵 본문의 길이가 150보다 큰 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_본문의_길이가_150보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.10 로드맵 난이도를 입력하지 않은 경우
+=== 2.8 로드맵 난이도를 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_난이도를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.11 로드맵 추천 소요 기간이 0보다 작은 경우
+=== 2.9 로드맵 추천 소요 기간이 0보다 작은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_추천_소요기간이_0보다_작으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.12 로드맵 추천 소요 기간이 1000보다 큰 경우
+=== 2.10 로드맵 추천 소요 기간이 1000보다 큰 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_추천_소요기간이_1000보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.13 로드맵 추천 소요 기간을 입력하지 않은 경우
+=== 2.11 로드맵 추천 소요 기간을 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_추천_소요기간을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.14 로드맵 노드의 제목의 길이가 1보다 작은 경우
-
-operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_제목의_길이가_1보다_작으면_예외가_발생한다[snippets='http-request,http-response']
-
-=== 2.15 로드맵 노드의 제목의 길이가 40보다 큰 경우
+=== 2.12 로드맵 노드의 제목의 길이가 40보다 큰 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_제목의_길이가_40보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.16 로드맵 노드의 제목을 입력하지 않은 경우
+=== 2.13 로드맵 노드의 제목을 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_제목을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.17 로드맵 노드의 설명의 길이가 1보다 작은 경우
-
-operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설명의_길이가_1보다_작으면_예외가_발생한다[snippets='http-request,http-response']
-
-=== 2.18 로드맵 노드의 설명의 길이가 200보다 큰 경우
+=== 2.14 로드맵 노드의 설명의 길이가 200보다 큰 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설명의_길이가_200보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.19 로드맵 노드의 설명을 입력하지 않은 경우
+=== 2.15 로드맵 노드의 설명을 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설명을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== 2.20 로드맵 노드를 입력하지 않은 경우
+=== 2.16 로드맵 노드를 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_노드를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
