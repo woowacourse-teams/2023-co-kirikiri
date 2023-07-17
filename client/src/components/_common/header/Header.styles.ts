@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import media from '@styles/media';
 
 export const HeaderWrapper = styled.div`
-  position: relative;
+  position: fixed;
 `;
 
 export const Header = styled.div`
