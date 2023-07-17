@@ -23,8 +23,6 @@ import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,8 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
 class RoadmapServiceTest {
 
     @InjectMocks
