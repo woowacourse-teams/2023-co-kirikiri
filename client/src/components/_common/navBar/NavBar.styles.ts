@@ -13,13 +13,13 @@ export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   border-radius: 3rem;
 
   ${({ isNavBarOpen }) =>
-    !isNavBarOpen
+    isNavBarOpen
       ? media.mobile`
-      display: none;
-   `
-      : media.mobile`
      padding-top: 56px;
      border-radius: 0;
+   `
+      : media.mobile`
+      display: none;
    `}
 `;
 
