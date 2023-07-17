@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.ImageContentType;
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.MemberProfileImage;
