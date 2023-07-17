@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -43,7 +42,7 @@ public class RoadmapContent extends BaseTimeEntity {
     }
 
     private void validate(final String content) {
-        if (Objects.isNull(content)) {
+        if (content == null) {
             return;
         }
         validateContentLength(content);
@@ -65,7 +64,9 @@ public class RoadmapContent extends BaseTimeEntity {
     }
 
     public void updateRoadmap(final Roadmap roadmap) {
-        this.roadmap = roadmap;
+        if (this.roadmap == null) {
+            this.roadmap = roadmap;
+        }
     }
 
     public RoadmapNodes getNodes() {

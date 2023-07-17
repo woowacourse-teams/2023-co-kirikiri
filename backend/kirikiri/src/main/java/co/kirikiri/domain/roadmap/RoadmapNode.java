@@ -72,7 +72,9 @@ public class RoadmapNode {
     }
 
     public void updateRoadmapContent(final RoadmapContent roadmapContent) {
-        this.roadmapContent = roadmapContent;
+        if (this.roadmapContent == null) {
+            this.roadmapContent = roadmapContent;
+        }
     }
 
     public RoadmapContent getRoadmapContent() {
