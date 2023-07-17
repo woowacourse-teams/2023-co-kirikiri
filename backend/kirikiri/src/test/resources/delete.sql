@@ -1,0 +1,12 @@
+SET
+REFERENTIAL_INTEGRITY FALSE;
+TRUNCATE TABLE member;
+TRUNCATE TABLE member_profile;
+TRUNCATE TABLE member_profile_image;
+TRUNCATE TABLE roadmap;
+TRUNCATE TABLE roadmap_category;
+TRUNCATE TABLE roadmap_content;
+TRUNCATE TABLE roadmap_node;
+TRUNCATE TABLE roadmap_node_image;
+SET
+REFERENTIAL_INTEGRITY TRUE;

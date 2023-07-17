@@ -48,40 +48,22 @@ class RoadmapTest {
             assertThat(contents.getContents()).hasSize(1);
         }
 
-        @Test
-        void 로드맵_제목의_길이가_1보다_작으면_예외가_발생한다() {
+        @ParameterizedTest
+        @ValueSource(ints = {0, 41})
+        void 로드맵_제목의_길이가_1보다_작거나_40보다_크면_예외가_발생한다(final int titleLength) {
             // given
-            final String title = "";
+            final String title = "a".repeat(titleLength);
 
             // expect
             assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT, creator, category))
                     .isInstanceOf(BadRequestException.class);
         }
 
-        @Test
-        void 로드맵_제목의_길이가_40보다_크면_예외가_발생한다() {
+        @ParameterizedTest
+        @ValueSource(ints = {0, 151})
+        void 로드맵_소개글의_길이가_1보다_작거나_150보다_크면_예외가_발생한다(final int introductionLength) {
             // given
-            final String title = "a".repeat(41);
-
-            // expect
-            assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT, creator, category))
-                    .isInstanceOf(BadRequestException.class);
-        }
-
-        @Test
-        void 로드맵_소개글의_길이가_1보다_작으면_예외가_발생한다() {
-            // given
-            final String introduction = "";
-
-            // expect
-            assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT, creator, category))
-                    .isInstanceOf(BadRequestException.class);
-        }
-
-        @Test
-        void 로드맵_소개글의_길이가_150보다_크면_예외가_발생한다() {
-            // given
-            final String introduction = "a".repeat(151);
+            final String introduction = "a".repeat(introductionLength);
 
             // expect
             assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT, creator, category))

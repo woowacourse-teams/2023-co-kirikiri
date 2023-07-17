@@ -14,17 +14,19 @@ import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.RestAssured;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -53,10 +55,14 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
         @Test
         void 정상적으로_생성한다() {
+            // given
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
+            // expect
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.CREATED);
+            final Long 로드맵_ID = 아이디를_반환한다(로드맵_생성_응답);
+            assertThat(로드맵_ID).isEqualTo(1L);
         }
 
         @Test
@@ -82,8 +88,8 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
-            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(ErrorResponse.class);
-
+            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.NOT_FOUND);
             assertThat(에러_메세지.message()).isEqualTo("존재하지 않는 카테고리입니다. categoryId=2");
 
@@ -99,25 +105,30 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("카테고리를 입력해주세요.");
         }
 
-        @ParameterizedTest
-        @ValueSource(ints = {0, 151})
-        void 제목의_길이가_1보다_작거나_40보다_크면_실패한다(final int 로드맵_제목_길이) {
+        @Test
+        void 제목의_길이가_40보다_크면_실패한다() {
             // given
-            final String 로드맵_제목 = "a".repeat(로드맵_제목_길이);
+            final String 로드맵_제목 = "a".repeat(41);
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, 로드맵_제목, "로드맵 소개글", "로드맵 본문",
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.message()).isEqualTo("로드맵 제목의 길이는 최소 1글자, 최대 40글자입니다.");
         }
 
         @Test
-        void 제목을_입력하지_않은_경우_실패한다() {
+        void 제목을_입력하지_않은_경우_실패한다() throws UnsupportedEncodingException, JsonProcessingException {
             // given
             final String 로드맵_제목 = null;
 
@@ -126,21 +137,26 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("로드맵의 제목을 입력해주세요.");
         }
 
-        @ParameterizedTest
-        @ValueSource(ints = {0, 151})
-        void 소개글의_길이가_1보다_작거나_150보다_크면_실패한다(final int 로드맵_소개글_길이) {
+        @Test
+        void 소개글의_길이가_150보다_크면_실패한다() {
             // given
-            final String 로드맵_소개글 = "a".repeat(로드맵_소개글_길이);
+            final String 로드맵_소개글 = "a".repeat(151);
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", 로드맵_소개글, "로드맵 본문",
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.message()).isEqualTo("로드맵 소개글의 길이는 최소 1글자, 최대 150글자입니다.");
         }
 
         @Test
@@ -153,7 +169,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("로드맵의 소개글을 입력해주세요.");
         }
 
         @Test
@@ -166,7 +185,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.message()).isEqualTo("로드맵 본문의 길이는 최대 150글자 입니다.");
         }
 
         @Test
@@ -179,7 +201,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     로드맵_난이도, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("난이도를 입력해주세요.");
         }
 
         @Test
@@ -193,7 +218,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("추천 소요 기간을 입력해주세요.");
         }
 
         @Test
@@ -207,27 +235,16 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
+            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.message()).isEqualTo("로드맵 추천 소요 기간은 최소 0일, 최대 1000일입니다.");
         }
 
         @Test
-        void 로드맵의_첫_단계를_입력하지_않으면_실패한다() {
+        void 로드맵_노드의_제목의_길이가_40보다_크면_실패한다() {
             // given
-            final List<RoadmapNodeSaveRequest> 로드맵_노드들 = null;
-
-            // when
-            final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들);
-
-            // then
-            응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
-        }
-
-        @ParameterizedTest
-        @ValueSource(ints = {0, 41})
-        void 로드맵_노드의_제목의_길이가_1보다_작거나_40보다_크면_실패한다(final int 로드맵_노드_제목_길이) {
-            // given
-            final String 로드맵_노드_제목 = "a".repeat(로드맵_노드_제목_길이);
+            final String 로드맵_노드_제목 = "a".repeat(41);
             final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest(로드맵_노드_제목, "로드맵 1주차 내용"));
 
             // when
@@ -235,7 +252,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들);
 
             // then
+            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.message()).isEqualTo("로드맵 노드의 제목의 길이는 최소 1글자, 최대 40글자입니다.");
         }
 
         @Test
@@ -249,14 +269,16 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들);
 
             // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("로드맵 노드의 제목을 입력해주세요.");
         }
 
-        @ParameterizedTest
-        @ValueSource(ints = {0, 201})
-        void 로드맵_노드의_설명의_길이가_1보다_작거나_200보다_크면_실패한다(final int 로드맵_노드_설명_길이) {
+        @Test
+        void 로드맵_노드의_설명의_길이가_200보다_크면_실패한다() {
             // given
-            final String 로드맵_노드_설명 = "a".repeat(로드맵_노드_설명_길이);
+            final String 로드맵_노드_설명 = "a".repeat(201);
             final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
 
             // when
@@ -264,7 +286,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들);
 
             // then
+            final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.message()).isEqualTo("로드맵 노드의 설명의 길이는 최소 1글자, 최대 200글자입니다.");
         }
 
         @Test
@@ -278,7 +303,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                     RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들);
 
             // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("로드맵 노드의 설명을 입력해주세요.");
         }
 
         private ExtractableResponse<Response> 로드맵_생성_요청(final Long 카테고리_ID, final String 로드맵_제목, final String 로드맵_소개글,
@@ -299,5 +327,9 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
     private void 응답_상태_코드_검증(final ExtractableResponse<Response> 응답, final HttpStatus http_상태) {
         assertThat(응답.statusCode()).isEqualTo(http_상태.value());
+    }
+
+    private static Long 아이디를_반환한다(final ExtractableResponse<Response> 응답) {
+        return Long.parseLong(응답.header(HttpHeaders.LOCATION).split("/")[2]);
     }
 }

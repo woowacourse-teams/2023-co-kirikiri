@@ -1,7 +1,6 @@
 package co.kirikiri.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.ImageContentType;
@@ -22,19 +21,13 @@ class RoadmapRepositoryTest extends RepositoryTest {
 
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
-    private final RoadmapContentRepository roadmapContentRepository;
-    private final RoadmapNodeRepository roadmapNodeRepository;
     private final MemberRepository memberRepository;
 
     public RoadmapRepositoryTest(final RoadmapRepository roadmapRepository,
                                  final RoadmapCategoryRepository roadmapCategoryRepository,
-                                 final RoadmapContentRepository roadmapContentRepository,
-                                 final RoadmapNodeRepository roadmapNodeRepository,
                                  final MemberRepository memberRepository) {
         this.roadmapRepository = roadmapRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
-        this.roadmapContentRepository = roadmapContentRepository;
-        this.roadmapNodeRepository = roadmapNodeRepository;
         this.memberRepository = memberRepository;
     }
 
@@ -54,11 +47,8 @@ class RoadmapRepositoryTest extends RepositoryTest {
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
 
         // then
-        assertAll(
-                () -> assertThat(savedRoadmap.getId()).isPositive(),
-                () -> assertThat(roadmapContentRepository.findAll()).hasSize(1),
-                () -> assertThat(roadmapNodeRepository.findAll()).hasSize(2)
-        );
+        assertThat(savedRoadmap).usingRecursiveComparison()
+                .isEqualTo(roadmap);
     }
 
     private Member 크리에이터를_생성한다() {

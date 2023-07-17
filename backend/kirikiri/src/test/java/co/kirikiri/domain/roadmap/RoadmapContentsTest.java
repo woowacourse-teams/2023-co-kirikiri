@@ -21,6 +21,7 @@ class RoadmapContentsTest {
         roadmapContents.add(updatedRoadmapContent);
 
         // then
-        assertThat(roadmapContents.getContents()).hasSize(2);
+        assertThat(roadmapContents.getContents()).usingRecursiveComparison()
+                .isEqualTo(List.of(roadmapContent, updatedRoadmapContent));
     }
 }
