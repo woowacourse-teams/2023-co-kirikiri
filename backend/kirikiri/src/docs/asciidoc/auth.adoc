@@ -18,7 +18,7 @@ endif::[]
 
 === *1-1* 성공
 
-operation::auth-controller-test/정상적으로_로그인에_성공한다[snippets='http-request,http-response']
+operation::auth-controller-test/정상적으로_로그인에_성공한다[snippets='http-request,http-response,request-fields,response-fields']
 
 === *1-2* 실패 - 아이디에 해당하는 회원이 없을때
 
@@ -45,7 +45,7 @@ operation::auth-controller-test/로그인_시_아이디와_비밀번호_모두_�
 
 === *2-1* 성공
 
-operation::auth-controller-test/토큰을_정상적으로_재발행한다[snippets='http-request,http-response']
+operation::auth-controller-test/토큰을_정상적으로_재발행한다[snippets='http-request,http-response,request-fields,response-fields']
 
 === *2-2* 실패 - 토큰 재발행 시 리프레시 토큰이 빈값일 때
 
@@ -55,6 +55,6 @@ operation::auth-controller-test/토큰_재발행_시_리프레시_토큰이_빈�
 
 operation::auth-controller-test/토큰_재발행_시_토큰이_만료_됐을_때_예외를_던진다[snippets='http-request,http-response']
 
-=== *2-4* 실패 - 토큰 재발행 시 토큰이 유효하지 않을 때 예외를 던진다
+=== *2-4* 실패 - 토큰 재발행 시 토큰이 유효하지 않을 때
 
 operation::auth-controller-test/토큰_재발행_시_토큰이_유효하지_않을_때_예외를_던진다[snippets='http-request,http-response']

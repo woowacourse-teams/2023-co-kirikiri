@@ -35,8 +35,8 @@ public class Member extends BaseTimeEntity {
         this.memberProfile = memberProfile;
     }
 
-    public boolean passwordNotMatch(final Password password) {
-        return this.encryptedPassword.isNotMatch(password);
+    public boolean isPasswordMismatch(final Password password) {
+        return this.encryptedPassword.isMismatch(password);
     }
 
     public Identifier getIdentifier() {

@@ -101,20 +101,13 @@ class AuthenticationIntegrationTest extends IntegrationTest {
     void 정상적으로_토큰_재발행을_힌다() {
         //given
         회원가입();
-        final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, "password1!");
+        final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, PASSWORD);
         final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
         final AuthenticationResponse 로그인_응답_바디 = 로그인_응답.as(AuthenticationResponse.class);
         final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest(로그인_응답_바디.refreshToken());
 
         //when
-        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(토큰_재발행_요청)
-                .post(API_PREFIX + "/auth/reissue")
-                .then()
-                .log().all()
-                .extract();
+        final ExtractableResponse<Response> 토큰_재발행_응답 = 토큰_재발행(토큰_재발행_요청);
 
         //then
         assertThat(토큰_재발행_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -130,14 +123,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest("");
 
         //when
-        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(토큰_재발행_요청)
-                .post(API_PREFIX + "/auth/reissue")
-                .then()
-                .log().all()
-                .extract();
+        final ExtractableResponse<Response> 토큰_재발행_응답 = 토큰_재발행(토큰_재발행_요청);
 
         //then
         assertThat(토큰_재발행_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -155,14 +141,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest("anyString");
 
         //when
-        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(토큰_재발행_요청)
-                .post(API_PREFIX + "/auth/reissue")
-                .then()
-                .log().all()
-                .extract();
+        final ExtractableResponse<Response> 토큰_재발행_응답 = 토큰_재발행(토큰_재발행_요청);
 
         //then
         assertThat(토큰_재발행_응답.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -194,5 +173,17 @@ class AuthenticationIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
+    }
+
+    private ExtractableResponse<Response> 토큰_재발행(final ReissueTokenRequest 토큰_재발행_요청) {
+        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(토큰_재발행_요청)
+                .post(API_PREFIX + "/auth/reissue")
+                .then()
+                .log().all()
+                .extract();
+        return 토큰_재발행_응답;
     }
 }

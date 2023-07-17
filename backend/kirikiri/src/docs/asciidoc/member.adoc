@@ -18,7 +18,7 @@ endif::[]
 
 === *1-1* 성공
 
-operation::member-controller-test/정상적으로_회원가입에_성공한다[snippets='http-request,http-response']
+operation::member-controller-test/정상적으로_회원가입에_성공한다[snippets='http-request,http-response,request-fields']
 
 === *1-2* 실패 - 아이디가 형식에 맞지 않을 때
 

@@ -1,20 +1,21 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+
+import java.time.LocalDate;
+import java.time.Month;
+
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberIntegrationTest extends IntegrationTest {
 
@@ -22,7 +23,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 정상적으로_회원가입을_성공한다() {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -37,7 +38,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 아이디_길이가_틀린_경우_회원가입에_실패한다(final String 회원_아이디) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(회원_아이디, "password12!", "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -53,7 +54,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 아이디에_허용되지_않은_문자가_들어온_경우_회원가입에_실패한다(final String 회원_아이디) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(회원_아이디, "password12!", "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -68,7 +69,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 아이디가_중복된_경우_회원가입에_실패한다() {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!", "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
         회원가입을_한다(회원가입_요청);
 
         //when
@@ -85,7 +86,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 비밀번호_길이가_틀린_경우_회원가입에_실패한다(final String password) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", password, "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -101,7 +102,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 비밀번호에_허용되지_않은_문자가_들어온_경우_회원가입에_실패한다(final String password) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", password, "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -117,7 +118,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 비밀번호에_영소문자만_들어온_경우_회원가입에_실패한다(final String password) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", password, "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -133,7 +134,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 비밀번호에_숫자만_들어온_경우_회원가입에_실패한다(final String password) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", password, "nickname", "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -149,7 +150,7 @@ class MemberIntegrationTest extends IntegrationTest {
     void 닉네임_길이가_틀린_경우_회원가입에_실패한다(final String nickname) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", nickname, "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 회원가입을_한다(회원가입_요청);
@@ -162,12 +163,12 @@ class MemberIntegrationTest extends IntegrationTest {
 
     private ExtractableResponse<Response> 회원가입을_한다(final MemberJoinRequest 회원가입_요청) {
         return given().log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-            .body(회원가입_요청)
-            .post("/api/members/join")
-            .then()
-            .log().all()
-            .extract();
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(회원가입_요청)
+                .post("/api/members/join")
+                .then()
+                .log().all()
+                .extract();
     }
 }

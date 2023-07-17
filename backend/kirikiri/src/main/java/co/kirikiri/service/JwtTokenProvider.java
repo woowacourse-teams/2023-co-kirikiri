@@ -60,7 +60,7 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public boolean validateToken(final String token) {
+    public boolean isValidToken(final String token) {
         try {
             parseToClaimsJws(token);
         } catch (final ExpiredJwtException expiredJwtException) {

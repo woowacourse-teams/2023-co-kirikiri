@@ -41,7 +41,7 @@ class JwtTokenProviderTest {
     }
 
     @Test
-    void 정상적으로_subject와_claims를_포함한_REFREST_TOKEN을_생성한다() {
+    void 정상적으로_subject와_claims를_포함한_REFRESH_TOKEN을_생성한다() {
         //given
         final String subject = "subject";
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
@@ -69,7 +69,7 @@ class JwtTokenProviderTest {
         final String accessToken = tokenProvider.createAccessToken(subject, claims);
 
         //when
-        final boolean result = tokenProvider.validateToken(accessToken);
+        final boolean result = tokenProvider.isValidToken(accessToken);
 
         //then
         assertThat(result).isTrue();
@@ -85,7 +85,7 @@ class JwtTokenProviderTest {
 
         //when
         //then
-        assertThatThrownBy(() -> tokenProvider.validateToken(accessToken))
+        assertThatThrownBy(() -> tokenProvider.isValidToken(accessToken))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Expired Token");
     }
@@ -97,7 +97,7 @@ class JwtTokenProviderTest {
 
         //when
         //then
-        assertThatThrownBy(() -> tokenProvider.validateToken(accessToken))
+        assertThatThrownBy(() -> tokenProvider.isValidToken(accessToken))
                 .isInstanceOf(AuthenticationException.class)
                 .hasMessage("Invalid Token");
     }

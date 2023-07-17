@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,6 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,11 +46,27 @@ class MemberControllerTest extends RestDocsHelper {
 
         //when
         //then
-        mockMvc.perform(post(API_PREFIX + "/members/join")
+        회원가입(jsonRequest, status().isCreated())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestFields(
+                                        fieldWithPath("identifier").description("회원 아이디"),
+                                        fieldWithPath("password").description("회원 비밀번호"),
+                                        fieldWithPath("nickname").description("회원 닉네임"),
+                                        fieldWithPath("phoneNumber").description("회원 휴대폰 번호(010-xxxx-xxxx)"),
+                                        fieldWithPath("genderType").description("회원 성별(MALE, FEMALE)"),
+                                        fieldWithPath("birthday").description("회원 생년월일(yyMMdd)")
+                                )
+                        )
+                );
+    }
+
+    private ResultActions 회원가입(final String jsonRequest, final ResultMatcher result) throws Exception {
+        return mockMvc.perform(post(API_PREFIX + "/members/join")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .contextPath(API_PREFIX))
-                .andExpect(status().isCreated())
+                .andExpect(result)
                 .andDo(print());
     }
 
@@ -63,12 +83,7 @@ class MemberControllerTest extends RestDocsHelper {
                 .join(any());
 
         //then
-        mockMvc.perform(post(API_PREFIX + "/members/join")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+        회원가입(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -84,12 +99,7 @@ class MemberControllerTest extends RestDocsHelper {
                 .join(any());
 
         //then
-        mockMvc.perform(post(API_PREFIX + "/members/join")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+        회원가입(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -105,12 +115,7 @@ class MemberControllerTest extends RestDocsHelper {
                 .join(any());
 
         //then
-        mockMvc.perform(post(API_PREFIX + "/members/join")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+        회원가입(jsonRequest, status().isBadRequest());
     }
 
     @Test
@@ -279,12 +284,7 @@ class MemberControllerTest extends RestDocsHelper {
                 .join(any());
 
         //then
-        mockMvc.perform(post(API_PREFIX + "/members/join")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isConflict())
-                .andDo(print());
+        회원가입(jsonRequest, status().isConflict());
     }
 
     @Test
@@ -300,11 +300,6 @@ class MemberControllerTest extends RestDocsHelper {
                 .join(any());
 
         //then
-        mockMvc.perform(post(API_PREFIX + "/members/join")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(status().isConflict())
-                .andDo(print());
+        회원가입(jsonRequest, status().isConflict());
     }
 }

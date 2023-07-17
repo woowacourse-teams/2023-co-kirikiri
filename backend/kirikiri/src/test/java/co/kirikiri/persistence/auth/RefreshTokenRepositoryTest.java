@@ -47,7 +47,7 @@ class RefreshTokenRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    void 정상적으로_토큰으로_취소되지_않은_리프레시_토큰을_찾아온다() {
+    void 정상적으로_취소되지_않은_리프레시_토큰을_찾아온다() {
         //given
         final EncryptedToken encryptedToken = new EncryptedToken("refreshToken");
         final LocalDateTime now = LocalDateTime.now();
@@ -56,10 +56,12 @@ class RefreshTokenRepositoryTest extends RepositoryTest {
         refreshTokenRepository.save(refreshToken);
 
         //when
-        final Optional<RefreshToken> result = refreshTokenRepository.findByTokenAndIsRevokedFalse(encryptedToken);
+        final Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByTokenAndIsRevokedFalse(encryptedToken);
 
         //then
-        assertThat(result).isNotEmpty();
-        assertThat(result.get().getToken()).usingRecursiveComparison().isEqualTo(encryptedToken);
+        assertThat(optionalRefreshToken).isNotEmpty();
+        final RefreshToken result = optionalRefreshToken.get();
+        assertThat(result.getToken()).usingRecursiveComparison()
+                .isEqualTo(encryptedToken);
     }
 }

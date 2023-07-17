@@ -2,21 +2,11 @@ package co.kirikiri.domain.member;
 
 import co.kirikiri.domain.BaseTimeEntity;
 import co.kirikiri.domain.member.vo.Nickname;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import java.time.LocalDate;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,13 +30,13 @@ public class MemberProfile extends BaseTimeEntity {
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-        orphanRemoval = true)
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     @JoinColumn(name = "member_profile_image_id")
     private MemberProfileImage image;
 
     public MemberProfile(final Gender gender, final LocalDate birthday, final Nickname nickname,
-        final String phoneNumber) {
+                         final String phoneNumber) {
         this.gender = gender;
         this.birthday = birthday;
         this.nickname = nickname;

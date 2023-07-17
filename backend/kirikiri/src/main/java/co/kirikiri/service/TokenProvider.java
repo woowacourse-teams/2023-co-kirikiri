@@ -9,9 +9,9 @@ public interface TokenProvider {
 
     String createRefreshToken(final String subject, final Map<String, Object> claims);
 
-    boolean validateToken(final String token);
+    boolean isValidToken(final String token);
 
     LocalDateTime findTokenExpiredAt(final String token);
 
-    String findSubject(String token);
+    String findSubject(final String token);
 }

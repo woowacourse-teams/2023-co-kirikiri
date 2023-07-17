@@ -104,7 +104,6 @@ class AuthServiceTest {
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
 
-
         //when
         //then
         assertThatThrownBy(() -> authService.login(loginRequest))
@@ -118,7 +117,7 @@ class AuthServiceTest {
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest("refreshToken");
         final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MAX, member);
-        given(tokenProvider.validateToken(any()))
+        given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
                 .willReturn(Optional.of(refreshToken));
@@ -128,7 +127,6 @@ class AuthServiceTest {
                 .willReturn(rawRefreshToken);
         given(tokenProvider.findTokenExpiredAt(anyString()))
                 .willReturn(LocalDateTime.now());
-
 
         //when
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
@@ -143,7 +141,7 @@ class AuthServiceTest {
         //given
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
-        given(tokenProvider.validateToken(any()))
+        given(tokenProvider.isValidToken(any()))
                 .willReturn(false);
 
         //when
@@ -157,7 +155,7 @@ class AuthServiceTest {
         //given
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
-        given(tokenProvider.validateToken(any()))
+        given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
                 .willReturn(Optional.empty());
@@ -174,7 +172,7 @@ class AuthServiceTest {
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
         final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MIN, member);
-        given(tokenProvider.validateToken(any()))
+        given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
                 .willReturn(Optional.of(refreshToken));

@@ -15,7 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class MemberIdentifierArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String TYPE = "Bearer ";
+    private static final String BEARER = "Bearer ";
 
     private final AuthService authService;
 
@@ -28,11 +28,15 @@ public class MemberIdentifierArgumentResolver implements HandlerMethodArgumentRe
     @Override
     public String resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer,
                                   final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) {
-        final String authorizationHeader = webRequest.getHeader((HttpHeaders.AUTHORIZATION));
-        if (authorizationHeader == null || !authorizationHeader.startsWith(TYPE)) {
-            throw new AuthenticationException("Authorization Header Is Empty.");
+        final String authorizationHeader = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        checkHeader(authorizationHeader);
+        final String token = authorizationHeader.substring(BEARER.length());
+        return authService.findIdentifierByToken(token);
+    }
+
+    private void checkHeader(final String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER)) {
+            throw new AuthenticationException("인증 헤더가 적절하지 않습니다.");
         }
-        final String token = authorizationHeader.substring(TYPE.length());
-        return authService.findMemberIdentifier(token);
     }
 }

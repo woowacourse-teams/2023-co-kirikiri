@@ -50,7 +50,7 @@ public class EncryptedPassword {
         }
     }
 
-    public boolean isNotMatch(final Password password) {
+    public boolean isMismatch(final Password password) {
         final String encrypted = encrypt(password, this.salt);
         return !encrypted.equals(this.password);
     }

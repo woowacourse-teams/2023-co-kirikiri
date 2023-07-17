@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public record MemberJoinRequest(
-
         @NotBlank(message = "아이디는 빈 값일 수 없습니다.")
         String identifier,
 

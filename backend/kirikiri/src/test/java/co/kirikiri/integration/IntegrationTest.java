@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -20,6 +21,9 @@ public class IntegrationTest {
     @Value("${server.servlet.contextPath}")
     protected String API_PREFIX;
 
+    @Autowired
+    protected ObjectMapper objectMapper;
+
     @LocalServerPort
     private int port;
 
@@ -27,8 +31,6 @@ public class IntegrationTest {
     void setUp() {
         RestAssured.port = port;
     }
-
-    protected ObjectMapper objectMapper = new ObjectMapper();
 
     protected <T> T jsonToClass(final String responseBody, final TypeReference<T> typeReference) throws JsonProcessingException, UnsupportedEncodingException {
         return objectMapper.readValue(responseBody, typeReference);

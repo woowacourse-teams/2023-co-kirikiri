@@ -12,36 +12,55 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.List;
 
+import static org.apache.http.HttpHeaders.RANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
 class AuthControllerTest extends RestDocsHelper {
 
+    private static final String IDENTIFIER = "identifier1";
+    private static final String PASSWORD = "password1!";
     @MockBean
     private AuthService authService;
 
     @Test
     void 정상적으로_로그인에_성공한다() throws Exception {
         //given
-        final LoginRequest request = new LoginRequest("identifier1", "password1!");
+        final LoginRequest request = new LoginRequest(IDENTIFIER, PASSWORD);
         final AuthenticationResponse expectedResponse = new AuthenticationResponse("refreshToken", "accessToken");
         final String jsonRequest = objectMapper.writeValueAsString(request);
         given(authService.login(request))
                 .willReturn(expectedResponse);
 
         //when
-        final MvcResult mvcResult = login(jsonRequest, status().isOk());
-
+        final MvcResult mvcResult = 로그인(jsonRequest, status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestFields(
+                                        fieldWithPath("identifier").description("사용자 아이디"),
+                                        fieldWithPath("password").description("사용자 비밀번호")
+                                                .attributes(new Attributes.Attribute(RANGE, "8-50"))
+                                ),
+                                responseFields(
+                                        fieldWithPath("refreshToken").description("리프레시 토큰"),
+                                        fieldWithPath("accessToken").description("액세스 토큰")
+                                )
+                        )
+                )
+                .andReturn();
         //then
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
@@ -53,11 +72,12 @@ class AuthControllerTest extends RestDocsHelper {
     @Test
     void 로그인_시_아이디에_빈값이_들어올_때_예외를_던진다() throws Exception {
         //given
-        final LoginRequest request = new LoginRequest("", "password1!");
+        final LoginRequest request = new LoginRequest("", PASSWORD);
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
-        final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
+        final MvcResult mvcResult = 로그인(jsonRequest, status().isBadRequest())
+                .andReturn();
 
         //then
         final ErrorResponse expectedResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
@@ -71,11 +91,12 @@ class AuthControllerTest extends RestDocsHelper {
     @Test
     void 로그인_시_비밀번호_빈값이_들어올_때_예외를_던진다() throws Exception {
         //given
-        final LoginRequest request = new LoginRequest("identifier1!", "");
+        final LoginRequest request = new LoginRequest(IDENTIFIER, "");
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
-        final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
+        final MvcResult mvcResult = 로그인(jsonRequest, status().isBadRequest())
+                .andReturn();
 
         //then
         final ErrorResponse expectedResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
@@ -93,7 +114,8 @@ class AuthControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
-        final MvcResult mvcResult = login(jsonRequest, status().isBadRequest());
+        final MvcResult mvcResult = 로그인(jsonRequest, status().isBadRequest())
+                .andReturn();
 
         //then
         final ErrorResponse passwordResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
@@ -109,14 +131,15 @@ class AuthControllerTest extends RestDocsHelper {
     @Test
     void 로그인_시_아이디에_해당하는_회원이_없을_때_예외를_던진다() throws Exception {
         //given
-        final LoginRequest request = new LoginRequest("identifier1", "password1!");
+        final LoginRequest request = new LoginRequest(IDENTIFIER, PASSWORD);
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new AuthenticationException("존재하지 않는 아이디입니다."))
                 .when(authService)
                 .login(request);
 
         //when
-        final MvcResult mvcResult = login(jsonRequest, status().isUnauthorized());
+        final MvcResult mvcResult = 로그인(jsonRequest, status().isUnauthorized())
+                .andReturn();
 
         //then
         final ErrorResponse expectedResponse = new ErrorResponse("존재하지 않는 아이디입니다.");
@@ -130,14 +153,15 @@ class AuthControllerTest extends RestDocsHelper {
     @Test
     void 로그인_시_비밀번호가_맞지_않을_때_예외를_던진다() throws Exception {
         //given
-        final LoginRequest request = new LoginRequest("identifier1", "password1!");
+        final LoginRequest request = new LoginRequest(IDENTIFIER, PASSWORD);
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new AuthenticationException("비밀번호가 일치하지 않습니다."))
                 .when(authService)
                 .login(request);
 
         //when
-        final MvcResult mvcResult = login(jsonRequest, status().isUnauthorized());
+        final MvcResult mvcResult = 로그인(jsonRequest, status().isUnauthorized())
+                .andReturn();
 
         //then
         final ErrorResponse expectedResponse = new ErrorResponse("비밀번호가 일치하지 않습니다.");
@@ -158,7 +182,19 @@ class AuthControllerTest extends RestDocsHelper {
                 .willReturn(expectedResponse);
 
         //when
-        final MvcResult mvcResult = reissue(jsonRequest, status().isOk());
+        final MvcResult mvcResult = 토큰_재발행(jsonRequest, status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestFields(
+                                        fieldWithPath("refreshToken").description("리프레시 토큰")
+                                ),
+                                responseFields(
+                                        fieldWithPath("refreshToken").description("리프레시 토큰"),
+                                        fieldWithPath("accessToken").description("액세스 토큰")
+                                )
+                        )
+                )
+                .andReturn();
 
         //then
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
@@ -174,7 +210,8 @@ class AuthControllerTest extends RestDocsHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
-        final MvcResult mvcResult = reissue(jsonRequest, status().isBadRequest());
+        final MvcResult mvcResult = 토큰_재발행(jsonRequest, status().isBadRequest())
+                .andReturn();
 
         //then
         final ErrorResponse errorResponse = new ErrorResponse("리프레시 토큰은 빈 값일 수 없습니다.");
@@ -194,7 +231,8 @@ class AuthControllerTest extends RestDocsHelper {
                 .reissueToken(request);
 
         //when
-        final MvcResult mvcResult = reissue(jsonRequest, status().isUnauthorized());
+        final MvcResult mvcResult = 토큰_재발행(jsonRequest, status().isUnauthorized())
+                .andReturn();
 
         //then
         final ErrorResponse errorResponse = new ErrorResponse("Invalid Token");
@@ -214,7 +252,8 @@ class AuthControllerTest extends RestDocsHelper {
                 .reissueToken(request);
 
         //when
-        final MvcResult mvcResult = reissue(jsonRequest, status().isUnauthorized());
+        final MvcResult mvcResult = 토큰_재발행(jsonRequest, status().isUnauthorized())
+                .andReturn();
 
         //then
         final ErrorResponse errorResponse = new ErrorResponse("Expired Token");
@@ -224,23 +263,21 @@ class AuthControllerTest extends RestDocsHelper {
                 .isEqualTo(errorResponse);
     }
 
-    private MvcResult login(final String jsonRequest, final ResultMatcher result) throws Exception {
+    private ResultActions 로그인(final String jsonRequest, final ResultMatcher result) throws Exception {
         return mockMvc.perform(post(API_PREFIX + "/auth/login")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .contextPath(API_PREFIX))
                 .andExpect(result)
-                .andDo(print())
-                .andReturn();
+                .andDo(print());
     }
 
-    private MvcResult reissue(final String jsonRequest, final ResultMatcher result) throws Exception {
+    private ResultActions 토큰_재발행(final String jsonRequest, final ResultMatcher result) throws Exception {
         return mockMvc.perform(post(API_PREFIX + "/auth/reissue")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .contextPath(API_PREFIX))
                 .andExpect(result)
-                .andDo(print())
-                .andReturn();
+                .andDo(print());
     }
 }
