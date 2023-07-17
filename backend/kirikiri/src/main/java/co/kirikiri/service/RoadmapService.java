@@ -10,7 +10,7 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.RoadmapCategoryRepository;
 import co.kirikiri.persistence.RoadmapRepository;
-import co.kirikiri.service.dto.roadmap.RoadmapNodesSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import co.kirikiri.service.mapper.RoadmapMapper;
@@ -50,9 +50,9 @@ public class RoadmapService {
         return roadmap;
     }
 
-    private RoadmapNodes makeRoadmapNodes(final List<RoadmapNodesSaveDto> roadmapNodesSaveDtos) {
+    private RoadmapNodes makeRoadmapNodes(final List<RoadmapNodeSaveDto> roadmapNodeSaveDtos) {
         return new RoadmapNodes(
-                roadmapNodesSaveDtos.stream()
+                roadmapNodeSaveDtos.stream()
                         .map(node -> new RoadmapNode(node.title(), node.content()))
                         .toList()
         );

@@ -12,7 +12,7 @@ import co.kirikiri.persistence.MemberRepository;
 import co.kirikiri.persistence.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapNodesSaveRequest;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -58,7 +58,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         @Test
         void 정상적으로_생성한다() {
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.CREATED);
         }
@@ -70,7 +70,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", 로드맵_본문,
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.CREATED);
@@ -83,7 +83,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(카테고리_id, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             final ErrorResponse 에러_메세지 = 로드맵_생성_응답.as(ErrorResponse.class);
@@ -100,7 +100,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(카테고리_id, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -114,7 +114,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, 로드맵_제목, "로드맵 소개글", "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -127,7 +127,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, 로드맵_제목, "로드맵 소개글", "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -141,7 +141,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", 로드맵_소개글, "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -154,7 +154,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", 로드맵_소개글, "로드맵 본문",
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -167,7 +167,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", 로드맵_본문,
-                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -180,7 +180,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                    로드맵_난이도, 30, List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    로드맵_난이도, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -194,7 +194,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                     RoadmapDifficultyType.DIFFICULT, 추천_소요_기간,
-                    List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -208,7 +208,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                     RoadmapDifficultyType.DIFFICULT, 추천_소요_기간,
-                    List.of(new RoadmapNodesSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                    List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
 
             // then
             응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
@@ -217,7 +217,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         @Test
         void 로드맵의_첫_단계를_입력하지_않으면_실패한다() {
             // given
-            final List<RoadmapNodesSaveRequest> 로드맵_노드들 = null;
+            final List<RoadmapNodeSaveRequest> 로드맵_노드들 = null;
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
@@ -232,7 +232,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         void 로드맵_노드의_제목의_길이가_1보다_작거나_40보다_크면_실패한다(final int 로드맵_노드_제목_길이) {
             // given
             final String 로드맵_노드_제목 = "a".repeat(로드맵_노드_제목_길이);
-            final List<RoadmapNodesSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodesSaveRequest(로드맵_노드_제목, "로드맵 1주차 내용"));
+            final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest(로드맵_노드_제목, "로드맵 1주차 내용"));
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
@@ -246,7 +246,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         void 로드맵_노드의_제목을_입력하지_않으면_실패한다() {
             // given
             final String 로드맵_노드_제목 = null;
-            final List<RoadmapNodesSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodesSaveRequest(로드맵_노드_제목, "로드맵 1주차 내용"));
+            final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest(로드맵_노드_제목, "로드맵 1주차 내용"));
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
@@ -261,7 +261,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         void 로드맵_노드의_설명의_길이가_1보다_작거나_200보다_크면_실패한다(final int 로드맵_노드_설명_길이) {
             // given
             final String 로드맵_노드_설명 = "a".repeat(로드맵_노드_설명_길이);
-            final List<RoadmapNodesSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodesSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
+            final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
@@ -275,7 +275,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         void 로드맵_노드의_설명을_입력하지_않으면_실패한다() {
             // given
             final String 로드맵_노드_설명 = null;
-            final List<RoadmapNodesSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodesSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
+            final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
 
             // when
             final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
@@ -288,7 +288,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         private ExtractableResponse<Response> 로드맵_생성_요청(final Long 카테고리_ID, final String 로드맵_제목, final String 로드맵_소개글,
                                                         final String 로드맵_본문, final RoadmapDifficultyType 로드맵_난이도,
                                                         final Integer 추천_소요_기간,
-                                                        final List<RoadmapNodesSaveRequest> 로드맵_노드들) {
+                                                        final List<RoadmapNodeSaveRequest> 로드맵_노드들) {
             final RoadmapSaveRequest request = new RoadmapSaveRequest(카테고리_ID, 로드맵_제목, 로드맵_소개글, 로드맵_본문, 로드맵_난이도,
                     추천_소요_기간, 로드맵_노드들);
 

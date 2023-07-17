@@ -1,6 +1,5 @@
 package co.kirikiri.service.dto.roadmap;
 
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import java.util.List;
 
 public record RoadmapSaveDto(
@@ -8,9 +7,9 @@ public record RoadmapSaveDto(
         String title,
         String introduction,
         String content,
-        RoadmapDifficulty difficulty,
+        RoadmapDifficultyType difficulty,
         Integer requiredPeriod,
-        List<RoadmapNodesSaveDto> roadmapNodes
+        List<RoadmapNodeSaveDto> roadmapNodes
 ) {
 
 }

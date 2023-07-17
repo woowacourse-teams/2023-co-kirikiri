@@ -18,7 +18,7 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.RoadmapCategoryRepository;
 import co.kirikiri.persistence.RoadmapRepository;
 import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapNodesSaveRequest;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import java.time.LocalDate;
 import java.util.List;
@@ -50,7 +50,7 @@ class RoadmapServiceTest {
         // given
         final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodesSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
         final Member creator = new Member(1L, "아이디", "비밀번호",
                 new MemberProfile(1L, Gender.FEMALE, LocalDate.of(1999, 6, 8), "닉네임", "01011112222",
                         new MemberProfileImage(1L, "파일명", "서버 파일 경로", ImageContentType.PNG)));
@@ -70,8 +70,8 @@ class RoadmapServiceTest {
         final String roadmapContent = "로드맵 본문";
         final RoadmapDifficultyType difficulty = RoadmapDifficultyType.DIFFICULT;
         final int requiredPeriod = 30;
-        final List<RoadmapNodesSaveRequest> roadmapNodes = List.of(
-                new RoadmapNodesSaveRequest("로드맵 노드1 제목", "로드맵 노드1 설명"));
+        final List<RoadmapNodeSaveRequest> roadmapNodes = List.of(
+                new RoadmapNodeSaveRequest("로드맵 노드1 제목", "로드맵 노드1 설명"));
         final Member creator = new Member(1L, "아이디", "비밀번호",
                 new MemberProfile(1L, Gender.FEMALE, LocalDate.of(1999, 6, 8), "닉네임", "01011112222",
                         new MemberProfileImage(1L, "파일명", "서버 파일 경로", ImageContentType.PNG)));
