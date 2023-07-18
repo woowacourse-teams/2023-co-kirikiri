@@ -309,6 +309,23 @@ public class RoadmapIntegrationTest extends IntegrationTest {
             assertThat(에러_메세지.get(0).message()).isEqualTo("로드맵 노드의 설명을 입력해주세요.");
         }
 
+        @Test
+        void 로드맵_노드를_입력하지_않으면_실패한다() {
+            // given
+            final String 로드맵_노드_설명 = null;
+            final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
+
+            // when
+            final ExtractableResponse<Response> 로드맵_생성_응답 = 로드맵_생성_요청(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+                    RoadmapDifficultyType.DIFFICULT, 30, null);
+
+            // then
+            final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답.as(new TypeRef<>() {
+            });
+            응답_상태_코드_검증(로드맵_생성_응답, HttpStatus.BAD_REQUEST);
+            assertThat(에러_메세지.get(0).message()).isEqualTo("로드맵의 첫 번째 단계를 입력해주세요.");
+        }
+
         private ExtractableResponse<Response> 로드맵_생성_요청(final Long 카테고리_ID, final String 로드맵_제목, final String 로드맵_소개글,
                                                         final String 로드맵_본문, final RoadmapDifficultyType 로드맵_난이도,
                                                         final Integer 추천_소요_기간,
