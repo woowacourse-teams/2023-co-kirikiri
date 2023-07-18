@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-export const useSwitch = (initState?: boolean) => {
-  const [isSwitchOn, setIsSwitchOn] = useState(Boolean(initState));
+export const useSwitch = (initState = false) => {
+  const [isSwitchOn, setIsSwitchOn] = useState(initState);
 
   const turnSwitchOn = () => {
     setIsSwitchOn(true);
