@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -50,12 +51,29 @@ class MemberControllerTest extends RestDocsHelper {
                 .andDo(
                         documentationResultHandler.document(
                                 requestFields(
-                                        fieldWithPath("identifier").description("회원 아이디"),
-                                        fieldWithPath("password").description("회원 비밀번호"),
-                                        fieldWithPath("nickname").description("회원 닉네임"),
-                                        fieldWithPath("phoneNumber").description("회원 휴대폰 번호(010-xxxx-xxxx)"),
-                                        fieldWithPath("genderType").description("회원 성별(MALE, FEMALE)"),
-                                        fieldWithPath("birthday").description("회원 생년월일(yyMMdd)")
+                                        fieldWithPath("identifier").description("사용자 아이디")
+                                                .attributes(new Attributes.Attribute(RESTRICT,
+                                                        "- 길이 : 4 ~ 20  +" + "\n" +
+                                                                "- 영어 소문자, 숫자 가능")),
+                                        fieldWithPath("password").description("사용자 비밀번호")
+                                                .attributes(new Attributes.Attribute(RESTRICT,
+                                                        "- 길이 : 8 ~ 15  +" + "\n" +
+                                                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
+                                                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능")),
+                                        fieldWithPath("nickname").description("회원 닉네임")
+                                                .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 2 ~ 8")),
+                                        fieldWithPath("phoneNumber").description("회원 휴대폰 번호")
+                                                .attributes(new Attributes.Attribute(RESTRICT,
+                                                        "- 길이 : 13  +" + "\n" +
+                                                                "- 번호 형식 : 010-xxxx-xxxx")),
+                                        fieldWithPath("genderType").description("회원 성별")
+                                                .attributes(new Attributes.Attribute(RESTRICT,
+                                                        "- 길이 : 4 , 6  +" + "\n" +
+                                                                "- MALE, FEMALE")),
+                                        fieldWithPath("birthday").description("회원 생년월일")
+                                                .attributes(new Attributes.Attribute(RESTRICT,
+                                                        "- 길이 : 6  +" + "\n" +
+                                                                "- yyMMdd"))
                                 )
                         )
                 );

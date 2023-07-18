@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.List;
 
-import static org.apache.http.HttpHeaders.RANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
@@ -50,9 +49,15 @@ class AuthControllerTest extends RestDocsHelper {
                 .andDo(
                         documentationResultHandler.document(
                                 requestFields(
-                                        fieldWithPath("identifier").description("사용자 아이디"),
+                                        fieldWithPath("identifier").description("사용자 아이디")
+                                                .attributes(new Attributes.Attribute(RESTRICT,
+                                                        "- 길이 : 4 ~ 20  +" + "\n" +
+                                                                "- 영어 소문자, 숫자 가능")),
                                         fieldWithPath("password").description("사용자 비밀번호")
-                                                .attributes(new Attributes.Attribute(RANGE, "8-50"))
+                                                .attributes(new Attributes.Attribute(RESTRICT,
+                                                        "- 길이 : 8 ~ 15  +" + "\n" +
+                                                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
+                                                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능"))
                                 ),
                                 responseFields(
                                         fieldWithPath("refreshToken").description("리프레시 토큰"),
@@ -61,6 +66,7 @@ class AuthControllerTest extends RestDocsHelper {
                         )
                 )
                 .andReturn();
+
         //then
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
