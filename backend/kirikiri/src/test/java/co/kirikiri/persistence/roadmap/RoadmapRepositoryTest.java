@@ -1,6 +1,7 @@
 package co.kirikiri.persistence.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.ImageContentType;
@@ -40,6 +41,27 @@ class RoadmapRepositoryTest extends RepositoryTest {
 
         assertThat(expectedRoadmap).usingRecursiveComparison()
                 .isEqualTo(savedRoadmap);
+    }
+
+    @Test
+    void 로드맵의_가장_최근_컨텐츠를_조회한다() {
+        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
+        roadmapRepository.flush();
+        Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
+        final RoadmapContent oldRoadmapContent = expectedRoadmap.getRecentContent().get();
+
+        final RoadmapContent newRoadmapContent = new RoadmapContent(로드맵_노드들을_생성한다());
+        savedRoadmap.addContent(newRoadmapContent);
+        roadmapRepository.flush();
+        expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
+        final RoadmapContent expectedRoadmapContent = expectedRoadmap.getRecentContent().get();
+
+        assertAll(
+                () -> assertThat(oldRoadmapContent.getCreatedAt())
+                        .isBefore(expectedRoadmapContent.getCreatedAt()),
+                () -> assertThat(expectedRoadmapContent).usingRecursiveComparison()
+                        .isEqualTo(newRoadmapContent)
+        );
     }
 
     private Roadmap 로드맵을_생성한다() {

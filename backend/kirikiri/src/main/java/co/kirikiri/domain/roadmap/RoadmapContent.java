@@ -37,7 +37,7 @@ public class RoadmapContent extends BaseTimeEntity {
     private List<RoadmapNode> nodes;
 
     public RoadmapContent(final List<RoadmapNode> nodes) {
-        this(null, nodes);
+        this(null, null, nodes);
     }
 
     public RoadmapContent(final String content, final List<RoadmapNode> nodes) {
@@ -52,17 +52,25 @@ public class RoadmapContent extends BaseTimeEntity {
 
     public void setRoadmap(final Roadmap roadmap) {
         if (Objects.nonNull(this.roadmap)) {
-            this.roadmap.getContents().remove(this);
+            this.roadmap.removeContent(this);
         }
         this.roadmap = roadmap;
-        if (!roadmap.getContents().contains(this)) {
-            roadmap.getContents().add(this);
+        if (!roadmap.hasContent(this)) {
+            roadmap.addContent(this);
         }
     }
 
     public void setNodes(final List<RoadmapNode> nodes) {
         this.nodes = nodes;
         nodes.forEach(node -> node.setRoadmapContent(this));
+    }
+
+    public void removeNode(final RoadmapNode roadmapNode) {
+        nodes.remove(roadmapNode);
+    }
+
+    public boolean isSameRoadmap(final Roadmap roadmap) {
+        return Objects.equals(this.roadmap, roadmap);
     }
 }
 

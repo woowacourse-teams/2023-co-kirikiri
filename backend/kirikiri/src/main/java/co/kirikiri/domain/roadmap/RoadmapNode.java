@@ -52,7 +52,7 @@ public class RoadmapNode {
 
     public void setRoadmapContent(final RoadmapContent roadmapContent) {
         if (Objects.nonNull(this.roadmapContent)) {
-            roadmapContent.getNodes().remove(this);
+            roadmapContent.removeNode(this);
         }
         this.roadmapContent = roadmapContent;
     }

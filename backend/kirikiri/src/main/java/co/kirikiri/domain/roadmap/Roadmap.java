@@ -1,8 +1,8 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.member.Member;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,9 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,9 +51,8 @@ public class Roadmap {
     @JoinColumn(name = "category_id", nullable = false)
     private RoadmapCategory category;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmap")
-    @Column(nullable = false)
-    private List<RoadmapContent> contents = new ArrayList<>();
+    @Embedded
+    private RoadmapContents contents;
 
     public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
                    final RoadmapDifficulty difficulty, final RoadmapStatus status,
@@ -74,19 +71,28 @@ public class Roadmap {
         this.status = status;
         this.creator = creator;
         this.category = category;
+        this.contents = new RoadmapContents();
     }
 
     public void addContent(final RoadmapContent content) {
         contents.add(content);
-        if (content.getRoadmap() != this) {
+        if (!content.isSameRoadmap(this)) {
             content.setRoadmap(this);
         }
     }
 
-    public RoadmapContent getRecentContent() {
+    public boolean hasContent(final RoadmapContent content) {
+        return contents.hasContent(content);
+    }
+
+    public void removeContent(final RoadmapContent content) {
+        contents.removeContent(content);
+    }
+
+    public Optional<RoadmapContent> getRecentContent() {
         if (contents.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
-        return contents.get(contents.size() - 1);
+        return Optional.of(contents.getRecentContent());
     }
 }
