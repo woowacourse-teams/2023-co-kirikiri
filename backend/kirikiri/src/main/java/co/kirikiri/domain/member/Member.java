@@ -1,7 +1,6 @@
 package co.kirikiri.domain.member;
 
 import co.kirikiri.domain.BaseTimeEntity;
-import co.kirikiri.domain.member.vo.EncryptedPassword;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Password;
 import jakarta.persistence.*;

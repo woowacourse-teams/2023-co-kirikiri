@@ -1,6 +1,5 @@
 package co.kirikiri.domain.auth;
 
-import co.kirikiri.domain.auth.vo.EncryptedToken;
 import co.kirikiri.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

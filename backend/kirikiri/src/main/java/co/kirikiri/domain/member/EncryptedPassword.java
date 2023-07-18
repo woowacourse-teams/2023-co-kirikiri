@@ -1,5 +1,6 @@
-package co.kirikiri.domain.member.vo;
+package co.kirikiri.domain.member;
 
+import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.ServerException;
 import jakarta.persistence.Column;
 import lombok.AccessLevel;

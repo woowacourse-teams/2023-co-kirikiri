@@ -1,7 +1,9 @@
 package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.BadRequestException;
+import lombok.Getter;
 
+@Getter
 public class Password {
 
     private static final int MIN_LENGTH = 8;

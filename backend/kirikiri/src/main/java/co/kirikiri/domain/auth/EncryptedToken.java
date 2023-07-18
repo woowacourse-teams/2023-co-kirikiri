@@ -1,4 +1,4 @@
-package co.kirikiri.domain.auth.vo;
+package co.kirikiri.domain.auth;
 
 import co.kirikiri.exception.ServerException;
 import jakarta.persistence.Column;

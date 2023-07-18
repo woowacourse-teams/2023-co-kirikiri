@@ -1,7 +1,7 @@
 package co.kirikiri.persistence.auth;
 
+import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
-import co.kirikiri.domain.auth.vo.EncryptedToken;
 
 import java.util.Optional;
 

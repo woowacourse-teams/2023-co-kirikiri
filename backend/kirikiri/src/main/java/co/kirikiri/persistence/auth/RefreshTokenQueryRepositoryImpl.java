@@ -1,8 +1,8 @@
 package co.kirikiri.persistence.auth;
 
+import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.QRefreshToken;
 import co.kirikiri.domain.auth.RefreshToken;
-import co.kirikiri.domain.auth.vo.EncryptedToken;
 import co.kirikiri.domain.member.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

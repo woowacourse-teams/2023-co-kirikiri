@@ -1,5 +1,6 @@
 package co.kirikiri.domain.auth.vo;
 
+import co.kirikiri.domain.auth.EncryptedToken;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

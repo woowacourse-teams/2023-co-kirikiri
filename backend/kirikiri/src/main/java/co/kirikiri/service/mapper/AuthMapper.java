@@ -1,6 +1,6 @@
 package co.kirikiri.service.mapper;
 
-import co.kirikiri.domain.auth.vo.EncryptedToken;
+import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.service.dto.auth.LoginDto;

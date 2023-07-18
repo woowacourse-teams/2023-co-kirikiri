@@ -1,7 +1,7 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
-import co.kirikiri.domain.auth.vo.EncryptedToken;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.AuthenticationException;
