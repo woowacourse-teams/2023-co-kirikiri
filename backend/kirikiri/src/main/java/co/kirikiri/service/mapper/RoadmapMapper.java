@@ -8,17 +8,12 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
-import java.util.List;
+import co.kirikiri.service.dto.roadmap.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -64,7 +59,7 @@ public final class RoadmapMapper {
 
         final Member creator = roadmap.getCreator();
         final MemberResponse creatorResponse = new MemberResponse(creator.getId(),
-                creator.getMemberProfile().getNickname());
+                creator.getNickname().getValue());
 
         return new RoadmapResponse(roadmap.getId(), roadmap.getTitle(), roadmap.getIntroduction(),
                 roadmap.getDifficulty().name(), roadmap.getRequiredPeriod(),

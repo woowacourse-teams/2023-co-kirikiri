@@ -2,9 +2,10 @@ package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Identifier {
@@ -50,5 +51,9 @@ public class Identifier {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    public String getValue() {
+        return value;
     }
 }

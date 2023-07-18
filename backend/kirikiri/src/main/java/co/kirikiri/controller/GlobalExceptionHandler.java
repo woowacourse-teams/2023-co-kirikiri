@@ -1,11 +1,7 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.exception.AuthenticationException;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ConflictException;
-import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.exception.*;
 import co.kirikiri.service.dto.ErrorResponse;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -60,6 +58,13 @@ public class GlobalExceptionHandler {
         log.warn(exception.getMessage(), exception);
         final List<ErrorResponse> errorResponses = makeErrorResponses(exception);
         return ResponseEntity.badRequest().body(errorResponses);
+    }
+
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<ErrorResponse> handleServerException(final ServerException exception) {
+        log.error(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     private List<ErrorResponse> makeErrorResponses(final MethodArgumentNotValidException exception) {

@@ -18,7 +18,7 @@ endif::[]
 
 === *1-1* 성공
 
-operation::member-controller-test/정상적으로_회원가입에_성공한다[snippets='http-request,http-response']
+operation::member-controller-test/정상적으로_회원가입에_성공한다[snippets='http-request,http-response,request-fields']
 
 === *1-2* 실패 - 아이디가 형식에 맞지 않을 때
 
@@ -43,3 +43,23 @@ operation::member-controller-test/회원가입_시_중복된_닉네임일_때[sn
 === *1-7* 실패 - 중복된 닉네임일 때
 
 operation::member-controller-test/회원가입_시_중복된_아이디일_때[snippets='http-request,http-response']
+
+=== *1-8* 실패 - 회원가입 시 아이디에 빈값이 들어올 때
+
+operation::member-controller-test/회원가입_시_아이디에_빈값이_들어올_때[snippets='http-request,http-response']
+
+=== *1-9* 실패 - 회원가입 시 비밀번호에 빈값이 들어올 때
+
+operation::member-controller-test/회원가입_시_비밀번호에_빈값이_들어올_때[snippets='http-request,http-response']
+
+=== *1-10* 실패 - 회원가입 할 때 닉네임에 빈값이 들어올 때
+
+operation::member-controller-test/회원가입_시_닉네임에_빈값이_들어올_때[snippets='http-request,http-response']
+
+=== *1-11* 실패 - 회원가입 시 전화번호에 빈값이 들어올 때
+
+operation::member-controller-test/회원가입_시_전화번호에_빈값이_들어올_때[snippets='http-request,http-response']
+
+=== *1-12* 실패 - 회원가입 시 아이디 비밀번호 닉네임 전화번호 필드에 빈값이 들어올 때
+
+operation::member-controller-test/회원가입_시_아이디_비밀번호_닉네임_전화번호_필드에_빈값이_들어올_때[snippets='http-request,http-response']

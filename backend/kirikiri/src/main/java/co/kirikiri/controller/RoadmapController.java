@@ -1,6 +1,6 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
@@ -9,17 +9,12 @@ import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import jakarta.validation.Valid;
-import java.net.URI;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/roadmaps")
@@ -30,9 +25,9 @@ public class RoadmapController {
 
     // TODO: Member 직접 받지 않도록 수정
     @PostMapping
-    public ResponseEntity<Void> create(@AuthPrincipal final Member member,
+    public ResponseEntity<Void> create(@MemberIdentifier final String identifier,
                                        @RequestBody @Valid final RoadmapSaveRequest request) {
-        final Long id = roadmapService.create(request, member);
+        final Long id = roadmapService.create(request, identifier);
 
         return ResponseEntity.created(URI.create("/roadmaps/" + id)).build();
     }

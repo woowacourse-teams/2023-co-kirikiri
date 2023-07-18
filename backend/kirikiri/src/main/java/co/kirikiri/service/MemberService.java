@@ -1,8 +1,8 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.EncryptedPassword;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
@@ -29,7 +29,7 @@ public class MemberService {
         checkNicknameDuplicate(memberJoinDto.nickname());
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.birthday(),
-            memberJoinDto.nickname(), memberJoinDto.phoneNumber());
+                memberJoinDto.nickname(), memberJoinDto.phoneNumber());
         final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberProfile);
         memberRepository.save(member);
     }

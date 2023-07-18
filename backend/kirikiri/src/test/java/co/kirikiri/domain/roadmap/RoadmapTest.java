@@ -1,26 +1,25 @@
 package co.kirikiri.domain.roadmap;
 
-import static co.kirikiri.domain.roadmap.RoadmapDifficulty.DIFFICULT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
-import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.MemberProfileImage;
-import co.kirikiri.domain.member.vo.EncryptedPassword;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.BadRequestException;
-import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static co.kirikiri.domain.roadmap.RoadmapDifficulty.DIFFICULT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class RoadmapTest {
 
@@ -83,12 +82,10 @@ class RoadmapTest {
         }
 
         private Member 크리에이터를_생성한다() {
-            final MemberProfileImage profileImage = new MemberProfileImage(1L, "originalFileName", "serverFilePath",
-                    ImageContentType.JPEG);
-            final MemberProfile profile = new MemberProfile(1L, Gender.FEMALE, LocalDate.of(1999, 6, 8),
-                    new Nickname("nickname"), "01011112222", profileImage);
+            final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8),
+                    new Nickname("nickname"), "01011112222");
 
-            return new Member(1L, new Identifier("creator"), new EncryptedPassword(new Password("password1")), profile);
+            return new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")), profile);
         }
 
         private RoadmapCategory 카테고리를_생성한다() {

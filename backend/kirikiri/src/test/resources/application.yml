@@ -22,3 +22,8 @@ logging:
 server:
   servlet:
     contextPath: /api
+
+jwt:
+  secret-key: 9zrOjg1kDd2gUp6KBbElGJj5GHP5BnneDs3nXEhdztHAUjKBX7l69JXUErBovPLn7TVWV0UCfejYZyxIjIMC5KPfSvBzo9C1gJ2
+  access-token-validity-in-seconds: 18400
+  refresh-token-validity-in-seconds: 86400

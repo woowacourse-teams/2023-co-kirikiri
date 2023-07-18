@@ -1,32 +1,25 @@
 package co.kirikiri.persistence.roadmap;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
+import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.MemberProfileImage;
-import co.kirikiri.domain.member.vo.EncryptedPassword;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.RoadmapStatus;
+import co.kirikiri.domain.roadmap.*;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoadmapRepositoryTest extends RepositoryTest {
 
@@ -133,10 +126,8 @@ class RoadmapRepositoryTest extends RepositoryTest {
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfileImage memberProfileImage = new MemberProfileImage("member-profile.png",
-                "member-profile-save-path", ImageContentType.PNG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname("코끼리"), "010-1234-5678", memberProfileImage);
+                new Nickname("코끼리"), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
         return memberRepository.save(creator);
@@ -173,4 +164,3 @@ class RoadmapRepositoryTest extends RepositoryTest {
                 RoadmapStatus.DELETED, creator, category);
     }
 }
-

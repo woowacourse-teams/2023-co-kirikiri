@@ -1,40 +1,21 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-
+import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.MemberProfileImage;
-import co.kirikiri.domain.member.vo.EncryptedPassword;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapStatus;
+import co.kirikiri.domain.roadmap.*;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import co.kirikiri.service.dto.roadmap.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,14 +24,30 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class RoadmapServiceTest {
+
+    private final Member member = new Member(1L, new Identifier("identifier1"), new EncryptedPassword(new Password("password1!")),
+            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), new Nickname("닉네임"), "010-1234-5678"));
 
     @Mock
     private RoadmapRepository roadmapRepository;
 
     @Mock
     private RoadmapCategoryRepository roadmapCategoryRepository;
+
+    @Mock
+    private MemberRepository memberRepository;
 
     @InjectMocks
     private RoadmapService roadmapService;
@@ -61,13 +58,14 @@ class RoadmapServiceTest {
         final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
-        final Member creator = 크리에이터를_생성한다();
 
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
         given(roadmapCategoryRepository.findById(any()))
                 .willReturn(Optional.empty());
 
         // expect
-        assertThatThrownBy(() -> roadmapService.create(request, creator))
+        assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -80,7 +78,6 @@ class RoadmapServiceTest {
         final RoadmapDifficultyType difficulty = RoadmapDifficultyType.DIFFICULT;
         final int requiredPeriod = 30;
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");
-        final Member creator = 크리에이터를_생성한다();
 
         final List<RoadmapNodeSaveRequest> roadmapNodes = List.of(
                 new RoadmapNodeSaveRequest("로드맵 노드1 제목", "로드맵 노드1 설명"));
@@ -92,10 +89,12 @@ class RoadmapServiceTest {
         given(roadmapRepository.save(any()))
                 .willReturn(new Roadmap(1L, roadmapTitle, roadmapIntroduction, requiredPeriod,
                         RoadmapDifficulty.valueOf(difficulty.name()),
-                        RoadmapStatus.CREATED, creator, category, any()));
+                        RoadmapStatus.CREATED, member, category, any()));
+        when(memberRepository.findByIdentifier(member.getIdentifier()))
+                .thenReturn(Optional.of(member));
 
         // expect
-        assertThat(roadmapService.create(request, creator)).isEqualTo(1L);
+        assertThat(roadmapService.create(request, "identifier1")).isEqualTo(1L);
     }
 
     @Test
@@ -130,14 +129,13 @@ class RoadmapServiceTest {
 
         // when
         final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(
-                categoryId,
-                filterType, pageRequest);
+                categoryId, filterType, pageRequest);
 
         // then
         final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(1L, "첫 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1, "여행"));
+                new MemberResponse(member.getId(), member.getNickname().getValue()), new RoadmapCategoryResponse(1, "여행"));
         final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(1L, "두 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1, "여행"));
+                new MemberResponse(member.getId(), member.getNickname().getValue()), new RoadmapCategoryResponse(1, "여행"));
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
                 List.of(firstRoadmapResponse, secondRoadmapResponse));
 
@@ -165,9 +163,9 @@ class RoadmapServiceTest {
 
         // then
         final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(1L, "첫 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1, "여행"));
+                new MemberResponse(member.getId(), member.getNickname().getValue()), new RoadmapCategoryResponse(1, "여행"));
         final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(1L, "두 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1, "여행"));
+                new MemberResponse(member.getId(), member.getNickname().getValue()), new RoadmapCategoryResponse(1, "여행"));
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
                 List.of(firstRoadmapResponse, secondRoadmapResponse));
 
@@ -198,7 +196,7 @@ class RoadmapServiceTest {
 
         // then
         final RoadmapResponse roadmapResponse = new RoadmapResponse(1L, "첫 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1, "여행"));
+                new MemberResponse(member.getId(), member.getNickname().getValue()), new RoadmapCategoryResponse(1, "여행"));
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1, List.of(roadmapResponse));
 
         assertThat(roadmapPageResponses)
@@ -223,24 +221,11 @@ class RoadmapServiceTest {
                 .isEqualTo(expected);
     }
 
-    private Member 크리에이터를_생성한다() {
-        return new Member(1L, new Identifier("identifier"), new EncryptedPassword(new Password("password1")),
-                new MemberProfile(1L, Gender.FEMALE, LocalDate.of(1999, 6, 8), new Nickname("닉네임"), "01011112222",
-                        new MemberProfileImage(1L, "파일명", "서버 파일 경로", ImageContentType.PNG)));
-    }
-
     private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {
-        final MemberProfileImage memberProfileImage = new MemberProfileImage("member-profile.png",
-                "member-profile-save-path", ImageContentType.PNG);
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname("코끼리"), "010-1234-5678", memberProfileImage);
-        final Member creator = new Member(1L, new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
-
         final RoadmapContent roadmapContent = new RoadmapContent(1L, "로드맵 내용1");
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");
         final Roadmap roadmap = new Roadmap(1L, roadmapTitle, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
-                RoadmapStatus.CREATED, creator, category);
+                RoadmapStatus.CREATED, member, category);
         roadmap.addContent(roadmapContent);
 
         return roadmap;
