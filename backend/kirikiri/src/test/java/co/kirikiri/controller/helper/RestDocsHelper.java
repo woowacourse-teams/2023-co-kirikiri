@@ -2,7 +2,10 @@ package co.kirikiri.controller.helper;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.UnsupportedEncodingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -46,5 +50,10 @@ public class RestDocsHelper {
                 .alwaysDo(documentationResultHandler)
                 .apply(documentationConfiguration(restDocumentationContextProvider))
                 .build();
+    }
+
+    protected <T> T jsonToClass(final MvcResult mvcResult, final TypeReference<T> typeReference)
+            throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), typeReference);
     }
 }

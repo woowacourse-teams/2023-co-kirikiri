@@ -19,13 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DatabaseCleaner implements InitializingBean {
 
-    private static final List<String> generatedTableNames = List.of("MEMBER", "MEMBER_PROFILE",
-            "MEMBER_PROFILE_IMAGE", "ROADMAP", "ROADMAP_CATEGORY", "ROADMAP_CONTENT", "ROADMAP_NODE",
-            "ROADMAP_NODE_IMAGE");
+    private static final List<String> SYSTEM_TABLE_NAMES = List.of("CONSTANTS", "ENUM_VALUES", "INDEXES",
+            "INDEX_COLUMNS", "INFORMATION_SCHEMA_CATALOG_NAME", "IN_DOUBT", "LOCKS",
+            "QUERY_STATISTICS", "RIGHTS", "ROLES", "SESSIONS", "SESSION_STATE", "SETTINGS", "SYNONYMS", "USERS");
 
     @PersistenceContext
     private EntityManager entityManager;
-
     private List<String> tableNames;
 
     @Override
@@ -41,10 +40,13 @@ public class DatabaseCleaner implements InitializingBean {
                 .getTables(conn.getCatalog(), null, "%", new String[]{"TABLE"});
 
         while (tables.next()) {
-            tableNames.add(tables.getString("table_name"));
+            final String tableName = tables.getString("TABLE_NAME");
+            if (!SYSTEM_TABLE_NAMES.contains(tableName)) {
+                tableNames.add(tableName);
+            }
         }
 
-        this.tableNames = generatedTableNames;
+        this.tableNames = tableNames;
     }
 
     public void execute() {
