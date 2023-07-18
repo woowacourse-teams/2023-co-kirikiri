@@ -2,8 +2,11 @@ package co.kirikiri.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.RestDocsHelper;
@@ -19,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @WebMvcTest(value = RoadmapController.class)
@@ -265,21 +269,34 @@ class RoadmapControllerTest extends RestDocsHelper {
         로드맵_생성_요청(jsonRequest, status().isBadRequest());
     }
 
-    @Test
-    void 로드맵_생성시_로드맵_노드를_입력하지_않으면_예외가_발생한다() throws Exception {
-        // given
-        final List<RoadmapNodeSaveRequest> roadmapNodes = null;
-        final RoadmapSaveRequest request = makeRoadmapSaveRequest(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, roadmapNodes);
-        final String jsonRequest = objectMapper.writeValueAsString(request);
-
     private void 로드맵_생성_요청(final String jsonRequest, final ResultMatcher httpStatus) throws Exception {
         mockMvc.perform(post(API_PREFIX + "/roadmaps")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(jsonRequest)
                         .contextPath(API_PREFIX))
                 .andExpect(httpStatus)
-                .andDo(print());
+                .andDo(documentationResultHandler.document(
+                        requestFields(
+                                fieldWithPath("categoryId").description("로드맵 카테고리 아이디"),
+                                fieldWithPath("title").description("로드맵 제목")
+                                        .attributes(new Attributes.Attribute("range", "1-40")),
+                                fieldWithPath("introduction").description("로드맵 소개글")
+                                        .attributes(new Attributes.Attribute("range", "1-150")),
+                                fieldWithPath("content").description("로드맵 본문 내용").optional()
+                                        .attributes(new Attributes.Attribute("range", "0-150")),
+                                fieldWithPath("difficulty").description(
+                                        "로드맵 난이도(VERY_EASY, EASY, NORMAL, DIFFICULT, VERY_DIFFICULT)"),
+                                fieldWithPath("requiredPeriod").description("로드맵 전체 추천 소요 기간")
+                                        .attributes(new Attributes.Attribute("range", "0-1000")),
+                                fieldWithPath("roadmapNodes").description("로드맵 노드들"),
+                                fieldWithPath("roadmapNodes[0].title").description("로드맵 노드의 제목")
+                                        .attributes(new Attributes.Attribute("range", "1-40")),
+                                fieldWithPath("roadmapNodes[0].content").description("로드맵 노드의 설명")
+                                        .attributes(new Attributes.Attribute("range", "1-200"))
+                        ),
+                        responseHeaders(
+                                headerWithName("Location").description("로드맵 아이디").optional()
+                        )));
     }
 
     private RoadmapSaveRequest makeRoadmapSaveRequest(final Long categoryId, final String roadmapTitle,

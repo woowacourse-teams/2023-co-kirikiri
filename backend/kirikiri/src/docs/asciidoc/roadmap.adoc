@@ -17,7 +17,7 @@ endif::[]
 
 == 1. Success
 
-operation::roadmap-controller-test/정상적으로_로드맵을_생성한다[snippets='http-request,http-response']
+operation::roadmap-controller-test/정상적으로_로드맵을_생성한다[snippets='http-request,http-response,request-fields,response-headers']
 
 == 2. Fail
 
@@ -80,7 +80,3 @@ operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설�
 === 2.15 로드맵 노드의 설명을 입력하지 않은 경우
 
 operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설명을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
-
-=== 2.16 로드맵 노드를 입력하지 않은 경우
-
-operation::roadmap-controller-test/로드맵_생성시_로드맵_노드를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
