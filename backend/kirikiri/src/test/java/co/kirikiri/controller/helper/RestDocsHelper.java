@@ -35,16 +35,16 @@ public class RestDocsHelper {
     void setUp(final WebApplicationContext webApplicationContext,
                final RestDocumentationContextProvider restDocumentationContextProvider) {
         this.documentationResultHandler = MockMvcRestDocumentation.document(
-            "{class-name}/{method-name}",
-            Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-            Preprocessors.preprocessResponse(Preprocessors.prettyPrint()));
+                "{class-name}/{method-name}",
+                Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+                Preprocessors.preprocessResponse(Preprocessors.prettyPrint()));
 
         this.mockMvc = MockMvcBuilders
-            .webAppContextSetup(webApplicationContext)
-            .addFilter(new CharacterEncodingFilter("UTF-8", true))
-            .alwaysDo(MockMvcResultHandlers.print())
-            .alwaysDo(documentationResultHandler)
-            .apply(documentationConfiguration(restDocumentationContextProvider))
-            .build();
+                .webAppContextSetup(webApplicationContext)
+                .addFilter(new CharacterEncodingFilter("UTF-8", true))
+                .alwaysDo(MockMvcResultHandlers.print())
+                .alwaysDo(documentationResultHandler)
+                .apply(documentationConfiguration(restDocumentationContextProvider))
+                .build();
     }
 }

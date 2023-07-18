@@ -1,7 +1,9 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,14 +11,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapContent extends BaseTimeEntity {
+
+    private static final int CONTENT_MAX_LENGTH = 150;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,27 +31,49 @@ public class RoadmapContent extends BaseTimeEntity {
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "roadmapContent")
-    private List<RoadmapNode> nodes;
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
 
-    public RoadmapContent(final Long id, final String content, final List<RoadmapNode> nodes) {
-        this.id = id;
+    public RoadmapContent(final String content) {
+        validate(content);
         this.content = content;
-        this.nodes = nodes;
     }
 
-    public void updateRoadmap(final Roadmap roadmap) {
-        if (this.roadmap != null) {
-            this.roadmap.removeContent(this);
+    public RoadmapContent(final Long id, final String content) {
+        this.id = id;
+        this.content = content;
+    }
+
+    private void validate(final String content) {
+        if (content == null) {
+            return;
         }
-        this.roadmap = roadmap;
-        if (roadmap.notContainsContent(this)) {
-            roadmap.addContent(this);
+        validateContentLength(content);
+    }
+
+    private void validateContentLength(final String content) {
+        if (content.length() > CONTENT_MAX_LENGTH) {
+            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자 입니다.", CONTENT_MAX_LENGTH));
         }
+    }
+
+    public void addNodes(final RoadmapNodes nodes) {
+        this.nodes.addAll(nodes);
+        nodes.updateAllRoadmapContent(this);
     }
 
     public boolean isNotSameRoadmap(final Roadmap roadmap) {
-        return this.roadmap != null && !this.roadmap.equals(roadmap);
+        return this.roadmap == null || !this.roadmap.equals(roadmap);
+    }
+
+    public void updateRoadmap(final Roadmap roadmap) {
+        if (this.roadmap == null) {
+            this.roadmap = roadmap;
+        }
+    }
+
+    public RoadmapNodes getNodes() {
+        return nodes;
     }
 
     public Roadmap getRoadmap() {

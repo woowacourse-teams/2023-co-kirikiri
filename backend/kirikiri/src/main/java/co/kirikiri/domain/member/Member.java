@@ -30,8 +30,8 @@ public class Member extends BaseTimeEntity {
     private EncryptedPassword password;
 
     @OneToOne(fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-        orphanRemoval = true)
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     @JoinColumn(name = "member_profile_id", nullable = false, unique = true)
     private MemberProfile memberProfile;
 

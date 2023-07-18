@@ -19,13 +19,6 @@ public class GlobalExceptionHandler {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequestException(final BadRequestException exception) {
-        log.warn(exception.getMessage(), exception);
-        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
-
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(final AuthenticationException exception) {
         log.warn(exception.getMessage(), exception);
@@ -40,32 +33,39 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ErrorResponse>> handleMethodArgumentNotValidException(
-        final MethodArgumentNotValidException exception) {
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(final BadRequestException exception) {
         log.warn(exception.getMessage(), exception);
-        final List<ErrorResponse> errorResponses = makeErrorResponses(exception);
-        return ResponseEntity.badRequest().body(errorResponses);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> notFoundException(final NotFoundException exception) {
+    public ResponseEntity<ErrorResponse> handleNotFoundException(final NotFoundException exception) {
         log.warn(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exception(final Exception exception) {
+    public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
         log.error(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<List<ErrorResponse>> handleMethodArgumentNotValidException(
+            final MethodArgumentNotValidException exception) {
+        log.warn(exception.getMessage(), exception);
+        final List<ErrorResponse> errorResponses = makeErrorResponses(exception);
+        return ResponseEntity.badRequest().body(errorResponses);
+    }
+
     private List<ErrorResponse> makeErrorResponses(final MethodArgumentNotValidException exception) {
         return exception.getFieldErrors()
-            .stream()
-            .map(it -> new ErrorResponse(it.getDefaultMessage()))
-            .toList();
+                .stream()
+                .map(it -> new ErrorResponse(it.getDefaultMessage()))
+                .toList();
     }
 }

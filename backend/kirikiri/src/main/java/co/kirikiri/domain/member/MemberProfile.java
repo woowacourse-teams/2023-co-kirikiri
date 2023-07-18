@@ -16,10 +16,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberProfile extends BaseTimeEntity {
 
     @Id
@@ -40,8 +42,8 @@ public class MemberProfile extends BaseTimeEntity {
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-        orphanRemoval = true)
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     @JoinColumn(name = "member_profile_image_id")
     private MemberProfileImage image;
 
