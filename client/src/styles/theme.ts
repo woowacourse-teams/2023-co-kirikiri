@@ -30,6 +30,12 @@ const theme: DefaultTheme = {
     caption1: font({ size: 0.65, weight: 400, lineHeight: 1.2 }),
     body1: font({ size: 1.12, weight: 300, lineHeight: 1.2 }),
   },
+
+  zIndex: {
+    navBar: 1,
+    header: 2,
+    navBarOverlay: 3,
+  },
 };
 
 export default theme;
