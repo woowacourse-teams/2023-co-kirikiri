@@ -5,5 +5,11 @@ declare module 'styled-components' {
     colors: {
       [key: string]: string;
     };
+    fonts: {
+      [key: string]: RuleSet<object>;
+    };
+    shadows: {
+      [key: string]: string;
+    };
   }
 }
