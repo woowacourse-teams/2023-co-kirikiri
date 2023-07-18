@@ -29,11 +29,12 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public class RestDocsHelper {
 
     protected static final String API_PREFIX = "/api";
+    protected static final String RESTRICT = "restrict";
 
-    protected MockMvc mockMvc;
-    protected RestDocumentationResultHandler documentationResultHandler;
     @Autowired
     protected ObjectMapper objectMapper;
+    protected MockMvc mockMvc;
+    protected RestDocumentationResultHandler documentationResultHandler;
 
     @BeforeEach
     void setUp(final WebApplicationContext webApplicationContext,

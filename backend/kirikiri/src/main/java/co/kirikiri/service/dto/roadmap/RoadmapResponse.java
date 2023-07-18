@@ -26,6 +26,7 @@ public record RoadmapResponse(
             MemberResponse creator,
             RoadmapCategoryResponse category
     ) {
-        this(roadmapId, category, roadmapTitle, introduction, creator, null, difficulty, recommendedRoadmapPeriod, null);
+        this(roadmapId, category, roadmapTitle, introduction, creator, null, difficulty, recommendedRoadmapPeriod,
+                null);
     }
 }

@@ -1,8 +1,9 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.BaseTimeEntity;
-import jakarta.persistence.CascadeType;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,67 +11,72 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.List;
-import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class RoadmapContent extends BaseTimeEntity {
 
+    private static final int CONTENT_MAX_LENGTH = 150;
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(length = 2200)
     private String content;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "roadmapContent")
-    private List<RoadmapNode> nodes;
-
-    public RoadmapContent(final List<RoadmapNode> nodes) {
-        this(null, null, nodes);
+    public RoadmapContent(final String content) {
+        validate(content);
+        this.content = content;
     }
 
-    public RoadmapContent(final String content, final List<RoadmapNode> nodes) {
-        this(null, content, nodes);
-    }
-
-    public RoadmapContent(final Long id, final String content, final List<RoadmapNode> nodes) {
+    public RoadmapContent(final Long id, final String content) {
         this.id = id;
         this.content = content;
-        setNodes(nodes);
     }
 
-    public void setRoadmap(final Roadmap roadmap) {
-        if (Objects.nonNull(this.roadmap)) {
-            this.roadmap.removeContent(this);
+    private void validate(final String content) {
+        if (content == null) {
+            return;
         }
-        this.roadmap = roadmap;
-        if (!roadmap.hasContent(this)) {
-            roadmap.addContent(this);
+        validateContentLength(content);
+    }
+
+    private void validateContentLength(final String content) {
+        if (content.length() > CONTENT_MAX_LENGTH) {
+            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자 입니다.", CONTENT_MAX_LENGTH));
         }
     }
 
-    public void setNodes(final List<RoadmapNode> nodes) {
-        this.nodes = nodes;
-        nodes.forEach(node -> node.setRoadmapContent(this));
+    public void addNodes(final RoadmapNodes nodes) {
+        this.nodes.addAll(nodes);
+        nodes.updateAllRoadmapContent(this);
     }
 
-    public void removeNode(final RoadmapNode roadmapNode) {
-        nodes.remove(roadmapNode);
+    public boolean isNotSameRoadmap(final Roadmap roadmap) {
+        return this.roadmap == null || !this.roadmap.equals(roadmap);
     }
 
-    public boolean isSameRoadmap(final Roadmap roadmap) {
-        return Objects.equals(this.roadmap, roadmap);
+    public void updateRoadmap(final Roadmap roadmap) {
+        if (this.roadmap == null) {
+            this.roadmap = roadmap;
+        }
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public RoadmapNodes getNodes() {
+        return nodes;
+    }
+
+    public Roadmap getRoadmap() {
+        return roadmap;
     }
 }
-

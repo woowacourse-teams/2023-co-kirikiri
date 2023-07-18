@@ -8,12 +8,10 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class RoadmapContents {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmap")
@@ -26,6 +24,10 @@ public class RoadmapContents {
 
     public void add(final RoadmapContent content) {
         this.contents.add(content);
+    }
+
+    public List<RoadmapContent> getContents() {
+        return contents;
     }
 
     public boolean isEmpty() {

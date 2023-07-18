@@ -3,11 +3,14 @@ package co.kirikiri.persistence.roadmap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.ImageContentType;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.MemberProfileImage;
+import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.member.vo.Nickname;
+import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
@@ -44,7 +47,7 @@ class RoadmapContentRepositoryTest extends RepositoryTest {
         final RoadmapContent oldRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
                 savedRoadmap).get();
 
-        final RoadmapContent newRoadmapContent = new RoadmapContent(로드맵_노드들을_생성한다());
+        final RoadmapContent newRoadmapContent = new RoadmapContent("로드맵 제목");
         savedRoadmap.addContent(newRoadmapContent);
         final RoadmapContent expectedRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
                 savedRoadmap).get();
@@ -59,7 +62,7 @@ class RoadmapContentRepositoryTest extends RepositoryTest {
     private Roadmap 로드맵을_생성한다() {
         final Member creator = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
-        final RoadmapContent content = new RoadmapContent(로드맵_노드들을_생성한다());
+        final RoadmapContent content = new RoadmapContent("로드맵 제목");
 
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
                 RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
@@ -69,11 +72,10 @@ class RoadmapContentRepositoryTest extends RepositoryTest {
     }
 
     private Member 사용자를_생성한다() {
-        final MemberProfileImage profileImage = new MemberProfileImage("sunshot_image.webp",
-                "sunshot-profile-save-path", ImageContentType.WEBP);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                "썬샷", "01083004367", profileImage);
-        final Member member = new Member("아이디", "패스워드", memberProfile);
+                new Nickname("썬샷"), "01083004367");
+        final Member member = new Member(new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")), memberProfile);
 
         return memberRepository.save(member);
     }
@@ -85,8 +87,8 @@ class RoadmapContentRepositoryTest extends RepositoryTest {
 
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {
         return List.of(
-                new RoadmapNode("1단계", "준비운동", 노드_이미지들을_생성한다()),
-                new RoadmapNode("2단계", "턱걸이", 노드_이미지들을_생성한다())
+                new RoadmapNode("1단계", "준비운동"),
+                new RoadmapNode("2단계", "턱걸이")
         );
     }
 

@@ -1,5 +1,6 @@
 package co.kirikiri.domain.member;
 
+import co.kirikiri.domain.ImageContentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,10 +9,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberProfileImage {
 
     @Id
@@ -33,9 +36,5 @@ public class MemberProfileImage {
         this.originalFileName = originalFileName;
         this.serverFilePath = serverFilePath;
         this.imageContentType = imageContentType;
-    }
-
-    public String getServerFilePath() {
-        return serverFilePath;
     }
 }
