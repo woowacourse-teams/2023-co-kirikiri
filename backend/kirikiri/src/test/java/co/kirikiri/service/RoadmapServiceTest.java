@@ -1,7 +1,7 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -21,9 +21,8 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDetailResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
-import co.kirikiri.service.dto.roadmap.SingleRoadmapResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -32,9 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class RoadmapServiceTest {
 
@@ -56,10 +53,11 @@ class RoadmapServiceTest {
                 .thenReturn(Optional.of(roadmap));
 
         //when
-        final SingleRoadmapResponse singleRoadmapResponse = roadmapService.findSingleRoadmap(roadmapId);
+        final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
 
         //then
-        final RoadmapDetailResponse roadmapDetail = new RoadmapDetailResponse(
+        final RoadmapResponse expectedResponse = new RoadmapResponse(
+                roadmapId,
                 new RoadmapCategoryResponse(1L, "운동"),
                 "로드맵 제목",
                 "로드맵 설명",
@@ -72,11 +70,11 @@ class RoadmapServiceTest {
                         new RoadmapNodeResponse("2단계", "턱걸이", List.of("node-image1-save-path"))
                 )
         );
-        final SingleRoadmapResponse expected = new SingleRoadmapResponse(roadmapDetail);
 
-        assertThat(singleRoadmapResponse)
+        assertThat(roadmapResponse)
                 .usingRecursiveComparison()
-                .isEqualTo(expected);
+                .ignoringFields("roadmapId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -88,7 +86,7 @@ class RoadmapServiceTest {
                 .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1L"));
 
         //then
-        assertThatThrownBy(() -> roadmapService.findSingleRoadmap(1L))
+        assertThatThrownBy(() -> roadmapService.findRoadmap(1L))
                 .isInstanceOf(NotFoundException.class);
     }
 

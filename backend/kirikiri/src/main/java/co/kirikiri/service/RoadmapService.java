@@ -3,7 +3,7 @@ package co.kirikiri.service;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import co.kirikiri.service.dto.roadmap.SingleRoadmapResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,14 @@ public class RoadmapService {
 
     private final RoadmapRepository roadmapRepository;
 
-    public SingleRoadmapResponse findSingleRoadmap(final Long roadmapId) {
-        final Roadmap roadmap = roadmapRepository.findById(roadmapId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + roadmapId));
+    public RoadmapResponse findRoadmap(final Long id) {
+        final Roadmap roadmap = findRoadmapById(id);
 
-        return RoadmapMapper.convertSingleRoadmapResponse(roadmap);
+        return RoadmapMapper.convertToRoadmapResponse(roadmap);
+    }
+
+    private Roadmap findRoadmapById(final Long id) {
+        return roadmapRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 }

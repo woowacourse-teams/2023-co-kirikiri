@@ -1,7 +1,7 @@
 package co.kirikiri.controller;
 
 import co.kirikiri.service.RoadmapService;
-import co.kirikiri.service.dto.roadmap.SingleRoadmapResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +17,8 @@ public class RoadmapController {
     private final RoadmapService roadmapService;
 
     @GetMapping("/{roadmapId}")
-    public ResponseEntity<SingleRoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
-        final SingleRoadmapResponse response = roadmapService.findSingleRoadmap(roadmapId);
+    public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
+        final RoadmapResponse response = roadmapService.findRoadmap(roadmapId);
         return ResponseEntity.ok(response);
     }
 }

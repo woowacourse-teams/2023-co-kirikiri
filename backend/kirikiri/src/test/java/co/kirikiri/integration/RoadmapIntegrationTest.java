@@ -22,9 +22,8 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDetailResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
-import co.kirikiri.service.dto.roadmap.SingleRoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -52,23 +51,24 @@ class RoadmapIntegrationTest extends IntegrationTest {
         //given
         final Member 사용자 = 사용자를_생성한다();
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_생성한다("운동");
-        final Roadmap 로드맵 = 로드맵을_생성한다(사용자, 카테고리);
+        로드맵을_생성한다(사용자, 카테고리);
 
         //when
         final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get("/roadmaps/{roadmapId}", 1)
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 1)
                 .then()
                 .log().all()
                 .extract();
 
         //then
-        final SingleRoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
+        final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
         });
 
-        final RoadmapDetailResponse 단일_로드맵_정보 = new RoadmapDetailResponse(
+        final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(
+                1L,
                 new RoadmapCategoryResponse(1L, "운동"),
                 "로드맵 제목",
                 "로드맵 설명",
@@ -81,25 +81,24 @@ class RoadmapIntegrationTest extends IntegrationTest {
                         new RoadmapNodeResponse("2단계", "턱걸이", List.of("node-image1-save-path"))
                 )
         );
-        final SingleRoadmapResponse 예상하는_단일_로드맵_응답 = new SingleRoadmapResponse(단일_로드맵_정보);
 
         assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(단일_로드맵_응답)
                 .usingRecursiveComparison()
-                .isEqualTo(예상하는_단일_로드맵_응답);
+                .isEqualTo(예상되는_단일_로드맵_응답);
     }
 
     @Test
     void 존재하지_않는_로드맵_아이디로_요청했을_때_조회를_실패한다() {
         //given
-        final Long 요청하는_로드맵_아이디 = 1L;
+        final Long 존재하지_않는_로드맵_아이디 = 1L;
 
         //when
         final ExtractableResponse<Response> 요청에_대한_응답 = given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get("/roadmaps/{roadmapId}", 요청하는_로드맵_아이디)
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 존재하지_않는_로드맵_아이디)
                 .then()
                 .log().all()
                 .extract();
@@ -109,7 +108,7 @@ class RoadmapIntegrationTest extends IntegrationTest {
 
         assertAll(
                 () -> assertThat(요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
-                () -> assertThat(예외_메시지).contains("존재하지 않는 로드맵입니다. roadmapId = " + 요청하는_로드맵_아이디)
+                () -> assertThat(예외_메시지).contains("존재하지 않는 로드맵입니다. roadmapId = " + 존재하지_않는_로드맵_아이디)
         );
     }
 

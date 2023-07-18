@@ -43,7 +43,7 @@ class RoadmapNodeRepositoryTest extends RepositoryTest {
         final Roadmap roadmap = 로드맵을_생성한다(nodes);
 
         final List<RoadmapNode> savedNodes = roadmapNodeRepository.findByRoadmapContentId(
-                roadmap.getRecentContent().getId());
+                roadmap.getRecentContent().get().getId());
         assertThat(savedNodes).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(nodes);
