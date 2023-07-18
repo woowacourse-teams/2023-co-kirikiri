@@ -38,8 +38,8 @@ const theme: DefaultTheme = {
   },
 
   shadows: {
-    box: '-1.4px 7px 42.4px rgba(0, 0, 0, 0.13)',
-    text: '0px 3px 3px rgba(0, 0, 0, 0.2)',
+    box: '-0.14rem 0.7rem 4.3rem rgba(0, 0, 0, 0.13)',
+    text: '0 0.3rem 0.3rem rgba(0, 0, 0, 0.2)',
   },
 };
 
