@@ -31,6 +31,12 @@ const theme: DefaultTheme = {
     body1: font({ size: 1.12, weight: 300, lineHeight: 1.2 }),
   },
 
+  zIndex: {
+    navBar: 1,
+    header: 2,
+    navBarOverlay: 3,
+  },
+
   shadows: {
     box: '-1.4px 7px 42.4px rgba(0, 0, 0, 0.13)',
     text: '0px 3px 3px rgba(0, 0, 0, 0.2)',
