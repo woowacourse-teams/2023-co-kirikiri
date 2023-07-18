@@ -29,4 +29,11 @@ public class MemberProfileImage {
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
     private ImageContentType imageContentType;
+
+    public MemberProfileImage(final String originalFileName, final String serverFilePath,
+                              final ImageContentType imageContentType) {
+        this.originalFileName = originalFileName;
+        this.serverFilePath = serverFilePath;
+        this.imageContentType = imageContentType;
+    }
 }

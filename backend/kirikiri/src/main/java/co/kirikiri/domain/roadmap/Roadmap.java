@@ -52,7 +52,7 @@ public class Roadmap {
     private RoadmapStatus status = RoadmapStatus.CREATED;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private Member creator;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -69,6 +69,25 @@ public class Roadmap {
         this.introduction = introduction;
         this.requiredPeriod = requiredPeriod;
         this.difficulty = difficulty;
+        this.creator = creator;
+        this.category = category;
+    }
+
+    public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
+                   final RoadmapCategory category) {
+        this(null, title, introduction, requiredPeriod, difficulty, status, creator, category);
+    }
+
+    public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
+                   final RoadmapCategory category) {
+        this.id = id;
+        this.title = title;
+        this.introduction = introduction;
+        this.requiredPeriod = requiredPeriod;
+        this.difficulty = difficulty;
+        this.status = status;
         this.creator = creator;
         this.category = category;
     }
@@ -112,12 +131,36 @@ public class Roadmap {
         }
     }
 
+    public Member getCreator() {
+        return creator;
+    }
+
     public Long getId() {
         return id;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public RoadmapCategory getCategory() {
+        return category;
+    }
+
     public RoadmapContents getContents() {
         return contents;
+    }
+
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public Integer getRequiredPeriod() {
+        return requiredPeriod;
+    }
+
+    public RoadmapDifficulty getDifficulty() {
+        return difficulty;
     }
 
     @Override

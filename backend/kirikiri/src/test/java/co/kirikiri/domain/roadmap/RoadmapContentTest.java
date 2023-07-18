@@ -11,6 +11,10 @@ import co.kirikiri.domain.member.ImageContentType;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.MemberProfileImage;
+import co.kirikiri.domain.member.vo.EncryptedPassword;
+import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.member.vo.Nickname;
+import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.BadRequestException;
 import java.time.LocalDate;
 import java.util.List;
@@ -62,9 +66,10 @@ class RoadmapContentTest {
         final RoadmapContent content = new RoadmapContent("content");
         final MemberProfileImage profileImage = new MemberProfileImage(1L, "originalFileName", "serverFilePath",
                 ImageContentType.JPEG);
-        final MemberProfile profile = new MemberProfile(1L, Gender.FEMALE, LocalDate.of(1999, 6, 8), "nickname",
-                "01011112222", profileImage);
-        final Member creator = new Member(1L, "creator", "password", profile);
+        final MemberProfile profile = new MemberProfile(1L, Gender.FEMALE, LocalDate.of(1999, 6, 8),
+                new Nickname("nickname"), "01011112222", profileImage);
+        final Member creator = new Member(1L, new Identifier("creator"),
+                new EncryptedPassword(new Password("password1")), profile);
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creator, category);
 
