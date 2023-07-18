@@ -3,7 +3,7 @@ import media from '@styles/media';
 
 export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   position: absolute;
-  z-index: 10;
+  z-index: ${({ theme }) => theme.zIndex.navBar};
   top: 0;
 
   width: 15rem;

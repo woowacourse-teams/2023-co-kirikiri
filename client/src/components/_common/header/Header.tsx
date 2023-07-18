@@ -12,7 +12,7 @@ const Header = () => {
         <S.Logo>코끼리끼리</S.Logo>
       </S.Header>
       <NavBar isSwitchOn={isSwitchOn} />
-      {isSwitchOn && <S.CloseNavBackground onClick={toggleSwitch} />}
+      {isSwitchOn && <S.NavBarOverlay onClick={toggleSwitch} />}
     </S.HeaderWrapper>
   );
 };
