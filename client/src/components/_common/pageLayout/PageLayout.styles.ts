@@ -23,6 +23,6 @@ export const ChildrenLayout = styled.div`
   padding: 0 1.8rem;
 
   ${media.mobile`
-    margin-top: 8rem 0 0 0;
+    margin: 8rem 0 0 0;
   `}
 `;
