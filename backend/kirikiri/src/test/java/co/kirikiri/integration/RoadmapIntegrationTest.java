@@ -3,8 +3,8 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.ImageContentType;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.MemberProfileImage;

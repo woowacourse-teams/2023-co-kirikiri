@@ -1,5 +1,6 @@
 package co.kirikiri.domain.member;
 
+import co.kirikiri.domain.ImageContentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

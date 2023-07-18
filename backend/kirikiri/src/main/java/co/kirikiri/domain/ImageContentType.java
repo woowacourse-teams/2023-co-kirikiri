@@ -1,4 +1,4 @@
-package co.kirikiri.domain.member;
+package co.kirikiri.domain;
 
 public enum ImageContentType {
 
