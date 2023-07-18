@@ -9,7 +9,6 @@ export const Categories = styled.div`
   justify-content: center;
 
   width: 100%;
-  margin-top: 30px;
   padding: 1.8rem 2.5rem;
 
   background-color: ${({ theme }) => theme.colors.gray100};
