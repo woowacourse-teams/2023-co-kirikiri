@@ -2,13 +2,16 @@ package co.kirikiri.domain.member;
 
 import co.kirikiri.domain.BaseTimeEntity;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -40,5 +43,13 @@ public class Member extends BaseTimeEntity {
 
     public Identifier getIdentifier() {
         return identifier;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Nickname getNickname() {
+        return memberProfile.getNickname();
     }
 }

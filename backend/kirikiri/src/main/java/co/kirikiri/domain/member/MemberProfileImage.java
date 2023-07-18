@@ -3,10 +3,12 @@ package co.kirikiri.domain.member;
 import co.kirikiri.domain.ImageContentType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberProfileImage {
 
     @Id
@@ -22,4 +24,11 @@ public class MemberProfileImage {
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
     private ImageContentType imageContentType;
+
+    public MemberProfileImage(final String originalFileName, final String serverFilePath,
+                              final ImageContentType imageContentType) {
+        this.originalFileName = originalFileName;
+        this.serverFilePath = serverFilePath;
+        this.imageContentType = imageContentType;
+    }
 }

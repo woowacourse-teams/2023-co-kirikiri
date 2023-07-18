@@ -1,6 +1,5 @@
 package co.kirikiri.controller.helper;
 
-import co.kirikiri.controller.GlobalExceptionHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,14 +32,10 @@ public class RestDocsHelper {
     protected static final String API_PREFIX = "/api";
     protected static final String RESTRICT = "restrict";
 
-    protected MockMvc mockMvc;
-    protected RestDocumentationResultHandler documentationResultHandler;
-
     @Autowired
     protected ObjectMapper objectMapper;
-
-    @Autowired
-    private GlobalExceptionHandler globalExceptionHandler;
+    protected MockMvc mockMvc;
+    protected RestDocumentationResultHandler documentationResultHandler;
 
     @BeforeEach
     void setUp(final WebApplicationContext webApplicationContext,

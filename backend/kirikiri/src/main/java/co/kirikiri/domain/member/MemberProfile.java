@@ -42,4 +42,8 @@ public class MemberProfile extends BaseTimeEntity {
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
     }
+
+    public Nickname getNickname() {
+        return nickname;
+    }
 }

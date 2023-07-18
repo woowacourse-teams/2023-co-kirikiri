@@ -1,5 +1,7 @@
 package co.kirikiri.service.dto;
 
-public record ErrorResponse(String message) {
+public record ErrorResponse(
+    String message
+) {
 
 }
