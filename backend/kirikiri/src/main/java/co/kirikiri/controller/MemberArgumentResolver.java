@@ -1,7 +1,7 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.ImageContentType;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.MemberProfileImage;
@@ -28,11 +28,6 @@ public class MemberArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer,
                                   final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) {
         // TODO: 제거
-//        final MemberProfileImage profileImage = new MemberProfileImage(1L, "originalFileName", "serverFilePath",
-//                ImageContentType.JPEG);
-//        final MemberProfile profile = new MemberProfile(1L, Gender.FEMALE, LocalDate.of(1999, 6, 8),
-//                new Nickname("nickname"), "01011112222", profileImage);
-//        return new Member(1L, new Identifier("creator"), new EncryptedPassword(new Password("password1")), profile);
         final MemberProfileImage memberProfileImage = new MemberProfileImage("member-profile.png",
                 "member-profile-save-path", ImageContentType.PNG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
