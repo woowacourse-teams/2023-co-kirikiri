@@ -1,21 +1,20 @@
 package co.kirikiri.integration;
 
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.time.LocalDate;
+import java.time.Month;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import java.time.LocalDate;
-import java.time.Month;
-
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberIntegrationTest extends IntegrationTest {
 
@@ -31,7 +30,6 @@ class MemberIntegrationTest extends IntegrationTest {
         //then
         assertThat(회원가입_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
-
 
     @ParameterizedTest
     @ValueSource(strings = {"abc", "abcdefghijklmnopqrstu"})

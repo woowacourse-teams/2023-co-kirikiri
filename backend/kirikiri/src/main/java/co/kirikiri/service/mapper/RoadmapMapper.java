@@ -3,17 +3,27 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.domain.roadmap.RoadmapNodeImage;
+import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.*;
+import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -71,5 +81,38 @@ public final class RoadmapMapper {
         return roadmapCategories.stream()
                 .map(category -> new RoadmapCategoryResponse(category.getId(), category.getName()))
                 .toList();
+    }
+
+    public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content) {
+        final RoadmapCategory category = roadmap.getCategory();
+        final Member creator = roadmap.getCreator();
+
+        return new RoadmapResponse(
+                roadmap.getId(),
+                new RoadmapCategoryResponse(category.getId(), category.getName()),
+                roadmap.getTitle(),
+                roadmap.getIntroduction(),
+                new MemberResponse(creator.getId(), creator.getNickname().getValue()),
+                content.getContent(),
+                roadmap.getDifficulty().name(),
+                roadmap.getRequiredPeriod(),
+                convertRoadmapNodeResponse(content.getNodes())
+        );
+    }
+
+    private static List<RoadmapNodeResponse> convertRoadmapNodeResponse(final RoadmapNodes nodes) {
+        return nodes.getRoadmapNodes()
+                .stream()
+                .map(RoadmapMapper::convertNode)
+                .toList();
+    }
+
+    private static RoadmapNodeResponse convertNode(final RoadmapNode node) {
+        final List<String> images = node.getImages()
+                .stream()
+                .map(RoadmapNodeImage::getServerFilePath)
+                .toList();
+
+        return new RoadmapNodeResponse(node.getTitle(), node.getContent(), images);
     }
 }

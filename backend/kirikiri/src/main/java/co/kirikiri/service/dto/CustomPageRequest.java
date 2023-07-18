@@ -1,8 +1,8 @@
 package co.kirikiri.service.dto;
 
 public record CustomPageRequest(
-    int page,
-    int size
+        int page,
+        int size
 ) {
 
     private static final int PAGE_OFFSET = 1;

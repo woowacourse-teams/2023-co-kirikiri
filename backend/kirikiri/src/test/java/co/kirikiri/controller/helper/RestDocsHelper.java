@@ -1,8 +1,11 @@
 package co.kirikiri.controller.helper;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.UnsupportedEncodingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +22,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-
-import java.io.UnsupportedEncodingException;
-
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
 @ActiveProfiles("test")
 @Import(TestObjectMapperConfig.class)
@@ -54,7 +53,8 @@ public class RestDocsHelper {
                 .build();
     }
 
-    protected <T> T jsonToClass(final MvcResult mvcResult, final TypeReference<T> typeReference) throws JsonProcessingException, UnsupportedEncodingException {
+    protected <T> T jsonToClass(final MvcResult mvcResult, final TypeReference<T> typeReference)
+            throws JsonProcessingException, UnsupportedEncodingException {
         return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), typeReference);
     }
 }

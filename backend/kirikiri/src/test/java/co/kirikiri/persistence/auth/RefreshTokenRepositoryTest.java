@@ -1,5 +1,7 @@
 package co.kirikiri.persistence.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -11,14 +13,11 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class RefreshTokenRepositoryTest extends RepositoryTest {
 
@@ -27,7 +26,6 @@ class RefreshTokenRepositoryTest extends RepositoryTest {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
-
 
     public RefreshTokenRepositoryTest(final RefreshTokenRepository refreshTokenRepository,
                                       final MemberRepository memberRepository) {
@@ -56,7 +54,8 @@ class RefreshTokenRepositoryTest extends RepositoryTest {
         refreshTokenRepository.save(refreshToken);
 
         //when
-        final Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByTokenAndIsRevokedFalse(encryptedToken);
+        final Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByTokenAndIsRevokedFalse(
+                encryptedToken);
 
         //then
         assertThat(optionalRefreshToken).isNotEmpty();

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapContents {
-    
+
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmap")
     @Column(nullable = false)
     private final List<RoadmapContent> contents = new ArrayList<>();
@@ -28,5 +28,17 @@ public class RoadmapContents {
 
     public List<RoadmapContent> getContents() {
         return contents;
+    }
+
+    public boolean isEmpty() {
+        return contents.isEmpty();
+    }
+
+    public boolean hasContent(final RoadmapContent content) {
+        return contents.contains(content);
+    }
+
+    public void removeContent(final RoadmapContent content) {
+        contents.remove(content);
     }
 }

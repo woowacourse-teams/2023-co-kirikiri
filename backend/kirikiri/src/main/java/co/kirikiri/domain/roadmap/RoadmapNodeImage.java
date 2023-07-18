@@ -28,4 +28,21 @@ public class RoadmapNodeImage {
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
     private ImageContentType imageContentType;
+
+    public RoadmapNodeImage(final String originalFileName, final String serverFilePath,
+                            final ImageContentType imageContentType) {
+        this(null, originalFileName, serverFilePath, imageContentType);
+    }
+
+    public RoadmapNodeImage(final Long id, final String originalFileName, final String serverFilePath,
+                            final ImageContentType imageContentType) {
+        this.id = id;
+        this.originalFileName = originalFileName;
+        this.serverFilePath = serverFilePath;
+        this.imageContentType = imageContentType;
+    }
+
+    public String getServerFilePath() {
+        return serverFilePath;
+    }
 }

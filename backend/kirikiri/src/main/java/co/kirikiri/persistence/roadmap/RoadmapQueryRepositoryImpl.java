@@ -29,20 +29,20 @@ public class RoadmapQueryRepositoryImpl implements RoadmapQueryRepository {
     public Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
                                                 final Pageable pageable) {
         final List<Roadmap> roadmaps = factory
-            .selectFrom(roadmap)
-            .innerJoin(roadmap.category, roadmapCategory)
-            .where(statusCond(RoadmapStatus.CREATED), categoryCond(category))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .orderBy(sortCond(orderType))
-            .fetchJoin()
-            .fetch();
+                .selectFrom(roadmap)
+                .innerJoin(roadmap.category, roadmapCategory)
+                .where(statusCond(RoadmapStatus.CREATED), categoryCond(category))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(sortCond(orderType))
+                .fetchJoin()
+                .fetch();
 
         final JPAQuery<Long> countQuery = factory
-            .select(roadmap.count())
-            .from(roadmap)
-            .innerJoin(roadmap.category, roadmapCategory)
-            .where(statusCond(RoadmapStatus.CREATED), categoryCond(category));
+                .select(roadmap.count())
+                .from(roadmap)
+                .innerJoin(roadmap.category, roadmapCategory)
+                .where(statusCond(RoadmapStatus.CREATED), categoryCond(category));
 
         return PageableExecutionUtils.getPage(roadmaps, pageable, countQuery::fetchOne);
     }

@@ -17,7 +17,8 @@ public class AuthMapper {
         return new LoginDto(new Identifier(request.identifier()), new Password(request.password()));
     }
 
-    public static AuthenticationResponse convertToAuthenticationResponse(final String refreshToken, final String accessToken) {
+    public static AuthenticationResponse convertToAuthenticationResponse(final String refreshToken,
+                                                                         final String accessToken) {
         return new AuthenticationResponse(refreshToken, accessToken);
     }
 

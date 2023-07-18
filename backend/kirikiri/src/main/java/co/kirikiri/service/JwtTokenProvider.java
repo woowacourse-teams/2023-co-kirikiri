@@ -3,15 +3,14 @@ package co.kirikiri.service;
 import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
+import javax.crypto.SecretKey;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider implements TokenProvider {
@@ -38,7 +37,8 @@ public class JwtTokenProvider implements TokenProvider {
         return createToken(refreshTokenValidityInSeconds, subject, claims);
     }
 
-    private String createToken(final Long tokenValidityInSeconds, final String subject, final Map<String, Object> claims) {
+    private String createToken(final Long tokenValidityInSeconds, final String subject,
+                               final Map<String, Object> claims) {
         final SecretKey signingKey = createKey();
         final Date expiration = createExpiration(tokenValidityInSeconds);
         return Jwts.builder()

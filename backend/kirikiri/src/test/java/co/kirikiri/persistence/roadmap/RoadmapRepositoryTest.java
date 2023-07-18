@@ -1,5 +1,9 @@
 package co.kirikiri.persistence.roadmap;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -7,19 +11,22 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.*;
+import co.kirikiri.domain.roadmap.Roadmap;
+import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapDifficulty;
+import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.domain.roadmap.RoadmapNodeImage;
+import co.kirikiri.domain.roadmap.RoadmapNodes;
+import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoadmapRepositoryTest extends RepositoryTest {
 
@@ -125,6 +132,48 @@ class RoadmapRepositoryTest extends RepositoryTest {
         );
     }
 
+    @Test
+    void 단일_로드맵을_조회한다() {
+        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
+        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
+
+        assertThat(expectedRoadmap).usingRecursiveComparison()
+                .isEqualTo(savedRoadmap);
+    }
+
+    private Roadmap 로드맵을_생성한다() {
+        final Member creator = 사용자를_생성한다();
+        final RoadmapCategory category = 로드맵_카테고리를_생성한다();
+        final RoadmapContent content = new RoadmapContent("로드맵 제목");
+
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
+                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        roadmap.addContent(content);
+
+        return roadmap;
+    }
+
+    private Member 사용자를_생성한다() {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
+                new Nickname("썬샷"), "01083004367");
+        final Member member = new Member(new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")), memberProfile);
+
+        return memberRepository.save(member);
+    }
+
+    private RoadmapCategory 로드맵_카테고리를_생성한다() {
+        final RoadmapCategory category = new RoadmapCategory("운동");
+        return roadmapCategoryRepository.save(category);
+    }
+
+    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
+        return List.of(
+                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
+                        ImageContentType.PNG)
+        );
+    }
+
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 new Nickname("코끼리"), "010-1234-5678");
@@ -139,8 +188,8 @@ class RoadmapRepositoryTest extends RepositoryTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
+        final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getRoadmapNodes());
 
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
                 creator, category);
@@ -148,9 +197,11 @@ class RoadmapRepositoryTest extends RepositoryTest {
         return roadmap;
     }
 
-    private List<RoadmapNode> 로드맵_노드들을_생성한다() {
-        return List.of(new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용"),
-                new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용"));
+    private RoadmapNodes 로드맵_노드들을_생성한다() {
+        return new RoadmapNodes(List.of(
+                new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용"),
+                new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용")));
+
     }
 
     private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
