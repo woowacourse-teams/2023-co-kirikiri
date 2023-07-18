@@ -41,10 +41,6 @@ export const SeparateLine = styled.div`
   `}
 `;
 
-export const CloseButton = styled.div`
-  font-size: 5rem;
-`;
-
 export const Nav = styled.div`
   display: flex;
   flex-direction: column;
