@@ -20,9 +20,10 @@ export const NavBar = styled.nav`
 
 export const ChildrenLayout = styled.div`
   margin-left: 15rem;
-  padding: 0 18px;
+  padding: 0 1.8rem;
 
   ${media.mobile`
+    margin-top: 8rem;
     margin-left: 0;
   `}
 `;
