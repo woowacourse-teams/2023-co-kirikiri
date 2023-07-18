@@ -15,7 +15,7 @@ export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   ${({ isNavBarOpen }) =>
     isNavBarOpen
       ? media.mobile`
-     padding-top: 56px;
+     padding-top: 8rem;
      border-radius: 0;
    `
       : media.mobile`
@@ -33,7 +33,7 @@ export const Logo = styled.div`
 
 export const SeparateLine = styled.div`
   width: 70%;
-  height: 1px;
+  height: 0.1rem;
   background-color: ${({ theme }) => theme.colors.main_dark};
 
   ${media.mobile`
@@ -47,7 +47,7 @@ export const Nav = styled.div`
   justify-content: space-between;
 
   height: calc(100% - 10rem);
-  padding: 30px 18px;
+  padding: 3rem 1.8rem;
 
   ${media.mobile`
     height:100%;

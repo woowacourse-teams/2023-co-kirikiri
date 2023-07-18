@@ -13,7 +13,7 @@ export const Header = styled.div`
   align-items: center;
 
   width: 100vw;
-  height: 56px;
+  height: 8rem;
 
   background-color: ${({ theme }) => theme.colors.gray100};
   border-radius: 0;
@@ -31,7 +31,7 @@ export const Logo = styled.div`
 `;
 
 export const NavBarToggleIcon = styled.div`
-  margin-left: 18px;
+  margin-left: 1.8rem;
   font-size: 5rem;
 `;
 
