@@ -1,6 +1,7 @@
 package co.kirikiri.persistence.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.ImageContentType;
@@ -20,26 +21,39 @@ import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class RoadmapRepositoryTest extends RepositoryTest {
+class RoadmapContentRepositoryTest extends RepositoryTest {
 
-    private final RoadmapRepository roadmapRepository;
     private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final RoadmapRepository roadmapRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
 
-    public RoadmapRepositoryTest(final RoadmapRepository roadmapRepository, final MemberRepository memberRepository,
-                                 final RoadmapCategoryRepository roadmapCategoryRepository) {
-        this.roadmapRepository = roadmapRepository;
+    public RoadmapContentRepositoryTest(final MemberRepository memberRepository,
+                                        final RoadmapCategoryRepository roadmapCategoryRepository,
+                                        final RoadmapRepository roadmapRepository,
+                                        final RoadmapContentRepository roadmapContentRepository) {
         this.memberRepository = memberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.roadmapRepository = roadmapRepository;
+        this.roadmapContentRepository = roadmapContentRepository;
     }
 
     @Test
-    void 단일_로드맵을_조회한다() {
+    void 로드맵의_가장_최근_컨텐츠를_조회한다() {
         final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
-        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
+        final RoadmapContent oldRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
+                savedRoadmap).get();
 
-        assertThat(expectedRoadmap).usingRecursiveComparison()
-                .isEqualTo(savedRoadmap);
+        final RoadmapContent newRoadmapContent = new RoadmapContent(로드맵_노드들을_생성한다());
+        savedRoadmap.addContent(newRoadmapContent);
+        final RoadmapContent expectedRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
+                savedRoadmap).get();
+
+        assertAll(
+                () -> assertThat(oldRoadmapContent).isNotEqualTo(expectedRoadmapContent),
+                () -> assertThat(expectedRoadmapContent).usingRecursiveComparison()
+                        .isEqualTo(newRoadmapContent)
+        );
     }
 
     private Roadmap 로드맵을_생성한다() {

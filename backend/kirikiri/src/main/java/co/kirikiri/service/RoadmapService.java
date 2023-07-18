@@ -1,7 +1,9 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.roadmap.Roadmap;
+import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
@@ -15,11 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoadmapService {
 
     private final RoadmapRepository roadmapRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
 
     public RoadmapResponse findRoadmap(final Long id) {
         final Roadmap roadmap = findRoadmapById(id);
+        final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
 
-        return RoadmapMapper.convertToRoadmapResponse(roadmap);
+        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent);
+    }
+
+    private RoadmapContent findRecentContent(final Roadmap roadmap) {
+        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
+                .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
     private Roadmap findRoadmapById(final Long id) {

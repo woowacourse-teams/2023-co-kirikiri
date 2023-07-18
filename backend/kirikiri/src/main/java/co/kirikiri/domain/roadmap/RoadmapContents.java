@@ -6,7 +6,6 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -39,10 +38,5 @@ public class RoadmapContents {
 
     public void removeContent(final RoadmapContent content) {
         contents.remove(content);
-    }
-
-    public RoadmapContent getRecentContent() {
-        contents.sort(Comparator.comparing(RoadmapContent::getCreatedAt).reversed());
-        return contents.get(0);
     }
 }

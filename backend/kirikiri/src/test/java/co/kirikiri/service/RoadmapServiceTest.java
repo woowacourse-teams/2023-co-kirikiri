@@ -2,6 +2,7 @@ package co.kirikiri.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -18,11 +19,12 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +40,9 @@ class RoadmapServiceTest {
     @Mock
     private RoadmapRepository roadmapRepository;
 
+    @Mock
+    private RoadmapContentRepository roadmapContentRepository;
+
     @InjectMocks
     private RoadmapService roadmapService;
 
@@ -46,11 +51,15 @@ class RoadmapServiceTest {
         //given
         final Member member = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다("운동");
+        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(member, category);
+        roadmap.addContent(content);
         final Long roadmapId = 1L;
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
+        when(roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(any()))
+                .thenReturn(Optional.of(content));
 
         //when
         final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
@@ -91,7 +100,7 @@ class RoadmapServiceTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapContent content = new RoadmapContent(로드맵_노드들을_생성한다());
+        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
 
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
                 RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
@@ -111,6 +120,10 @@ class RoadmapServiceTest {
 
     private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
         return new RoadmapCategory(1L, title);
+    }
+
+    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
+        return new RoadmapContent(로드맵_노드들을_생성한다());
     }
 
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {

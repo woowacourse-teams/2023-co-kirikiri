@@ -8,21 +8,18 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoadmapMapper {
 
-    public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap) {
+    public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content) {
         final RoadmapCategory category = roadmap.getCategory();
         final Member creator = roadmap.getCreator();
-        final RoadmapContent recentContent = roadmap.getRecentContent()
-                .orElseThrow(() -> new NoSuchElementException("로드맵의 컨텐츠가 존재하지 않습니다"));
 
         return new RoadmapResponse(
                 roadmap.getId(),
@@ -30,10 +27,10 @@ public class RoadmapMapper {
                 roadmap.getTitle(),
                 roadmap.getIntroduction(),
                 new MemberResponse(creator.getId(), creator.getMemberProfile().getNickname()),
-                recentContent.getContent(),
+                content.getContent(),
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
-                convertRoadmapNodeResponse(recentContent.getNodes())
+                convertRoadmapNodeResponse(content.getNodes())
         );
     }
 
