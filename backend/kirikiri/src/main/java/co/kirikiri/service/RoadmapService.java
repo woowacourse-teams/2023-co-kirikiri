@@ -115,16 +115,16 @@ public class RoadmapService {
         return RoadmapMapper.convertRoadmapPageResponse(roadmapPages, pageRequest);
     }
 
-    public List<RoadmapCategoryResponse> findAllRoadmapCategories() {
-        final List<RoadmapCategory> roadmapCategories = roadmapCategoryRepository.findAll();
-        return RoadmapMapper.convertRoadmapCategoryResponses(roadmapCategories);
-    }
-
     private RoadmapCategory findCategoryById(final Long categoryId) {
         if (categoryId == null) {
             return null;
         }
         return roadmapCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
+    }
+
+    public List<RoadmapCategoryResponse> findAllRoadmapCategories() {
+        final List<RoadmapCategory> roadmapCategories = roadmapCategoryRepository.findAll();
+        return RoadmapMapper.convertRoadmapCategoryResponses(roadmapCategories);
     }
 }

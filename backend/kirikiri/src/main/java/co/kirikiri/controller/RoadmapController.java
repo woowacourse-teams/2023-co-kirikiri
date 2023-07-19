@@ -39,7 +39,7 @@ public class RoadmapController {
     @GetMapping
     public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
-            @RequestParam(value = "roadmapFilterTypeDto", required = false) final RoadmapFilterTypeDto roadmapFilterTypeDto,
+            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeDto roadmapFilterTypeDto,
             @ModelAttribute final CustomPageRequest pageRequest
     ) {
         final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
