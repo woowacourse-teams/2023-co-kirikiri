@@ -88,11 +88,11 @@ operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설�
 
 === *2-1* 성공
 
-operation::roadmap-controller-test/로드맵_목록을_조건에_따라_조회한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/로드맵_목록을_조건에_따라_조회한다[snippets='http-request,http-response,response-fields']
 
 === *2-2* 실패 - 카테고리 아이디가 유효하지 않음
 
-operation::roadmap-controller-test/로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,response-fields']
 
 ---
 
@@ -101,7 +101,7 @@ operation::roadmap-controller-test/로드맵_목록_조회시_유효하지_않�
 
 === *3-1* 성공
 
-operation::roadmap-controller-test/로드맵_카테고리_목록을_조회한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/로드맵_카테고리_목록을_조회한다[snippets='http-request,http-response,response-fields']
 
 [[로드맵조회-API]]
 == *1. 로드맵 조회 API*

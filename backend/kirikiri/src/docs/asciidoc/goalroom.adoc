@@ -1,0 +1,36 @@
+= GoalRoom API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: GoalRoom API Docs
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
+
+
+[[골룸단일조회-API]]
+== *1. 골룸 단일 조회 API (비로그인)*
+
+=== *1-1* 성공
+
+operation::goal-room-read-api-test/골룸_아이디로_골룸을_조회한다[snippets='http-request,http-response,response-fields']
+
+=== *1-2* 실패
+
+operation::goal-room-read-api-test/골룸_아이디로_골룸_조회시_아이디가_유효하지_않으면_예외가_발생한다[snippets='http-request,http-response,response-fields']
+
+== *2. 골룸 단일 조회 API (로그인)*
+
+=== *2-1* 성공
+
+operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸을_조회한다[snippets='http-request,request-headers,http-response,response-fields']
+
+=== *2-2* 실패
+
+operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸_조회시_골룸_아이디가_유효하지_않으면_예외_발생[snippets='http-request,request-headers,http-response,response-fields']
