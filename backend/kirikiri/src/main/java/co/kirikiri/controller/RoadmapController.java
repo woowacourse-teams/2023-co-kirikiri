@@ -40,6 +40,12 @@ public class RoadmapController {
         return ResponseEntity.created(URI.create(httpServletRequest.getRequestURI() + "/" + id)).build();
     }
 
+    @GetMapping("/{roadmapId}")
+    public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
+        final RoadmapResponse response = roadmapService.findRoadmap(roadmapId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
     public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
@@ -55,11 +61,5 @@ public class RoadmapController {
     public ResponseEntity<List<RoadmapCategoryResponse>> getAllRoadmapCategories() {
         final List<RoadmapCategoryResponse> roadmapCategoryResponses = roadmapService.getAllRoadmapCategories();
         return ResponseEntity.ok(roadmapCategoryResponses);
-    }
-
-    @GetMapping("/{roadmapId}")
-    public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
-        final RoadmapResponse response = roadmapService.findRoadmap(roadmapId);
-        return ResponseEntity.ok(response);
     }
 }
