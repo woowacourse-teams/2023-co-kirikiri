@@ -5,6 +5,7 @@ const theme: DefaultTheme = {
   colors: {
     main_light: '#C8EE44',
     main_dark: '#76A082',
+    gray_light: '#fbfbfb',
     gray100: '#F2F2F2',
     gray200: '#F5F5F5',
     gray300: '#9E9EAE',
@@ -29,6 +30,11 @@ const theme: DefaultTheme = {
     description5: font({ size: 1.22, weight: 300, lineHeight: 1.2 }),
     caption1: font({ size: 0.65, weight: 400, lineHeight: 1.2 }),
     body1: font({ size: 1.12, weight: 300, lineHeight: 1.2 }),
+  },
+
+  shadows: {
+    box: '-1.4px 7px 42.4px rgba(0, 0, 0, 0.13)',
+    text: '0px 3px 3px rgba(0, 0, 0, 0.2)',
   },
 };
 
