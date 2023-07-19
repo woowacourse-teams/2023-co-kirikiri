@@ -15,7 +15,7 @@ export const FormItem = styled.div`
   align-items: center;
 
   min-height: 5rem;
-  padding: 0 1rem 0 1rem;
+  padding: 0 1rem;
 
   border: 1px solid ${({ theme }) => theme.colors.gray300};
 
