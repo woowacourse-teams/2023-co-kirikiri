@@ -13,6 +13,7 @@ import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
@@ -93,10 +94,9 @@ public final class RoadmapMapper {
                 roadmap.getTitle(),
                 roadmap.getIntroduction(),
                 new MemberResponse(creator.getId(), creator.getNickname().getValue()),
-                content.getContent(),
+                new RoadmapContentResponse(content.getContent(), convertRoadmapNodeResponse(content.getNodes())),
                 roadmap.getDifficulty().name(),
-                roadmap.getRequiredPeriod(),
-                convertRoadmapNodeResponse(content.getNodes())
+                roadmap.getRequiredPeriod()
         );
     }
 

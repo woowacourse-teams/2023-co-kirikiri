@@ -19,6 +19,7 @@ import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
@@ -195,12 +196,12 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                 fieldWithPath("introduction").description("로드맵 소개글"),
                                 fieldWithPath("creator.id").description("로드맵 크리에이터 아이디"),
                                 fieldWithPath("creator.name").description("로드맵 크리에이터 닉네임"),
-                                fieldWithPath("content").description("로드맵 본문"),
+                                fieldWithPath("roadmapContent.content").description("로드맵 본문"),
+                                fieldWithPath("roadmapContent.nodes[0].title").description("로드맵 노드 제목"),
+                                fieldWithPath("roadmapContent.nodes[0].description").description("로드맵 노드 본문"),
+                                fieldWithPath("roadmapContent.nodes[0].imageUrls[0]").description("로드맵 노드 이미지 파일 경로"),
                                 fieldWithPath("difficulty").description("로드맵 난이도"),
-                                fieldWithPath("recommendedRoadmapPeriod").description("로드맵 추천 기간"),
-                                fieldWithPath("nodes[0].title").description("로드맵 노드 제목"),
-                                fieldWithPath("nodes[0].description").description("로드맵 노드 본문"),
-                                fieldWithPath("nodes[0].imageUrls[0]").description("로드맵 노드 이미지 파일 경로")
+                                fieldWithPath("recommendedRoadmapPeriod").description("로드맵 추천 기간")
                         )))
                 .andReturn();
 
@@ -241,7 +242,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 new RoadmapNodeResponse("1번 노드", "1번 노드 설명", List.of("image1-filepath", "image2-filepath")),
                 new RoadmapNodeResponse("2번 노드", "2번 노드 설명", Collections.emptyList())
         );
-        return new RoadmapResponse(1L, category, "제목", "소개글", creator, "본문",
-                "EASY", 100, nodes);
+        return new RoadmapResponse(1L, category, "제목", "소개글", creator,
+                new RoadmapContentResponse("본문", nodes), "EASY", 100);
     }
 }

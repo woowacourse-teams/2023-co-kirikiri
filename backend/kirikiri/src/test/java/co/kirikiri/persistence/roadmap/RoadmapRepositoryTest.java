@@ -156,7 +156,7 @@ class RoadmapRepositoryTest {
 
     private Member 사용자를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("썬샷"), "01083004367");
+                new Nickname("nickname"), "010-1234-5678");
         final Member member = new Member(new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
 

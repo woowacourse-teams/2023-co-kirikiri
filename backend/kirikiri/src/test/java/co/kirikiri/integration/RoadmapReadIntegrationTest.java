@@ -20,6 +20,7 @@ import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
@@ -272,13 +273,14 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 "로드맵 제목",
                 "로드맵 소개글",
                 new MemberResponse(크리에이터.getId(), NICKNAME),
-                "로드맵 본문",
+                new RoadmapContentResponse(
+                        "로드맵 본문",
+                        List.of(
+                                new RoadmapNodeResponse("노드 제목 1", "노드 내용 1", Collections.emptyList()),
+                                new RoadmapNodeResponse("노드 제목 2", "노드 내용 2", Collections.emptyList())
+                        )),
                 RoadmapDifficultyType.NORMAL.name(),
-                100,
-                List.of(
-                        new RoadmapNodeResponse("노드 제목 1", "노드 내용 1", Collections.emptyList()),
-                        new RoadmapNodeResponse("노드 제목 2", "노드 내용 2", Collections.emptyList())
-                )
+                100
         );
 
         assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());

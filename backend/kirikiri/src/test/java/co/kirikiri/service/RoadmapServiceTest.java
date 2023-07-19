@@ -31,6 +31,7 @@ import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
@@ -95,10 +96,9 @@ class RoadmapServiceTest {
                 "로드맵 제목",
                 "로드맵 설명",
                 new MemberResponse(1L, "썬샷"),
-                "콘텐츠 제목",
+                new RoadmapContentResponse("콘텐츠 제목", Collections.emptyList()),
                 "NORMAL",
-                100,
-                Collections.emptyList()
+                100
         );
 
         assertThat(roadmapResponse)
