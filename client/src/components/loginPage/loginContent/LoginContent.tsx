@@ -18,10 +18,10 @@ const LoginContent = () => {
       <Link to='/'>
         <img src={logo} alt='코끼리 로고' />
       </Link>
-      {!isLoginFormVisible ? (
-        <LoginOptions toggleLoginForm={toggleLoginForm} />
-      ) : (
+      {isLoginFormVisible ? (
         <LoginForm />
+      ) : (
+        <LoginOptions toggleLoginForm={toggleLoginForm} />
       )}
       {isLoginFormVisible && <BackButton action={toggleLoginForm} />}
     </SingleCardWrapper>
