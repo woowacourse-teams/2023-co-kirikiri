@@ -24,7 +24,8 @@ import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class RoadmapContentRepositoryTest extends RepositoryTest {
+@RepositoryTest
+class RoadmapContentRepositoryTest {
 
     private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;

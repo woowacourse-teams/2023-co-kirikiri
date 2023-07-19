@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -19,9 +18,8 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
+import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
@@ -53,7 +51,7 @@ class RoadmapServiceTest {
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")),
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), new Nickname("닉네임"), "010-1234-5678"));
+            new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 6, 8), new Nickname("닉네임"), "010-1234-5678"));
 
     @Mock
     private RoadmapRepository roadmapRepository;
@@ -120,63 +118,6 @@ class RoadmapServiceTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
-
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
-                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
-        roadmap.addContent(content);
-
-        return roadmap;
-    }
-
-    private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("썬샷"), "01083004367");
-
-        return new Member(1L, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
-    }
-
-    private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
-        return new RoadmapCategory(1L, title);
-    }
-
-    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
-        return new RoadmapContent("콘텐츠 제목");
-    }
-
-    private List<RoadmapNode> 로드맵_노드들을_생성한다() {
-        return List.of(
-                new RoadmapNode("1단계", "준비운동"),
-                new RoadmapNode("2단계", "턱걸이")
-        );
-    }
-
-    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
-        return List.of(
-                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
-                        ImageContentType.PNG)
-        );
-    }
-
-    @Test
-    void 존재하지_않는_카테고리를_입력하면_예외가_발생한다() {
-        // given
-        final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
-
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
-        given(roadmapCategoryRepository.findById(any()))
-                .willReturn(Optional.empty());
-
-        // expect
-        assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
-                .isInstanceOf(NotFoundException.class);
-    }
-
     @Test
     void 로드맵을_생성한다() {
         // given
@@ -203,6 +144,38 @@ class RoadmapServiceTest {
 
         // expect
         assertThat(roadmapService.create(request, "identifier1")).isEqualTo(1L);
+    }
+
+    @Test
+    void 로드맵_생성시_존재하지_않는_회원이면_입력하면_예외가_발생한다() {
+        // given
+        final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+                RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.empty());
+
+        // expect
+        assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
+                .isInstanceOf(AuthenticationException.class);
+    }
+
+    @Test
+    void 로드맵_생성시_존재하지_않는_카테고리를_입력하면_예외가_발생한다() {
+        // given
+        final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+                RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(roadmapCategoryRepository.findById(any()))
+                .willReturn(Optional.empty());
+
+        // expect
+        assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -332,6 +305,32 @@ class RoadmapServiceTest {
         assertThat(categoryResponses)
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
+    }
+
+    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
+        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
+
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
+                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        roadmap.addContent(content);
+
+        return roadmap;
+    }
+
+    private Member 사용자를_생성한다() {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
+                new Nickname("썬샷"), "01083004367");
+
+        return new Member(1L, new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")), memberProfile);
+    }
+
+    private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
+        return new RoadmapCategory(1L, title);
+    }
+
+    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
+        return new RoadmapContent("콘텐츠 제목");
     }
 
     private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {

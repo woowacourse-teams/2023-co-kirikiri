@@ -28,7 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-class RoadmapRepositoryTest extends RepositoryTest {
+@RepositoryTest
+class RoadmapRepositoryTest {
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
