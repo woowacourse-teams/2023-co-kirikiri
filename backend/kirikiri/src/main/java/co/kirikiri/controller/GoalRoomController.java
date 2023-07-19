@@ -1,5 +1,6 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.GoalRoomService;
 import co.kirikiri.service.dto.goalroom.GoalRoomResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,13 @@ public class GoalRoomController {
     @GetMapping("/{goalRoomId}")
     public ResponseEntity<GoalRoomResponse> findGoalRoom(@PathVariable("goalRoomId") final Long goalRoomId) {
         final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(goalRoomId);
+        return ResponseEntity.ok(goalRoomResponse);
+    }
+
+    @GetMapping("/certified/{goalRoomId}")
+    public ResponseEntity<GoalRoomResponse> findGoalRoom(@MemberIdentifier final String identifier,
+                                                         @PathVariable("goalRoomId") final Long goalRoomId) {
+        final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(identifier, goalRoomId);
         return ResponseEntity.ok(goalRoomResponse);
     }
 }

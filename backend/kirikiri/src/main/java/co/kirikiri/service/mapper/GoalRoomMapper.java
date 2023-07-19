@@ -15,11 +15,11 @@ public final class GoalRoomMapper {
 
     private static final int DATE_OFFSET = 1;
 
-    public static GoalRoomResponse convertGoalRoomResponse(final GoalRoom goalRoom) {
+    public static GoalRoomResponse convertGoalRoomResponse(final GoalRoom goalRoom, final Boolean isJoined) {
         final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
         final List<GoalRoomNodeResponse> roadmapNodeResponses = convertGoalRoomNodeResponses(nodes.getValues());
         final int period = calculateGoalRoomTotalPeriod(goalRoom);
-        return new GoalRoomResponse(goalRoom.getName(), roadmapNodeResponses, period);
+        return new GoalRoomResponse(goalRoom.getName(), roadmapNodeResponses, period, isJoined);
     }
 
     private static List<GoalRoomNodeResponse> convertGoalRoomNodeResponses(

@@ -10,6 +10,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class ControllerTestHelper extends RestDocsHelper {
 
+    protected final String AUTHORIZATION = "Authorization";
+    protected final String BEARER_TOKEN_FORMAT = "Bearer %s";
+
     @MockBean
     protected AuthInterceptor authInterceptor;
 

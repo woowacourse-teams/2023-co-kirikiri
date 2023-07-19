@@ -7,8 +7,10 @@ import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -28,10 +30,12 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.dto.goalroom.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomResponse;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -45,6 +49,9 @@ class GoalRoomServiceTest {
 
     @Mock
     private GoalRoomRepository goalRoomRepository;
+
+    @Mock
+    private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     @InjectMocks
     private GoalRoomService goalRoomService;
@@ -64,7 +71,7 @@ class GoalRoomServiceTest {
 
         // when
         final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(goalRoom.getId());
-        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다();
+        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다(null);
 
         // then
         assertThat(goalRoomResponse)
@@ -72,13 +79,77 @@ class GoalRoomServiceTest {
     }
 
     @Test
-    void 유효하지_않은_골룸_아이디로_골룸_조회시_예외가_발생한다() {
+    void 골룸_조회시_골룸_아이디가_유효하지_않으면_예외가_발생한다() {
         // given
         when(goalRoomRepository.findByIdWithRoadmapContent(any()))
                 .thenReturn(Optional.empty());
 
         // expected
         assertThatThrownBy(() -> goalRoomService.findGoalRoom(1L))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸_아이디와_사용자_아이디로_골룸_대기_목록_조회시_참여하는_사용자면_참여여부가_true로_반환된다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, creator);
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomPendingMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomPendingMember));
+
+        // when
+        final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(creator.getIdentifier().getValue(),
+                goalRoom.getId());
+        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다(true);
+
+        // then
+        assertThat(goalRoomResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸_아이디와_사용자_아이디로_골룸_대기_목록_조회시_참여하는_사용자면_참여여부가_false로_반환된다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomPendingMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.empty());
+
+        // when
+        final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(creator.getIdentifier().getValue(),
+                goalRoom.getId());
+        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다(false);
+
+        // then
+        assertThat(goalRoomResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸_아이디와_사용자_아이디로_골룸_대기_목록_조회시_골룸_아이디가_유효하지_않으면_예외가_발생한다() {
+        // given
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> goalRoomService.findGoalRoom("cokirikiri", 1L))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -141,12 +212,12 @@ class GoalRoomServiceTest {
         return goalRoom;
     }
 
-    private static GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
+    private static GoalRoomResponse 예상하는_골룸_응답을_생성한다(final Boolean isJoined) {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17, isJoined);
     }
 }

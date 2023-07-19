@@ -4,8 +4,10 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -22,9 +24,9 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
-import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
@@ -40,6 +42,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import io.restassured.common.mapper.TypeRef;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -50,19 +53,19 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
 
-    private final RoadmapCategoryRepository roadmapCategoryRepository;
-    private final GoalRoomRepository goalRoomRepository;
     private final RoadmapRepository roadmapRepository;
-    private final RoadmapContentRepository roadmapContentRepository;
+    private final GoalRoomRepository goalRoomRepository;
+    private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
-    public GoalRoomReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
+    public GoalRoomReadIntegrationTest(final RoadmapRepository roadmapRepository,
                                        final GoalRoomRepository goalRoomRepository,
-                                       final RoadmapRepository roadmapRepository,
-                                       final RoadmapContentRepository roadmapContentRepository) {
-        this.roadmapCategoryRepository = roadmapCategoryRepository;
-        this.goalRoomRepository = goalRoomRepository;
+                                       final RoadmapCategoryRepository roadmapCategoryRepository,
+                                       final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository) {
         this.roadmapRepository = roadmapRepository;
-        this.roadmapContentRepository = roadmapContentRepository;
+        this.goalRoomRepository = goalRoomRepository;
+        this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
     }
 
     @Test
@@ -89,7 +92,38 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final GoalRoomResponse 예상하는_골룸_응답값 = 예상하는_골룸_응답을_생성한다();
+        final GoalRoomResponse 예상하는_골룸_응답값 = 예상하는_골룸_응답을_생성한다(null);
+        assertThat(골룸_응답값)
+                .isEqualTo(예상하는_골룸_응답값);
+    }
+
+    @Test
+    void 골룸_아이디와_사용자_아이디로_골룸_정보를_조회한다() {
+        // given
+        final Member 크리에이터 = 크리에이터를_저장한다();
+        final String 로그인_토큰_정보 = 로그인();
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+        final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
+        final List<RoadmapContent> 로드맵_본문_리스트 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답).getValues();
+        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트);
+        골룸_대기_사용자를_저장한다(크리에이터, 골룸);
+
+        // when
+        final GoalRoomResponse 골룸_응답값 = given()
+                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/certified/{goalRoomId}", 골룸.getId())
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        final GoalRoomResponse 예상하는_골룸_응답값 = 예상하는_골룸_응답을_생성한다(true);
         assertThat(골룸_응답값)
                 .isEqualTo(예상하는_골룸_응답값);
     }
@@ -214,12 +248,18 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
 
     }
 
-    private GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
+    private GoalRoomResponse 예상하는_골룸_응답을_생성한다(final Boolean 참여_여부) {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17, 참여_여부);
+    }
+
+    private void 골룸_대기_사용자를_저장한다(final Member 크리에이터, final GoalRoom 골룸) {
+        final GoalRoomPendingMember 골룸_대기_사용자 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), 골룸, 크리에이터);
+        goalRoomPendingMemberRepository.save(골룸_대기_사용자);
     }
 }
