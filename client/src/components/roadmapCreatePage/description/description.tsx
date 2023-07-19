@@ -4,12 +4,11 @@ import InputLabel from '../input/inputLabel/inputLebel';
 import TextCount from '../input/textCount/textCount';
 import * as S from './description.styles';
 
-const DESCRIPTION_MAX_LENGTH = { rule: /^.{0,150}$/, message: '소개글을 입력해주세요' };
+const DESCRIPTION_MAX_LENGTH = { rule: /^.{1,150}$/, message: '소개글을 입력해주세요' };
 
 const Description = () => {
-  const { handleInputChange, checkBlank, errorMessage, value } = useValidateInput([
-    DESCRIPTION_MAX_LENGTH,
-  ]);
+  const { handleInputChange, validateInput, errorMessage, resetErrorMessage, value } =
+    useValidateInput(DESCRIPTION_MAX_LENGTH);
 
   return (
     <S.Container>
@@ -19,7 +18,8 @@ const Description = () => {
           placeholder='컨텐츠를 소개하는 문장을 작성해주세요'
           handleInputChange={handleInputChange}
           maxLength={150}
-          checkBlank={checkBlank}
+          validateInput={validateInput}
+          resetErrorMessage={resetErrorMessage}
         />
         <TextCount maxCount={150} currentCount={value.length} />
       </S.FieldWrapper>

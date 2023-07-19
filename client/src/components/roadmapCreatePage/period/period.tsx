@@ -10,7 +10,8 @@ const PERIOD = {
 };
 
 const Period = () => {
-  const { handleInputChange, checkBlank, errorMessage } = useValidateInput([PERIOD]);
+  const { handleInputChange, validateInput, errorMessage, resetErrorMessage } =
+    useValidateInput(PERIOD);
   return (
     <S.Container>
       <InputLabel text='예상기간' />
@@ -19,7 +20,8 @@ const Period = () => {
         <InputField
           handleInputChange={handleInputChange}
           maxLength={4}
-          checkBlank={checkBlank}
+          validateInput={validateInput}
+          resetErrorMessage={resetErrorMessage}
         />
         <p>일</p>
       </S.FieldWrapper>

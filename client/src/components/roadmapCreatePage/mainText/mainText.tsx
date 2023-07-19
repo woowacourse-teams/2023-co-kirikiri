@@ -6,9 +6,8 @@ import * as S from './mainText.styles';
 
 const MAIN_TEXT_MAX_LENGTH = { rule: /^.{0,2000}$/, message: '' };
 const MainText = () => {
-  const { handleInputChange, checkBlank, value } = useValidateInput([
-    MAIN_TEXT_MAX_LENGTH,
-  ]);
+  const { handleInputChange, validateInput, resetErrorMessage, value } =
+    useValidateInput(MAIN_TEXT_MAX_LENGTH);
 
   return (
     <S.Container>
@@ -18,7 +17,8 @@ const MainText = () => {
           placeholder='컨텐츠를 자세하게 설명해주세요'
           handleInputChange={handleInputChange}
           maxLength={2000}
-          checkBlank={checkBlank}
+          validateInput={validateInput}
+          resetErrorMessage={resetErrorMessage}
         />
         <S.TextCountWrapper>
           <TextCount maxCount={2000} currentCount={value.length} />

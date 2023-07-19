@@ -2,21 +2,20 @@ import { ChangeEvent, TextareaHTMLAttributes } from 'react';
 import * as S from './inputField.styles';
 
 type InputFieldProps = {
-  placeholder?: string;
   handleInputChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-  maxLength: number;
-  checkBlank: () => void;
+  validateInput: () => void;
+  resetErrorMessage: () => void;
 } & TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 const InputField = (props: InputFieldProps) => {
-  const { placeholder = '', handleInputChange, maxLength, checkBlank } = props;
+  const { handleInputChange, validateInput, resetErrorMessage, ...restProps } = props;
 
   return (
     <S.Input
-      placeholder={placeholder}
       onInput={handleInputChange}
-      maxLength={maxLength}
-      onBlur={checkBlank}
+      onBlur={validateInput}
+      onFocus={resetErrorMessage}
+      {...restProps}
     />
   );
 };
