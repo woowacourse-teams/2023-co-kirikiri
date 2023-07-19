@@ -77,6 +77,18 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: 'Noto Sans', 'Noto Sans KR', sans-serif;
   }
+  
+  button, select {
+    cursor: pointer;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  input, select {
+    background: inherit;
+  }
 `;
 
 export default GlobalStyle;
