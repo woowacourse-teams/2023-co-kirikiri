@@ -11,7 +11,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.RepositoryTest;
+import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +19,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class RefreshTokenRepositoryTest extends RepositoryTest {
+@RepositoryTest
+class RefreshTokenRepositoryTest {
 
     private static Member member;
     private static MemberProfile memberProfile;

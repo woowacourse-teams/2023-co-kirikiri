@@ -1,4 +1,4 @@
-package co.kirikiri;
+package co.kirikiri.integration.helper;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

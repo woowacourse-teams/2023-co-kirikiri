@@ -8,7 +8,7 @@ import java.util.List;
 public record RoadmapResponse(
         Long roadmapId,
         RoadmapCategoryResponse category,
-        String title,
+        String roadmapTitle,
         String introduction,
         MemberResponse creator,
         String content,
@@ -18,13 +18,13 @@ public record RoadmapResponse(
 ) {
 
     public RoadmapResponse(
-            long roadmapId,
-            String roadmapTitle,
-            String introduction,
-            String difficulty,
-            int recommendedRoadmapPeriod,
-            MemberResponse creator,
-            RoadmapCategoryResponse category
+            final long roadmapId,
+            final String roadmapTitle,
+            final String introduction,
+            final String difficulty,
+            final int recommendedRoadmapPeriod,
+            final MemberResponse creator,
+            final RoadmapCategoryResponse category
     ) {
         this(roadmapId, category, roadmapTitle, introduction, creator, null, difficulty, recommendedRoadmapPeriod,
                 null);
