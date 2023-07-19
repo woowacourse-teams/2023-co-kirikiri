@@ -8,7 +8,7 @@ export const OathButtonContainer = styled.div`
   align-items: center;
   justify-content: center;
 
-  margin-top: 1.5rem;
+  margin-top: 7rem;
 `;
 
 export const OathButton = styled.button<{ type?: string }>`

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { SingleCardWrapper } from '@components/_common/SingleCard/SingleCard.styles';
 import logo from '@assets/images/logo.png';
 import { Link } from 'react-router-dom';
 import BackButton from '@components/_common/backButton/BackButton';
 import LoginOptions from '@components/loginPage/loginOptions/LoginOptions';
 import LoginForm from '@components/loginPage/loginForm/LoginForm';
+import { SingleCardWrapper } from '@components/_common/SingleCard/SingleCard.styles';
 
 const LoginContent = () => {
   const [isLoginFormVisible, setIsLoginFormVisible] = useState<boolean>(false);
