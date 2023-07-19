@@ -42,11 +42,6 @@ const theme: DefaultTheme = {
   shadows: {
     box: '-0.14rem 0.7rem 4.3rem rgba(0, 0, 0, 0.13)',
     text: '0 0.2rem 0.2rem rgba(0, 0, 0, 0.18)',
-  },
-
-  shadows: {
-    box: '-1.4px 7px 42.4px rgba(0, 0, 0, 0.13)',
-    text: '0px 3px 3px rgba(0, 0, 0, 0.2)',
     main: 'rgba(0, 0, 0, 0.25) 0px 0px 0.315rem',
   },
 };
