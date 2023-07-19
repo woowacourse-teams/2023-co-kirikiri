@@ -7,44 +7,37 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
+import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 
-public class RoadmapQueryRepositoryImpl implements RoadmapQueryRepository {
+public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter implements RoadmapQueryRepository {
 
-    private final JPAQueryFactory factory;
-
-    public RoadmapQueryRepositoryImpl(final EntityManager em) {
-        this.factory = new JPAQueryFactory(em);
+    public RoadmapQueryRepositoryImpl() {
+        super(Roadmap.class);
     }
 
     @Override
     public Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
                                                 final Pageable pageable) {
-        final List<Roadmap> roadmaps = factory
-                .selectFrom(roadmap)
-                .innerJoin(roadmap.category, roadmapCategory)
-                .where(statusCond(RoadmapStatus.CREATED), categoryCond(category))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(sortCond(orderType))
-                .fetchJoin()
-                .fetch();
+        final JPAQuery<Roadmap> roadmapContentQuery =
+                selectFrom(roadmap)
+                        .innerJoin(roadmap.category, roadmapCategory)
+                        .where(statusCond(RoadmapStatus.CREATED), categoryCond(category))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(sortCond(orderType))
+                        .fetchJoin();
 
-        final JPAQuery<Long> countQuery = factory
-                .select(roadmap.count())
+        final JPAQuery<Long> countQuery = select(roadmap.count())
                 .from(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
                 .where(statusCond(RoadmapStatus.CREATED), categoryCond(category));
 
-        return PageableExecutionUtils.getPage(roadmaps, pageable, countQuery::fetchOne);
+        return applyPagination(pageable, roadmapContentQuery, countQuery);
     }
 
     private BooleanExpression statusCond(final RoadmapStatus status) {
