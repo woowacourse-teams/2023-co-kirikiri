@@ -5,6 +5,7 @@ import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.exception.ServerException;
+import co.kirikiri.exception.UnauthorizedException;
 import co.kirikiri.service.dto.ErrorResponse;
 import java.util.List;
 import org.slf4j.Logger;
@@ -61,6 +62,13 @@ public class GlobalExceptionHandler {
         log.warn(exception.getMessage(), exception);
         final List<ErrorResponse> errorResponses = makeErrorResponses(exception);
         return ResponseEntity.badRequest().body(errorResponses);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(final UnauthorizedException exception) {
+        log.warn(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(ServerException.class)
