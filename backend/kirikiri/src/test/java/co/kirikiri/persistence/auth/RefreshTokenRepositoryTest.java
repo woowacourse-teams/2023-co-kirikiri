@@ -1,7 +1,5 @@
 package co.kirikiri.persistence.auth;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -11,15 +9,19 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.RepositoryTest;
+import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class RefreshTokenRepositoryTest extends RepositoryTest {
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RepositoryTest
+class RefreshTokenRepositoryTest {
 
     private static Member member;
     private static MemberProfile memberProfile;

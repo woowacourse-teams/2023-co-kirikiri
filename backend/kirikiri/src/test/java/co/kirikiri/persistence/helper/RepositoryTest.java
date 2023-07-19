@@ -7,10 +7,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 @DataJpaTest
 @ActiveProfiles("test")
-@Import({TestEntityManagerConfig.class, JpaConfig.class})
+@Import({JpaConfig.class})
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
 @TestConstructor(autowireMode = AutowireMode.ALL)
-public class RepositoryTest {
+public @interface RepositoryTest {
 
 }
