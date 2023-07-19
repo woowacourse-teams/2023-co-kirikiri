@@ -19,15 +19,19 @@ endif::[]
 
 === *1-1* 성공
 
-operation::roadmap-controller-test/정상적으로_로드맵을_생성한다[snippets='http-request,http-response,request-fields,response-headers']
+operation::roadmap-create-api-test/정상적으로_로드맵을_생성한다[snippets='http-request,http-response,request-headers,request-fields,response-headers']
 
 === *1-2* 실패 - 카테고리 아이디가 유효하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_유효하지_않은_카테고리_아이디를_입력하면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_유효하지_않은_카테고리_아이디를_입력하면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *1-3* 실패 - 회원이 존재하지 않음
+
+operation::roadmap-create-api-test/로드맵_생성시_존재하지_않은_회원이면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-3* 실패 - 카테고리를 입력하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_카테고리_아이디를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_카테고리_아이디를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-4* 실패 - 로드맵 제목의 길이가 40보다 큼
 
@@ -35,51 +39,51 @@ operation::roadmap-controller-test/로드맵_생성시_로드맵_제목의_길�
 
 === *1-5* 실패 - 로드맵 제목을 입력하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_제목을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_제목을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-6* 실패 - 로드맵 소개글의 길이가 150보다 큼
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_소개글의_길이가_150보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_소개글의_길이가_150보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-7* 실패 - 로드맵 소개글을 입력하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_소개글을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_소개글을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-8* 실패 - 로드맵 본문의 길이가 150보다 큼
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_본문의_길이가_150보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_본문의_길이가_150보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-9* 실패 - 로드맵 난이도를 입력하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_난이도를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_난이도를_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-10* 실패 - 로드맵 추천 소요 기간이 0보다 작음
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_추천_소요기간이_0보다_작으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_추천_소요기간이_0보다_작으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-11* 실패 - 로드맵 추천 소요 기간이 1000보다 큼
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_추천_소요기간이_1000보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_추천_소요기간이_1000보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-12* 실패 - 로드맵 추천 소요 기간을 입력하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_추천_소요기간을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_추천_소요기간을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-13* 실패 - 로드맵 노드의 제목의 길이가 40보다 큼
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_제목의_길이가_40보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_제목의_길이가_40보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-14* 실패 - 로드맵 노드의 제목을 입력하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_제목을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_제목을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-15* 실패 - 로드맵 노드의 설명의 길이가 200보다 큼
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설명의_길이가_200보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_설명의_길이가_200보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-16* 실패 - 로드맵 노드의 설명을 입력하지 않음
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설명을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_설명을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
 ---
 
@@ -88,11 +92,11 @@ operation::roadmap-controller-test/로드맵_생성시_로드맵_노드의_설�
 
 === *2-1* 성공
 
-operation::roadmap-controller-test/로드맵_목록을_조건에_따라_조회한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/로드맵_목록을_조건에_따라_조회한다[snippets='http-request,http-response,response-fields']
 
 === *2-2* 실패 - 카테고리 아이디가 유효하지 않음
 
-operation::roadmap-controller-test/로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,response-fields']
 
 ---
 
@@ -101,17 +105,17 @@ operation::roadmap-controller-test/로드맵_목록_조회시_유효하지_않�
 
 === *3-1* 성공
 
-operation::roadmap-controller-test/로드맵_카테고리_목록을_조회한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/로드맵_카테고리_목록을_조회한다[snippets='http-request,http-response,response-fields']
 
 [[로드맵조회-API]]
 == *1. 로드맵 조회 API*
 
 === *1-1* 성공
 
-operation::roadmap-controller-test/단일_로드맵_정보를_조회한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/단일_로드맵_정보를_조회한다[snippets='http-request,http-response,response-fields']
 
 ---
 
 === *1-2* 실패 - 로드맵 아이디가 유효하지 않음
 
-operation::roadmap-controller-test/존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다[snippets='http-request,http-response,response-fields']

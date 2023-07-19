@@ -1,5 +1,6 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.CustomPageRequest;
@@ -8,6 +9,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -30,11 +32,12 @@ public class RoadmapController {
     private final RoadmapService roadmapService;
 
     @PostMapping
+    @Authenticated
     public ResponseEntity<Void> create(@MemberIdentifier final String identifier,
-                                       @RequestBody @Valid final RoadmapSaveRequest request) {
+                                       @RequestBody @Valid final RoadmapSaveRequest request,
+                                       final HttpServletRequest httpServletRequest) {
         final Long id = roadmapService.create(request, identifier);
-
-        return ResponseEntity.created(URI.create("/roadmaps/" + id)).build();
+        return ResponseEntity.created(URI.create(httpServletRequest.getRequestURI() + "/" + id)).build();
     }
 
     @GetMapping
@@ -44,8 +47,7 @@ public class RoadmapController {
             @ModelAttribute final CustomPageRequest pageRequest
     ) {
         final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
-                categoryId,
-                roadmapFilterTypeDto, pageRequest);
+                categoryId, roadmapFilterTypeDto, pageRequest);
         return ResponseEntity.ok(roadmapPageResponse);
     }
 

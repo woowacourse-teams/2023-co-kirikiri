@@ -41,32 +41,19 @@ public class RoadmapService {
     private final MemberRepository memberRepository;
     private final RoadmapContentRepository roadmapContentRepository;
 
-    public RoadmapResponse findRoadmap(final Long id) {
-        final Roadmap roadmap = findRoadmapById(id);
-        final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
-
-        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent);
-    }
-
-    private RoadmapContent findRecentContent(final Roadmap roadmap) {
-        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
-                .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
-    }
-
-    private Roadmap findRoadmapById(final Long id) {
-        return roadmapRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
-    }
-
     @Transactional
     public Long create(final RoadmapSaveRequest request, final String identifier) {
-        final Member member = memberRepository.findByIdentifier(new Identifier(identifier))
-                .orElseThrow(() -> new AuthenticationException("존재하지 않은 회원입니다."));
+        final Member member = findMemberByIdentifier(identifier);
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
         final RoadmapSaveDto roadmapSaveDto = RoadmapMapper.convertToRoadmapSaveDto(request);
         final Roadmap roadmap = makeRoadmap(member, roadmapSaveDto, roadmapCategory);
 
         return roadmapRepository.save(roadmap).getId();
+    }
+
+    private Member findMemberByIdentifier(final String identifier) {
+        return memberRepository.findByIdentifier(new Identifier(identifier))
+                .orElseThrow(() -> new AuthenticationException("존재하지 않는 회원입니다."));
     }
 
     private RoadmapCategory findRoadmapCategoryById(final Long categoryId) {
@@ -78,7 +65,9 @@ public class RoadmapService {
                                 final RoadmapCategory roadmapCategory) {
         final RoadmapNodes roadmapNodes = makeRoadmapNodes(roadmapSaveDto.roadmapNodes());
         final RoadmapContent roadmapContent = makeRoadmapContent(roadmapSaveDto, roadmapNodes);
-        final Roadmap roadmap = makeRoadmap(roadmapSaveDto, member, roadmapCategory);
+        final Roadmap roadmap = new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(),
+                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), member,
+                roadmapCategory);
         roadmap.addContent(roadmapContent);
         return roadmap;
     }
@@ -97,10 +86,21 @@ public class RoadmapService {
         return roadmapContent;
     }
 
-    private Roadmap makeRoadmap(final RoadmapSaveDto roadmapSaveDto, final Member member,
-                                final RoadmapCategory roadmapCategory) {
-        return new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(), roadmapSaveDto.requiredPeriod(),
-                RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), member, roadmapCategory);
+    public RoadmapResponse findRoadmap(final Long id) {
+        final Roadmap roadmap = findRoadmapById(id);
+        final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
+
+        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent);
+    }
+
+    private RoadmapContent findRecentContent(final Roadmap roadmap) {
+        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
+                .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
+    }
+
+    private Roadmap findRoadmapById(final Long id) {
+        return roadmapRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
     public PageResponse<RoadmapResponse> findRoadmapsByFilterType(final Long categoryId,
