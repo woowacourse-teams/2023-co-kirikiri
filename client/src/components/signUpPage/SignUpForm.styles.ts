@@ -44,8 +44,7 @@ export const SubmitButton = styled.button`
   margin-top: 1rem;
   padding: 1rem;
 
-  font-size: 1.125rem;
-  font-weight: 700;
+  ${({ theme }) => theme.fonts.button1};
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme }) => theme.colors.main_dark};
