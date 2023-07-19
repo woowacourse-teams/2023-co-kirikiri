@@ -325,7 +325,7 @@ class RoadmapServiceTest {
                 .thenReturn(roadmapCategories);
 
         // when
-        final List<RoadmapCategoryResponse> categoryResponses = roadmapService.getAllRoadmapCategories();
+        final List<RoadmapCategoryResponse> categoryResponses = roadmapService.findAllRoadmapCategories();
 
         // then
         final List<RoadmapCategoryResponse> expected = 로드맵_카테고리_응답_리스트를_반환한다();
@@ -335,7 +335,7 @@ class RoadmapServiceTest {
     }
 
     private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {
-        final RoadmapContent roadmapContent = new RoadmapContent(1L, "로드맵 내용1");
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 내용1");
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");
         final Roadmap roadmap = new Roadmap(1L, roadmapTitle, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
                 RoadmapStatus.CREATED, member, category);

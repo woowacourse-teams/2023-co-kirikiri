@@ -32,9 +32,8 @@ public class RoadmapController {
     @PostMapping
     public ResponseEntity<Void> create(@MemberIdentifier final String identifier,
                                        @RequestBody @Valid final RoadmapSaveRequest request) {
-        final Long id = roadmapService.create(request, identifier);
-
-        return ResponseEntity.created(URI.create("/roadmaps/" + id)).build();
+        final Long roadmapId = roadmapService.create(request, identifier);
+        return ResponseEntity.created(URI.create("/api/roadmaps/" + roadmapId)).build();
     }
 
     @GetMapping
@@ -50,8 +49,8 @@ public class RoadmapController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<RoadmapCategoryResponse>> getAllRoadmapCategories() {
-        final List<RoadmapCategoryResponse> roadmapCategoryResponses = roadmapService.getAllRoadmapCategories();
+    public ResponseEntity<List<RoadmapCategoryResponse>> findAllRoadmapCategories() {
+        final List<RoadmapCategoryResponse> roadmapCategoryResponses = roadmapService.findAllRoadmapCategories();
         return ResponseEntity.ok(roadmapCategoryResponses);
     }
 

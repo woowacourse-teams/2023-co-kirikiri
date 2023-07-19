@@ -62,6 +62,22 @@ public final class RoadmapMapper {
         return new PageResponse<>(currentPage, totalPages, roadmapResponses);
     }
 
+    public static List<RoadmapCategoryResponse> convertRoadmapCategoryResponses(
+            final List<RoadmapCategory> roadmapCategories) {
+        return roadmapCategories.stream()
+                .map(category -> new RoadmapCategoryResponse(category.getId(), category.getName()))
+                .toList();
+    }
+
+    public static RoadmapNodeResponse convertNode(final RoadmapNode node) {
+        final List<String> images = node.getImages()
+                .stream()
+                .map(RoadmapNodeImage::getServerFilePath)
+                .toList();
+
+        return new RoadmapNodeResponse(node.getTitle(), node.getContent(), images);
+    }
+
     private static RoadmapResponse convertRoadmapResponse(final Roadmap roadmap) {
         final RoadmapCategory category = roadmap.getCategory();
         final RoadmapCategoryResponse categoryResponse = new RoadmapCategoryResponse(category.getId(),
@@ -74,13 +90,6 @@ public final class RoadmapMapper {
         return new RoadmapResponse(roadmap.getId(), roadmap.getTitle(), roadmap.getIntroduction(),
                 roadmap.getDifficulty().name(), roadmap.getRequiredPeriod(),
                 creatorResponse, categoryResponse);
-    }
-
-    public static List<RoadmapCategoryResponse> convertRoadmapCategoryResponses(
-            final List<RoadmapCategory> roadmapCategories) {
-        return roadmapCategories.stream()
-                .map(category -> new RoadmapCategoryResponse(category.getId(), category.getName()))
-                .toList();
     }
 
     public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content) {
@@ -105,14 +114,5 @@ public final class RoadmapMapper {
                 .stream()
                 .map(RoadmapMapper::convertNode)
                 .toList();
-    }
-
-    private static RoadmapNodeResponse convertNode(final RoadmapNode node) {
-        final List<String> images = node.getImages()
-                .stream()
-                .map(RoadmapNodeImage::getServerFilePath)
-                .toList();
-
-        return new RoadmapNodeResponse(node.getTitle(), node.getContent(), images);
     }
 }

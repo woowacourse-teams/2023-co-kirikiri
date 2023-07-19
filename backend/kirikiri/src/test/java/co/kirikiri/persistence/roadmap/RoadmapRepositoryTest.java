@@ -8,6 +8,7 @@ import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
+import co.kirikiri.domain.member.MemberProfileImage;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -28,7 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-class RoadmapRepositoryTest extends RepositoryTest {
+@RepositoryTest
+class RoadmapRepositoryTest {
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
@@ -175,8 +177,11 @@ class RoadmapRepositoryTest extends RepositoryTest {
     }
 
     private Member 크리에이터를_생성한다() {
+        final MemberProfileImage memberProfileImage = new MemberProfileImage("member-profile.png",
+                "member-profile-save-path", ImageContentType.PNG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 new Nickname("코끼리"), "010-1234-5678");
+        memberProfile.updateMemberProfileImage(memberProfileImage);
         final Member creator = new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
         return memberRepository.save(creator);
@@ -188,13 +193,8 @@ class RoadmapRepositoryTest extends RepositoryTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getRoadmapNodes());
-
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
-                creator, category);
-        roadmap.addContent(roadmapContent);
-        return roadmap;
+        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
+                RoadmapStatus.CREATED, creator, category);
     }
 
     private RoadmapNodes 로드맵_노드들을_생성한다() {
