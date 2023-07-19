@@ -5,12 +5,12 @@ import InputLabel from '../input/inputLabel/inputLebel';
 import * as S from './period.styles';
 
 const PERIOD = {
-  rule: /^(?:[1-9]\d{0,2}|1000)$/,
+  rule: /^(?:[1-9]\d{0,2}|1000)$/g,
   message: '1일부터 100일까지만 입력할 수 있습니다',
 };
 
 const Period = () => {
-  const { handleInputChange, validateInput, errorMessage, resetErrorMessage } =
+  const { controlInputChange, validateInput, errorMessage, resetErrorMessage } =
     useValidateInput(PERIOD);
   return (
     <S.Container>
@@ -18,7 +18,7 @@ const Period = () => {
       <InputDescription text='컨텐츠를 달성하는데 걸리는 기간을 입력해주세요' />
       <S.FieldWrapper>
         <InputField
-          handleInputChange={handleInputChange}
+          handleInputChange={controlInputChange}
           maxLength={4}
           validateInput={validateInput}
           resetErrorMessage={resetErrorMessage}

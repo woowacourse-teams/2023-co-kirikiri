@@ -12,7 +12,7 @@ const InputField = (props: InputFieldProps) => {
 
   return (
     <S.Input
-      onInput={handleInputChange}
+      onChange={handleInputChange}
       onBlur={validateInput}
       onFocus={resetErrorMessage}
       {...restProps}

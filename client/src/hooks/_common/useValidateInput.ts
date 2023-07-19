@@ -8,10 +8,26 @@ export const useValidateInput = (pattern: any) => {
     setValue(e.target.value);
   };
 
+  const controlInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const { rule, message } = pattern;
+
+    if (!rule.test(e.target.value)) {
+      e.target.value = e.target.value.slice(0, -1);
+      setErrorMessage(message);
+
+      return;
+    }
+
+    setValue(e.target.value);
+  };
+
   const validateInput = () => {
     const { rule, message } = pattern;
+
     if (rule.test(value)) return true;
+
     setErrorMessage(message);
+
     return false;
   };
 
@@ -19,5 +35,12 @@ export const useValidateInput = (pattern: any) => {
     setErrorMessage('');
   };
 
-  return { handleInputChange, errorMessage, value, validateInput, resetErrorMessage };
+  return {
+    handleInputChange,
+    errorMessage,
+    value,
+    validateInput,
+    controlInputChange,
+    resetErrorMessage,
+  };
 };
