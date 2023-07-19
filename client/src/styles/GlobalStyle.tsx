@@ -63,6 +63,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   :root {
+    background: ${({ theme }) => theme.colors.gray_back};
     font-size: 41.6%; /* for mobile devices */
 
     @media (min-width: ${BREAK_POINTS.TABLET}px) {
@@ -80,6 +81,18 @@ const GlobalStyle = createGlobalStyle`
     button {
       border:none;
     }
+  }
+  
+  button, select {
+    cursor: pointer;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  input, select {
+    background: inherit;
   }
 `;
 

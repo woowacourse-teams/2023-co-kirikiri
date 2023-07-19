@@ -23,6 +23,12 @@ const media = {
     }
   `,
 
+  tablet: (styles: TemplateStringsArray) => css`
+    @media (max-width: ${BREAK_POINTS.TABLET}px) {
+      ${styles}
+    }
+  `,
+
   desktop: (styles: TemplateStringsArray) => css`
     @media (max-width: ${BREAK_POINTS.DESKTOP}px) {
       ${styles}

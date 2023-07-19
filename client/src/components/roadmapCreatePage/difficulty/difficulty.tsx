@@ -1,6 +1,6 @@
 import { useSelect } from '@/hooks/_common/useSelect';
 import { Select, SelectBox } from '../selector/selectBox';
-import { S } from './difficulty.style';
+import { S } from './difficulty.styles';
 
 // 임시 더미데이터
 type DummyDifficultyType = {

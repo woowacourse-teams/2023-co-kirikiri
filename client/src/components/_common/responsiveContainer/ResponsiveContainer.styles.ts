@@ -5,7 +5,7 @@ export const Container = styled.div`
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-  background: red;
+  background: ${({ theme }) => theme.colors.white};
 
   @media (min-width: ${BREAK_POINTS.TABLET}px) {
     max-width: 100vw;

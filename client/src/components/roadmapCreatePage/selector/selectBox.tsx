@@ -13,8 +13,8 @@ import {
   TriggerProps,
 } from '@/types/_common/select';
 import { useSelect } from '@/hooks/_common/useSelect';
-import { S } from './selectBox.style';
 import { SelectContext } from '@/context/selectContext';
+import { S } from './selectBox.styles';
 
 // select컴포넌트가 context를 공유할 수 있게 하는 provider컴포넌트
 export const SelectBox = (
