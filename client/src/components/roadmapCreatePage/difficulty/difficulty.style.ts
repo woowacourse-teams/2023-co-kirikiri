@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const DifficultyLabel = styled.h2`
   display: flex;
+  margin-top: 2rem;
   margin-bottom: 1rem;
   ${({ theme }) => theme.fonts.title_large}
   color: ${({ theme }) => theme.colors.black};
@@ -13,7 +14,7 @@ const DifficultyLabel = styled.h2`
 
 const DifficultyDescription = styled.p`
   margin-bottom: 2.5rem;
-  ${({ theme }) => theme.fonts.description5}
+  ${({ theme }) => theme.fonts.description4}
   color: ${({ theme }) => theme.colors.gray300};
 `;
 
@@ -43,7 +44,8 @@ const TriggerButton = styled.button`
 
 const DifficultyOption = styled.li<{ isSelected?: boolean }>`
   display: flex;
-  ${({ theme }) => theme.fonts.button3}
+  align-items: center;
+  ${({ theme }) => theme.fonts.button2}
   color: ${({ theme, isSelected }) =>
     isSelected !== undefined &&
     (isSelected ? theme.colors.main_dark : theme.colors.gray300)};
@@ -59,7 +61,8 @@ const OptionIndicator = styled.span<{ isSelected?: boolean }>`
     isSelected !== undefined && (isSelected ? theme.colors.main_dark : 'transparent')};
   border: 0.1rem solid
     ${({ theme, isSelected }) =>
-      isSelected !== undefined && (isSelected ? 'none' : theme.colors.main_dark)};
+      isSelected !== undefined &&
+      (isSelected ? theme.colors.main_dark : theme.colors.gray300)};
 `;
 
 export const S = {

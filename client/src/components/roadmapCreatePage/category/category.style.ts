@@ -13,7 +13,7 @@ const CategoryLabel = styled.h2`
 
 const CategoryDescription = styled.p`
   margin-bottom: 2.5rem;
-  ${({ theme }) => theme.fonts.description5}
+  ${({ theme }) => theme.fonts.description4}
   color: ${({ theme }) => theme.colors.gray300};
 `;
 
@@ -43,7 +43,7 @@ const CategoryBox = styled.article<{ isSelected?: boolean }>`
     (isSelected ? theme.colors.main_light : theme.colors.gray100)};
   border-radius: 10rem;
 
-  ${({ theme }) => theme.fonts.title_large}
+  ${({ theme }) => theme.fonts.description5}
 `;
 
 export const S = {

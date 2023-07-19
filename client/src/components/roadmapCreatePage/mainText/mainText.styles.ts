@@ -13,8 +13,7 @@ export const FieldWrapper = styled.div`
   height: 30rem;
   padding-left: 2rem;
 
-  background-color: ${({ theme }) => theme.colors.gray200};
-  border-bottom: 0.2rem solid ${({ theme }) => theme.colors.gray300};
+  background-color: ${({ theme }) => theme.colors.gray100};
   border-radius: 2rem;
 `;
 

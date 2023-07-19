@@ -13,7 +13,7 @@ export const FieldWrapper = styled.div`
   padding-left: 1rem;
 
   border-bottom: 0.2rem solid ${({ theme }) => theme.colors.gray300};
-  ${({ theme }) => theme.fonts.nav_title}
+  ${({ theme }) => theme.fonts.button2}
 
   > p {
     padding-bottom: 1rem;
@@ -22,5 +22,6 @@ export const FieldWrapper = styled.div`
 
 export const ErrorMessage = styled.div`
   height: 2rem;
+  margin-top: 1rem;
   color: ${({ theme }) => theme.colors.red};
 `;
