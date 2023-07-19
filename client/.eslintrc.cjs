@@ -98,5 +98,8 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error', {"ignoreTypeReferences": true}],
     'no-plusplus': 'off',
     'no-param-reassign': 'off',
+    'react/jsx-no-constructed-context-values': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'no-nested-ternary': 'off',
   },
 };
