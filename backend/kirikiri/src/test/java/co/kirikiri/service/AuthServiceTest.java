@@ -1,11 +1,5 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-
 import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -21,15 +15,22 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -79,8 +80,7 @@ class AuthServiceTest {
         final AuthenticationResponse authenticationResponse = authService.login(loginRequest);
 
         //then
-        assertThat(authenticationResponse.accessToken()).isEqualTo(accessToken);
-        assertThat(authenticationResponse.refreshToken()).isEqualTo(refreshToken);
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken));
     }
 
     @Test
@@ -132,8 +132,7 @@ class AuthServiceTest {
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
 
         //then
-        assertThat(authenticationResponse.refreshToken()).isEqualTo(rawRefreshToken);
-        assertThat(authenticationResponse.accessToken()).isEqualTo(rawAccessToken);
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(rawRefreshToken, rawAccessToken));
     }
 
     @Test

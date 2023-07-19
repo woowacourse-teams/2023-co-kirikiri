@@ -71,8 +71,7 @@ class AuthControllerTest extends ControllerTestHelper {
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
-        assertThat(response).usingRecursiveComparison()
-                .isEqualTo(expectedResponse);
+        assertThat(response).isEqualTo(expectedResponse);
     }
 
     @Test
@@ -206,8 +205,7 @@ class AuthControllerTest extends ControllerTestHelper {
         //then
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
-        assertThat(response).usingRecursiveComparison()
-                .isEqualTo(expectedResponse);
+        assertThat(response).isEqualTo(expectedResponse);
     }
 
     @Test
