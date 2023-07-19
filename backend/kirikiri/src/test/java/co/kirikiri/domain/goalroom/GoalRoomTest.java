@@ -15,7 +15,7 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(10),
                 new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMembers()
+                new GoalRoomPendingMember()
         );
         final GoalRoomPendingMember member = new GoalRoomPendingMember();
 
@@ -33,7 +33,7 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(10),
                 new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMembers()
+                new GoalRoomPendingMember()
         );
         goalRoom.updateStatus(GoalRoomStatus.RUNNING);
         final GoalRoomPendingMember member = new GoalRoomPendingMember();
@@ -50,7 +50,7 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(1),
                 new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMembers()
+                new GoalRoomPendingMember()
         );
         final GoalRoomPendingMember member1 = new GoalRoomPendingMember();
         final GoalRoomPendingMember member2 = new GoalRoomPendingMember();

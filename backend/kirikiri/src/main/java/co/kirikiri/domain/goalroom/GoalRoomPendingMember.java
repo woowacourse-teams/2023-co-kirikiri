@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,6 +26,7 @@ public class GoalRoomPendingMember {
     @Enumerated(value = EnumType.STRING)
     private GoalRoomRole role;
 
+    @CreatedDate
     private LocalDateTime joinedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,4 +36,12 @@ public class GoalRoomPendingMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public GoalRoomPendingMember(final Member member) {
+        this.member = member;
+    }
+
+    public void updateGoalRoom(final GoalRoom goalRoom) {
+        this.goalRoom = goalRoom;
+    }
 }

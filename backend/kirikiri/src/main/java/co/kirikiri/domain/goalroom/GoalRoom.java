@@ -36,7 +36,7 @@ public class GoalRoom extends BaseTimeEntity {
     private LimitedMemberCount limitedMemberCount;
 
     @Embedded
-    private CurrentMemberCount currentMemberCount = new CurrentMemberCount(0);
+    private CurrentMemberCount currentMemberCount = new CurrentMemberCount(1);
 
     @Enumerated(value = EnumType.STRING)
     private GoalRoomStatus status = GoalRoomStatus.RECRUITING;
@@ -58,20 +58,21 @@ public class GoalRoom extends BaseTimeEntity {
     private GoalRoomMembers goalRoomMembers;
 
     @Embedded
-    private GoalRoomPendingMembers goalRoomPendingMembers;
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
 
     public GoalRoom(final String name, final LimitedMemberCount limitedMemberCount,
-                    final RoadmapContent roadmapContent, final GoalRoomPendingMembers goalRoomPendingMembers) {
-        this(null, name, limitedMemberCount, roadmapContent, goalRoomPendingMembers);
+                    final RoadmapContent roadmapContent, final GoalRoomPendingMember goalRoomPendingMember) {
+        this(null, name, limitedMemberCount, roadmapContent, goalRoomPendingMember);
     }
 
     public GoalRoom(final Long id, final String name, final LimitedMemberCount limitedMemberCount,
-                    final RoadmapContent roadmapContent, final GoalRoomPendingMembers goalRoomPendingMembers) {
+                    final RoadmapContent roadmapContent, final GoalRoomPendingMember goalRoomPendingMember) {
         this.id = id;
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
         this.roadmapContent = roadmapContent;
-        this.goalRoomPendingMembers = goalRoomPendingMembers;
+        goalRoomPendingMembers.add(goalRoomPendingMember);
+        goalRoomPendingMember.updateGoalRoom(this);
     }
 
     public void updateStatus(final GoalRoomStatus status) {
@@ -83,7 +84,7 @@ public class GoalRoom extends BaseTimeEntity {
         validateStatus();
         this.currentMemberCount = currentMemberCount.addMemberCount();
         goalRoomPendingMembers.add(member);
-
+        member.updateGoalRoom(this);
     }
 
     private void validateMemberCount() {

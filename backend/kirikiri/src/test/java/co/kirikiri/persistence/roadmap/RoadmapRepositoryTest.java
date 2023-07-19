@@ -3,7 +3,6 @@ package co.kirikiri.persistence.roadmap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -16,7 +15,6 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
@@ -166,13 +164,6 @@ class RoadmapRepositoryTest {
     private RoadmapCategory 로드맵_카테고리를_생성한다() {
         final RoadmapCategory category = new RoadmapCategory("운동");
         return roadmapCategoryRepository.save(category);
-    }
-
-    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
-        return List.of(
-                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
-                        ImageContentType.PNG)
-        );
     }
 
     private Member 크리에이터를_생성한다() {
