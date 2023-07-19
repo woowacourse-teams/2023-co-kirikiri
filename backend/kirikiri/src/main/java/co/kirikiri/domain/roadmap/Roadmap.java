@@ -73,21 +73,13 @@ public class Roadmap {
         this.category = category;
     }
 
-    public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
-                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
-                   final RoadmapCategory category) {
-        this(null, title, introduction, requiredPeriod, difficulty, status, creator, category);
-    }
-
     public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
-                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
-                   final RoadmapCategory category) {
+                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
         this.id = id;
         this.title = title;
         this.introduction = introduction;
         this.requiredPeriod = requiredPeriod;
         this.difficulty = difficulty;
-        this.status = status;
         this.creator = creator;
         this.category = category;
     }
@@ -131,6 +123,27 @@ public class Roadmap {
         }
     }
 
+    public void delete() {
+        this.status = RoadmapStatus.DELETED;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Roadmap roadmap = (Roadmap) o;
+        return Objects.equals(id, roadmap.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public Member getCreator() {
         return creator;
     }
@@ -161,22 +174,5 @@ public class Roadmap {
 
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Roadmap roadmap = (Roadmap) o;
-        return Objects.equals(id, roadmap.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

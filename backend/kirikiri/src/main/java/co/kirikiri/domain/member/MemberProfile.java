@@ -53,6 +53,10 @@ public class MemberProfile extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
     }
 
+    public void updateMemberProfileImage(final MemberProfileImage image) {
+        this.image = image;
+    }
+
     public Nickname getNickname() {
         return nickname;
     }

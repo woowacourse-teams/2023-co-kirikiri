@@ -19,7 +19,6 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -148,8 +147,7 @@ class RoadmapRepositoryTest {
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
         final RoadmapContent content = new RoadmapContent("로드맵 제목");
 
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
-                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
         roadmap.addContent(content);
 
         return roadmap;
@@ -193,8 +191,7 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
-                RoadmapStatus.CREATED, creator, category);
+        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
     }
 
     private RoadmapNodes 로드맵_노드들을_생성한다() {
@@ -211,7 +208,8 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 삭제된_로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        return new Roadmap("로드맵 제목2", "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT,
-                RoadmapStatus.DELETED, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목2", "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator, category);
+        roadmap.delete();
+        return roadmap;
     }
 }

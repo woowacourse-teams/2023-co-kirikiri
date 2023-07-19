@@ -19,16 +19,20 @@ import lombok.NoArgsConstructor;
 public class RoadmapContent extends BaseTimeEntity {
 
     private static final int CONTENT_MAX_LENGTH = 150;
-    @Embedded
-    private final RoadmapNodes nodes = new RoadmapNodes();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 2200)
     private String content;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
+
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
 
     public RoadmapContent(final String content) {
         validate(content);
@@ -66,6 +70,10 @@ public class RoadmapContent extends BaseTimeEntity {
         if (this.roadmap == null) {
             this.roadmap = roadmap;
         }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getContent() {
