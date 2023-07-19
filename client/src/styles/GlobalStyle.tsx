@@ -21,8 +21,14 @@ const GlobalStyle = createGlobalStyle`
     list-style: none
   }
 
+  li {
+    list-style: none;
+  }
+
   button, input, select {
-    margin: 0
+    margin: 0;
+    background-color: transparent;
+    border: none;
   }
 
   *, :after, :before {
@@ -76,6 +82,21 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'Noto Sans', 'Noto Sans KR', sans-serif;
+  }
+
+  input {
+    padding:0 ;
+    border: none;
+    outline: none;
+
+  }
+
+  textarea {
+    resize: none;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
   }
 `;
 
