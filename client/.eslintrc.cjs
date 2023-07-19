@@ -46,7 +46,7 @@ module.exports = {
   },
   rules: {
     'import/extensions': [
-      'warn',
+      'off',
       'ignorePackages',
       {
         js: 'never',
@@ -100,5 +100,8 @@ module.exports = {
     'no-param-reassign': 'off',
     'react/require-default-props': 'off',
     'react/jsx-no-constructed-context-values': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'import/no-unresolved': 'off',
+    'import/order': 'off',
   },
 };
