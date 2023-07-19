@@ -63,6 +63,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   :root {
+    background: ${({ theme }) => theme.colors.gray_back};
     font-size: 41.6%; /* for mobile devices */
 
     @media (min-width: ${BREAK_POINTS.TABLET}px) {

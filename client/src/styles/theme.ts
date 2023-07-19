@@ -5,6 +5,7 @@ const theme: DefaultTheme = {
   colors: {
     main_light: '#C8EE44',
     main_dark: '#76A082',
+    gray_back: '#f8f8fa',
     gray_light: '#fbfbfb',
     gray100: '#F2F2F2',
     gray200: '#F5F5F5',
@@ -35,6 +36,7 @@ const theme: DefaultTheme = {
   shadows: {
     box: '-1.4px 7px 42.4px rgba(0, 0, 0, 0.13)',
     text: '0px 3px 3px rgba(0, 0, 0, 0.2)',
+    main: 'rgba(0, 0, 0, 0.25) 0px 0px 0.315rem',
   },
 };
 

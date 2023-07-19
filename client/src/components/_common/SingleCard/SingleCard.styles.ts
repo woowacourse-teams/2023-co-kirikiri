@@ -1,11 +1,10 @@
 import styled from 'styled-components';
-import media from "@styles/media";
+import media from '@styles/media';
 
 export const SingleCardWrapper = styled.div`
   position: relative;
 
-  width: 70%;
-  min-height: 60vh;
+  width: 40%;
   padding: 1.5rem;
 
   border: 1px solid ${({ theme }) => theme.colors.gray300};
@@ -13,6 +12,6 @@ export const SingleCardWrapper = styled.div`
   box-shadow: ${({ theme }) => theme.shadows.box};
 
   ${media.mobile`
-    min-height: 50vh;
+      width: 80%;  
   `}
 `;
