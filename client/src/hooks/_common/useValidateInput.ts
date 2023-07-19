@@ -1,32 +1,23 @@
 import { ChangeEvent, useState } from 'react';
 
-export const useValidateInput = (patterns: any) => {
+export const useValidateInput = (pattern: any) => {
   const [value, setValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const validateInput = (value: string) => {
-    patterns.every((pattern: any) => {
-      const { rule, message } = pattern;
-      if (!rule.test(value)) {
-        setErrorMessage(message);
-        return false;
-      }
-      setErrorMessage('');
-      return true;
-    });
-  };
-
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
-
-    validateInput(e.target.value);
   };
 
-  const checkBlank = () => {
-    if (value.length === 0) {
-      setErrorMessage('필수 입력란 입니다');
-    }
+  const validateInput = () => {
+    const { rule, message } = pattern;
+    if (rule.test(value)) return true;
+    setErrorMessage(message);
+    return false;
   };
 
-  return { handleInputChange, checkBlank, errorMessage, value };
+  const resetErrorMessage = () => {
+    setErrorMessage('');
+  };
+
+  return { handleInputChange, errorMessage, value, validateInput, resetErrorMessage };
 };
