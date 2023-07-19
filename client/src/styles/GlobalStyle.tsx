@@ -77,6 +77,10 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'Noto Sans', 'Noto Sans KR', sans-serif;
+
+    button {
+      border:none;
+    }
   }
   
   button, select {

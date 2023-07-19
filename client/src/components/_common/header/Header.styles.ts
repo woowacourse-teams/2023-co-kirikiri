@@ -2,18 +2,18 @@ import styled from 'styled-components';
 import media from '@styles/media';
 
 export const HeaderWrapper = styled.div`
-  position: relative;
+  position: fixed;
 `;
 
 export const Header = styled.div`
   position: relative;
-  z-index: 100;
+  z-index: ${({ theme }) => theme.zIndex.header};
 
   display: none;
   align-items: center;
 
   width: 100vw;
-  height: 56px;
+  height: 8rem;
 
   background-color: ${({ theme }) => theme.colors.gray100};
   border-radius: 0;
@@ -31,13 +31,13 @@ export const Logo = styled.div`
 `;
 
 export const NavBarToggleIcon = styled.div`
-  margin-left: 18px;
+  margin-left: 1.8rem;
   font-size: 5rem;
 `;
 
-export const CloseNavBackground = styled.div`
+export const NavBarOverlay = styled.div`
   position: absolute;
-  z-index: 200;
+  z-index: ${({ theme }) => theme.zIndex.navBarOverlay};
   top: 0;
 
   width: calc(100% - 15rem);

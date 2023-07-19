@@ -3,7 +3,7 @@ import media from '@styles/media';
 
 export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   position: absolute;
-  z-index: 10;
+  z-index: ${({ theme }) => theme.zIndex.navBar};
   top: 0;
 
   width: 15rem;
@@ -13,13 +13,13 @@ export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   border-radius: 3rem;
 
   ${({ isNavBarOpen }) =>
-    !isNavBarOpen
+    isNavBarOpen
       ? media.mobile`
-      display: none;
+     padding-top: 8rem;
+     border-radius: 0;
    `
       : media.mobile`
-     padding-top: 56px;
-     border-radius: 0;
+      display: none;
    `}
 `;
 
@@ -33,16 +33,12 @@ export const Logo = styled.div`
 
 export const SeparateLine = styled.div`
   width: 70%;
-  height: 1px;
+  height: 0.1rem;
   background-color: ${({ theme }) => theme.colors.main_dark};
 
   ${media.mobile`
     display: none;
   `}
-`;
-
-export const CloseButton = styled.div`
-  font-size: 5rem;
 `;
 
 export const Nav = styled.div`
@@ -51,7 +47,7 @@ export const Nav = styled.div`
   justify-content: space-between;
 
   height: calc(100% - 10rem);
-  padding: 30px 18px;
+  padding: 3rem 1.8rem;
 
   ${media.mobile`
     height:100%;

@@ -1,12 +1,12 @@
 import * as S from './NavBar.styles';
 
 type NavBarProps = {
-  isNavBarOpen: boolean;
+  isSwitchOn: boolean;
 };
 
-const NavBar = ({ isNavBarOpen }: NavBarProps) => {
+const NavBar = ({ isSwitchOn }: NavBarProps) => {
   return (
-    <S.NavBar isNavBarOpen={isNavBarOpen}>
+    <S.NavBar isNavBarOpen={isSwitchOn}>
       <S.Logo>코끼리끼리</S.Logo>
       <S.SeparateLine />
       <S.Nav>
