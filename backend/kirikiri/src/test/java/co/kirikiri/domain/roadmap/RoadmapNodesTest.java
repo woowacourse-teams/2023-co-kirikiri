@@ -1,10 +1,11 @@
 package co.kirikiri.domain.roadmap;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoadmapNodesTest {
 
@@ -17,7 +18,7 @@ class RoadmapNodesTest {
         roadmapNodes.add(new RoadmapNode("로드맵 노드 제목", "로드맵 노드 내용"));
 
         // then
-        assertThat(roadmapNodes.getRoadmapNodes()).hasSize(2);
+        assertThat(roadmapNodes.getValues()).hasSize(2);
     }
 
     @Test
@@ -31,7 +32,7 @@ class RoadmapNodesTest {
         roadmapNodes.updateAllRoadmapContent(roadmapContent);
 
         // then
-        final List<RoadmapNode> nodes = roadmapNodes.getRoadmapNodes();
+        final List<RoadmapNode> nodes = roadmapNodes.getValues();
         assertAll(
                 () -> assertThat(nodes.get(0).getRoadmapContent()).isEqualTo(roadmapContent),
                 () -> assertThat(nodes.get(1).getRoadmapContent()).isEqualTo(roadmapContent)

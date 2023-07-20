@@ -20,10 +20,11 @@ import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -101,7 +102,7 @@ public final class RoadmapMapper {
     }
 
     private static List<RoadmapNodeResponse> convertRoadmapNodeResponse(final RoadmapNodes nodes) {
-        return nodes.getRoadmapNodes()
+        return nodes.getValues()
                 .stream()
                 .map(RoadmapMapper::convertNode)
                 .toList();

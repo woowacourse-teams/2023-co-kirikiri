@@ -10,10 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,6 +40,13 @@ public class RoadmapNode {
 
     public RoadmapNode(final String title, final String content) {
         validate(title, content);
+        this.title = title;
+        this.content = content;
+    }
+
+    public RoadmapNode(final Long id, final String title, final String content) {
+        validate(title, content);
+        this.id = id;
         this.title = title;
         this.content = content;
     }
@@ -70,6 +78,10 @@ public class RoadmapNode {
         if (this.roadmapContent == null) {
             this.roadmapContent = roadmapContent;
         }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {

@@ -9,28 +9,29 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapNodes {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmapContent")
-    private final List<RoadmapNode> roadmapNodes = new ArrayList<>();
+    private final List<RoadmapNode> values = new ArrayList<>();
 
-    public RoadmapNodes(final List<RoadmapNode> roadmapNodes) {
-        this.roadmapNodes.addAll(roadmapNodes);
+    public RoadmapNodes(final List<RoadmapNode> values) {
+        this.values.addAll(values);
     }
 
     public void add(final RoadmapNode roadmapNode) {
-        this.roadmapNodes.add(roadmapNode);
+        this.values.add(roadmapNode);
     }
 
     public void addAll(final RoadmapNodes roadmapNodes) {
-        this.roadmapNodes.addAll(roadmapNodes.getRoadmapNodes());
+        this.values.addAll(roadmapNodes.getValues());
     }
 
     public void updateAllRoadmapContent(final RoadmapContent content) {
-        for (final RoadmapNode roadmapNode : roadmapNodes) {
+        for (final RoadmapNode roadmapNode : values) {
             updateRoadmapContent(roadmapNode, content);
         }
     }
@@ -41,7 +42,18 @@ public class RoadmapNodes {
         }
     }
 
-    public List<RoadmapNode> getRoadmapNodes() {
-        return roadmapNodes;
+    public Optional<RoadmapNode> findById(final Long roadmapNodeId) {
+        return values.stream()
+                .filter(it -> it.getId() != null)
+                .filter(it -> it.getId().equals(roadmapNodeId))
+                .findAny();
+    }
+
+    public int size() {
+        return values.size();
+    }
+
+    public List<RoadmapNode> getValues() {
+        return values;
     }
 }

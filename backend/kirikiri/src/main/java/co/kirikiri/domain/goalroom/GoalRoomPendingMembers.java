@@ -25,7 +25,7 @@ public class GoalRoomPendingMembers {
     }
 
     public void add(final GoalRoomPendingMember goalRoomPendingMember) {
-        values.add(goalRoomPendingMember);
+        values.add(new GoalRoomPendingMember(goalRoomPendingMember));
     }
 
     public int size() {

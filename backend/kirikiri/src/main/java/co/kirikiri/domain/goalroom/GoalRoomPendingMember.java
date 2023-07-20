@@ -2,7 +2,16 @@ package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,8 +42,21 @@ public class GoalRoomPendingMember {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    public GoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
+        this(goalRoomPendingMember.id, goalRoomPendingMember.role, goalRoomPendingMember.joinedAt,
+                goalRoomPendingMember.goalRoom, goalRoomPendingMember.member);
+    }
+
     public GoalRoomPendingMember(final GoalRoomRole role, final Member member) {
+        this(null, role, null, null, member);
+    }
+
+    public GoalRoomPendingMember(final Long id, final GoalRoomRole role, final LocalDateTime joinedAt,
+                                 final GoalRoom goalRoom, final Member member) {
+        this.id = id;
         this.role = role;
+        this.joinedAt = joinedAt;
+        this.goalRoom = goalRoom;
         this.member = member;
     }
 

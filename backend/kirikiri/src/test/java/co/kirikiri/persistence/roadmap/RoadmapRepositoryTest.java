@@ -8,7 +8,14 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.*;
+import co.kirikiri.domain.roadmap.Roadmap;
+import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapDifficulty;
+import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.domain.roadmap.RoadmapNodeImage;
+import co.kirikiri.domain.roadmap.RoadmapNodes;
+import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -184,7 +191,7 @@ class RoadmapRepositoryTest {
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
         final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getRoadmapNodes());
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getValues());
 
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
                 creator, category);

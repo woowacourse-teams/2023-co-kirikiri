@@ -1,12 +1,5 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -36,10 +29,6 @@ import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,6 +36,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapServiceTest {
@@ -103,7 +104,7 @@ class RoadmapServiceTest {
 
         assertThat(roadmapResponse)
                 .usingRecursiveComparison()
-                .ignoringFields("roadmapId")
+                .ignoringFields("roadmapContentId")
                 .isEqualTo(expectedResponse);
     }
 
@@ -113,7 +114,7 @@ class RoadmapServiceTest {
 
         //when
         when(roadmapRepository.findById(anyLong()))
-                .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1L"));
+                .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapContentId = 1L"));
 
         //then
         assertThatThrownBy(() -> roadmapService.findRoadmap(1L))

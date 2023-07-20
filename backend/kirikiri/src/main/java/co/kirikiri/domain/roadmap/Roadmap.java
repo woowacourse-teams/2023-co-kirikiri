@@ -2,7 +2,17 @@ package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -122,6 +132,23 @@ public class Roadmap {
         }
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Roadmap roadmap = (Roadmap) o;
+        return Objects.equals(id, roadmap.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public Member getCreator() {
         return creator;
     }
@@ -152,22 +179,5 @@ public class Roadmap {
 
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Roadmap roadmap = (Roadmap) o;
-        return Objects.equals(id, roadmap.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

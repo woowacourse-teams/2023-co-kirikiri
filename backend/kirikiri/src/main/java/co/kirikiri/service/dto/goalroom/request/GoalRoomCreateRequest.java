@@ -7,8 +7,8 @@ import java.util.List;
 
 public record GoalRoomCreateRequest(
 
-        @NotBlank(message = "컨텐츠 아이디는 빈 값일 수 없습니다.")
-        Long contentId,
+        @NotBlank(message = "로드맵 컨텐츠 아이디는 빈 값일 수 없습니다.")
+        Long roadmapContentId,
 
         @NotBlank(message = "골룸 이름을 빈 값일 수 없습니다.")
         String name,
@@ -20,6 +20,6 @@ public record GoalRoomCreateRequest(
         GoalRoomTodoRequest goalRoomTodo,
 
         @NotEmpty(message = "각 노드에 대한 기간은 필수 값입니다.")
-        List<GoalRoomRoadmapNodePeriodRequest> goalRoomRoadmapNodePeriods
+        List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodePeriods
 ) {
 }

@@ -8,9 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,9 +25,16 @@ public class GoalRoomRoadmapNode {
 
     private LocalDate endDate;
 
-    private Integer checkCount = 0;
+    private Integer checkCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roadmap_node_id")
+    @JoinColumn(name = "roadmap_node_id", nullable = false)
     private RoadmapNode roadmapNode;
+
+    public GoalRoomRoadmapNode(final LocalDate startDate, final LocalDate endDate, final Integer checkCount, final RoadmapNode roadmapNode) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.checkCount = checkCount;
+        this.roadmapNode = roadmapNode;
+    }
 }
