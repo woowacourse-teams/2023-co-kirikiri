@@ -52,7 +52,7 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸에_참가한다() {
         //given
         final Roadmap roadmap = 로드맵을_생성한다();
-        final GoalRoom goalRoom = 골룸을_생성한다(roadmap.getContents().getContents().get(0));
+        final GoalRoom goalRoom = 골룸을_생성한다(roadmap.getContents().getValues().get(0));
         final Member member = 사용자를_생성한다("identifier3", "닉네임3");
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(member, GoalRoomRole.FOLLOWER);
 

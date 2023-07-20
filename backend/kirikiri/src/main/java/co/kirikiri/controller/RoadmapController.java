@@ -34,7 +34,7 @@ public class RoadmapController {
                                        @RequestBody @Valid final RoadmapSaveRequest request) {
         final Long id = roadmapService.create(request, identifier);
 
-        return ResponseEntity.created(URI.create("/roadmaps/" + id)).build();
+        return ResponseEntity.created(URI.create("/api/roadmaps/" + id)).build();
     }
 
     @GetMapping

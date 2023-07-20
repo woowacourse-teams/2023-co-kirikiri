@@ -47,7 +47,7 @@ class RoadmapTest {
 
             // then
             final RoadmapContents contents = roadmap.getContents();
-            assertThat(contents.getContents()).hasSize(1);
+            assertThat(contents.getValues()).hasSize(1);
         }
 
         @ParameterizedTest

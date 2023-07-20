@@ -10,7 +10,7 @@ public record RoadmapResponse(
         String roadmapTitle,
         String introduction,
         MemberResponse creator,
-        RoadmapContentResponse roadmapContent,
+        RoadmapContentResponse content,
         String difficulty,
         int recommendedRoadmapPeriod
 ) {
