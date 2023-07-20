@@ -9,7 +9,7 @@ const InputLabel = (props: InputLabelProps) => {
 
   return (
     <S.InputLabel>
-      {text} <p>*</p>
+      {text} <abbr title='required'>*</abbr>
     </S.InputLabel>
   );
 };

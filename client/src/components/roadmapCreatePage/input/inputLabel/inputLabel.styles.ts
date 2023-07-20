@@ -6,7 +6,7 @@ export const InputLabel = styled.h2`
   margin-bottom: 2rem;
   color: ${({ theme }) => theme.colors.black};
 
-  > p {
+  > abbr {
     color: ${({ theme }) => theme.colors.red};
   }
 `;
