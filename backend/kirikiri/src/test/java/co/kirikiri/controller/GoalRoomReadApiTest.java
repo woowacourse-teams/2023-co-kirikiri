@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.service.GoalRoomService;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import com.fasterxml.jackson.core.type.TypeReference;

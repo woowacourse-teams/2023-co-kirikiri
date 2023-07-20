@@ -1,4 +1,4 @@
-package co.kirikiri.service.dto.goalroom;
+package co.kirikiri.service.dto.goalroom.response;
 
 import co.kirikiri.service.dto.member.MemberResponse;
 import java.time.LocalDate;

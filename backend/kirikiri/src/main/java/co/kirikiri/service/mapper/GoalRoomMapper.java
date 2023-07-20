@@ -7,7 +7,7 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import co.kirikiri.service.dto.member.MemberResponse;
 import java.util.List;
 import org.springframework.data.domain.Page;

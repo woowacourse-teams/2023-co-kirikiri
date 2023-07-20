@@ -4,7 +4,7 @@ import co.kirikiri.service.GoalRoomService;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
