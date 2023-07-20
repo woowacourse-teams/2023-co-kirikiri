@@ -22,3 +22,7 @@ include::overview.adoc[Overview]
 == *로드맵 API*
 
 * link:roadmap.html[Roadmap API]
+
+== *골룸 API*
+
+* link:goalroom.html[GoalRoom API]
