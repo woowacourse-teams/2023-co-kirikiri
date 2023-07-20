@@ -37,8 +37,9 @@ public class GoalRoomPendingMember {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public GoalRoomPendingMember(final Member member) {
+    public GoalRoomPendingMember(final Member member, final GoalRoomRole role) {
         this.member = member;
+        this.role = role;
     }
 
     public void updateGoalRoom(final GoalRoom goalRoom) {

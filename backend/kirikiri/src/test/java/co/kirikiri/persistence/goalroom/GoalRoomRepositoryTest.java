@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -25,7 +26,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
-public class GoalRoomRepositoryTest {
+class GoalRoomRepositoryTest {
 
     private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -48,13 +49,13 @@ public class GoalRoomRepositoryTest {
         final Roadmap roadmap = 로드맵을_생성한다();
         final GoalRoom goalRoom = 골룸을_생성한다(roadmap.getContents().getContents().get(0));
         final Member member = 사용자를_생성한다("identifier3", "닉네임3");
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(member);
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(member, GoalRoomRole.FOLLOWER);
 
         //when
         goalRoom.addMember(goalRoomPendingMember);
 
         //then
-        assertThat(goalRoom.getCurrentMemberCount().getValue()).isEqualTo(2);
+        assertThat(goalRoom.getCurrentMemberCount()).isEqualTo(2);
     }
 
     private Roadmap 로드맵을_생성한다() {
@@ -87,7 +88,7 @@ public class GoalRoomRepositoryTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(20),
                 roadmapContent,
-                new GoalRoomPendingMember(사용자를_생성한다("identifier2", "닉네임2"))
+                new GoalRoomPendingMember(사용자를_생성한다("identifier2", "닉네임2"), GoalRoomRole.LEADER)
         );
 
         return goalRoomRepository.save(goalRoom);

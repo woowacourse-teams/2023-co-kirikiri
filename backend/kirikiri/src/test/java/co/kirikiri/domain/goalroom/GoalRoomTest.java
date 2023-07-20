@@ -3,8 +3,16 @@ package co.kirikiri.domain.goalroom;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import co.kirikiri.domain.member.EncryptedPassword;
+import co.kirikiri.domain.member.Gender;
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberProfile;
+import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.member.vo.Nickname;
+import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 class GoalRoomTest {
@@ -15,16 +23,17 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(10),
                 new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMember()
+                new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"), GoalRoomRole.LEADER)
         );
-        final GoalRoomPendingMember member = new GoalRoomPendingMember();
+        final GoalRoomPendingMember member = new GoalRoomPendingMember(사용자를_생성한다("identifier2", "팔로워"),
+                GoalRoomRole.FOLLOWER);
 
         //when
         goalRoom.addMember(member);
 
         //then
-        final Integer currentMemberCount = goalRoom.getCurrentMemberCount().getValue();
-        assertThat(currentMemberCount).isEqualTo(1);
+        final Integer currentMemberCount = goalRoom.getCurrentMemberCount();
+        assertThat(currentMemberCount).isEqualTo(2);
     }
 
     @Test
@@ -33,10 +42,11 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(10),
                 new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMember()
+                new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"), GoalRoomRole.LEADER)
         );
         goalRoom.updateStatus(GoalRoomStatus.RUNNING);
-        final GoalRoomPendingMember member = new GoalRoomPendingMember();
+        final GoalRoomPendingMember member = new GoalRoomPendingMember(사용자를_생성한다("identifier2", "팔로워"),
+                GoalRoomRole.FOLLOWER);
 
         //when, then
         assertThatThrownBy(() -> goalRoom.addMember(member))
@@ -50,15 +60,22 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(1),
                 new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMember()
+                new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"), GoalRoomRole.LEADER)
         );
-        final GoalRoomPendingMember member1 = new GoalRoomPendingMember();
-        final GoalRoomPendingMember member2 = new GoalRoomPendingMember();
-        goalRoom.addMember(member1);
+        final GoalRoomPendingMember member = new GoalRoomPendingMember(사용자를_생성한다("identifier2", "팔로워"),
+                GoalRoomRole.FOLLOWER);
 
         //when,then
-        assertThatThrownBy(() -> goalRoom.addMember(member2))
+        assertThatThrownBy(() -> goalRoom.addMember(member))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
+    }
+
+    private Member 사용자를_생성한다(final String identifier, final String nickname) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
+                new Nickname(nickname), "010-1234-5678");
+
+        return new Member(new Identifier(identifier),
+                new EncryptedPassword(new Password("password1!")), memberProfile);
     }
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -23,10 +24,11 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
-public class GoalRoomPendingMemberRepositoryTest {
+class GoalRoomPendingMemberRepositoryTest {
 
     private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -52,7 +54,7 @@ public class GoalRoomPendingMemberRepositoryTest {
         final Roadmap roadmap = 로드맵을_생성한다();
         final GoalRoom goalRoom = 골룸을_생성한다(roadmap.getContents().getContents().get(0));
         final Member member = 사용자를_생성한다("identifier3", "닉네임3");
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(member);
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(member, GoalRoomRole.FOLLOWER);
 
         //when
         goalRoom.addMember(goalRoomPendingMember);
@@ -60,8 +62,10 @@ public class GoalRoomPendingMemberRepositoryTest {
         //then
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
                 goalRoom);
-        assertThat(goalRoomPendingMembers).hasSize(2);
-        assertThat(goalRoomPendingMembers).contains(goalRoomPendingMember);
+        Assertions.assertAll(
+                () -> assertThat(goalRoomPendingMembers).hasSize(2),
+                () -> assertThat(goalRoomPendingMembers).contains(goalRoomPendingMember)
+        );
     }
 
     private Roadmap 로드맵을_생성한다() {
@@ -94,7 +98,7 @@ public class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = new GoalRoom("골룸 이름",
                 new LimitedMemberCount(20),
                 roadmapContent,
-                new GoalRoomPendingMember(사용자를_생성한다("identifier2", "닉네임2"))
+                new GoalRoomPendingMember(사용자를_생성한다("identifier2", "닉네임2"), GoalRoomRole.LEADER)
         );
 
         return goalRoomRepository.save(goalRoom);

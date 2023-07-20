@@ -23,4 +23,8 @@ public class GoalRoomPendingMembers {
     public void add(final GoalRoomPendingMember member) {
         values.add(member);
     }
+
+    public int getCurrentMemberCount() {
+        return values.size();
+    }
 }

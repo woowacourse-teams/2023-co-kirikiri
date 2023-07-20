@@ -35,9 +35,6 @@ public class GoalRoom extends BaseTimeEntity {
     @Embedded
     private LimitedMemberCount limitedMemberCount;
 
-    @Embedded
-    private CurrentMemberCount currentMemberCount = new CurrentMemberCount(1);
-
     @Enumerated(value = EnumType.STRING)
     private GoalRoomStatus status = GoalRoomStatus.RECRUITING;
 
@@ -82,13 +79,12 @@ public class GoalRoom extends BaseTimeEntity {
     public void addMember(final GoalRoomPendingMember member) {
         validateMemberCount();
         validateStatus();
-        this.currentMemberCount = currentMemberCount.addMemberCount();
         goalRoomPendingMembers.add(member);
         member.updateGoalRoom(this);
     }
 
     private void validateMemberCount() {
-        if (!currentMemberCount.isLessThan(limitedMemberCount.getValue())) {
+        if (getCurrentMemberCount() >= limitedMemberCount.getValue()) {
             throw new BadRequestException("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
         }
     }
@@ -103,7 +99,7 @@ public class GoalRoom extends BaseTimeEntity {
         return id;
     }
 
-    public CurrentMemberCount getCurrentMemberCount() {
-        return currentMemberCount;
+    public int getCurrentMemberCount() {
+        return goalRoomPendingMembers.getCurrentMemberCount();
     }
 }
