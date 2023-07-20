@@ -1,10 +1,9 @@
+import { DESCRIPTION_MAX_LENGTH } from '@/constants/roadmap/regex';
 import { useValidateInput } from '@/hooks/_common/useValidateInput';
 import InputField from '../input/inputField/inputField';
 import InputLabel from '../input/inputLabel/inputLebel';
 import TextCount from '../input/textCount/textCount';
 import * as S from './description.styles';
-
-const DESCRIPTION_MAX_LENGTH = { rule: /^.{1,150}$/, message: '소개글을 입력해주세요' };
 
 const Description = () => {
   const { handleInputChange, validateInput, errorMessage, resetErrorMessage, value } =

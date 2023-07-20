@@ -1,10 +1,9 @@
+import { TITLE_MAX_LENGTH } from '@/constants/roadmap/regex';
 import { useValidateInput } from '@hooks/_common/useValidateInput';
 import InputField from '../input/inputField/inputField';
 import InputLabel from '../input/inputLabel/inputLebel';
 import TextCount from '../input/textCount/textCount';
 import * as S from './title.styles';
-
-const TITLE_MAX_LENGTH = { rule: /^.{1,20}$/, message: '제목은 필수로 입력해주세요' };
 
 const Title = () => {
   const { handleInputChange, validateInput, resetErrorMessage, errorMessage, value } =
