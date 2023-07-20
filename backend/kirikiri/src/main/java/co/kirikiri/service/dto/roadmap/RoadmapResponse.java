@@ -2,6 +2,7 @@ package co.kirikiri.service.dto.roadmap;
 
 import co.kirikiri.service.dto.member.MemberResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,13 +19,13 @@ public record RoadmapResponse(
 ) {
 
     public RoadmapResponse(
-            long roadmapId,
-            String roadmapTitle,
-            String introduction,
-            String difficulty,
-            int recommendedRoadmapPeriod,
-            MemberResponse creator,
-            RoadmapCategoryResponse category
+            final long roadmapId,
+            final String roadmapTitle,
+            final String introduction,
+            final String difficulty,
+            final int recommendedRoadmapPeriod,
+            final MemberResponse creator,
+            final RoadmapCategoryResponse category
     ) {
         this(roadmapId, category, roadmapTitle, introduction, creator, null, difficulty, recommendedRoadmapPeriod,
                 null);
