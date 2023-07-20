@@ -1,6 +1,8 @@
+import { PatternType } from '@/myTypes/roadmap/roadmapCreate';
 import { ChangeEvent, useState } from 'react';
 
-export const useValidateInput = (pattern: any) => {
+export const useValidateInput = (pattern: PatternType) => {
+  const { rule, message } = pattern;
   const [value, setValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -8,22 +10,19 @@ export const useValidateInput = (pattern: any) => {
     setValue(e.target.value);
   };
 
-  const controlInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const { rule, message } = pattern;
-
-    if (!rule.test(e.target.value)) {
-      e.target.value = e.target.value.slice(0, -1);
+  const controlInputChange = ({
+    target: { value },
+  }: ChangeEvent<HTMLTextAreaElement>) => {
+    if (!rule.test(value)) {
       setErrorMessage(message);
 
       return;
     }
 
-    setValue(e.target.value);
+    setValue(value);
   };
 
   const validateInput = () => {
-    const { rule, message } = pattern;
-
     if (rule.test(value)) return true;
 
     setErrorMessage(message);
