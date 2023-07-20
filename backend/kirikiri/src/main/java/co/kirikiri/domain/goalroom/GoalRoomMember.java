@@ -27,7 +27,7 @@ public class GoalRoomMember {
 
     private LocalDateTime joinedAt;
 
-    private Double accomplishmentRate = 0.0;
+    private final Double accomplishmentRate = 0.0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_room_id", nullable = false)
@@ -36,4 +36,20 @@ public class GoalRoomMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public GoalRoomMember(final GoalRoomRole role, final LocalDateTime joinedAt,
+                          final GoalRoom goalRoom, final Member member) {
+        this.role = role;
+        this.joinedAt = joinedAt;
+        this.goalRoom = goalRoom;
+        this.member = member;
+    }
+    
+    public GoalRoom getGoalRoom() {
+        return goalRoom;
+    }
+
+    public Member getMember() {
+        return member;
+    }
 }

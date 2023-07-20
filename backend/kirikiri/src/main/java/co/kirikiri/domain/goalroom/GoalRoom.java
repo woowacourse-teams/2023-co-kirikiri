@@ -4,6 +4,7 @@ import co.kirikiri.domain.BaseTimeEntity;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -45,16 +46,52 @@ public class GoalRoom extends BaseTimeEntity {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
+    private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true)
-    @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = new ArrayList<>();
+    @Embedded
+    private GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true, mappedBy = "goalRoom")
-    private List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
+    @Embedded
+    private GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
+
+    public GoalRoom(final String name, final Integer limitedMemberCount, final Integer currentMemberCount,
+                    final GoalRoomStatus status, final RoadmapContent roadmapContent) {
+        this.name = name;
+        this.limitedMemberCount = limitedMemberCount;
+        this.currentMemberCount = currentMemberCount;
+        this.status = status;
+        this.roadmapContent = roadmapContent;
+    }
+
+    public void addGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    }
+
+    public void addMember(final GoalRoomMember goalRoomMember) {
+        goalRoomMembers.add(goalRoomMember);
+    }
+
+    public boolean isCompleted() {
+        return status == GoalRoomStatus.COMPLETED;
+    }
+
+    public void complete() {
+        status = GoalRoomStatus.COMPLETED;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public RoadmapContent getRoadmapContent() {
+        return roadmapContent;
+    }
+
+    public GoalRoomStatus getStatus() {
+        return status;
+    }
 }
