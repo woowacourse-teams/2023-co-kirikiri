@@ -100,6 +100,10 @@ const GlobalStyle = createGlobalStyle`
     border: none;
     outline: none;
   }
+
+  abbr {
+    text-decoration: none;
+  }
 `;
 
 export default GlobalStyle;
