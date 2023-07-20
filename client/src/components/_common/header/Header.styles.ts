@@ -9,18 +9,19 @@ export const Header = styled.div`
   position: relative;
   z-index: ${({ theme }) => theme.zIndex.header};
 
-  display: none;
   align-items: center;
 
   width: 100vw;
   height: 8rem;
 
-  background-color: ${({ theme }) => theme.colors.gray100};
+  background-color: ${({ theme }) => theme.colors.gray100});
   border-radius: 0;
 
   ${media.mobile`
     display: flex;
   `}
+
+  display: none;
 `;
 
 export const Logo = styled.div`
@@ -39,10 +40,10 @@ export const NavBarOverlay = styled.div`
   position: absolute;
   z-index: ${({ theme }) => theme.zIndex.navBarOverlay};
   top: 0;
+  right: 0;
 
-  width: calc(100% - 15rem);
+  width: calc(100% - 60%);
   height: 100vh;
-  margin-left: 15rem;
 
-  background-color: rgba(1, 1, 1, 0.3);
+  background-color: rgba(0, 0, 0, 0.3);
 `;
