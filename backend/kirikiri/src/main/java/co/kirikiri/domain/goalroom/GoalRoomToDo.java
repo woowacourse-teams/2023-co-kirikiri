@@ -1,7 +1,8 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseTimeEntity;
-import jakarta.persistence.Column;
+import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,9 +20,8 @@ public class GoalRoomToDo extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // todo : wrapped class로 만들어서 글자 수 제한
-    @Column(nullable = false, length = 300)
-    private String content;
+    @Embedded
+    private GoalRoomTodoContent content;
 
     private LocalDate startDate;
 
@@ -31,11 +31,11 @@ public class GoalRoomToDo extends BaseTimeEntity {
         this(goalRoomToDo.id, goalRoomToDo.content, goalRoomToDo.startDate, goalRoomToDo.endDate);
     }
 
-    public GoalRoomToDo(final String content, final LocalDate startDate, final LocalDate endDate) {
+    public GoalRoomToDo(final GoalRoomTodoContent content, final LocalDate startDate, final LocalDate endDate) {
         this(null, content, startDate, endDate);
     }
 
-    private GoalRoomToDo(final Long id, final String content, final LocalDate startDate, final LocalDate endDate) {
+    private GoalRoomToDo(final Long id, final GoalRoomTodoContent content, final LocalDate startDate, final LocalDate endDate) {
         this.id = id;
         this.content = content;
         this.startDate = startDate;

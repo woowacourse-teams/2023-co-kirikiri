@@ -2,15 +2,19 @@ package co.kirikiri.service.mapper;
 
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
 
     public static GoalRoomCreateDto convertToGoalRoomCreateDto(final GoalRoomCreateRequest goalRoomCreateRequest) {
@@ -23,9 +27,8 @@ public class GoalRoomMapper {
     }
 
     private static GoalRoomToDo makeGoalRoomToDo(final GoalRoomTodoRequest goalRoomTodoRequest) {
-        final GoalRoomToDo goalRoomToDo = new GoalRoomToDo(goalRoomTodoRequest.content(),
+        return new GoalRoomToDo(new GoalRoomTodoContent(goalRoomTodoRequest.content()),
                 goalRoomTodoRequest.startDate(), goalRoomTodoRequest.endDate());
-        return goalRoomToDo;
     }
 
     private static List<GoalRoomRoadmapNodeDto> makeGoalRoomRoadmapNodeDtos(final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests) {
