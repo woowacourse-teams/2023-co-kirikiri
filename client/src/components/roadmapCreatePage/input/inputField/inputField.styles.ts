@@ -5,7 +5,7 @@ export const Input = styled.textarea`
   height: 80%;
   color: ${({ theme }) => theme.colors.gray300};
   &::placeholder {
-    color: ${({ theme }) => theme.colors.gray200};
     ${({ theme }) => theme.fonts.description4};
+    color: ${({ theme }) => theme.colors.gray200};
   }
 `;

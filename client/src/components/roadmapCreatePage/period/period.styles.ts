@@ -5,6 +5,7 @@ export const Container = styled.article`
 `;
 
 export const FieldWrapper = styled.div`
+  ${({ theme }) => theme.fonts.button2}
   display: flex;
   justify-content: space-between;
 
@@ -13,7 +14,6 @@ export const FieldWrapper = styled.div`
   padding-left: 1rem;
 
   border-bottom: 0.2rem solid ${({ theme }) => theme.colors.gray300};
-  ${({ theme }) => theme.fonts.button2}
 
   > p {
     padding-bottom: 1rem;

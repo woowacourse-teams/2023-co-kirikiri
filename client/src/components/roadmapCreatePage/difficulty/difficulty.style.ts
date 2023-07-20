@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
 const DifficultyLabel = styled.h2`
+  ${({ theme }) => theme.fonts.title_large}
   display: flex;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  ${({ theme }) => theme.fonts.title_large}
   color: ${({ theme }) => theme.colors.black};
 
   > p {
@@ -13,8 +13,8 @@ const DifficultyLabel = styled.h2`
 `;
 
 const DifficultyDescription = styled.p`
-  margin-bottom: 2.5rem;
   ${({ theme }) => theme.fonts.description4}
+  margin-bottom: 2.5rem;
   color: ${({ theme }) => theme.colors.gray300};
 `;
 
@@ -43,9 +43,9 @@ const TriggerButton = styled.button`
 `;
 
 const DifficultyOption = styled.li<{ isSelected?: boolean }>`
+  ${({ theme }) => theme.fonts.button2}
   display: flex;
   align-items: center;
-  ${({ theme }) => theme.fonts.button2}
   color: ${({ theme, isSelected }) =>
     isSelected !== undefined &&
     (isSelected ? theme.colors.main_dark : theme.colors.gray300)};
