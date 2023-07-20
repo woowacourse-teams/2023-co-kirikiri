@@ -1,4 +1,5 @@
 import { styled } from 'styled-components';
+import media from '@styles/media';
 
 export const Categories = styled.div`
   display: flex;
@@ -21,12 +22,13 @@ export const CategoriesRow = styled.div`
 `;
 
 export const Category = styled.div`
+  ${({ theme }) => theme.fonts.description5}
+  cursor: pointer;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  ${({ theme }) => theme.fonts.description5}
 
   width: 8.2rem;
   height: 7.8rem;
@@ -34,8 +36,19 @@ export const Category = styled.div`
   background-color: white;
   border-radius: 1.4rem;
   box-shadow: ${({ theme }) => theme.shadows.box};
+
+  &:hover {
+    transform: scale(1.05);
+    color: ${({ theme }) => theme.colors.main_dark};
+    transition: all ease-in-out 0.1s;
+  }
 `;
 
 export const CategoryName = styled.div`
-  margin-top: 0.5rem;
+  ${({ theme }) => theme.fonts.description4}
+  margin-top: 0.3rem;
+
+  ${media.tablet`
+    display:none;
+  `}
 `;
