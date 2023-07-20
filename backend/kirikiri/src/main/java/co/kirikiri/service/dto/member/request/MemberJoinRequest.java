@@ -1,6 +1,5 @@
 package co.kirikiri.service.dto.member.request;
 
-import co.kirikiri.service.dto.member.GenderType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

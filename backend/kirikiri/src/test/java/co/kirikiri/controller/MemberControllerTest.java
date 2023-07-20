@@ -15,7 +15,7 @@ import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.member.GenderType;
+import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;

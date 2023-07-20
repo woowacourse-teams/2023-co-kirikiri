@@ -16,16 +16,16 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.dto.member.GenderType;
-import co.kirikiri.service.dto.member.MemberResponse;
+import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapContentResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
+import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
@@ -54,6 +54,71 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+    }
+
+    @Test
+    void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보를_조회를_성공한다() {
+        //given
+        final Member 크리에이터 = 크리에이터를_생성한다();
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("운동");
+        final Roadmap 로드맵 = 로드맵을_생성한다(카테고리);
+
+        //when
+        final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = given()
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 1)
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
+        });
+
+        final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(
+                로드맵.getId(),
+                new RoadmapCategoryResponse(카테고리.getId(), "운동"),
+                "로드맵 제목",
+                "로드맵 소개글",
+                new MemberResponse(크리에이터.getId(), NICKNAME),
+                new RoadmapContentResponse(
+                        "로드맵 본문",
+                        List.of(
+                                new RoadmapNodeResponse("노드 제목 1", "노드 내용 1", Collections.emptyList()),
+                                new RoadmapNodeResponse("노드 제목 2", "노드 내용 2", Collections.emptyList())
+                        )),
+                RoadmapDifficultyType.NORMAL.name(),
+                100
+        );
+
+        assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(단일_로드맵_응답).isEqualTo(예상되는_단일_로드맵_응답);
+    }
+
+    @Test
+    void 존재하지_않는_로드맵_아이디로_요청했을_때_조회를_실패한다() {
+        //given
+        final Long 존재하지_않는_로드맵_아이디 = 1L;
+
+        //when
+        final ExtractableResponse<Response> 요청에_대한_응답 = given()
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 존재하지_않는_로드맵_아이디)
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        final String 예외_메시지 = 요청에_대한_응답.asString();
+
+        assertAll(
+                () -> assertThat(요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
+                () -> assertThat(예외_메시지).contains("존재하지 않는 로드맵입니다. roadmapId = " + 존재하지_않는_로드맵_아이디)
+        );
     }
 
     @Test
@@ -244,71 +309,6 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         assertThat(roadmapCategoryResponses)
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
-    }
-
-    @Test
-    void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보를_조회를_성공한다() {
-        //given
-        final Member 크리에이터 = 크리에이터를_생성한다();
-        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("운동");
-        final Roadmap 로드맵 = 로드맵을_생성한다(카테고리);
-
-        //when
-        final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = given()
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/roadmaps/{roadmapId}", 1)
-                .then()
-                .log().all()
-                .extract();
-
-        //then
-        final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
-        });
-
-        final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(
-                로드맵.getId(),
-                new RoadmapCategoryResponse(카테고리.getId(), "운동"),
-                "로드맵 제목",
-                "로드맵 소개글",
-                new MemberResponse(크리에이터.getId(), NICKNAME),
-                new RoadmapContentResponse(
-                        "로드맵 본문",
-                        List.of(
-                                new RoadmapNodeResponse("노드 제목 1", "노드 내용 1", Collections.emptyList()),
-                                new RoadmapNodeResponse("노드 제목 2", "노드 내용 2", Collections.emptyList())
-                        )),
-                RoadmapDifficultyType.NORMAL.name(),
-                100
-        );
-
-        assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(단일_로드맵_응답).isEqualTo(예상되는_단일_로드맵_응답);
-    }
-
-    @Test
-    void 존재하지_않는_로드맵_아이디로_요청했을_때_조회를_실패한다() {
-        //given
-        final Long 존재하지_않는_로드맵_아이디 = 1L;
-
-        //when
-        final ExtractableResponse<Response> 요청에_대한_응답 = given()
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/roadmaps/{roadmapId}", 존재하지_않는_로드맵_아이디)
-                .then()
-                .log().all()
-                .extract();
-
-        //then
-        final String 예외_메시지 = 요청에_대한_응답.asString();
-
-        assertAll(
-                () -> assertThat(요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
-                () -> assertThat(예외_메시지).contains("존재하지 않는 로드맵입니다. roadmapId = " + 존재하지_않는_로드맵_아이디)
-        );
     }
 
     private Member 크리에이터를_생성한다() {

@@ -55,6 +55,15 @@ class RoadmapRepositoryTest {
     }
 
     @Test
+    void 단일_로드맵을_조회한다() {
+        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
+        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
+
+        assertThat(expectedRoadmap).usingRecursiveComparison()
+                .isEqualTo(savedRoadmap);
+    }
+
+    @Test
     void 카테고리_값이_null이라면_삭제되지_않은_전체_로드맵을_최신순으로_조회한다() {
         // given
         final Member creator = 크리에이터를_생성한다();
@@ -131,18 +140,9 @@ class RoadmapRepositoryTest {
         );
     }
 
-    @Test
-    void 단일_로드맵을_조회한다() {
-        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
-        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
-
-        assertThat(expectedRoadmap).usingRecursiveComparison()
-                .isEqualTo(savedRoadmap);
-    }
-
     private Roadmap 로드맵을_생성한다() {
-        final Member creator = 사용자를_생성한다();
-        final RoadmapCategory category = 로드맵_카테고리를_생성한다();
+        final Member creator = 크리에이터를_생성한다();
+        final RoadmapCategory category = 카테고리를_생성한다("운동");
         final RoadmapContent content = new RoadmapContent("로드맵 제목");
 
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
@@ -150,20 +150,6 @@ class RoadmapRepositoryTest {
         roadmap.addContent(content);
 
         return roadmap;
-    }
-
-    private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("nickname"), "010-1234-5678");
-        final Member member = new Member(new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
-
-        return memberRepository.save(member);
-    }
-
-    private RoadmapCategory 로드맵_카테고리를_생성한다() {
-        final RoadmapCategory category = new RoadmapCategory("운동");
-        return roadmapCategoryRepository.save(category);
     }
 
     private Member 크리에이터를_생성한다() {

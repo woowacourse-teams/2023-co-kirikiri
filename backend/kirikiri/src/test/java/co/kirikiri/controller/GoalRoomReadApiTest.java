@@ -24,15 +24,14 @@ import org.springframework.http.MediaType;
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomReadApiTest extends ControllerTestHelper {
 
-    private static final String IDENTIFIER = "identifier1";
-    private static final Long goalRoomId = 1L;
-
     @MockBean
     private GoalRoomService goalRoomService;
 
     @Test
     void 골룸_참가_요청을_성공한다() throws Exception {
         //given
+        final Long goalRoomId = 1L;
+
         //when
         //then
         mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/join", goalRoomId)
@@ -48,6 +47,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 비로그인_상태에서_골룸_참가_요청은_실패한다() throws Exception {
         //given
+        final Long goalRoomId = 1L;
         doThrow(new UnauthorizedException("비로그인 상태에서는 골룸에 참여할 수 없습니다."))
                 .when(goalRoomService)
                 .join(anyString(), anyLong());
@@ -73,6 +73,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 존재하지_않는_골룸에_대한_참가_요청은_실패한다() throws Exception {
         //given
+        final Long goalRoomId = 1L;
         doThrow(new NotFoundException("존재하지 않는 골룸입니다. roadmapId = 1"))
                 .when(goalRoomService)
                 .join(anyString(), anyLong());
@@ -98,6 +99,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 이미_참여한_골룸에_대한_참가_요청은_실패한다() throws Exception {
         //given
+        final Long goalRoomId = 1L;
         doThrow(new BadRequestException("이미 참가되어 있는 골룸입니다."))
                 .when(goalRoomService)
                 .join(anyString(), anyLong());
@@ -123,6 +125,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 제한_인원이_가득_찬_골룸에_대한_참가_요청은_실패한다() throws Exception {
         //given
+        final Long goalRoomId = 1L;
         doThrow(new BadRequestException("제한 인원이 가득 찬 골룸에는 참가할 수 없습니다."))
                 .when(goalRoomService)
                 .join(anyString(), anyLong());

@@ -23,8 +23,8 @@ public class GoalRoomPendingMembers {
 
     public boolean contains(final GoalRoomPendingMember member) {
         return values.stream()
-                .anyMatch(goalRoomPendingMember -> Objects.equals(member.getMember().getId(),
-                        goalRoomPendingMember.getMember().getId()));
+                .anyMatch(goalRoomPendingMember -> Objects.equals(member.getMember(),
+                        goalRoomPendingMember.getMember()));
     }
 
     public int getCurrentMemberCount() {

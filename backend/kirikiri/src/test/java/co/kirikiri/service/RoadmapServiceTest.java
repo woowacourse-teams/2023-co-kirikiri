@@ -26,14 +26,14 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapContentResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
+import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -138,7 +138,7 @@ class RoadmapServiceTest {
                 "로드맵 제목",
                 "로드맵 설명",
                 new MemberResponse(1L, "썬샷"),
-                new RoadmapContentResponse("콘텐츠 제목", Collections.emptyList()),
+                new RoadmapContentResponse("컨텐츠 제목", Collections.emptyList()),
                 "NORMAL",
                 100
         );
@@ -169,7 +169,7 @@ class RoadmapServiceTest {
                 .thenThrow(new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 1L"));
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeDto filterType = RoadmapFilterTypeDto.LATEST;
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when, then
@@ -189,7 +189,7 @@ class RoadmapServiceTest {
                 .thenReturn(roadmapPages);
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeDto filterType = null;
+        final RoadmapFilterTypeRequest filterType = null;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
@@ -221,7 +221,7 @@ class RoadmapServiceTest {
                 .thenReturn(roadmapPages);
 
         final Long categoryId = null;
-        final RoadmapFilterTypeDto filterType = RoadmapFilterTypeDto.LATEST;
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
@@ -255,7 +255,7 @@ class RoadmapServiceTest {
                 .thenReturn(roadmapPages);
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeDto filterType = RoadmapFilterTypeDto.LATEST;
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
