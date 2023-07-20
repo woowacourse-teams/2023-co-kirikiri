@@ -1,3 +1,4 @@
+import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './NavBar.styles';
 
 type NavBarProps = {
@@ -7,17 +8,33 @@ type NavBarProps = {
 const NavBar = ({ isSwitchOn }: NavBarProps) => {
   return (
     <S.NavBar isNavBarOpen={isSwitchOn}>
-      <S.Logo>코끼리끼리</S.Logo>
-      <S.SeparateLine />
       <S.Nav>
         <S.Links>
-          <div>로드맵</div>
-          <div>골룸</div>
-          <div>알림</div>
+          <S.NavTitle to='/'>
+            <S.ItemIcon>
+              <SVGIcon name='CokiriIcon' />
+            </S.ItemIcon>
+          </S.NavTitle>
+          <S.Item to='/roadmap-list'>
+            <S.ItemIcon>
+              <SVGIcon name='RoadmapIcon' />
+            </S.ItemIcon>
+            <S.Text>로드맵</S.Text>
+          </S.Item>
+          <S.Item to='/goalroom-list'>
+            <S.ItemIcon>
+              <SVGIcon name='GoalRoomIcon' />
+            </S.ItemIcon>
+            <S.Text>골룸</S.Text>
+          </S.Item>
         </S.Links>
         <S.Links>
-          <div>우디</div>
-          <div>로그아웃</div>
+          <S.Item to='/login'>
+            <S.ItemIcon>
+              <SVGIcon name='LoginIcon' />
+            </S.ItemIcon>
+            <S.Text>로그인</S.Text>
+          </S.Item>
         </S.Links>
       </S.Nav>
     </S.NavBar>
