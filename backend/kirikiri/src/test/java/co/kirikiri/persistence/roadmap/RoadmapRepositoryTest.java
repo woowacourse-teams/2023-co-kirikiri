@@ -190,7 +190,7 @@ class RoadmapRepositoryTest {
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
         final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getRoadmapNodes());
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getValues());
 
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
                 creator, category);

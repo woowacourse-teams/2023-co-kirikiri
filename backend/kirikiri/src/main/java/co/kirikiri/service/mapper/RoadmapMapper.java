@@ -101,7 +101,7 @@ public final class RoadmapMapper {
     }
 
     private static List<RoadmapNodeResponse> convertRoadmapNodeResponse(final RoadmapNodes nodes) {
-        return nodes.getRoadmapNodes()
+        return nodes.getValues()
                 .stream()
                 .map(RoadmapMapper::convertNode)
                 .toList();
