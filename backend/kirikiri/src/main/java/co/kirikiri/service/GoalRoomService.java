@@ -66,7 +66,7 @@ public class GoalRoomService {
 
     private RoadmapNode findRoadmapNode(final RoadmapContent roadmapContent, final Long roadmapNodeId) {
         return roadmapContent.findRoadmapNodeById(roadmapNodeId)
-                .orElseThrow(() -> new NotFoundException("로드맵에 존재하지 않는 노드입니다"));
+                .orElseThrow(() -> new NotFoundException("로드맵에 존재하지 않는 노드입니다."));
     }
 
     private GoalRoomPendingMember makeGoalRoomPendingMember(final String memberIdentifier) {

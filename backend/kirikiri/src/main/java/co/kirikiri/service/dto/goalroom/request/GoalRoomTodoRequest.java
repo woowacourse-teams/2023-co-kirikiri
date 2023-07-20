@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public record GoalRoomTodoRequest(
 
-        @NotBlank
+        @NotBlank(message = "투두의 컨텐츠는 빈 값일 수 없습니다.")
         String content,
 
         @JsonFormat(pattern = "yyMMdd")

@@ -19,6 +19,7 @@ public class GoalRoomToDo extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // todo : wrapped class로 만들어서 글자 수 제한
     @Column(nullable = false, length = 300)
     private String content;
 

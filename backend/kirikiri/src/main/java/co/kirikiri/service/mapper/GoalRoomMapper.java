@@ -16,7 +16,7 @@ public class GoalRoomMapper {
     public static GoalRoomCreateDto convertToGoalRoomCreateDto(final GoalRoomCreateRequest goalRoomCreateRequest) {
         final GoalRoomTodoRequest goalRoomTodoRequest = goalRoomCreateRequest.goalRoomTodo();
         final GoalRoomToDo goalRoomToDo = makeGoalRoomToDo(goalRoomTodoRequest);
-        final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests = goalRoomCreateRequest.goalRoomRoadmapNodePeriods();
+        final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests = goalRoomCreateRequest.goalRoomRoadmapNodeRequests();
         final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos = makeGoalRoomRoadmapNodeDtos(goalRoomRoadmapNodeRequests);
         return new GoalRoomCreateDto(goalRoomCreateRequest.roadmapContentId(), new GoalRoomName(goalRoomCreateRequest.name()),
                 new LimitedMemberCount(goalRoomCreateRequest.limitedMemberCount()), goalRoomToDo, goalRoomRoadmapNodeDtos);
