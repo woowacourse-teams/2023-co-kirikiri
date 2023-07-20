@@ -2,6 +2,7 @@ package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,9 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -23,24 +21,42 @@ public class RoadmapNode {
     private static final int TITLE_MAX_LENGTH = 40;
     private static final int CONTENT_MIN_LENGTH = 1;
     private static final int CONTENT_MAX_LENGTH = 200;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roadmap_node_id")
-    private final List<RoadmapNodeImage> images = new ArrayList<>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 50, nullable = false)
     private String title;
+
     @Column(length = 2200, nullable = false)
     private String content;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     private RoadmapContent roadmapContent;
+
+    @Embedded
+    private final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
 
     public RoadmapNode(final String title, final String content) {
         validate(title, content);
         this.title = title;
         this.content = content;
+    }
+
+    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
+        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
+    }
+
+    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
+        if (this.roadmapContent == null) {
+            this.roadmapContent = roadmapContent;
+        }
+    }
+
+    public void addImages(final RoadmapNodeImages roadmapNodeImages) {
+        this.roadmapNodeImages.addAll(roadmapNodeImages);
     }
 
     private void validate(final String title, final String content) {
@@ -62,16 +78,6 @@ public class RoadmapNode {
         }
     }
 
-    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
-        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
-    }
-
-    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
-        if (this.roadmapContent == null) {
-            this.roadmapContent = roadmapContent;
-        }
-    }
-
     public String getTitle() {
         return title;
     }
@@ -84,7 +90,7 @@ public class RoadmapNode {
         return roadmapContent;
     }
 
-    public List<RoadmapNodeImage> getImages() {
-        return images;
+    public RoadmapNodeImages getImages() {
+        return roadmapNodeImages;
     }
 }

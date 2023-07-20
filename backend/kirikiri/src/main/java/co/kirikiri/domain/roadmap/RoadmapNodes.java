@@ -8,28 +8,30 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapNodes {
 
+    @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmapContent")
-    private final List<RoadmapNode> roadmapNodes = new ArrayList<>();
+    private final List<RoadmapNode> values = new ArrayList<>();
 
     public RoadmapNodes(final List<RoadmapNode> roadmapNodes) {
-        this.roadmapNodes.addAll(roadmapNodes);
+        this.values.addAll(roadmapNodes);
     }
 
     public void add(final RoadmapNode roadmapNode) {
-        this.roadmapNodes.add(roadmapNode);
+        this.values.add(roadmapNode);
     }
 
     public void addAll(final RoadmapNodes roadmapNodes) {
-        this.roadmapNodes.addAll(roadmapNodes.getRoadmapNodes());
+        this.values.addAll(roadmapNodes.values);
     }
 
     public void updateAllRoadmapContent(final RoadmapContent content) {
-        for (final RoadmapNode roadmapNode : roadmapNodes) {
+        for (final RoadmapNode roadmapNode : values) {
             updateRoadmapContent(roadmapNode, content);
         }
     }
@@ -40,7 +42,7 @@ public class RoadmapNodes {
         }
     }
 
-    public List<RoadmapNode> getRoadmapNodes() {
-        return roadmapNodes;
+    public List<RoadmapNode> getValues() {
+        return values;
     }
 }
