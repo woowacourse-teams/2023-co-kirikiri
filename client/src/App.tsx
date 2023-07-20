@@ -6,29 +6,29 @@ import ResponsiveContainer from '@components/_common/responsiveContainer/Respons
 import SignUpPage from '@pages/signUpPage/SignUpPage';
 import LoginPage from '@pages/loginPage/LoginPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/roadmapCreatePage';
+import PageLayout from '@components/_common/pageLayout/PageLayout';
+import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
+import GoalRoomListPage from '@components/goalRommListPage/GoalRoomListPage';
+import MainPage from '@components/mainPage/MainPage';
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <ResponsiveContainer>
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path='/'
-              element={
-                <div>
-                  <p>한글이라네 자네</p>
-                  <p>here comes Eng</p>
-                </div>
-              }
-            />
-            <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
-            <Route path='/login' element={<LoginPage />} />
-            <Route path='/join' element={<SignUpPage />} />
-          </Routes>
-        </BrowserRouter>
-      </ResponsiveContainer>
+      <BrowserRouter>
+        <ResponsiveContainer>
+          <PageLayout>
+            <Routes>
+              <Route path='/' element={<MainPage />} />
+              <Route path='/login' element={<LoginPage />} />
+              <Route path='/join' element={<SignUpPage />} />
+              <Route path='/roadmap-list' element={<RoadmapListPage />} />
+              <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
+              <Route path='/goalroom-list' element={<GoalRoomListPage />} />
+            </Routes>
+          </PageLayout>
+        </ResponsiveContainer>
+      </BrowserRouter>
     </ThemeProvider>
   );
 };

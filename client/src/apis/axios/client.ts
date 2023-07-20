@@ -12,7 +12,6 @@ const client = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 });
 
 client.interceptors.request.use((config) => {
@@ -39,10 +38,9 @@ client.interceptors.response.use(
         !originalRequest.shouldRetry
       ) {
         originalRequest.shouldRetry = true;
+        const refreshToken = getCookie('refresh_token');
         // refresh token으로 새로운 access token을 발급받는 API를 호출합니다.
-        const { data } = await client.post('/auth/reissue', null, {
-          withCredentials: true,
-        });
+        const { data } = await client.post('/auth/reissue', { refreshToken });
         // 새로 받은 access token으로 기본 header를 설정합니다.
         client.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
         // 원래의 요청에도 새로운 access token을 설정합니다.

@@ -5,6 +5,7 @@ export const Layout = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  box-shadow: ${({ theme }) => theme.shadows.main};
 `;
 
 export const NavBar = styled.nav`

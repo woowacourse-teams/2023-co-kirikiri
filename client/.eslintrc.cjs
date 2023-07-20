@@ -103,5 +103,8 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'import/no-unresolved': 'off',
     'import/order': 'off',
+    'react/jsx-no-constructed-context-values': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'no-nested-ternary': 'off',
   },
 };

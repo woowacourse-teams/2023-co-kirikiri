@@ -4,7 +4,10 @@ import font from '@styles/font';
 const theme: DefaultTheme = {
   colors: {
     main_light: '#C8EE44',
+    main_middle: '#99c799',
     main_dark: '#76A082',
+    gray_back: '#f8f8fa',
+    gray_light: '#fbfbfb',
     gray100: '#F2F2F2',
     gray200: '#C7C7CA',
     gray300: '#9E9EAE',
@@ -40,6 +43,7 @@ const theme: DefaultTheme = {
   shadows: {
     box: '-0.14rem 0.7rem 4.3rem rgba(0, 0, 0, 0.13)',
     text: '0 0.2rem 0.2rem rgba(0, 0, 0, 0.18)',
+    main: 'rgba(0, 0, 0, 0.25) 0px 0px 0.315rem',
   },
 };
 
