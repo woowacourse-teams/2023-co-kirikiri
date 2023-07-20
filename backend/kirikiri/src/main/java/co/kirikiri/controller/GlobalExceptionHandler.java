@@ -3,6 +3,7 @@ package co.kirikiri.controller;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -41,18 +42,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> forbiddenException(final ForbiddenException exception) {
+        log.error(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(final NotFoundException exception) {
         log.warn(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
-        log.error(exception.getMessage(), exception);
-        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -65,6 +66,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServerException.class)
     public ResponseEntity<ErrorResponse> handleServerException(final ServerException exception) {
+        log.error(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
         log.error(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
