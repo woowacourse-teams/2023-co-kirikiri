@@ -71,11 +71,28 @@ class GoalRoomTest {
                 .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
     }
 
+    @Test
+    void 이미_참여_중인_사용자를_골룸에_추가하면_예외가_발생한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom("골룸 이름",
+                new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"),
+                new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"), GoalRoomRole.LEADER)
+        );
+        final GoalRoomPendingMember member = new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"),
+                GoalRoomRole.FOLLOWER);
+
+        //when,then
+        assertThatThrownBy(() -> goalRoom.addMember(member))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
+    }
+
     private Member 사용자를_생성한다(final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
                 new Nickname(nickname), "010-1234-5678");
 
-        return new Member(new Identifier(identifier),
+        return new Member(1L, new Identifier(identifier),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
     }
 }

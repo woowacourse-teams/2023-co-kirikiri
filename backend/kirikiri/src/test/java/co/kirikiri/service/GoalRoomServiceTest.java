@@ -48,9 +48,9 @@ class GoalRoomServiceTest {
     void 골룸에_참가한다() {
         //given
         final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
-        final Member creator = 사용자를_생성한다("identifier1", "시진이");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
-        final Member follower = 사용자를_생성한다("identifier2", "팔로워");
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
@@ -80,7 +80,7 @@ class GoalRoomServiceTest {
     @Test
     void 골룸_참가_요청시_유효한_골룸_아이디가_아니면_예외가_발생한다() {
         //given
-        final Member follower = 사용자를_생성한다("identifier1", "팔로워");
+        final Member follower = 사용자를_생성한다(1L, "identifier1", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
@@ -97,9 +97,9 @@ class GoalRoomServiceTest {
     void 골룸_참가_요청시_제한_인원이_가득_찼을_경우_예외가_발생한다() {
         //given
         final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
-        final Member creator = 사용자를_생성한다("identifier1", "시진이");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 1);
-        final Member follower = 사용자를_생성한다("identifier2", "팔로워");
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
@@ -116,9 +116,9 @@ class GoalRoomServiceTest {
     void 골룸_참가_요청시_모집_중이_아닌_경우_예외가_발생한다() {
         //given
         final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
-        final Member creator = 사용자를_생성한다("identifier1", "시진이");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
-        final Member follower = 사용자를_생성한다("identifier2", "팔로워");
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
         goalRoom.updateStatus(GoalRoomStatus.RUNNING);
 
         when(memberRepository.findByIdentifier(any()))
@@ -132,11 +132,11 @@ class GoalRoomServiceTest {
                 .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
     }
 
-    private Member 사용자를_생성한다(final String identifier, final String nickname) {
+    private Member 사용자를_생성한다(final Long memberId, final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
                 new Nickname(nickname), "010-1234-5678");
 
-        return new Member(new Identifier(identifier),
+        return new Member(memberId, new Identifier(identifier),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
     }
 

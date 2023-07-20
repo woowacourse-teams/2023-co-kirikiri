@@ -77,10 +77,15 @@ public class GoalRoom extends BaseTimeEntity {
     }
 
     public void addMember(final GoalRoomPendingMember member) {
-        validateMemberCount();
-        validateStatus();
+        validateJoinGoalRoom(member);
         goalRoomPendingMembers.add(member);
         member.updateGoalRoom(this);
+    }
+
+    private void validateJoinGoalRoom(final GoalRoomPendingMember member) {
+        validateMemberCount();
+        validateStatus();
+        validateParticipation(member);
     }
 
     private void validateMemberCount() {
@@ -92,6 +97,12 @@ public class GoalRoom extends BaseTimeEntity {
     private void validateStatus() {
         if (!status.equals(GoalRoomStatus.RECRUITING)) {
             throw new BadRequestException("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
+        }
+    }
+
+    private void validateParticipation(final GoalRoomPendingMember member) {
+        if (goalRoomPendingMembers.contains(member)) {
+            throw new BadRequestException("이미 참여한 골룸에는 참여할 수 없습니다.");
         }
     }
 

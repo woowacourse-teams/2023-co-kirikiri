@@ -45,4 +45,8 @@ public class GoalRoomPendingMember {
     public void updateGoalRoom(final GoalRoom goalRoom) {
         this.goalRoom = goalRoom;
     }
+
+    public Member getMember() {
+        return member;
+    }
 }
