@@ -4,6 +4,7 @@ import font from '@styles/font';
 const theme: DefaultTheme = {
   colors: {
     main_light: '#C8EE44',
+    main_middle: '#99c799',
     main_dark: '#76A082',
     gray_back: '#f8f8fa',
     gray_light: '#fbfbfb',
