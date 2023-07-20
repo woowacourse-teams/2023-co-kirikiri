@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.io.UnsupportedEncodingException;
+import org.springframework.test.context.TestConstructor;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class IntegrationTest {
 
     protected static final String API_PREFIX = "/api";
@@ -39,7 +39,7 @@ public class IntegrationTest {
     }
 
     protected <T> T jsonToClass(final String responseBody, final TypeReference<T> typeReference)
-            throws JsonProcessingException, UnsupportedEncodingException {
+            throws JsonProcessingException {
         return objectMapper.readValue(responseBody, typeReference);
     }
 }

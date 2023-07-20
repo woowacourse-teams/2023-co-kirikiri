@@ -269,7 +269,7 @@ class GoalRoomControllerTest extends ControllerTestHelper {
                 20, new GoalRoomTodoRequest("content", LocalDate.MIN, LocalDate.MAX),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 20, LocalDate.MIN, LocalDate.MAX))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
-        doThrow(new NotFoundException("로드맵에 존재하지 않는 노드입니다"))
+        doThrow(new NotFoundException("로드맵에 존재하지 않는 노드입니다."))
                 .when(goalRoomService)
                 .create(any(), any());
 

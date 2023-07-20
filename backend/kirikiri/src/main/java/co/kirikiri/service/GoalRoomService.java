@@ -20,6 +20,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,17 +33,18 @@ public class GoalRoomService {
     private final RoadmapContentRepository roadmapContentRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
         final RoadmapContent roadmapContent = findRoadmapContent(goalRoomCreateDto.roadmapContentId());
         checkNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
-        final GoalRoomPendingMember goalRoomPendingMember = makeGoalRoomPendingMember(memberIdentifier);
         final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(), roadmapContent);
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final GoalRoomPendingMember goalRoomPendingMember = makeGoalRoomPendingMember(memberIdentifier, savedGoalRoom);
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         goalRoom.addGoalRoomTodo(goalRoomCreateDto.goalRoomToDo());
         goalRoom.participate(goalRoomPendingMember);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
         return savedGoalRoom.getId();
     }
 
@@ -69,9 +71,9 @@ public class GoalRoomService {
                 .orElseThrow(() -> new NotFoundException("로드맵에 존재하지 않는 노드입니다."));
     }
 
-    private GoalRoomPendingMember makeGoalRoomPendingMember(final String memberIdentifier) {
+    private GoalRoomPendingMember makeGoalRoomPendingMember(final String memberIdentifier, final GoalRoom savedGoalRoom) {
         final Member member = findMember(memberIdentifier);
-        return new GoalRoomPendingMember(GoalRoomRole.LEADER, member);
+        return new GoalRoomPendingMember(GoalRoomRole.LEADER, savedGoalRoom, member);
     }
 
     private Member findMember(final String memberIdentifier) {

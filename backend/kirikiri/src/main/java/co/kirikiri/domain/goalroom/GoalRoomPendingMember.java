@@ -51,6 +51,10 @@ public class GoalRoomPendingMember {
         this(null, role, null, null, member);
     }
 
+    public GoalRoomPendingMember(final GoalRoomRole role, final GoalRoom goalRoom, final Member member) {
+        this(null, role, null, goalRoom, member);
+    }
+
     public GoalRoomPendingMember(final Long id, final GoalRoomRole role, final LocalDateTime joinedAt,
                                  final GoalRoom goalRoom, final Member member) {
         this.id = id;

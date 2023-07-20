@@ -77,7 +77,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 아이디와_비밀번호에_빈값이_있을때() throws UnsupportedEncodingException, JsonProcessingException {
+    void 아이디와_비밀번호에_빈값이_있을때() throws JsonProcessingException {
         //given
         final LoginRequest 로그인_요청 = new LoginRequest("", "");
 
