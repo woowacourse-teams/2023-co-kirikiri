@@ -24,9 +24,23 @@ public class GoalRoomRoadmapNode {
 
     private LocalDate endDate;
 
-    private Integer checkCount = 0;
+    private final Integer checkCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_node_id")
     private RoadmapNode roadmapNode;
+
+    public GoalRoomRoadmapNode(final LocalDate startDate, final LocalDate endDate, final RoadmapNode roadmapNode) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.roadmapNode = roadmapNode;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 }
