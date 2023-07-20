@@ -92,7 +92,6 @@ const GlobalStyle = createGlobalStyle`
     padding:0 ;
     border: none;
     outline: none;
-
   }
 
   textarea {
@@ -100,7 +99,6 @@ const GlobalStyle = createGlobalStyle`
     background-color: transparent;
     border: none;
     outline: none;
-
   }
 `;
 
