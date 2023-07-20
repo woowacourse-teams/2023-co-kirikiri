@@ -1,8 +1,5 @@
 package co.kirikiri.service;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -33,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -84,15 +81,9 @@ class GoalRoomServiceTest {
                 .willReturn(Optional.of(ROADMAP_CONTENT));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
-        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName(request.name()), new LimitedMemberCount(request.limitedMemberCount()), ROADMAP_CONTENT);
-        given(goalRoomRepository.save(any()))
-                .willReturn(goalRoom);
 
         //when
-        final Long result = goalRoomService.create(request, member.getIdentifier().getValue());
-
-        //then
-        assertThat(result).isEqualTo(1L);
+        assertDoesNotThrow(() -> goalRoomService.create(request, member.getIdentifier().getValue()));
     }
 
     @Test

@@ -40,12 +40,12 @@ public class GoalRoomService {
         checkNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
         final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(), roadmapContent);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
-        final GoalRoomPendingMember goalRoomPendingMember = makeGoalRoomPendingMember(memberIdentifier, savedGoalRoom);
+        goalRoomRepository.save(goalRoom);
+        final GoalRoomPendingMember goalRoomPendingMember = makeGoalRoomPendingMember(memberIdentifier, goalRoom);
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         goalRoom.addGoalRoomTodo(goalRoomCreateDto.goalRoomToDo());
         goalRoom.participate(goalRoomPendingMember);
-        return savedGoalRoom.getId();
+        return goalRoom.getId();
     }
 
     private RoadmapContent findRoadmapContent(final Long roadmapContentId) {

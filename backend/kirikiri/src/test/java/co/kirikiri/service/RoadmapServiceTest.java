@@ -124,7 +124,7 @@ class RoadmapServiceTest {
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
         final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
 
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100,
                 RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
         roadmap.addContent(content);
 
