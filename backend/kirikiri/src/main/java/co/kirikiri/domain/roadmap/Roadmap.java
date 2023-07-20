@@ -62,6 +62,9 @@ public class Roadmap {
     @Embedded
     private RoadmapContents contents = new RoadmapContents();
 
+    @Embedded
+    private RoadmapReviews reviews = new RoadmapReviews();
+
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
         validate(title, introduction, requiredPeriod);
@@ -73,21 +76,13 @@ public class Roadmap {
         this.category = category;
     }
 
-    public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
-                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
-                   final RoadmapCategory category) {
-        this(null, title, introduction, requiredPeriod, difficulty, status, creator, category);
-    }
-
     public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
-                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
-                   final RoadmapCategory category) {
+                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
         this.id = id;
         this.title = title;
         this.introduction = introduction;
         this.requiredPeriod = requiredPeriod;
         this.difficulty = difficulty;
-        this.status = status;
         this.creator = creator;
         this.category = category;
     }
@@ -129,6 +124,21 @@ public class Roadmap {
         if (content.isNotSameRoadmap(this)) {
             content.updateRoadmap(this);
         }
+    }
+
+    public boolean isCreator(final Member member) {
+        return Objects.equals(creator.getId(), member.getId());
+    }
+
+    public void addReview(final RoadmapReview review) {
+        reviews.add(review);
+        if (review.isNotSameRoadmap(this)) {
+            review.updateRoadmap(this);
+        }
+    }
+
+    public void delete() {
+        this.status = RoadmapStatus.DELETED;
     }
 
     public Member getCreator() {
