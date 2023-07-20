@@ -104,14 +104,46 @@ operation::roadmap-controller-test/로드맵_목록_조회시_유효하지_않�
 operation::roadmap-controller-test/로드맵_카테고리_목록을_조회한다[snippets='http-request,http-response,response-fields']
 
 [[로드맵조회-API]]
-== *1. 로드맵 조회 API*
+== *4. 로드맵 조회 API*
 
-=== *1-1* 성공
+=== *4-1* 성공
 
 operation::roadmap-controller-test/단일_로드맵_정보를_조회한다[snippets='http-request,http-response,response-fields']
 
 ---
 
-=== *1-2* 실패 - 로드맵 아이디가 유효하지 않음
+=== *4-2* 실패 - 로드맵 아이디가 유효하지 않음
 
 operation::roadmap-controller-test/존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다[snippets='http-request,http-response,response-fields']
+
+---
+
+[[로드맵리뷰생성-API]]
+== *5. 로드맵 리뷰 생성 API*
+
+=== *5-1* 성공
+
+operation::roadmap-api-test/로드맵의_리뷰를_생성한다[snippets='http-request,path-parameters,request-headers,request-fields,http-response']
+
+=== *5-2* 실패 - 유효하지 않은 로드맵 아이디인 경우
+operation::roadmap-api-test/로드맵_리뷰_생성시_존재하지_않은_로드맵이면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *5-3* 실패 - 리뷰 내용이 공백일 경우
+operation::roadmap-api-test/로드맵_리뷰_생성시_내용이_공백이라면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *5-4* 실패 - 리뷰 내용이 1000자가 넘는 경우
+operation::roadmap-api-test/로드맵_리뷰_생성시_내용이_1000자가_넘으면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *5-5* 실패 - 리뷰 별점이 0~5 사이의 0.5씩 증가하는 값이 아닌 경우
+operation::roadmap-api-test/로드맵_리뷰_생성시_별점이_잘못된_값이면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *5-6* 실패 - 해당 로드맵의 생성자가 리뷰를 달려고 하는 경우
+operation::roadmap-api-test/로드맵_리뷰_생성시_로드맵_생성자가_리뷰를_달려고_하면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *5-7* 실패 - 해당 로드맵에 참여하지 않은 사용자가 리뷰를 달려고 하는 경우
+operation::roadmap-api-test/로드맵_리뷰_생성시_로드맵에_참여한_사용자가_아니면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *5-8* 실패 -해당 로드맵에 이미 리뷰를 단 적이 있는 경우
+operation::roadmap-api-test/로드맵_리뷰_생성시_이미_리뷰를_단적이_있으면_예외가_발생한다[snippets='http-request,http-response']
+
+
