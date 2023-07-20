@@ -15,7 +15,7 @@ import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.dto.member.GenderType;
+import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import java.time.LocalDate;
 import java.util.Optional;

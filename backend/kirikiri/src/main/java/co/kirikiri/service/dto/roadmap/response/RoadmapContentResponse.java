@@ -1,4 +1,4 @@
-package co.kirikiri.service.dto.roadmap;
+package co.kirikiri.service.dto.roadmap.response;
 
 import java.util.List;
 

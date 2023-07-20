@@ -16,10 +16,10 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
+import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps")
                                 .param("categoryId", "1")
-                                .param("filterCond", RoadmapFilterTypeDto.LATEST.name())
+                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
                                 .param("page", "1")
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))
@@ -91,7 +91,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps")
                                 .param("categoryId", "1")
-                                .param("filterCond", RoadmapFilterTypeDto.LATEST.name())
+                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
                                 .param("page", "1")
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))

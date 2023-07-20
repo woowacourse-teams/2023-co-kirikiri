@@ -1,6 +1,6 @@
-package co.kirikiri.service.dto.roadmap;
+package co.kirikiri.service.dto.roadmap.response;
 
-import co.kirikiri.service.dto.member.MemberResponse;
+import co.kirikiri.service.dto.member.response.MemberResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
