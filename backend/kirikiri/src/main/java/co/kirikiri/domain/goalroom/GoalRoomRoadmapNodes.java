@@ -17,10 +17,10 @@ public class GoalRoomRoadmapNodes {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private List<GoalRoomRoadmapNode> values;
+    private final List<GoalRoomRoadmapNode> values = new ArrayList<>();
 
     public GoalRoomRoadmapNodes(final List<GoalRoomRoadmapNode> values) {
-        this.values = values;
+        this.values.addAll(new ArrayList<>(values));
     }
 
     public void addAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {

@@ -8,6 +8,7 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,10 +19,10 @@ public class GoalRoomPendingMembers {
             mappedBy = "goalRoom",
             orphanRemoval = true)
     @Column(nullable = false)
-    private List<GoalRoomPendingMember> values;
+    private final List<GoalRoomPendingMember> values = new ArrayList<>();
 
     public GoalRoomPendingMembers(final List<GoalRoomPendingMember> values) {
-        this.values = values;
+        this.values.addAll(new ArrayList<>(values));
     }
 
     public void add(final GoalRoomPendingMember goalRoomPendingMember) {
