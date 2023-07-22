@@ -1,6 +1,7 @@
 package co.kirikiri.controller;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.AuthService;
@@ -15,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -30,7 +30,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,37 +58,34 @@ class GoalRoomControllerTest extends ControllerTestHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
+        final List<FieldDescription> requestFieldDescription = makeRequestFieldDescription();
+
         final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isCreated())
-                .andDo(
-                        documentationResultHandler.document(
-                                requestFields(
-                                        fieldWithPath("roadmapContentId").description("로드맵 컨텐츠 id"),
-                                        fieldWithPath("name").description("골룸 이름")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 1 ~ 40  ")),
-                                        fieldWithPath("limitedMemberCount").description("최대 제한 인원")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 1 ~ 20  ")),
-                                        fieldWithPath("goalRoomTodo").description("최초 골룸 투두"),
-                                        fieldWithPath("goalRoomTodo.content").description("골룸 투두 컨텐츠")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 1 ~ 250 ")),
-                                        fieldWithPath("goalRoomTodo.startDate").description("골룸 투두 시작일")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- yyMMdd 형식 ")),
-                                        fieldWithPath("goalRoomTodo.endDate").description("골룸 투두 종료일")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- yyMMdd 형식 ")),
-                                        fieldWithPath("goalRoomRoadmapNodeRequests").description("골룸 노드 정보"),
-                                        fieldWithPath("goalRoomRoadmapNodeRequests[].roadmapNodeId").description("설정할 로드맵 노드의 id"),
-                                        fieldWithPath("goalRoomRoadmapNodeRequests[].checkCount").description("- 골룸 노드의 인증 횟수"),
-                                        fieldWithPath("goalRoomRoadmapNodeRequests[].startDate").description("골룸 노드의 시작일")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- yyMMdd 형식 ")),
-                                        fieldWithPath("goalRoomRoadmapNodeRequests[].endDate").description("골룸 노드의 종료일")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- yyMMdd 형식 "))
-                                )
-                        )
-                )
+                .andDo(documentationResultHandler.document(
+                        requestFields(makeFieldDescriptor(requestFieldDescription))))
                 .andReturn();
 
 
         //then
         assertThat(mvcResult.getResponse().getHeader("Location")).isEqualTo("/api/goal-rooms/" + 1);
+    }
+
+
+    private List<FieldDescription> makeRequestFieldDescription() {
+        return List.of(
+                new FieldDescription("roadmapContentId", "로드맵 컨텐츠 id", null),
+                new FieldDescription("name", "골룸 이름", "- 길이 : 1 ~ 40"),
+                new FieldDescription("limitedMemberCount", "최대 제한 인원", "- 길이 : 1 ~ 20"),
+                new FieldDescription("goalRoomTodo", "최초 골룸 투두", null),
+                new FieldDescription("goalRoomTodo.content", "골룸 투두 컨텐츠", "- 길이 : 1 ~ 250"),
+                new FieldDescription("goalRoomTodo.startDate", "골룸 투두 시작일", "- yyMMdd 형식"),
+                new FieldDescription("goalRoomTodo.endDate", "골룸 투두 종료일", "- yyMMdd 형식"),
+                new FieldDescription("goalRoomRoadmapNodeRequests", "골룸 노드 정보", null),
+                new FieldDescription("goalRoomRoadmapNodeRequests[].roadmapNodeId", "설정할 로드맵 노드의 id", null),
+                new FieldDescription("goalRoomRoadmapNodeRequests[].checkCount", "골룸 노드의 인증 횟수", null),
+                new FieldDescription("goalRoomRoadmapNodeRequests[].startDate", "골룸 노드의 시작일", "- yyMMdd 형식"),
+                new FieldDescription("goalRoomRoadmapNodeRequests[].endDate", "골룸 노드의 종료일", "- yyMMdd 형식")
+        );
     }
 
     @Test

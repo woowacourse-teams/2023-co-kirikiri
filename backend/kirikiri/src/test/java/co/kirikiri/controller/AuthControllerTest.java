@@ -1,6 +1,7 @@
 package co.kirikiri.controller;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -23,7 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,26 +46,14 @@ class AuthControllerTest extends ControllerTestHelper {
         given(authService.login(request))
                 .willReturn(expectedResponse);
 
+        final List<FieldDescription> requestFieldDescription = makeRequestFieldDescription();
+        final List<FieldDescription> responseFieldDescription = makeResponseFieldDescription();
+
         //when
         final MvcResult mvcResult = 로그인(jsonRequest, status().isOk())
-                .andDo(
-                        documentationResultHandler.document(
-                                requestFields(
-                                        fieldWithPath("identifier").description("사용자 아이디")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 4 ~ 20  +" + "\n" +
-                                                                "- 영어 소문자, 숫자 가능")),
-                                        fieldWithPath("password").description("사용자 비밀번호")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 8 ~ 15  +" + "\n" +
-                                                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
-                                                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능"))
-                                ),
-                                responseFields(
-                                        fieldWithPath("refreshToken").description("리프레시 토큰"),
-                                        fieldWithPath("accessToken").description("액세스 토큰")
-                                )
-                        )
+                .andDo(documentationResultHandler.document(
+                        requestFields(makeFieldDescriptor(requestFieldDescription)),
+                        responseFields(makeFieldDescriptor(responseFieldDescription)))
                 )
                 .andReturn();
 
@@ -72,6 +62,25 @@ class AuthControllerTest extends ControllerTestHelper {
         });
 
         assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    private List<FieldDescription> makeRequestFieldDescription() {
+        return List.of(
+                new FieldDescription("identifier", "사용자 아이디",
+                        "- 길이 : 4 ~ 20  +" + "\n" +
+                                "- 영어 소문자, 숫자 가능"),
+                new FieldDescription("password", "사용자 비밀번호",
+                        "- 길이 : 8 ~ 15  +" + "\n" +
+                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
+                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능")
+        );
+    }
+
+    private List<FieldDescription> makeResponseFieldDescription() {
+        return List.of(
+                new FieldDescription("refreshToken", "리프레시 토큰", null),
+                new FieldDescription("accessToken", "액세스 토큰", null)
+        );
     }
 
     @Test
