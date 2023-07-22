@@ -138,14 +138,14 @@ class RoadmapServiceTest {
                 "로드맵 제목",
                 "로드맵 설명",
                 new MemberResponse(1L, "썬샷"),
-                new RoadmapContentResponse("컨텐츠 제목", Collections.emptyList()),
+                new RoadmapContentResponse(1L, "컨텐츠 제목", Collections.emptyList()),
                 "NORMAL",
                 100
         );
 
         assertThat(roadmapResponse)
                 .usingRecursiveComparison()
-                .ignoringFields("roadmapId")
+                .ignoringFields("roadmapId", "content.id")
                 .isEqualTo(expectedResponse);
     }
 

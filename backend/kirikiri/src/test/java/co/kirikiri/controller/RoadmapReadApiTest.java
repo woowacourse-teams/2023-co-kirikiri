@@ -61,7 +61,9 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                 fieldWithPath("introduction").description("로드맵 소개글"),
                                 fieldWithPath("creator.id").description("로드맵 크리에이터 아이디"),
                                 fieldWithPath("creator.name").description("로드맵 크리에이터 닉네임"),
-                                fieldWithPath("content.content").description("로드맵 본문"),
+                                fieldWithPath("content.id").description("로드맵 컨텐츠 아이디"),
+                                fieldWithPath("content.content").description("로드맵 컨텐츠 본문"),
+                                fieldWithPath("content.nodes[0].id").description("로드맵 노드 아이디"),
                                 fieldWithPath("content.nodes[0].title").description("로드맵 노드 제목"),
                                 fieldWithPath("content.nodes[0].description").description("로드맵 노드 본문"),
                                 fieldWithPath("content.nodes[0].imageUrls[0]").description("로드맵 노드 이미지 파일 경로"),
@@ -217,11 +219,11 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final RoadmapCategoryResponse category = new RoadmapCategoryResponse(1, "운동");
         final MemberResponse creator = new MemberResponse(1, "닉네임");
         final List<RoadmapNodeResponse> nodes = List.of(
-                new RoadmapNodeResponse("1번 노드", "1번 노드 설명", List.of("image1-filepath", "image2-filepath")),
-                new RoadmapNodeResponse("2번 노드", "2번 노드 설명", Collections.emptyList())
+                new RoadmapNodeResponse(1L, "1번 노드", "1번 노드 설명", List.of("image1-filepath", "image2-filepath")),
+                new RoadmapNodeResponse(2L, "2번 노드", "2번 노드 설명", Collections.emptyList())
         );
         return new RoadmapResponse(1L, category, "제목", "소개글", creator,
-                new RoadmapContentResponse("본문", nodes), "EASY", 100);
+                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100);
     }
 
     private PageResponse<RoadmapResponse> 로드맵_페이지_응답을_생성한다() {

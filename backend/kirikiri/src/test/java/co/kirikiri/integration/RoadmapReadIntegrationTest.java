@@ -84,10 +84,10 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 "로드맵 소개글",
                 new MemberResponse(크리에이터.getId(), NICKNAME),
                 new RoadmapContentResponse(
-                        "로드맵 본문",
+                        1L, "로드맵 본문",
                         List.of(
-                                new RoadmapNodeResponse("노드 제목 1", "노드 내용 1", Collections.emptyList()),
-                                new RoadmapNodeResponse("노드 제목 2", "노드 내용 2", Collections.emptyList())
+                                new RoadmapNodeResponse(1L, "노드 제목 1", "노드 내용 1", Collections.emptyList()),
+                                new RoadmapNodeResponse(2L, "노드 제목 2", "노드 내용 2", Collections.emptyList())
                         )),
                 RoadmapDifficultyType.NORMAL.name(),
                 100

@@ -94,7 +94,8 @@ public final class RoadmapMapper {
                 roadmap.getTitle(),
                 roadmap.getIntroduction(),
                 new MemberResponse(creator.getId(), creator.getNickname().getValue()),
-                new RoadmapContentResponse(content.getContent(), convertRoadmapNodeResponse(content.getNodes())),
+                new RoadmapContentResponse(content.getId(), content.getContent(),
+                        convertRoadmapNodeResponse(content.getNodes())),
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod()
         );
@@ -113,6 +114,6 @@ public final class RoadmapMapper {
                 .map(RoadmapNodeImage::getServerFilePath)
                 .toList();
 
-        return new RoadmapNodeResponse(node.getTitle(), node.getContent(), images);
+        return new RoadmapNodeResponse(node.getId(), node.getTitle(), node.getContent(), images);
     }
 }
