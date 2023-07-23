@@ -27,11 +27,14 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
 
     @Override
     public Optional<Roadmap> findByGoalRoomId(final Long goalRoomId) {
-        return Optional.ofNullable(selectFrom(roadmap)
-                .innerJoin(roadmap, roadmapContent.roadmap)
-                .innerJoin(roadmapContent, goalRoom.roadmapContent)
-                .where(goalRoom.id.eq(goalRoomId))
-                .fetchJoin()
+        return Optional.ofNullable(select(roadmap)
+                .from(roadmap)
+                .where(roadmap.id.in(
+                        select(roadmapContent.roadmap.id)
+                                .from(goalRoom)
+                                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                                .where(goalRoom.id.eq(goalRoomId))
+                ))
                 .fetchFirst());
     }
 

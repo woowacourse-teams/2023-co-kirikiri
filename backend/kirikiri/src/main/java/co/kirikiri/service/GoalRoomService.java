@@ -4,6 +4,7 @@ import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -53,7 +54,7 @@ public class GoalRoomService {
 
     private GoalRoom findGoalRoomByIdWithMember(final Long goalRoomId, final Member member) {
         return goalRoomRepository.findByIdWithMember(goalRoomId, member)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
+                .orElseThrow(() -> new BadRequestException("참여하지 않은 골룸입니다."));
     }
 
     private Roadmap findRoadmapByGoalRoomId(final Long goalRoomId) {
