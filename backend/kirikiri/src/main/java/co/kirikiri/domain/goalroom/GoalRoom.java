@@ -49,7 +49,7 @@ public class GoalRoom extends BaseTimeEntity {
     private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
 
     @Embedded
-    private GoalRoomRoadmapNodes goalRoomRoadmapNodes;
+    private GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     @Embedded
     private GoalRoomMembers goalRoomMembers;
@@ -116,5 +116,9 @@ public class GoalRoom extends BaseTimeEntity {
 
     public int getCurrentMemberCount() {
         return goalRoomPendingMembers.getCurrentMemberCount();
+    }
+
+    public void addRoadmapNodesAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
     }
 }
