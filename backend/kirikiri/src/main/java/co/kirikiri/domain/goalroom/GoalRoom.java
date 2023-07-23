@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -49,7 +50,7 @@ public class GoalRoom extends BaseTimeEntity {
     private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
 
     @Embedded
-    private GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     @Embedded
     private GoalRoomMembers goalRoomMembers;
@@ -106,19 +107,43 @@ public class GoalRoom extends BaseTimeEntity {
         }
     }
 
-    public void addGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.goalRoomRoadmapNodes = goalRoomRoadmapNodes;
+    public void addRoadmapNodesAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
     }
 
     public Long getId() {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int getCurrentMemberCount() {
         return goalRoomPendingMembers.getCurrentMemberCount();
     }
 
-    public void addRoadmapNodesAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    public int getLimitedMemberCount() {
+        return limitedMemberCount.getValue();
+    }
+
+    public LocalDate getGoalRoomStartDate() {
+        return goalRoomRoadmapNodes.getGoalRoomStartDate();
+    }
+
+    public LocalDate getGoalRoomEndDate() {
+        return goalRoomRoadmapNodes.getGoalRoomEndDate();
+    }
+
+    public GoalRoomPendingMember findLeader() {
+        return goalRoomPendingMembers.findGoalRoomLeader();
+    }
+
+    public GoalRoomStatus getStatus() {
+        return status;
+    }
+
+    public List<GoalRoomToDo> getTodos() {
+        return goalRoomToDos;
     }
 }

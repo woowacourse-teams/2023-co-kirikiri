@@ -1,11 +1,14 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -30,5 +33,19 @@ public class GoalRoomRoadmapNodes {
 
     public List<GoalRoomRoadmapNode> getValues() {
         return values;
+    }
+
+    public LocalDate getGoalRoomStartDate() {
+        return values.stream()
+                .min(Comparator.comparing(GoalRoomRoadmapNode::getStartDate))
+                .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
+                .getStartDate();
+    }
+
+    public LocalDate getGoalRoomEndDate() {
+        return values.stream()
+                .max(Comparator.comparing(GoalRoomRoadmapNode::getEndDate))
+                .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
+                .getEndDate();
     }
 }

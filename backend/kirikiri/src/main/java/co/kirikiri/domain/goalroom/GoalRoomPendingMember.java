@@ -46,6 +46,10 @@ public class GoalRoomPendingMember {
         this.goalRoom = goalRoom;
     }
 
+    public boolean isLeader() {
+        return role == GoalRoomRole.LEADER;
+    }
+
     public Member getMember() {
         return member;
     }

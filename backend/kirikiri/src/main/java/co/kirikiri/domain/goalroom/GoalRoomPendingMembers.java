@@ -1,5 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
@@ -29,6 +30,13 @@ public class GoalRoomPendingMembers {
 
     public int getCurrentMemberCount() {
         return values.size();
+    }
+
+    public GoalRoomPendingMember findGoalRoomLeader() {
+        return values.stream()
+                .filter(GoalRoomPendingMember::isLeader)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
     }
 
     public List<GoalRoomPendingMember> getValues() {
