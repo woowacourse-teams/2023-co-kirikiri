@@ -7,7 +7,7 @@ import ResponsiveContainer from '@components/_common/responsiveContainer/Respons
 import SignUpPage from '@pages/signUpPage/SignUpPage';
 import LoginPage from '@pages/loginPage/LoginPage';
 import PageLayout from '@components/_common/pageLayout/PageLayout';
-import RoadmapListPage from '@pages/roadmapListPage/RoadmapListPage';
+import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
 import GoalRoomListPage from '@components/goalRommListPage/GoalRoomListPage';
 import MainPage from '@components/mainPage/MainPage';
 import Fallback from '@components/_common/fallback/Fallback';
