@@ -1,4 +1,4 @@
-import { CategoriesInfo } from '@constants/roadmap/Category';
+import { CategoriesInfo } from '@constants/roadmap/category';
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './Categories.styles';
 

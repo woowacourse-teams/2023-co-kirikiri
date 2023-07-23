@@ -1,5 +1,5 @@
-import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/Difficulty';
-import { CategoriesInfo } from '@constants/roadmap/Category';
+import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
+import { CategoriesInfo } from '@constants/roadmap/category';
 
 export type CategoryType = {
   id: keyof typeof CategoriesInfo;
