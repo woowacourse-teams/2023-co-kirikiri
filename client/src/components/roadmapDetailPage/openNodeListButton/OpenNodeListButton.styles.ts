@@ -1,7 +1,16 @@
 import { styled } from 'styled-components';
 
 export const OpenNodeListButton = styled.div`
-  width: 4rem;
-  height: 4rem;
-  background-color: red;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 40rem;
+  height: 30rem;
+  margin-top: 3rem;
+  padding: 3rem 3rem;
+
+  border-radius: 4rem;
+  box-shadow: ${({ theme }) => theme.shadows.box};
 `;
