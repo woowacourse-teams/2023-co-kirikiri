@@ -108,7 +108,7 @@ const DummyData: RoadmapListResponseType = {
 
 const RoadmapListView = () => {
   const [categoryId, setCategoryId] = useState();
-  const { data } = useQuery([QUERY_KEYS.roadmap.detail, categoryId], () =>
+  const { data } = useQuery([QUERY_KEYS.roadmap.detail], () =>
     getRoadmapList(categoryId)
   );
 

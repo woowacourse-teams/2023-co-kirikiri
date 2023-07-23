@@ -7,7 +7,7 @@ export const getRoadmapList = (
   size = 10,
   filterCond = 'LATEST'
 ) => {
-  return client.get(`/api/roadmaps`, {
+  return client.get(`/roadmaps`, {
     params: {
       categoryId,
       page,
