@@ -1,18 +1,21 @@
-import { CategoriesInfo } from '@constants/roadmap/Category';
-import SVGIcon from '@components/icons/SVGIcon';
-import { RoadmapItemType } from '@myTypes/roadmap';
+import type { RoadmapItemType } from '@myTypes/roadmap';
+
 import { Link } from 'react-router-dom';
+import SVGIcon from '@components/icons/SVGIcon';
+import { CategoriesInfo } from '@constants/roadmap/Category';
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/Difficulty';
 import Box from '../box/Box';
+import Button from '../button/Button';
 import * as S from './RoadmapItem.styles';
 
 type RoadmapItemProps = {
   item: RoadmapItemType;
+  hasBorder?: boolean;
 } & {
   dummyCategoryId?: keyof typeof CategoriesInfo;
 };
 
-const RoadmapItem = ({ item, dummyCategoryId }: RoadmapItemProps) => {
+const RoadmapItem = ({ item, dummyCategoryId, hasBorder = true }: RoadmapItemProps) => {
   const categoryIcon = (
     <SVGIcon name={CategoriesInfo[dummyCategoryId || item.category.id].iconName} />
   );
@@ -21,7 +24,7 @@ const RoadmapItem = ({ item, dummyCategoryId }: RoadmapItemProps) => {
   );
 
   return (
-    <S.RoadmapItem>
+    <S.RoadmapItem hasBorder={hasBorder}>
       <S.ItemHeader>
         <S.AchieversCount>지금까지 1024명이 목표를 달성했어요!</S.AchieversCount>
         <S.ReviewersCount>❤️ 240</S.ReviewersCount>
@@ -32,18 +35,14 @@ const RoadmapItem = ({ item, dummyCategoryId }: RoadmapItemProps) => {
       </S.ItemInfos>
       <S.ItemExtraInfos>
         <Box>{categoryIcon}</Box>
-        <Box>
-          <div style={{ marginTop: '2.5rem' }}>{difficultyIcon}</div>
-        </Box>
-        <Box>
-          <div style={{ fontWeight: '700', fontSize: '2rem' }}>
-            {item.recommendedRoadmapPeriod}
-          </div>
+        <S.Difficulty>{difficultyIcon}</S.Difficulty>
+        <S.RecommendedRoadmapPeriod>
+          <div>{item.recommendedRoadmapPeriod}</div>
           <div>Days</div>
-        </Box>
+        </S.RecommendedRoadmapPeriod>
       </S.ItemExtraInfos>
       <Link to={`/roadmap/${item.roadmapId}`}>
-        <S.SeeDetailButton>자세히 보기</S.SeeDetailButton>
+        <Button>{hasBorder ? '자세히 보기' : '진행중인 골룸 보기'}</Button>
       </Link>
       <S.ItemFooter>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>

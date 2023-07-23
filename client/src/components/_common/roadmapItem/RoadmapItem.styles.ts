@@ -1,16 +1,17 @@
 import { styled } from 'styled-components';
+import { Box } from '../box/Box.styles';
 
-export const RoadmapItem = styled.div`
+export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
   flex-shrink: 0;
 
   width: 100%;
   max-width: 36.8rem;
   height: fit-content;
-  padding: 3rem 2.6rem 3rem 2.6rem;
+  padding: ${({ hasBorder }) => (hasBorder ? '3rem 2.6rem 3rem 2.6rem' : 0)};
 
   background: ${({ theme }) => theme.colors.white};
   border-radius: 3.1rem;
-  box-shadow: ${({ theme }) => theme.shadows.box};
+  box-shadow: ${({ theme, hasBorder }) => (hasBorder ? theme.shadows.box : 'none')};
 `;
 
 export const ItemHeader = styled.div`
@@ -23,7 +24,6 @@ export const ItemHeader = styled.div`
 export const AchieversCount = styled.div`
   ${({ theme }) => theme.fonts.description2}
   color: ${({ theme }) => theme.colors.gray300};
-  text-shadow: ${({ theme }) => theme.shadows.text};
 `;
 
 export const ReviewersCount = styled.div`
@@ -53,6 +53,16 @@ export const ItemExtraInfos = styled.div`
   border-radius: 1rem;
 `;
 
+export const Difficulty = styled(Box)`
+  & > svg {
+    margin-top: 1.5rem;
+  }
+`;
+
+export const RecommendedRoadmapPeriod = styled(Box)`
+  ${({ theme }) => theme.fonts.h2}
+`;
+
 export const ExtraInfoCol = styled.div`
   ${({ theme }) => theme.fonts.description4}
   display: flex;
@@ -75,28 +85,6 @@ export const ExtraInfoCol = styled.div`
 `;
 
 export const Category = styled.div``;
-
-export const Difficulty = styled.div``;
-
-export const RecommendedRoadmapPeriod = styled.div``;
-
-export const SeeDetailButton = styled.button`
-  ${({ theme }) => theme.fonts.button1}
-  cursor: pointer;
-
-  width: 100%;
-  height: 4rem;
-  margin-top: 1.5rem;
-
-  color: ${({ theme }) => theme.colors.gray100};
-
-  background: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 1rem;
-
-  &:hover {
-    opacity: 0.9;
-  }
-`;
 
 export const ItemFooter = styled.div`
   display: flex;
