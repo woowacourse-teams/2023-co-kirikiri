@@ -9,6 +9,7 @@ import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -52,7 +53,44 @@ class GoalRoomRepositoryTest {
     }
 
     @Test
-    void 사용자의_골룸을_조회한다() {
+    void 사용자의_단일_골룸을_조회한다() {
+        //given
+        final Member creator = 사용자를_생성한다("황시진", "010-1234-5678",
+                "identifier1", "password1!");
+        final RoadmapCategory category = 카테고리를_생성한다("운동");
+        final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
+        final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
+        로드맵을_생성한다(creator, category, new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)),
+                roadmapContent);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 1),
+                LocalDate.of(2023, 7, 8),
+                roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
+                LocalDate.of(2023, 7, 16),
+                roadmapNode2);
+        final GoalRoom goalRoom = 골룸을_생성한다("goalroom1", 6, GoalRoomStatus.RECRUITING, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)),
+                new GoalRoomPendingMember(creator, GoalRoomRole.LEADER));
+
+        final GoalRoomToDo goalRoomTodo1 = 골룸_투두를_생성한다("첫번째 투두", LocalDate.of(2023, 7, 1),
+                LocalDate.of(2023, 7, 8));
+        final GoalRoomToDo goalRoomTodo2 = 골룸_투두를_생성한다("두번째 투두", LocalDate.of(2023, 7, 9),
+                LocalDate.of(2023, 7, 16));
+        goalRoom.addGoalRoomTodo(goalRoomTodo1);
+        goalRoom.addGoalRoomTodo(goalRoomTodo2);
+
+        //when
+        final GoalRoom findGoalRoom = goalRoomRepository.findByIdWithMember(1L, creator)
+                .get();
+
+        //then
+        assertThat(findGoalRoom).isEqualTo(goalRoom);
+    }
+
+    @Test
+    void 사용자의_골룸_목록을_조회한다() {
         //given
         final Member creator = 사용자를_생성한다("황시진", "010-1234-5678",
                 "identifier1", "password1!");
@@ -148,6 +186,10 @@ class GoalRoomRepositoryTest {
     private GoalRoomRoadmapNode 골룸_로드맵_노드를_생성한다(final LocalDate startDate, final LocalDate endDate,
                                                 final RoadmapNode roadmapNode) {
         return new GoalRoomRoadmapNode(startDate, endDate, roadmapNode);
+    }
+
+    private GoalRoomToDo 골룸_투두를_생성한다(final String content, final LocalDate startDate, final LocalDate endDate) {
+        return new GoalRoomToDo(content, startDate, endDate);
     }
 
     private GoalRoom 골룸을_생성한다(final String name, final Integer limitedMemberCount,

@@ -111,6 +111,10 @@ public class GoalRoom extends BaseTimeEntity {
         this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
     }
 
+    public void addGoalRoomTodo(final GoalRoomToDo goalRoomToDo) {
+        goalRoomToDos.add(goalRoomToDo);
+    }
+
     public Long getId() {
         return id;
     }

@@ -24,4 +24,16 @@ public class GoalRoomToDo extends BaseTimeEntity {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    public GoalRoomToDo(final String content, final LocalDate startDate, final LocalDate endDate) {
+        this(null, content, startDate, endDate);
+    }
+
+    private GoalRoomToDo(final Long id, final String content, final LocalDate startDate,
+                         final LocalDate endDate) {
+        this.id = id;
+        this.content = content;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
