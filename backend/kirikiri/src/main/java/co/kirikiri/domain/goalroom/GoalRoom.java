@@ -147,6 +147,10 @@ public class GoalRoom extends BaseTimeEntity {
         return status;
     }
 
+    public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
+        return goalRoomRoadmapNodes;
+    }
+
     public List<GoalRoomToDo> getTodos() {
         return goalRoomToDos;
     }

@@ -43,4 +43,12 @@ public class GoalRoomRoadmapNode {
     public LocalDate getEndDate() {
         return endDate;
     }
+
+    public Integer getCheckCount() {
+        return checkCount;
+    }
+
+    public RoadmapNode getRoadmapNode() {
+        return roadmapNode;
+    }
 }
