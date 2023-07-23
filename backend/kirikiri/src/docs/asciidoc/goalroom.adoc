@@ -37,13 +37,28 @@ operation::goal-room-create-api-test/이미_참여한_골룸에_대한_참가_�
 
 operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response,path-parameters,response-fields']
 
-[[사용자골룸목록조회-API]]
-== *2. 사용자 골룸 목록 조회 API*
+[[사용자골룸조회-API]]
+== *2. 사용자 골룸 조회 API*
 
 === *2-1* 성공
 
-operation::goal-room-read-api-test/사용자의_골룸_목록을_조회한다[snippets='http-request,http-response,query-parameters']
+operation::goal-room-read-api-test/사용자가_참가한_골룸을_조회한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']
 
-=== *2-2* 실패 - 사용자 아이디가 유효하지 않음
+=== *2-2* 실패 - 사용자_골룸_조회_시_골룸_아이디가_유효하지_않으면_예외가_발생한다
 
-operation::goal-room-read-api-test/사용자_골룸_목록_조회시_유효하지_않은_사용자_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,query-parameters']
+operation::goal-room-read-api-test/사용자_골룸_조회_시_골룸_아이디가_유효하지_않으면_예외가_발생한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']
+
+=== *2-3* 실패 - 사용자_골룸_조회_시_사용자_아이디가_유효하지_않으면_예외가_발생한다
+
+operation::goal-room-read-api-test/사용자_골룸_조회_시_사용자_아이디가_유효하지_않으면_예외가_발생한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']
+
+[[사용자골룸목록조회-API]]
+== *3. 사용자 골룸 목록 조회 API*
+
+=== *3-1* 성공
+
+operation::goal-room-read-api-test/사용자의_골룸_목록을_조회한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']
+
+=== *3-2* 실패 - 사용자 아이디가 유효하지 않음
+
+operation::goal-room-read-api-test/사용자_골룸_목록_조회시_유효하지_않은_사용자_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']

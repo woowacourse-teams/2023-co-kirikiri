@@ -8,6 +8,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,11 @@ public class GoalRoomService {
     // TODO : 추후에 GoalRoomMembers 관련 로직 추가 시 수정 필요
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
+
+    public GoalRoomResponse findMemberGoalRoom(final Long memberId, final Long goalRoomId) {
+        final Member member = findMember(memberId);
+        return null;
+    }
 
     public PageResponse<GoalRoomForListResponse> findMemberGoalRooms(final Long memberId,
                                                                      final CustomPageRequest pageRequest) {

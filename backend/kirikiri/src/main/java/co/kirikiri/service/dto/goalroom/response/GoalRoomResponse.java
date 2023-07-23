@@ -6,8 +6,10 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record GoalRoomResponse(
         String name,
+        String roadmapName,
         String status,
         List<GoalRoomNodeResponse> goalRoomNodes,
+        List<GoalRoomTodoResponse> goalRoomTodos,
         int period,
         Boolean isJoined
 ) {
@@ -18,7 +20,7 @@ public record GoalRoomResponse(
             final int period,
             final Boolean isJoined
     ) {
-        this(name, null, goalRoomNodes, period, isJoined);
+        this(name, null, null, goalRoomNodes, null, period, isJoined);
     }
 
 }
