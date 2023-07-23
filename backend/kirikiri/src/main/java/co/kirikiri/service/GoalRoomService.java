@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GoalRoomService {
 
-    //TODO : 추후에 GoalRoomMembers 관련 로직 추가 시 수정 필요
+    // TODO : 추후에 GoalRoomMembers 관련 로직 추가 시 수정 필요
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
 
