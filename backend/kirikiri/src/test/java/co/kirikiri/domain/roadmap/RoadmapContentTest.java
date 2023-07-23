@@ -52,9 +52,9 @@ class RoadmapContentTest {
         // then
         final RoadmapNodes nodes = content.getNodes();
         assertAll(
-                () -> assertThat(nodes.getRoadmapNodes()).hasSize(2),
-                () -> assertThat(nodes.getRoadmapNodes().get(0).getRoadmapContent()).isEqualTo(content),
-                () -> assertThat(nodes.getRoadmapNodes().get(1).getRoadmapContent()).isEqualTo(content)
+                () -> assertThat(nodes.getValues()).hasSize(2),
+                () -> assertThat(nodes.getValues().get(0).getRoadmapContent()).isEqualTo(content),
+                () -> assertThat(nodes.getValues().get(1).getRoadmapContent()).isEqualTo(content)
         );
     }
 

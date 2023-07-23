@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -19,8 +18,6 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -29,13 +26,14 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
+import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -69,96 +67,6 @@ class RoadmapServiceTest {
 
     @InjectMocks
     private RoadmapService roadmapService;
-
-    @Test
-    void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() {
-        //given
-        final Member member = 사용자를_생성한다();
-        final RoadmapCategory category = 로드맵_카테고리를_생성한다("운동");
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
-        final Roadmap roadmap = 로드맵을_생성한다(member, category);
-        roadmap.addContent(content);
-        final Long roadmapId = 1L;
-
-        when(roadmapRepository.findById(anyLong()))
-                .thenReturn(Optional.of(roadmap));
-        when(roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(any()))
-                .thenReturn(Optional.of(content));
-
-        //when
-        final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
-
-        //then
-        final RoadmapResponse expectedResponse = new RoadmapResponse(
-                roadmapId,
-                new RoadmapCategoryResponse(1L, "운동"),
-                "로드맵 제목",
-                "로드맵 설명",
-                new MemberResponse(1L, "썬샷"),
-                "콘텐츠 제목",
-                "NORMAL",
-                100,
-                Collections.emptyList()
-        );
-
-        assertThat(roadmapResponse)
-                .usingRecursiveComparison()
-                .ignoringFields("roadmapId")
-                .isEqualTo(expectedResponse);
-    }
-
-    @Test
-    void 로드맵_단일_조회_시_로드맵_아이디가_존재하지_않는_아이디일_경우_예외를_반환한다() {
-        //given
-
-        //when
-        when(roadmapRepository.findById(anyLong()))
-                .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1L"));
-
-        //then
-        assertThatThrownBy(() -> roadmapService.findRoadmap(1L))
-                .isInstanceOf(NotFoundException.class);
-    }
-
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
-
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
-                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
-        roadmap.addContent(content);
-
-        return roadmap;
-    }
-
-    private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("썬샷"), "01083004367");
-
-        return new Member(1L, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
-    }
-
-    private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
-        return new RoadmapCategory(1L, title);
-    }
-
-    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
-        return new RoadmapContent("콘텐츠 제목");
-    }
-
-    private List<RoadmapNode> 로드맵_노드들을_생성한다() {
-        return List.of(
-                new RoadmapNode("1단계", "준비운동"),
-                new RoadmapNode("2단계", "턱걸이")
-        );
-    }
-
-    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
-        return List.of(
-                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
-                        ImageContentType.PNG)
-        );
-    }
 
     @Test
     void 존재하지_않는_카테고리를_입력하면_예외가_발생한다() {
@@ -206,13 +114,62 @@ class RoadmapServiceTest {
     }
 
     @Test
+    void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() {
+        //given
+        final Member member = 사용자를_생성한다();
+        final RoadmapCategory category = 로드맵_카테고리를_생성한다("운동");
+        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(member, category);
+        roadmap.addContent(content);
+        final Long roadmapId = 1L;
+
+        when(roadmapRepository.findById(anyLong()))
+                .thenReturn(Optional.of(roadmap));
+        when(roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(any()))
+                .thenReturn(Optional.of(content));
+
+        //when
+        final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
+
+        //then
+        final RoadmapResponse expectedResponse = new RoadmapResponse(
+                roadmapId,
+                new RoadmapCategoryResponse(1L, "운동"),
+                "로드맵 제목",
+                "로드맵 설명",
+                new MemberResponse(1L, "썬샷"),
+                new RoadmapContentResponse(1L, "컨텐츠 제목", Collections.emptyList()),
+                "NORMAL",
+                100
+        );
+
+        assertThat(roadmapResponse)
+                .usingRecursiveComparison()
+                .ignoringFields("roadmapId", "content.id")
+                .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 로드맵_단일_조회_시_로드맵_아이디가_존재하지_않는_아이디일_경우_예외를_반환한다() {
+        //given
+
+        //when
+        when(roadmapRepository.findById(anyLong()))
+                .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1L"));
+
+        //then
+        assertThatThrownBy(() -> roadmapService.findRoadmap(1L))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
     void 로드맵_목록_조회시_카테고리_아이디가_유효하지_않으면_예외가_발생한다() {
         // given
         when(roadmapCategoryRepository.findById(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 1L"));
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeDto filterType = RoadmapFilterTypeDto.LATEST;
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when, then
@@ -232,7 +189,7 @@ class RoadmapServiceTest {
                 .thenReturn(roadmapPages);
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeDto filterType = null;
+        final RoadmapFilterTypeRequest filterType = null;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
@@ -264,7 +221,7 @@ class RoadmapServiceTest {
                 .thenReturn(roadmapPages);
 
         final Long categoryId = null;
-        final RoadmapFilterTypeDto filterType = RoadmapFilterTypeDto.LATEST;
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
@@ -298,7 +255,7 @@ class RoadmapServiceTest {
                 .thenReturn(roadmapPages);
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeDto filterType = RoadmapFilterTypeDto.LATEST;
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
@@ -332,6 +289,32 @@ class RoadmapServiceTest {
         assertThat(categoryResponses)
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
+    }
+
+    private Member 사용자를_생성한다() {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
+                new Nickname("썬샷"), "010-1234-5678");
+
+        return new Member(1L, new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")), memberProfile);
+    }
+
+    private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
+        return new RoadmapCategory(1L, title);
+    }
+
+    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
+        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
+
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
+                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        roadmap.addContent(content);
+
+        return roadmap;
+    }
+
+    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
+        return new RoadmapContent("컨텐츠 제목");
     }
 
     private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {
