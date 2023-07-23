@@ -1,5 +1,5 @@
-import Category from '@/components/roadmapCreatePage/category/category';
-import Difficulty from '@/components/roadmapCreatePage/difficulty/difficulty';
+import Category from '@components/roadmapCreatePage/category/Category';
+import Difficulty from '@components/roadmapCreatePage/difficulty/Difficulty';
 
 const RoadmapCreatePage = () => {
   return (
