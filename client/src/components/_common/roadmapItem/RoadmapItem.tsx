@@ -2,8 +2,8 @@ import type { RoadmapItemType } from '@myTypes/roadmap';
 
 import { Link } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';
-import { CategoriesInfo } from '@/constants/roadmap/category';
-import { DIFFICULTY_ICON_NAME } from '@/constants/roadmap/difficulty';
+import { CategoriesInfo } from '@constants/roadmap/category';
+import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
 import Box from '../box/Box';
 import Button from '../button/Button';
 import * as S from './RoadmapItem.styles';

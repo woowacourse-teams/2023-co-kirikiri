@@ -2,11 +2,8 @@ import media from '@styles/media';
 import styled from 'styled-components';
 
 export const RoadmapDetailPage = styled.div`
-  display: grid;
-  grid-template-columns: 17fr 13fr;
-  column-gap: 3rem;
-
-  margin: 10rem 0;
+  position: relative;
+  margin: 4rem 0;
   padding: 0 2rem;
 
   ${media.mobile`
@@ -15,17 +12,21 @@ export const RoadmapDetailPage = styled.div`
   `}
 `;
 
-export const RoadmapInfo = styled.div`
+export const RoadmapBody = styled.p`
+  ${({ theme }) => theme.fonts.description5}
   width: 100%;
-`;
+  margin: 4rem 0;
+  padding: 4rem 8rem;
 
-export const NodeList = styled.div`
-  width: 100%;
-  min-width: 26rem;
   border-radius: 3rem;
-  box-shadow: ${({ theme }) => theme.shadows.boxBig};
+  box-shadow: ${({ theme }) => theme.shadows.box};
 
   ${media.mobile`
-    margin-top: 3rem;
+    padding: 4rem 4rem;
   `}
+`;
+
+export const PageOnTop = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
