@@ -21,6 +21,7 @@ const DummyData: RoadmapListResponseType = {
       category: {
         id: 1,
         name: '어학',
+        iconName: 'LanguageIcon',
       },
     },
     {
@@ -36,6 +37,7 @@ const DummyData: RoadmapListResponseType = {
       category: {
         id: 2,
         name: 'IT',
+        iconName: 'ITIcon',
       },
     },
     {
@@ -51,6 +53,7 @@ const DummyData: RoadmapListResponseType = {
       category: {
         id: 3,
         name: '시험',
+        iconName: 'ExamIcon',
       },
     },
     {
@@ -66,6 +69,7 @@ const DummyData: RoadmapListResponseType = {
       category: {
         id: 4,
         name: '운동',
+        iconName: 'ExerciseIcon',
       },
     },
     {
@@ -81,6 +85,7 @@ const DummyData: RoadmapListResponseType = {
       category: {
         id: 5,
         name: '게임',
+        iconName: 'GameIcon',
       },
     },
     {
@@ -96,6 +101,7 @@ const DummyData: RoadmapListResponseType = {
       category: {
         id: 6,
         name: '음악',
+        iconName: 'MusicIcon',
       },
     },
   ],

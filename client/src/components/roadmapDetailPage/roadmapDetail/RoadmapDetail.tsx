@@ -22,6 +22,7 @@ const DummyData: RoadmapItemType = {
   category: {
     id: 1,
     name: '어학',
+    iconName: 'LanguageIcon',
   },
 };
 

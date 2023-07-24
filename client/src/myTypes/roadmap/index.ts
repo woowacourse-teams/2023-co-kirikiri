@@ -1,9 +1,11 @@
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
 import { CategoriesInfo } from '@constants/roadmap/category';
+import * as Icons from '@components/icons/svgIcons';
 
 export type CategoryType = {
   id: keyof typeof CategoriesInfo;
   name: string;
+  iconName: keyof typeof Icons;
 };
 
 export type CreatorType = {

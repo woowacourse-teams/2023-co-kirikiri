@@ -16,6 +16,7 @@ const DummyData: RoadmapItemType[] = [
     category: {
       id: 1,
       name: 'IT',
+      iconName: 'ITIcon',
     },
   },
   {
@@ -31,6 +32,7 @@ const DummyData: RoadmapItemType[] = [
     category: {
       id: 2,
       name: 'IT',
+      iconName: 'ITIcon',
     },
   },
   {
@@ -46,6 +48,7 @@ const DummyData: RoadmapItemType[] = [
     category: {
       id: 3,
       name: 'IT',
+      iconName: 'ITIcon',
     },
   },
 ];
