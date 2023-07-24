@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { RoadmapListResponseType } from '@myTypes/roadmap';
-import Paginator from '@components/_common/paginator/Paginator';
 import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
 import { useQuery } from '@tanstack/react-query';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
@@ -122,7 +121,6 @@ const RoadmapListView = () => {
           <RoadmapItem key={item.roadmapId} item={item} />
         ))}
       </S.RoadmapList>
-      <Paginator />
     </S.RoadmapListView>
   );
 };
