@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
 import { CategoriesInfo } from '@constants/roadmap/category';
-import Box from '../box/Box';
 import Button from '../button/Button';
 import * as S from './RoadmapItem.styles';
 
@@ -30,7 +29,7 @@ const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
         <S.Description>{item.introduction}</S.Description>
       </div>
       <S.ItemExtraInfos>
-        <Box>{categoryIcon}</Box>
+        <S.ExtraInfoBox>{categoryIcon}</S.ExtraInfoBox>
         <S.Difficulty>{difficultyIcon}</S.Difficulty>
         <S.RecommendedRoadmapPeriod>
           <div>{item.recommendedRoadmapPeriod}</div>

@@ -1,5 +1,4 @@
 import { styled } from 'styled-components';
-import { Box } from '../box/Box.styles';
 
 export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
   flex-shrink: 0;
@@ -51,13 +50,27 @@ export const ItemExtraInfos = styled.div`
   border-radius: 8px;
 `;
 
-export const Difficulty = styled(Box)`
+export const ExtraInfoBox = styled.div`
+  ${({ theme }) => theme.fonts.description4}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 8rem;
+  height: 8rem;
+
+  background-color: ${({ theme }) => theme.colors.white};
+  border-radius: 8px;
+`;
+
+export const Difficulty = styled(ExtraInfoBox)`
   & > svg {
     margin-top: 1.5rem;
   }
 `;
 
-export const RecommendedRoadmapPeriod = styled(Box)`
+export const RecommendedRoadmapPeriod = styled(ExtraInfoBox)`
   ${({ theme }) => theme.fonts.h2}
 `;
 
