@@ -2,8 +2,8 @@ import type { RoadmapItemType } from '@myTypes/roadmap';
 
 import { Link } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';
-import { CategoriesInfo } from '@constants/roadmap/category';
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
+import { CategoriesInfo } from '@constants/roadmap/category';
 import Box from '../box/Box';
 import Button from '../button/Button';
 import * as S from './RoadmapItem.styles';
@@ -25,10 +25,10 @@ const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
         <S.AchieversCount>지금까지 1024명이 목표를 달성했어요!</S.AchieversCount>
         <S.ReviewersCount>❤️ 240</S.ReviewersCount>
       </S.ItemHeader>
-      <S.ItemInfos>
+      <div>
         <S.RoadmapTitle>{item.roadmapTitle}</S.RoadmapTitle>
         <S.Description>{item.introduction}</S.Description>
-      </S.ItemInfos>
+      </div>
       <S.ItemExtraInfos>
         <Box>{categoryIcon}</Box>
         <S.Difficulty>{difficultyIcon}</S.Difficulty>

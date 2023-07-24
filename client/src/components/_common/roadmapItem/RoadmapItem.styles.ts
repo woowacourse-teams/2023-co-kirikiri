@@ -30,8 +30,6 @@ export const ReviewersCount = styled.div`
   ${({ theme }) => theme.fonts.button1}
 `;
 
-export const ItemInfos = styled.div``;
-
 export const RoadmapTitle = styled.div`
   ${({ theme }) => theme.fonts.h1}
 `;
