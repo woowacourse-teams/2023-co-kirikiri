@@ -23,8 +23,6 @@ export const CategoriesRow = styled.div`
 
 export const Category = styled.div`
   ${({ theme }) => theme.fonts.description5}
-  cursor: pointer;
-
   display: flex;
   flex-direction: column;
   align-items: center;
