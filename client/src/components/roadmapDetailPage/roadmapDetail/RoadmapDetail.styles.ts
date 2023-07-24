@@ -1,7 +1,7 @@
 import media from '@styles/media';
 import styled from 'styled-components';
 
-export const RoadmapDetailPage = styled.div`
+export const RoadmapDetail = styled.div`
   position: relative;
   margin: 4rem 0;
   padding: 0 2rem;
