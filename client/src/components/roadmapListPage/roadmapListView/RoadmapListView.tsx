@@ -1,9 +1,5 @@
-import { useState } from 'react';
 import type { RoadmapListResponseType } from '@myTypes/roadmap';
 import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
-import { useQuery } from '@tanstack/react-query';
-import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
-import { getRoadmapList } from '@apis/roadmap';
 import Categories from '../categories/Categories';
 
 import * as S from './RoadmapListView.styles';
@@ -106,16 +102,9 @@ const DummyData: RoadmapListResponseType = {
 };
 
 const RoadmapListView = () => {
-  const [categoryId, setCategoryId] = useState();
-  const { data } = useQuery([QUERY_KEYS.roadmap.detail], () =>
-    getRoadmapList(categoryId)
-  );
-
-  console.log(data);
-
   return (
     <S.RoadmapListView>
-      <Categories setDummyCategoryId={setCategoryId} />
+      <Categories />
       <S.RoadmapList>
         {DummyData.data.map((item) => (
           <RoadmapItem key={item.roadmapId} item={item} />

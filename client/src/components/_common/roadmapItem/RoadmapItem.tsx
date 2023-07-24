@@ -11,14 +11,10 @@ import * as S from './RoadmapItem.styles';
 type RoadmapItemProps = {
   item: RoadmapItemType;
   hasBorder?: boolean;
-} & {
-  dummyCategoryId?: keyof typeof CategoriesInfo;
 };
 
-const RoadmapItem = ({ item, dummyCategoryId, hasBorder = true }: RoadmapItemProps) => {
-  const categoryIcon = (
-    <SVGIcon name={CategoriesInfo[dummyCategoryId || item.category.id].iconName} />
-  );
+const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
+  const categoryIcon = <SVGIcon name={CategoriesInfo[item.category.id].iconName} />;
   const difficultyIcon = (
     <SVGIcon name={DIFFICULTY_ICON_NAME[item.difficulty]} size={50} />
   );

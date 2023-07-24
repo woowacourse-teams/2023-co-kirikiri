@@ -2,7 +2,7 @@ import { CategoriesInfo } from '@constants/roadmap/category';
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './Categories.styles';
 
-const Categories = ({ setDummyCategoryId }: any) => {
+const Categories = () => {
   const categories = Object.values(CategoriesInfo);
   const upCategories = categories.slice(0, 5);
   const downCategories = categories.slice(5);
@@ -12,7 +12,7 @@ const Categories = ({ setDummyCategoryId }: any) => {
       <S.CategoriesRow>
         {upCategories.map(({ name, id, iconName }) => {
           return (
-            <S.Category key={id} onClick={() => setDummyCategoryId(id)}>
+            <S.Category key={id}>
               <SVGIcon name={iconName} />
               <S.CategoryName>{name}</S.CategoryName>
             </S.Category>
@@ -22,7 +22,7 @@ const Categories = ({ setDummyCategoryId }: any) => {
       <S.CategoriesRow>
         {downCategories.map(({ name, id, iconName }) => {
           return (
-            <S.Category key={id} onClick={() => setDummyCategoryId(id)}>
+            <S.Category key={id}>
               <SVGIcon name={iconName} />
               <S.CategoryName>{name}</S.CategoryName>
             </S.Category>
