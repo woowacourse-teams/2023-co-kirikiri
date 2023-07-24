@@ -10,7 +10,7 @@ export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
   padding: ${({ hasBorder }) => (hasBorder ? '3rem 2.6rem 3rem 2.6rem' : 0)};
 
   background: ${({ theme }) => theme.colors.white};
-  border-radius: 3.1rem;
+  border-radius: 18px;
   box-shadow: ${({ theme, hasBorder }) => (hasBorder ? theme.shadows.box : 'none')};
 `;
 
@@ -50,7 +50,7 @@ export const ItemExtraInfos = styled.div`
   height: 10rem;
 
   background: ${({ theme }) => theme.colors.gray100};
-  border-radius: 1rem;
+  border-radius: 8px;
 `;
 
 export const Difficulty = styled(Box)`
@@ -80,11 +80,9 @@ export const ExtraInfoCol = styled.div`
     margin-bottom: 0.3rem;
 
     background-color: ${({ theme }) => theme.colors.white};
-    border-radius: 2rem;
+    border-radius: 12px;
   }
 `;
-
-export const Category = styled.div``;
 
 export const ItemFooter = styled.div`
   display: flex;

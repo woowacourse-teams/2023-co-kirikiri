@@ -41,7 +41,7 @@ const CategoryBox = styled.article<{ isSelected?: boolean }>`
   background-color: ${({ theme, isSelected }) =>
     isSelected !== undefined &&
     (isSelected ? theme.colors.main_light : theme.colors.gray100)};
-  border-radius: 10rem;
+  border-radius: 40px;
 
   ${({ theme }) => theme.fonts.title_large}
 `;

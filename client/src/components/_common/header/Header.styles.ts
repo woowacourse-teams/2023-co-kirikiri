@@ -9,19 +9,18 @@ export const Header = styled.div`
   position: relative;
   z-index: ${({ theme }) => theme.zIndex.header};
 
+  display: none;
   align-items: center;
 
   width: 100vw;
   height: 8rem;
 
-  background-color: ${({ theme }) => theme.colors.gray100});
-  border-radius: 0;
+  background-color: ${({ theme }) => theme.colors.gray100};
+  border-radius: 0px;
 
   ${media.mobile`
     display: flex;
   `}
-
-  display: none;
 `;
 
 export const Logo = styled.div`

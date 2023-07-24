@@ -9,7 +9,7 @@ export const Button = styled.button`
   color: ${({ theme }) => theme.colors.gray100};
 
   background: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 1rem;
+  border-radius: 8px;
 
   &:hover {
     opacity: 0.9;

@@ -12,7 +12,7 @@ export const NavBar = styled.nav`
   width: 15rem;
   height: 100vh;
   background: ${({ theme }) => theme.colors.gray100};
-  border-radius: 3rem;
+  border-radius: 24px;
 
   ${media.mobile`
     display: none;

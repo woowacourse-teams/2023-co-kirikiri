@@ -13,7 +13,7 @@ export const Categories = styled.div`
   padding: 1.8rem 2.5rem;
 
   background-color: ${({ theme }) => theme.colors.gray100};
-  border-radius: 2rem;
+  border-radius: 12px;
 `;
 
 export const CategoriesRow = styled.div`
@@ -32,7 +32,7 @@ export const Category = styled.div`
   height: 7.8rem;
 
   background-color: white;
-  border-radius: 1.4rem;
+  border-radius: 8px;
   box-shadow: ${({ theme }) => theme.shadows.box};
 
   &:hover {

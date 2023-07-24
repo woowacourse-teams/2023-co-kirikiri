@@ -11,6 +11,6 @@ export const OpenNodeListButton = styled.div`
   margin-top: 3rem;
   padding: 3rem 3rem;
 
-  border-radius: 4rem;
+  border-radius: 12px;
   box-shadow: ${({ theme }) => theme.shadows.box};
 `;

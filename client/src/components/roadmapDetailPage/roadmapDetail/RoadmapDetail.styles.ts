@@ -18,7 +18,7 @@ export const RoadmapBody = styled.p`
   margin: 4rem 0;
   padding: 4rem 8rem;
 
-  border-radius: 3rem;
+  border-radius: 18px;
   box-shadow: ${({ theme }) => theme.shadows.box};
 
   ${media.mobile`

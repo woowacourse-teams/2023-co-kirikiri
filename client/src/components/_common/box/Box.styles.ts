@@ -11,5 +11,5 @@ export const Box = styled.div`
   height: 8rem;
 
   background-color: ${({ theme }) => theme.colors.white};
-  border-radius: 2rem;
+  border-radius: 8px;
 `;
