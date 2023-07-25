@@ -13,9 +13,11 @@ import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
@@ -30,15 +32,21 @@ public final class RoadmapMapper {
 
     public static RoadmapSaveDto convertToRoadmapSaveDto(final RoadmapSaveRequest request) {
         final List<RoadmapNodeSaveDto> roadmapNodes = request.roadmapNodes().stream()
-                .map(co.kirikiri.service.mapper.RoadmapMapper::convertToRoadmapNodesSaveDto)
+                .map(RoadmapMapper::convertToRoadmapNodesSaveDto)
+                .toList();
+        final List<RoadmapTagSaveDto> roadmapTags = request.tags().stream()
+                .map(RoadmapMapper::convertToRoadmapTagSaveDto)
                 .toList();
         return new RoadmapSaveDto(request.categoryId(), request.title(), request.introduction(), request.content(),
-                request.difficulty(), request.requiredPeriod(), roadmapNodes);
+                request.difficulty(), request.requiredPeriod(), roadmapNodes, roadmapTags);
     }
 
     private static RoadmapNodeSaveDto convertToRoadmapNodesSaveDto(final RoadmapNodeSaveRequest request) {
         return new RoadmapNodeSaveDto(request.title(), request.content());
+    }
 
+    private static RoadmapTagSaveDto convertToRoadmapTagSaveDto(final RoadmapTagSaveRequest request) {
+        return new RoadmapTagSaveDto(request.name());
     }
 
     public static RoadmapFilterType convertRoadmapOrderType(final RoadmapFilterTypeRequest filterType) {

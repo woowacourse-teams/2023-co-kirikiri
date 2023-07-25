@@ -55,6 +55,9 @@ public class Roadmap extends BaseEntity {
     @Embedded
     private RoadmapContents contents = new RoadmapContents();
 
+    @Embedded
+    private RoadmapTags tags = new RoadmapTags();
+
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
         validate(title, introduction, requiredPeriod);
@@ -114,6 +117,10 @@ public class Roadmap extends BaseEntity {
         if (content.isNotSameRoadmap(this)) {
             content.updateRoadmap(this);
         }
+    }
+
+    public void addTags(final RoadmapTags tags) {
+        this.tags = tags;
     }
 
     public void delete() {

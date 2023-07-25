@@ -38,6 +38,7 @@ import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
@@ -45,6 +46,7 @@ import io.restassured.common.mapper.TypeRef;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -178,8 +180,8 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
         final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30, List.of(
                 new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용"),
-                new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")
-        ));
+                new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")),
+                List.of(new RoadmapTagSaveRequest("태그")));
 
         final String 생성된_로드맵_아이디 = given()
                 .header(AUTHORIZATION, 로그인_토큰_정보)
