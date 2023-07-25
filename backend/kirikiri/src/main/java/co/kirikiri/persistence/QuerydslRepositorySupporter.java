@@ -1,5 +1,6 @@
 package co.kirikiri.persistence;
 
+import co.kirikiri.exception.ServerException;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -10,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.internal.Function;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
@@ -25,13 +27,17 @@ public abstract class QuerydslRepositorySupporter {
     private JPAQueryFactory queryFactory;
 
     public QuerydslRepositorySupporter(final Class<?> domainClass) {
-        assert domainClass != null : "Domain class must not be null!";
+        if (domainClass == null) {
+            throw new ServerException("Domain class must not be null!");
+        }
         this.builder = new PathBuilderFactory().create(domainClass);
     }
 
     @Autowired
     public void setEntityManager(final EntityManager entityManager) {
-        assert entityManager != null : "EntityManager must not be null!";
+        if (entityManager == null) {
+            throw new ServerException("EntityManager must not be null!");
+        }
         this.entityManager = entityManager;
         this.querydsl = new Querydsl(entityManager, builder);
         this.queryFactory = new JPAQueryFactory(entityManager);
@@ -39,9 +45,15 @@ public abstract class QuerydslRepositorySupporter {
 
     @PostConstruct
     public void validate() {
-        assert entityManager != null : "EntityManager must not be null!";
-        assert querydsl != null : "Querydsl must not be null!";
-        assert queryFactory != null : "QueryFactory must not be null!";
+        if (entityManager == null) {
+            throw new ServerException("EntityManager must not be null!");
+        }
+        if (querydsl == null) {
+            throw new ServerException("Querydsl must not be null!");
+        }
+        if (queryFactory == null) {
+            throw new ServerException("QueryFactory must not be null!");
+        }
     }
 
     protected <T> JPAQuery<T> select(final Expression<T> expr) {
@@ -53,10 +65,12 @@ public abstract class QuerydslRepositorySupporter {
     }
 
     protected <T> Page<T> applyPagination(final Pageable pageable,
-                                          final JPAQuery<T> contentQuery,
-                                          final JPAQuery<Long> countQuery) {
-        final List<T> content = getQuerydsl().applyPagination(pageable, contentQuery).fetch();
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+                                          final Function<JPAQueryFactory, JPAQuery<T>> contentQuery,
+                                          final Function<JPAQueryFactory, JPAQuery<Long>> countQuery) {
+        final JPAQuery<T> jpaContentQuery = contentQuery.apply(getQueryFactory());
+        final JPAQuery<Long> jpaCountQuery = countQuery.apply(getQueryFactory());
+        final List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
+        return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchOne);
     }
 
     protected JPAQueryFactory getQueryFactory() {

@@ -10,7 +10,6 @@ import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,21 +22,19 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     @Override
     public Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
                                                 final Pageable pageable) {
-        final JPAQuery<Roadmap> roadmapContentQuery =
-                selectFrom(roadmap)
+
+        return applyPagination(pageable,
+                (contentQuery) -> contentQuery.selectFrom(roadmap)
                         .innerJoin(roadmap.category, roadmapCategory)
                         .where(statusCond(RoadmapStatus.CREATED), categoryCond(category))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .orderBy(sortCond(orderType))
-                        .fetchJoin();
-
-        final JPAQuery<Long> countQuery = select(roadmap.count())
-                .from(roadmap)
-                .innerJoin(roadmap.category, roadmapCategory)
-                .where(statusCond(RoadmapStatus.CREATED), categoryCond(category));
-
-        return applyPagination(pageable, roadmapContentQuery, countQuery);
+                        .fetchJoin(),
+                (countQuery) -> countQuery.select(roadmap.count())
+                        .from(roadmap)
+                        .innerJoin(roadmap.category, roadmapCategory)
+                        .where(statusCond(RoadmapStatus.CREATED), categoryCond(category)));
     }
 
     private BooleanExpression statusCond(final RoadmapStatus status) {

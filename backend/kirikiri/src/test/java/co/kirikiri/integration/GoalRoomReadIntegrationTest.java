@@ -30,8 +30,9 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomNodeResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
@@ -92,7 +93,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final GoalRoomResponse 예상하는_골룸_응답값 = 예상하는_골룸_응답을_생성한다(null);
+        final GoalRoomResponse 예상하는_골룸_응답값 = 예상하는_골룸_응답을_생성한다();
         assertThat(골룸_응답값)
                 .isEqualTo(예상하는_골룸_응답값);
     }
@@ -110,12 +111,12 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
         골룸_대기_사용자를_저장한다(크리에이터, 골룸);
 
         // when
-        final GoalRoomResponse 골룸_응답값 = given()
+        final GoalRoomCertifiedResponse 골룸_응답값 = given()
                 .header(AUTHORIZATION, 로그인_토큰_정보)
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get(API_PREFIX + "/goal-rooms/certified/{goalRoomId}", 골룸.getId())
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 골룸.getId())
                 .then()
                 .log().all()
                 .extract()
@@ -123,7 +124,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final GoalRoomResponse 예상하는_골룸_응답값 = 예상하는_골룸_응답을_생성한다(true);
+        final GoalRoomCertifiedResponse 예상하는_골룸_응답값 = 로그인후_예상하는_골룸_응답을_생성한다();
         assertThat(골룸_응답값)
                 .isEqualTo(예상하는_골룸_응답값);
     }
@@ -229,7 +230,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
 
     private GoalRoom 골룸을_저장한다(final List<RoadmapContent> 로드맵_본문_리스트) {
         final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
-        final GoalRoom 골룸 = new GoalRoom("골룸", 10, 5, GoalRoomStatus.RECRUITING, 로드맵_본문);
+        final GoalRoom 골룸 = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, 로드맵_본문);
         final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
 
         final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);
@@ -245,16 +246,24 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomRoadmapNodes 골룸_노드들 = new GoalRoomRoadmapNodes(List.of(첫번째_골룸_노드, 두번째_골룸_노드));
         골룸.addGoalRoomRoadmapNodes(골룸_노드들);
         return goalRoomRepository.save(골룸);
-
     }
 
-    private GoalRoomResponse 예상하는_골룸_응답을_생성한다(final Boolean 참여_여부) {
+    private GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17, 참여_여부);
+        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+    }
+
+    private GoalRoomCertifiedResponse 로그인후_예상하는_골룸_응답을_생성한다() {
+        final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
+                        LocalDate.of(2023, 7, 30), 10),
+                new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
+                        LocalDate.of(2023, 8, 5), 2));
+        return new GoalRoomCertifiedResponse("골룸", goalRoomNodeResponses, 17, true);
     }
 
     private void 골룸_대기_사용자를_저장한다(final Member 크리에이터, final GoalRoom 골룸) {

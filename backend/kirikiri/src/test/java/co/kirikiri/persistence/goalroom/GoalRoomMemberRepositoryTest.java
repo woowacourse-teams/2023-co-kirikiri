@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -28,28 +30,62 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
-class GoalRoomRepositoryTest {
+class GoalRoomMemberRepositoryTest {
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
-    private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final GoalRoomRepository goalRoomRepository;
+    private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
 
-    public GoalRoomRepositoryTest(final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
-                                  final RoadmapCategoryRepository roadmapCategoryRepository,
-                                  final GoalRoomRepository goalRoomRepository) {
+    public GoalRoomMemberRepositoryTest(final MemberRepository memberRepository,
+                                        final RoadmapRepository roadmapRepository,
+                                        final GoalRoomRepository goalRoomRepository,
+                                        final RoadmapCategoryRepository roadmapCategoryRepository,
+                                        final GoalRoomMemberRepository goalRoomMemberRepository) {
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
-        this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.goalRoomRepository = goalRoomRepository;
+        this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.goalRoomMemberRepository = goalRoomMemberRepository;
     }
 
     @Test
-    void 골룸_아이디로_골룸_정보를_조회한다() {
+    void 골룸과_사용자_아이디로_골룸_사용자_대기_목록을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, creator);
+        final GoalRoomMember expected = goalRoomMemberRepository.save(goalRoomMember);
+
+        // when
+        final Optional<GoalRoomMember> findGoalRoomPendingMember = goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(
+                savedGoalRoom, new Identifier("cokirikiri"));
+
+        // then
+        assertThat(findGoalRoomPendingMember.get())
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸과_사용자_아이디로_골룸_사용자_대기_목록_조회시_없으면_빈값을_반환한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
         final RoadmapCategory category = 카테고리를_저장한다("게임");
@@ -62,13 +98,12 @@ class GoalRoomRepositoryTest {
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
         // when
-        final GoalRoom findGoalRoom = goalRoomRepository.findByIdWithRoadmapContent(savedGoalRoom.getId()).get();
+        final Optional<GoalRoomMember> findGoalRoomPendingMember = goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(
+                savedGoalRoom, new Identifier("cokirikiri2"));
 
         // then
-        assertThat(findGoalRoom)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(goalRoom);
+        assertThat(findGoalRoomPendingMember)
+                .isEmpty();
     }
 
     private Member 크리에이터를_저장한다() {

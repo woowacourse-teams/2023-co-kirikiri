@@ -16,8 +16,9 @@ import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.GoalRoomService;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomNodeResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +36,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 골룸_아이디로_골룸을_조회한다() throws Exception {
         // given
-        final GoalRoomResponse expected = 골룸_조회_응답을_생성한다(null);
+        final GoalRoomResponse expected = 골룸_조회_응답을_생성한다();
         when(goalRoomService.findGoalRoom(any()))
                 .thenReturn(expected);
 
@@ -97,14 +98,14 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 골룸_아이디와_사용자_아이디로_골룸을_조회한다() throws Exception {
         // given
-        final GoalRoomResponse expected = 골룸_조회_응답을_생성한다(true);
+        final GoalRoomCertifiedResponse expected = 로그인시_골룸_조회_응답을_생성한다(true);
         when(goalRoomService.findGoalRoom(any(), any()))
                 .thenReturn(expected);
 
         // when
         final String response = mockMvc.perform(
                         RestDocumentationRequestBuilders
-                                .get(API_PREFIX + "/goal-rooms/certified/{goalRoomId}", 1L)
+                                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
                                 .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
@@ -128,7 +129,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                 .getContentAsString();
 
         // then
-        final GoalRoomResponse 골룸_단일_조회_응답 = objectMapper.readValue(response, new TypeReference<>() {
+        final GoalRoomCertifiedResponse 골룸_단일_조회_응답 = objectMapper.readValue(response, new TypeReference<>() {
         });
         assertThat(골룸_단일_조회_응답)
                 .isEqualTo(expected);
@@ -142,7 +143,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .get(API_PREFIX + "/goal-rooms/certified/{goalRoomId}", 1L)
+                        .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .contextPath(API_PREFIX))
                 .andExpectAll(
@@ -165,12 +166,21 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                 .isEqualTo(expected);
     }
 
-    private static GoalRoomResponse 골룸_조회_응답을_생성한다(final Boolean isJoined) {
+    private GoalRoomResponse 골룸_조회_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17, isJoined);
+        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+    }
+
+    private GoalRoomCertifiedResponse 로그인시_골룸_조회_응답을_생성한다(final boolean isJoined) {
+        final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
+                        LocalDate.of(2023, 7, 30), 10),
+                new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
+                        LocalDate.of(2023, 8, 5), 2));
+        return new GoalRoomCertifiedResponse("골룸", goalRoomNodeResponses, 17, isJoined);
     }
 }

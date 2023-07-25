@@ -16,7 +16,6 @@ import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.MemberProfileImage;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -30,10 +29,12 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.service.dto.goalroom.GoalRoomNodeResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +50,9 @@ class GoalRoomServiceTest {
 
     @Mock
     private GoalRoomRepository goalRoomRepository;
+
+    @Mock
+    private GoalRoomMemberRepository goalRoomMemberRepository;
 
     @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
@@ -71,7 +75,7 @@ class GoalRoomServiceTest {
 
         // when
         final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(goalRoom.getId());
-        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다(null);
+        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다();
 
         // then
         assertThat(goalRoomResponse)
@@ -90,7 +94,7 @@ class GoalRoomServiceTest {
     }
 
     @Test
-    void 골룸_아이디와_사용자_아이디로_골룸_대기_목록_조회시_참여하는_사용자면_참여여부가_true로_반환된다() {
+    void 모집중인_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_대기_목록_조회시_참여하는_사용자면_참여여부가_true로_반환된다() {
         // given
         final Member creator = 크리에이터를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -108,9 +112,9 @@ class GoalRoomServiceTest {
                 .thenReturn(Optional.of(goalRoomPendingMember));
 
         // when
-        final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(creator.getIdentifier().getValue(),
-                goalRoom.getId());
-        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다(true);
+        final GoalRoomCertifiedResponse goalRoomResponse = goalRoomService.findGoalRoom(
+                creator.getIdentifier().getValue(), goalRoom.getId());
+        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(true);
 
         // then
         assertThat(goalRoomResponse)
@@ -118,7 +122,7 @@ class GoalRoomServiceTest {
     }
 
     @Test
-    void 골룸_아이디와_사용자_아이디로_골룸_대기_목록_조회시_참여하는_사용자면_참여여부가_false로_반환된다() {
+    void 모집중인_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_대기_목록_조회시_참여하지_않는_사용자면_참여여부가_false로_반환된다() {
         // given
         final Member creator = 크리에이터를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -133,9 +137,9 @@ class GoalRoomServiceTest {
                 .thenReturn(Optional.empty());
 
         // when
-        final GoalRoomResponse goalRoomResponse = goalRoomService.findGoalRoom(creator.getIdentifier().getValue(),
-                goalRoom.getId());
-        final GoalRoomResponse expected = 예상하는_골룸_응답을_생성한다(false);
+        final GoalRoomCertifiedResponse goalRoomResponse = goalRoomService.findGoalRoom(
+                creator.getIdentifier().getValue(), goalRoom.getId());
+        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(false);
 
         // then
         assertThat(goalRoomResponse)
@@ -154,11 +158,8 @@ class GoalRoomServiceTest {
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfileImage memberProfileImage = new MemberProfileImage("member-profile.png",
-                "member-profile-save-path", ImageContentType.PNG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 new Nickname("코끼리"), "010-1234-5678");
-        memberProfile.updateMemberProfileImage(memberProfileImage);
         return new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
     }
@@ -193,7 +194,7 @@ class GoalRoomServiceTest {
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom("골룸", 10, 5, GoalRoomStatus.RECRUITING, roadmapContent);
+        final GoalRoom goalRoom = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, roadmapContent);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -212,12 +213,21 @@ class GoalRoomServiceTest {
         return goalRoom;
     }
 
-    private static GoalRoomResponse 예상하는_골룸_응답을_생성한다(final Boolean isJoined) {
+    private static GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17, isJoined);
+        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+    }
+
+    private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined) {
+        final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
+                        LocalDate.of(2023, 7, 30), 10),
+                new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
+                        LocalDate.of(2023, 8, 5), 2));
+        return new GoalRoomCertifiedResponse("골룸", goalRoomNodeResponses, 17, isJoined);
     }
 }

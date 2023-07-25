@@ -8,7 +8,6 @@ import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.MemberProfileImage;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -175,11 +174,8 @@ class RoadmapRepositoryTest {
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfileImage memberProfileImage = new MemberProfileImage("member-profile.png",
-                "member-profile-save-path", ImageContentType.PNG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 new Nickname("코끼리"), "010-1234-5678");
-        memberProfile.updateMemberProfileImage(memberProfileImage);
         final Member creator = new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
         return memberRepository.save(creator);

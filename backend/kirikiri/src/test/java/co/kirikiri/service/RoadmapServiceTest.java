@@ -18,7 +18,6 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
@@ -151,8 +150,7 @@ class RoadmapServiceTest {
                 .willReturn(Optional.of(category));
         given(roadmapRepository.save(any()))
                 .willReturn(new Roadmap(1L, roadmapTitle, roadmapIntroduction, requiredPeriod,
-                        RoadmapDifficulty.valueOf(difficulty.name()),
-                        RoadmapStatus.CREATED, member, category, any()));
+                        RoadmapDifficulty.valueOf(difficulty.name()), member, category));
         when(memberRepository.findByIdentifier(member.getIdentifier()))
                 .thenReturn(Optional.of(member));
 

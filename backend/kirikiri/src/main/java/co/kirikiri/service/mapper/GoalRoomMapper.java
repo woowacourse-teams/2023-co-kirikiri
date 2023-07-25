@@ -3,9 +3,9 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.service.dto.goalroom.GoalRoomNodeResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomResponse;
-import java.time.temporal.ChronoUnit;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -13,13 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GoalRoomMapper {
 
-    private static final int DATE_OFFSET = 1;
-
-    public static GoalRoomResponse convertGoalRoomResponse(final GoalRoom goalRoom, final Boolean isJoined) {
+    public static GoalRoomResponse convertGoalRoomResponse(final GoalRoom goalRoom) {
         final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
         final List<GoalRoomNodeResponse> roadmapNodeResponses = convertGoalRoomNodeResponses(nodes.getValues());
-        final int period = calculateGoalRoomTotalPeriod(goalRoom);
-        return new GoalRoomResponse(goalRoom.getName(), roadmapNodeResponses, period, isJoined);
+        final int period = goalRoom.calculateTotalPeriod();
+        return new GoalRoomResponse(goalRoom.getName(), roadmapNodeResponses, period);
     }
 
     private static List<GoalRoomNodeResponse> convertGoalRoomNodeResponses(
@@ -34,14 +32,12 @@ public final class GoalRoomMapper {
                 node.getCheckCount());
     }
 
-    private static int calculateGoalRoomTotalPeriod(final GoalRoom goalRoom) {
-        final List<GoalRoomRoadmapNode> nodes = goalRoom.getGoalRoomRoadmapNodes().getValues();
-        return nodes.stream()
-                .mapToInt(GoalRoomMapper::calculatePeriod)
-                .sum();
+    public static GoalRoomCertifiedResponse convertGoalRoomCertifiedResponse(final GoalRoom goalRoom,
+                                                                             final boolean isJoined) {
+        final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
+        final List<GoalRoomNodeResponse> roadmapNodeResponses = convertGoalRoomNodeResponses(nodes.getValues());
+        final int period = goalRoom.calculateTotalPeriod();
+        return new GoalRoomCertifiedResponse(goalRoom.getName(), roadmapNodeResponses, period, isJoined);
     }
 
-    private static int calculatePeriod(final GoalRoomRoadmapNode node) {
-        return (int) ChronoUnit.DAYS.between(node.getStartDate(), node.getEndDate()) + DATE_OFFSET;
-    }
 }
