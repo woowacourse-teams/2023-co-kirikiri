@@ -5,7 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import ResponsiveContainer from '@components/_common/responsiveContainer/ResponsiveContainer';
 import SignUpPage from '@pages/signUpPage/SignUpPage';
 import LoginPage from '@pages/loginPage/LoginPage';
-import RoadmapCreatePage from './pages/roadmapCreatePage/roadmapCreatePage';
+import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
 import PageLayout from '@components/_common/pageLayout/PageLayout';
 import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
 import GoalRoomListPage from '@components/goalRommListPage/GoalRoomListPage';
