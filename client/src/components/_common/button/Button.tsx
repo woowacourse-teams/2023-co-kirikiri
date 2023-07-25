@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import * as S from './Button.styles';
 
 type ButtonProps = {
-  variant: 'primary';
+  variant?: 'primary';
 } & PropsWithChildren;
 
 const Button = ({ children, variant = 'primary' }: ButtonProps) => {
