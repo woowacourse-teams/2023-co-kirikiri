@@ -10,6 +10,7 @@ import PageLayout from '@components/_common/pageLayout/PageLayout';
 import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
 import GoalRoomListPage from '@components/goalRommListPage/GoalRoomListPage';
 import MainPage from '@components/mainPage/MainPage';
+import GoalRoomDashboardPage from '@pages/goalRoomDashboardPage/GoalRoomDashboardPage';
 
 const App = () => {
   return (
@@ -25,6 +26,10 @@ const App = () => {
               <Route path='/roadmap-list' element={<RoadmapListPage />} />
               <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
               <Route path='/goalroom-list' element={<GoalRoomListPage />} />
+              <Route
+                path='/goalroom-dashboard/:goalroomId'
+                element={<GoalRoomDashboardPage />}
+              />
             </Routes>
           </PageLayout>
         </ResponsiveContainer>
