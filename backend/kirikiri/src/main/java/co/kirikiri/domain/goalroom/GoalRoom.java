@@ -1,16 +1,14 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -21,18 +19,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoom extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class GoalRoom extends BaseCreatedTimeEntity {
 
     @Column(nullable = false, length = 50)
     private String name;
 
     private Integer limitedMemberCount = 0;
-
-    private Integer currentMemberCount = 0;
 
     @Enumerated(value = EnumType.STRING)
     private GoalRoomStatus status;
@@ -45,16 +37,60 @@ public class GoalRoom extends BaseTimeEntity {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
+    private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true)
-    @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = new ArrayList<>();
+    @Embedded
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
-    private List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
+    private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
+
+    @Embedded
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
+
+    public GoalRoom(final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
+                    final RoadmapContent roadmapContent) {
+        this.name = name;
+        this.limitedMemberCount = limitedMemberCount;
+        this.status = status;
+        this.roadmapContent = roadmapContent;
+    }
+
+    public void addGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    }
+
+    public void joinGoalRoom(final GoalRoomPendingMember goalRoomPendingMember) {
+        goalRoomPendingMembers.add(goalRoomPendingMember);
+    }
+
+    public int calculateTotalPeriod() {
+        return goalRoomRoadmapNodes.addTotalPeriod();
+    }
+
+    public boolean isRecruiting() {
+        return status == GoalRoomStatus.RECRUITING;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getLimitedMemberCount() {
+        return limitedMemberCount;
+    }
+
+    public Integer getCurrentPendingMemberCount() {
+        return goalRoomPendingMembers.size();
+    }
+
+    public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
+        return goalRoomRoadmapNodes;
+    }
 }

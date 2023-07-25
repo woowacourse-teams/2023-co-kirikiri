@@ -14,22 +14,22 @@ import lombok.NoArgsConstructor;
 public class RoadmapNodes {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmapContent")
-    private final List<RoadmapNode> roadmapNodes = new ArrayList<>();
+    private final List<RoadmapNode> values = new ArrayList<>();
 
     public RoadmapNodes(final List<RoadmapNode> roadmapNodes) {
-        this.roadmapNodes.addAll(roadmapNodes);
+        this.values.addAll(new ArrayList<>(roadmapNodes));
     }
 
     public void add(final RoadmapNode roadmapNode) {
-        this.roadmapNodes.add(roadmapNode);
+        this.values.add(roadmapNode);
     }
 
     public void addAll(final RoadmapNodes roadmapNodes) {
-        this.roadmapNodes.addAll(roadmapNodes.getRoadmapNodes());
+        this.values.addAll(new ArrayList<>(roadmapNodes.values));
     }
 
     public void updateAllRoadmapContent(final RoadmapContent content) {
-        for (final RoadmapNode roadmapNode : roadmapNodes) {
+        for (final RoadmapNode roadmapNode : values) {
             updateRoadmapContent(roadmapNode, content);
         }
     }
@@ -40,7 +40,7 @@ public class RoadmapNodes {
         }
     }
 
-    public List<RoadmapNode> getRoadmapNodes() {
-        return roadmapNodes;
+    public List<RoadmapNode> getValues() {
+        return new ArrayList<>(values);
     }
 }

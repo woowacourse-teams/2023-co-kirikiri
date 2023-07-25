@@ -17,12 +17,12 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +104,7 @@ public class RoadmapService {
     }
 
     public PageResponse<RoadmapResponse> findRoadmapsByFilterType(final Long categoryId,
-                                                                  final RoadmapFilterTypeDto filterType,
+                                                                  final RoadmapFilterTypeRequest filterType,
                                                                   final CustomPageRequest pageRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
@@ -123,7 +123,7 @@ public class RoadmapService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
     }
 
-    public List<RoadmapCategoryResponse> getAllRoadmapCategories() {
+    public List<RoadmapCategoryResponse> findAllRoadmapCategories() {
         final List<RoadmapCategory> roadmapCategories = roadmapCategoryRepository.findAll();
         return RoadmapMapper.convertRoadmapCategoryResponses(roadmapCategories);
     }

@@ -9,13 +9,13 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import co.kirikiri.controller.helper.RestDocsHelper;
+import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.member.GenderType;
+import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @WebMvcTest(MemberController.class)
-class MemberControllerTest extends RestDocsHelper {
+class MemberControllerTest extends ControllerTestHelper {
 
     @MockBean
     private MemberService memberService;

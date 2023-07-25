@@ -10,7 +10,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import co.kirikiri.controller.helper.RestDocsHelper;
+import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @WebMvcTest(AuthController.class)
-class AuthControllerTest extends RestDocsHelper {
+class AuthControllerTest extends ControllerTestHelper {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";

@@ -14,10 +14,10 @@ logging:
   level:
     org:
       hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+        sql: debug
+        orm:
+          jdbc:
+            bind: TRACE
 
 server:
   servlet:

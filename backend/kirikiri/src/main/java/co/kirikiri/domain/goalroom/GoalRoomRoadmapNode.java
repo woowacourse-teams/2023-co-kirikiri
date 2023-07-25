@@ -1,11 +1,9 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
@@ -14,11 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoomRoadmapNode {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class GoalRoomRoadmapNode extends BaseEntity {
 
     private LocalDate startDate;
 
@@ -29,4 +23,28 @@ public class GoalRoomRoadmapNode {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_node_id")
     private RoadmapNode roadmapNode;
+
+    public GoalRoomRoadmapNode(final LocalDate startDate, final LocalDate endDate, final Integer checkCount,
+                               final RoadmapNode roadmapNode) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.checkCount = checkCount;
+        this.roadmapNode = roadmapNode;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public Integer getCheckCount() {
+        return checkCount;
+    }
+
+    public RoadmapNode getRoadmapNode() {
+        return roadmapNode;
+    }
 }

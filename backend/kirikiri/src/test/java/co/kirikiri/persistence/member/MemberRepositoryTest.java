@@ -9,13 +9,14 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.RepositoryTest;
+import co.kirikiri.persistence.helper.RepositoryTest;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class MemberRepositoryTest extends RepositoryTest {
+@RepositoryTest
+class MemberRepositoryTest {
 
     private static Member member;
     private static MemberProfile memberProfile;
