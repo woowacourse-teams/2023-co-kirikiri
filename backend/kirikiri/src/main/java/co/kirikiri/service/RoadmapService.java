@@ -103,11 +103,11 @@ public class RoadmapService {
     @Transactional
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final List<GoalRoomMember> goalRoomMember = findGoalRoomMember(roadmapId, identifier);
-        final Member member = goalRoomMember.get(0).getMember();
+        final List<GoalRoomMember> goalRoomMembers = findGoalRoomMembers(roadmapId, identifier);
+        final Member member = goalRoomMembers.get(0).getMember();
         validateReviewQualification(roadmap, member);
         validateReviewCount(roadmap, member);
-        validateHasCompletedGoalRoom(roadmapId, goalRoomMember, member);
+        validateHasCompletedGoalRoom(roadmapId, goalRoomMembers, member);
         final RoadmapReview roadmapReview = new RoadmapReview(request.content(), request.rate(), member);
         roadmap.addReview(roadmapReview);
     }
@@ -117,7 +117,7 @@ public class RoadmapService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-    private List<GoalRoomMember> findGoalRoomMember(final Long roadmapId, final String identifier) {
+    private List<GoalRoomMember> findGoalRoomMembers(final Long roadmapId, final String identifier) {
         final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifier(
                 roadmapId, new Identifier(identifier));
         if (goalRoomMembers.size() == 0) {

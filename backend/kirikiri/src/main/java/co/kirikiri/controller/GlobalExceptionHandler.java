@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ErrorResponse> forbiddenException(final ForbiddenException exception) {
+    public ResponseEntity<ErrorResponse> handleForbiddenException(final ForbiddenException exception) {
         log.error(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);

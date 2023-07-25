@@ -1,12 +1,12 @@
 package co.kirikiri.service.dto.roadmap;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record RoadmapReviewSaveRequest(
 
-        @NotBlank(message = "리뷰를 입력해 주세요.")
         String content,
-        
+
+        @NotNull(message = "별점을 입력해 주세요.")
         Double rate
 ) {
 

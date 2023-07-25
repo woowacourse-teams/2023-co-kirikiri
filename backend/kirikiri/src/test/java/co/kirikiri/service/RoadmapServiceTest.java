@@ -142,7 +142,7 @@ class RoadmapServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
         goalRoom.complete();
-        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_목록을_생성한다(goalRoom);
+        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
@@ -203,7 +203,7 @@ class RoadmapServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
 
-        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_목록을_생성한다(goalRoom);
+        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
@@ -231,7 +231,7 @@ class RoadmapServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
 
-        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_목록을_생성한다(goalRoom);
+        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
@@ -483,7 +483,7 @@ class RoadmapServiceTest {
         return new GoalRoom("골룸", 10, 5, GoalRoomStatus.RECRUITING, roadmapContent);
     }
 
-    private List<GoalRoomMember> 사용자가_참여한_특정_로드맵의_골룸_목록을_생성한다(final GoalRoom goalRoom) {
+    private List<GoalRoomMember> 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(final GoalRoom goalRoom) {
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.FOLLOWER,
                 LocalDateTime.of(2022, 7, 20, 17, 10), goalRoom, member);
         goalRoom.addMember(goalRoomMember);

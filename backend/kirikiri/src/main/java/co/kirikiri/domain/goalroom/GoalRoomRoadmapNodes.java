@@ -26,11 +26,11 @@ public class GoalRoomRoadmapNodes {
         this.values.addAll(goalRoomRoadmapNodes);
     }
 
-    public List<GoalRoomRoadmapNode> getValues() {
-        return values;
-    }
-
     public void addAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
         this.values.addAll(goalRoomRoadmapNodes.values);
+    }
+
+    public List<GoalRoomRoadmapNode> getValues() {
+        return values;
     }
 }

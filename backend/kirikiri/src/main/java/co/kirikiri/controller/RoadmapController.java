@@ -39,7 +39,7 @@ public class RoadmapController {
         return ResponseEntity.created(URI.create("/api/roadmaps/" + id)).build();
     }
 
-    @PostMapping("/reviews/{roadmapId}")
+    @PostMapping("/{roadmapId}/reviews")
     public ResponseEntity<Void> createReview(
             @PathVariable("roadmapId") final Long roadmapId,
             @MemberIdentifier final String identifier,

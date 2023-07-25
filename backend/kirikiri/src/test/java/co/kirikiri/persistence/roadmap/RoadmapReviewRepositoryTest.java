@@ -50,7 +50,7 @@ class RoadmapReviewRepositoryTest {
         final RoadmapCategory category = 카테고리를_저장한다("게임");
         final Roadmap roadmap = 로드맵을_저장한다(member, category);
 
-        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", null, member);
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 1.5, member);
         roadmapReview.updateRoadmap(roadmap);
         roadmapReviewRepository.save(roadmapReview);
 
@@ -70,7 +70,7 @@ class RoadmapReviewRepositoryTest {
         final RoadmapCategory category = 카테고리를_저장한다("게임");
         final Roadmap roadmap = 로드맵을_저장한다(member, category);
 
-        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", null, member);
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member);
         roadmapReview.updateRoadmap(roadmap);
         roadmapReviewRepository.save(roadmapReview);
 

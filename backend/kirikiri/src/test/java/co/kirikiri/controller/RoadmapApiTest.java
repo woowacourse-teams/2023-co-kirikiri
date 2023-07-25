@@ -46,7 +46,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
 
         // when
         mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -66,21 +66,21 @@ public class RoadmapApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_내용이_공백이라면_예외가_발생한다() throws Exception {
+    void 로드맵_리뷰_생성시_별점이_null이라면_예외가_발생한다() throws Exception {
         // given
-        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest(" ", 5.0);
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest(" ", null);
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .contextPath(API_PREFIX))
                 .andExpectAll(
                         status().is4xxClientError(),
-                        jsonPath("$[0].message").value("리뷰를 입력해 주세요."))
+                        jsonPath("$[0].message").value("별점을 입력해 주세요."))
                 .andDo(documentationResultHandler.document(
                         requestHeaders(
                                 headerWithName(AUTHORIZATION).description("액세스 토큰")),
@@ -95,7 +95,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
         // then
         final List<ErrorResponse> errorResponses = objectMapper.readValue(response, new TypeReference<>() {
         });
-        final List<ErrorResponse> expected = List.of(new ErrorResponse("리뷰를 입력해 주세요."));
+        final List<ErrorResponse> expected = List.of(new ErrorResponse("별점을 입력해 주세요."));
         assertThat(errorResponses)
                 .isEqualTo(expected);
     }
@@ -112,7 +112,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -151,7 +151,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -189,7 +189,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -227,7 +227,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -267,7 +267,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -307,7 +307,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .post(API_PREFIX + "/roadmaps/reviews/{roadmapId}", 1L)
+                        .post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)

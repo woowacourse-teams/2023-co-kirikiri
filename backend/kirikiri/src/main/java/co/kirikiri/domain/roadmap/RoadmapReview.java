@@ -45,10 +45,10 @@ public class RoadmapReview extends BaseTimeEntity {
 
     public RoadmapReview(final String content, final Double rate, final Member member) {
         validate(content, rate);
-        this.content = content;
-        if (rate != null) {
-            this.rate = rate;
+        if (content != null) {
+            this.content = content;
         }
+        this.rate = rate;
         this.member = member;
     }
 
@@ -58,14 +58,13 @@ public class RoadmapReview extends BaseTimeEntity {
     }
 
     private void validateContentLength(final String content) {
-        if (content.length() > CONTENT_MAX_LENGTH) {
+        if (content != null && content.length() > CONTENT_MAX_LENGTH) {
             throw new BadRequestException(String.format("리뷰는 최대 %d글자까지 입력할 수 있습니다.", CONTENT_MAX_LENGTH));
         }
     }
 
     private void validateRate(final Double rate) {
-        final String rateRegex = String.format(RATE_FORMAT, MAX_RATE, MIN_RATE, MIN_RATE, MAX_RATE - 1, RATE_UNIT);
-        if (rate != null && !Pattern.matches(rateRegex, String.valueOf(rate))) {
+        if (!Pattern.matches(RATE_FORMAT, String.valueOf(rate))) {
             throw new BadRequestException(String.format("별점은 %d부터 %d까지 0.%d 단위로 설정할 수 있습니다.",
                     MIN_RATE, MAX_RATE, RATE_UNIT));
         }

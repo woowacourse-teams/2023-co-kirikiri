@@ -101,11 +101,11 @@ public class RoadmapIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_내용이_공백이면_예외가_발생한다() {
+    void 로드맵_리뷰_생성시_별점이_null이면_예외가_발생한다() {
         // given
         final Member 팔로워 = 사용자를_생성한다("팔로워", "follower");
         final String 팔로워_토큰_정보 = 로그인(팔로워.getIdentifier().getValue());
-        final RoadmapReviewSaveRequest 로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest(" ", 5.0);
+        final RoadmapReviewSaveRequest 로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest(" ", null);
 
         // when
         final ExtractableResponse<Response> 리뷰_생성_요청_결과 = 리뷰를_생성한다(팔로워_토큰_정보, 1L, 로드맵_리뷰_생성_요청);
@@ -114,7 +114,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         final List<ErrorResponse> 예외_응답 = 리뷰_생성_요청_결과.as(new TypeRef<>() {
         });
         assertThat(리뷰_생성_요청_결과.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(예외_응답.get(0).message()).isEqualTo("리뷰를 입력해 주세요.");
+        assertThat(예외_응답.get(0).message()).isEqualTo("별점을 입력해 주세요.");
     }
 
     @Test
@@ -420,7 +420,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
                 .when()
                 .header(AUTHORIZATION, 팔로워_토큰_정보)
                 .body(로드맵_리뷰_생성_요청)
-                .post("/api/roadmaps/reviews/" + 로드맵_아이디)
+                .post("/api/roadmaps/" + 로드맵_아이디 + "/reviews")
                 .then()
                 .log().all()
                 .extract();
