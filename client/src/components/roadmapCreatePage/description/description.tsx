@@ -19,6 +19,8 @@ const Description = () => {
           maxLength={150}
           validateInput={validateInput}
           resetErrorMessage={resetErrorMessage}
+          name='introduction'
+          data-valid={validateInput}
         />
         <TextCount maxCount={150} currentCount={value.length} />
       </S.FieldWrapper>

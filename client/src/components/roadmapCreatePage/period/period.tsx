@@ -19,6 +19,8 @@ const Period = () => {
           validateInput={validateInput}
           resetErrorMessage={resetErrorMessage}
           value={value}
+          name='requiredPeriod'
+          data-valid={validateInput}
         />
         <p>일</p>
       </S.FieldWrapper>
