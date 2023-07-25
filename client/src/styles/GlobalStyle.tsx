@@ -21,8 +21,14 @@ const GlobalStyle = createGlobalStyle`
     list-style: none
   }
 
+  li {
+    list-style: none;
+  }
+
   button, input, select {
-    margin: 0
+    margin: 0;
+    background-color: transparent;
+    border: none;
   }
 
   *, :after, :before {
@@ -63,8 +69,9 @@ const GlobalStyle = createGlobalStyle`
   }
 
   :root {
-    background: ${({ theme }) => theme.colors.gray_back};
     font-size: 41.6%; /* for mobile devices */
+    background: ${({ theme }) => theme.colors.gray_back};
+    background: ${({ theme }) => theme.colors.gray_back};
 
     @media (min-width: ${BREAK_POINTS.TABLET}px) {
       font-size: 55%; /* for tablet devices */
@@ -81,6 +88,23 @@ const GlobalStyle = createGlobalStyle`
     button {
       border:none;
     }
+  }
+
+  input {
+    padding:0 ;
+    border: none;
+    outline: none;
+  }
+
+  textarea {
+    resize: none;
+    background-color: transparent;
+    border: none;
+    outline: none;
+  }
+
+  abbr {
+    text-decoration: none;
   }
   
   button, select {
