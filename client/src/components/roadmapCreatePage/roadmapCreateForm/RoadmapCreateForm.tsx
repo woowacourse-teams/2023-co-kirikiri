@@ -69,7 +69,7 @@ const RoadmapCreateForm = () => {
         <MainText />
         <Period />
         <Roadmap />
-        <button type='submit'>done!!</button>
+        <button>done!!</button>
       </form>
     </RefProvider>
   );
