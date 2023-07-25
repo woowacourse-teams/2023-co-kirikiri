@@ -7,6 +7,7 @@ import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -36,15 +37,20 @@ public class RoadmapController {
         return ResponseEntity.created(URI.create("/api/roadmaps/" + roadmapId)).build();
     }
 
+    @GetMapping("/{roadmapId}")
+    public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
+        final RoadmapResponse response = roadmapService.findRoadmap(roadmapId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
-    public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
+    public ResponseEntity<PageResponse<RoadmapForListResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
             @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest roadmapFilterTypeRequest,
             @ModelAttribute final CustomPageRequest pageRequest
     ) {
-        final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
-                categoryId,
-                roadmapFilterTypeRequest, pageRequest);
+        final PageResponse<RoadmapForListResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
+                categoryId, roadmapFilterTypeRequest, pageRequest);
         return ResponseEntity.ok(roadmapPageResponse);
     }
 
@@ -52,11 +58,5 @@ public class RoadmapController {
     public ResponseEntity<List<RoadmapCategoryResponse>> findAllRoadmapCategories() {
         final List<RoadmapCategoryResponse> roadmapCategoryResponses = roadmapService.findAllRoadmapCategories();
         return ResponseEntity.ok(roadmapCategoryResponses);
-    }
-
-    @GetMapping("/{roadmapId}")
-    public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
-        final RoadmapResponse response = roadmapService.findRoadmap(roadmapId);
-        return ResponseEntity.ok(response);
     }
 }

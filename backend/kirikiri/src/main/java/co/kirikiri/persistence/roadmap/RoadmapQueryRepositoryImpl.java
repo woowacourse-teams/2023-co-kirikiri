@@ -1,5 +1,6 @@
 package co.kirikiri.persistence.roadmap;
 
+import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
 
@@ -10,6 +11,7 @@ import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,6 +19,17 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
 
     public RoadmapQueryRepositoryImpl() {
         super(Roadmap.class);
+    }
+
+    @Override
+    public Optional<Roadmap> findRoadmapById(final Long roadmapId) {
+        return Optional.ofNullable(selectFrom(roadmap)
+                .join(roadmap.creator, member)
+                .fetchJoin()
+                .join(roadmap.category, roadmapCategory)
+                .fetchJoin()
+                .where(roadmap.id.eq(roadmapId))
+                .fetchOne());
     }
 
     @Override

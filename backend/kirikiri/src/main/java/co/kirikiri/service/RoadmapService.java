@@ -25,6 +25,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
@@ -116,9 +117,9 @@ public class RoadmapService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-    public PageResponse<RoadmapResponse> findRoadmapsByFilterType(final Long categoryId,
-                                                                  final RoadmapFilterTypeRequest filterType,
-                                                                  final CustomPageRequest pageRequest) {
+    public PageResponse<RoadmapForListResponse> findRoadmapsByFilterType(final Long categoryId,
+                                                                         final RoadmapFilterTypeRequest filterType,
+                                                                         final CustomPageRequest pageRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
 

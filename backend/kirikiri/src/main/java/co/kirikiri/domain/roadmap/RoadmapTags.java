@@ -34,4 +34,8 @@ public class RoadmapTags {
                     String.format("태그의 개수는 최대 %d개까지 가능합니다.", MAX_COUNT));
         }
     }
+
+    public List<RoadmapTag> getValues() {
+        return values;
+    }
 }

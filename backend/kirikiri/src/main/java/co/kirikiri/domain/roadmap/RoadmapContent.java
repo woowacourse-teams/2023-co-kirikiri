@@ -65,6 +65,10 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getContent() {
         return content;
     }

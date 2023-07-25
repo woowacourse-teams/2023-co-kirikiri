@@ -2,11 +2,13 @@ package co.kirikiri.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,12 +21,19 @@ import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(RoadmapController.class)
 public class RoadmapReadApiTest extends ControllerTestHelper {
@@ -33,9 +42,74 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
     private RoadmapService roadmapService;
 
     @Test
+    void 단일_로드맵_정보를_조회한다() throws Exception {
+        //given
+        final RoadmapResponse expectedResponse = 단일_로드맵_조회에_대한_응답();
+        when(roadmapService.findRoadmap(anyLong())).thenReturn(expectedResponse);
+
+        //when
+        final MvcResult response = mockMvc.perform(get(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
+                        .content(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(documentationResultHandler.document(
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("roadmapId").description("로드맵 아이디"),
+                                fieldWithPath("category.id").description("로드맵 카테고리 아이디"),
+                                fieldWithPath("category.name").description("로드맵 카테고리 이름"),
+                                fieldWithPath("roadmapTitle").description("로드맵 제목"),
+                                fieldWithPath("introduction").description("로드맵 소개글"),
+                                fieldWithPath("creator.id").description("로드맵 크리에이터 아이디"),
+                                fieldWithPath("creator.name").description("로드맵 크리에이터 닉네임"),
+                                fieldWithPath("content.id").description("로드맵 컨텐츠 아이디"),
+                                fieldWithPath("content.content").description("로드맵 컨텐츠 본문"),
+                                fieldWithPath("content.nodes[0].id").description("로드맵 노드 아이디"),
+                                fieldWithPath("content.nodes[0].title").description("로드맵 노드 제목"),
+                                fieldWithPath("content.nodes[0].description").description("로드맵 노드 본문"),
+                                fieldWithPath("content.nodes[0].imageUrls[0]").description("로드맵 노드 이미지 파일 경로"),
+                                fieldWithPath("difficulty").description("로드맵 난이도"),
+                                fieldWithPath("recommendedRoadmapPeriod").description("로드맵 추천 기간"),
+                                fieldWithPath("tags[0].id").description("로드맵 태그 아이디"),
+                                fieldWithPath("tags[0].name").description("로드맵 태그 이름")
+                        )))
+                .andReturn();
+
+        //then
+        final RoadmapResponse roadmapResponse = jsonToClass(response, new TypeReference<>() {
+        });
+
+        assertThat(roadmapResponse)
+                .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다() throws Exception {
+        // given
+        when(roadmapService.findRoadmap(anyLong())).thenThrow(
+                new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
+
+        // when
+        // then
+        mockMvc.perform(get(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
+                        .content(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("존재하지 않는 로드맵입니다. roadmapId = 1"))
+                .andDo(documentationResultHandler.document(
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디")),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )));
+    }
+
+    @Test
     void 로드맵_목록을_조건에_따라_조회한다() throws Exception {
         // given
-        final PageResponse<RoadmapResponse> expected = 로드맵_페이지_응답을_생성한다();
+        final PageResponse<RoadmapForListResponse> expected = 로드맵_페이지_응답을_생성한다();
         when(roadmapService.findRoadmapsByFilterType(any(), any(), any()))
                 .thenReturn(expected);
 
@@ -74,9 +148,10 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                 .getContentAsString();
 
         // then
-        final PageResponse<RoadmapResponse> roadmapPageResponse = objectMapper.readValue(response,
+        final PageResponse<RoadmapForListResponse> roadmapPageResponse = objectMapper.readValue(response,
                 new TypeReference<>() {
                 });
+
         assertThat(roadmapPageResponse)
                 .isEqualTo(expected);
     }
@@ -149,10 +224,27 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                 .isEqualTo(expected);
     }
 
-    private PageResponse<RoadmapResponse> 로드맵_페이지_응답을_생성한다() {
-        final RoadmapResponse roadmapResponse1 = new RoadmapResponse(1L, "로드맵 제목1", "로드맵 소개글1", "NORMAL", 10,
+    private RoadmapResponse 단일_로드맵_조회에_대한_응답() {
+        final RoadmapCategoryResponse category = new RoadmapCategoryResponse(1, "운동");
+        final MemberResponse creator = new MemberResponse(1, "닉네임");
+        final List<RoadmapNodeResponse> nodes = List.of(
+                new RoadmapNodeResponse(1L, "1번 노드", "1번 노드 설명", List.of("image1-filepath", "image2-filepath")),
+                new RoadmapNodeResponse(2L, "2번 노드", "2번 노드 설명", Collections.emptyList())
+        );
+        final List<RoadmapTagResponse> tags = List.of(
+                new RoadmapTagResponse(1L, "태그1"),
+                new RoadmapTagResponse(2L, "태그2")
+        );
+        return new RoadmapResponse(1L, category, "제목", "소개글", creator,
+                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100, tags);
+    }
+
+    private PageResponse<RoadmapForListResponse> 로드맵_페이지_응답을_생성한다() {
+        final RoadmapForListResponse roadmapResponse1 = new RoadmapForListResponse(1L, "로드맵 제목1", "로드맵 소개글1", "NORMAL",
+                10,
                 new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1L, "여행"));
-        final RoadmapResponse roadmapResponse2 = new RoadmapResponse(2L, "로드맵 제목2", "로드맵 소개글2", "DIFFICULT", 7,
+        final RoadmapForListResponse roadmapResponse2 = new RoadmapForListResponse(2L, "로드맵 제목2", "로드맵 소개글2",
+                "DIFFICULT", 7,
                 new MemberResponse(2L, "끼리코"), new RoadmapCategoryResponse(2L, "IT"));
         return new PageResponse<>(1, 2, List.of(roadmapResponse1, roadmapResponse2));
     }

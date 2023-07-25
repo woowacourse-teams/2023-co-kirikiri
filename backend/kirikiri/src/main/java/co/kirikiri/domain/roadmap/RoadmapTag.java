@@ -22,10 +22,23 @@ public class RoadmapTag extends BaseEntity {
         this.name = name;
     }
 
+    public RoadmapTag(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     private void validate(final String name) {
         if (name.length() < MIN_LENGTH || name.length() > MAX_LENGTH) {
             throw new BadRequestException(
                     String.format("태그 이름은 최소 %d자부터 최대 %d자까지 가능합니다.", MIN_LENGTH, MAX_LENGTH));
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 }

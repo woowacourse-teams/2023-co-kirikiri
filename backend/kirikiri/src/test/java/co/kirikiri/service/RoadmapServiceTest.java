@@ -37,7 +37,10 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -75,7 +78,7 @@ class RoadmapServiceTest {
     @Test
     void 로드맵을_저장한다() {
         // given
-        final RoadmapCategory category = new RoadmapCategory(1L, "여가");
+        final RoadmapCategory category = 로드맵_카테고리를_생성한다("여가");
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(category);
 
@@ -94,17 +97,14 @@ class RoadmapServiceTest {
     @Test
     void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() {
         //given
-        final Member member = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다("운동");
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
-        final Roadmap roadmap = 로드맵을_생성한다(member, category);
-        roadmap.addContent(content);
+        final Roadmap roadmap = 로드맵을_생성한다(category);
         final Long roadmapId = 1L;
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(any()))
-                .thenReturn(Optional.of(content));
+                .thenReturn(Optional.of(roadmap.getContents().getValues().get(0)));
 
         //when
         final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
@@ -114,16 +114,20 @@ class RoadmapServiceTest {
                 roadmapId,
                 new RoadmapCategoryResponse(1L, "운동"),
                 "로드맵 제목",
-                "로드맵 설명",
-                new MemberResponse(1L, "썬샷"),
-                new RoadmapContentResponse("콘텐츠 제목", Collections.emptyList()),
-                "NORMAL",
-                100
+                "로드맵 소개글",
+                new MemberResponse(1L, "닉네임"),
+                new RoadmapContentResponse(1L, "로드맵 본문",
+                        List.of(
+                                new RoadmapNodeResponse(1L, "로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList())
+                        )),
+                "DIFFICULT",
+                30,
+                List.of(
+                        new RoadmapTagResponse(1L, "태그1"),
+                        new RoadmapTagResponse(2L, "태그2"))
         );
 
         assertThat(roadmapResponse)
-                .usingRecursiveComparison()
-                .ignoringFields("roadmapId")
                 .isEqualTo(expectedResponse);
     }
 
@@ -186,17 +190,19 @@ class RoadmapServiceTest {
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
-        final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(
+        final PageResponse<RoadmapForListResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(
                 categoryId, filterType, pageRequest);
 
         // then
-        final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(1L, "첫 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(member.getId(), member.getNickname().getValue()),
+        final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(1L, "첫 번째 로드맵", "로드맵 소개글",
+                "NORMAL", 10,
+                new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"));
-        final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(1L, "두 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(member.getId(), member.getNickname().getValue()),
+        final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
+                "NORMAL", 10,
+                new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"));
-        final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
+        final PageResponse<RoadmapForListResponse> expected = new PageResponse<>(1, 1,
                 List.of(firstRoadmapResponse, secondRoadmapResponse));
 
         assertThat(roadmapPageResponses)
@@ -217,17 +223,20 @@ class RoadmapServiceTest {
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
-        final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(categoryId,
+        final PageResponse<RoadmapForListResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(
+                categoryId,
                 filterType, pageRequest);
 
         // then
-        final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(1L, "첫 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(member.getId(), member.getNickname().getValue()),
+        final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(1L, "첫 번째 로드맵", "로드맵 소개글",
+                "NORMAL", 10,
+                new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"));
-        final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(1L, "두 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(member.getId(), member.getNickname().getValue()),
+        final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
+                "NORMAL", 10,
+                new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"));
-        final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
+        final PageResponse<RoadmapForListResponse> expected = new PageResponse<>(1, 1,
                 List.of(firstRoadmapResponse, secondRoadmapResponse));
 
         assertThat(roadmapPageResponses)
@@ -250,15 +259,16 @@ class RoadmapServiceTest {
         final CustomPageRequest pageRequest = new CustomPageRequest(1, 10);
 
         // when
-        final PageResponse<RoadmapResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(
+        final PageResponse<RoadmapForListResponse> roadmapPageResponses = roadmapService.findRoadmapsByFilterType(
                 categoryId,
                 filterType, pageRequest);
 
         // then
-        final RoadmapResponse roadmapResponse = new RoadmapResponse(1L, "첫 번째 로드맵", "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(member.getId(), member.getNickname().getValue()),
+        final RoadmapForListResponse roadmapResponse = new RoadmapForListResponse(1L, "첫 번째 로드맵", "로드맵 소개글", "NORMAL",
+                10,
+                new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"));
-        final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1, List.of(roadmapResponse));
+        final PageResponse<RoadmapForListResponse> expected = new PageResponse<>(1, 1, List.of(roadmapResponse));
 
         assertThat(roadmapPageResponses)
                 .isEqualTo(expected);
@@ -280,18 +290,6 @@ class RoadmapServiceTest {
                 .isEqualTo(expected);
     }
 
-    private Roadmap 로드맵을_생성한다(final RoadmapCategory category) {
-        final RoadmapTags roadmapTags = new RoadmapTags(List.of(new RoadmapTag("태그1"), new RoadmapTag("태그2")));
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 소개글", 30,
-                RoadmapDifficulty.valueOf("DIFFICULT"), member, category);
-        roadmap.addTags(roadmapTags);
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(new RoadmapNode("로드맵 노드1 제목", "로드맵 노드1 설명")));
-        roadmapContent.addNodes(roadmapNodes);
-        roadmap.addContent(roadmapContent);
-        return roadmap;
-    }
-
     private RoadmapSaveRequest 로드맵_생성_요청을_생성한다() {
         final String roadmapTitle = "로드맵 제목";
         final String roadmapIntroduction = "로드맵 소개글";
@@ -308,29 +306,20 @@ class RoadmapServiceTest {
         return request;
     }
 
-    private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("썬샷"), "01083004367");
-
-        return new Member(1L, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
-    }
-
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
-
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
-        roadmap.addContent(content);
-
+    private Roadmap 로드맵을_생성한다(final RoadmapCategory category) {
+        final RoadmapTags roadmapTags = new RoadmapTags(List.of(new RoadmapTag(1L, "태그1"), new RoadmapTag(2L, "태그2")));
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 소개글", 30,
+                RoadmapDifficulty.valueOf("DIFFICULT"), member, category);
+        roadmap.addTags(roadmapTags);
+        final RoadmapContent roadmapContent = new RoadmapContent(1L, "로드맵 본문");
+        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(new RoadmapNode(1L, "로드맵 노드1 제목", "로드맵 노드1 설명")));
+        roadmapContent.addNodes(roadmapNodes);
+        roadmap.addContent(roadmapContent);
         return roadmap;
     }
 
     private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
         return new RoadmapCategory(1L, title);
-    }
-
-    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
-        return new RoadmapContent("콘텐츠 제목");
     }
 
     private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {

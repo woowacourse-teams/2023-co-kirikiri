@@ -39,6 +39,12 @@ public class RoadmapNode extends BaseEntity {
         this.content = content;
     }
 
+    public RoadmapNode(final Long id, final String title, final String content) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+    }
+
     private void validate(final String title, final String content) {
         validateTitleLength(title);
         validateContentLength(content);
@@ -70,6 +76,10 @@ public class RoadmapNode extends BaseEntity {
             throw new BadRequestException(
                     String.format("로드맵 노드의 설명의 길이는 최소 %d글자, 최대 %d글자입니다.", CONTENT_MIN_LENGTH, CONTENT_MAX_LENGTH));
         }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {

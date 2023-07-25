@@ -158,4 +158,8 @@ public class Roadmap extends BaseEntity {
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
     }
+
+    public RoadmapTags getTags() {
+        return tags;
+    }
 }
