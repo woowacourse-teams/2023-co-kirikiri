@@ -10,7 +10,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --config webpack.prod.js",
     "build:dev": "cross-env NODE_ENV=development BABEL_ENV=production webpack --progress --config webpack.prod.js",
     "build:local": "cross-env NODE_ENV=local webpack --progress --config webpack.dev.js",
-    "test": "echo no test yet",
+    "test": "jest",
     "prepare": "cd .. && husky install client/.husky",
     "lint-fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix && stylelint 'src/**/*.{js,jsx,ts,tsx}' --fix && prettier 'src/**/*.{js,jsx,ts,tsx}' --write"
   },
