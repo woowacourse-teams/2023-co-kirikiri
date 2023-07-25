@@ -1,10 +1,11 @@
 import { useSelect } from '@/hooks/_common/useSelect';
+import { useEffect } from 'react';
 import { Select, SelectBox } from '../selector/selectBox';
 import { S } from './category.styles';
 
 // 임시 더미데이터
-type DummyCategoryType = {
-  [key: string]: string;
+export type DummyCategoryType = {
+  [key: number]: string;
 };
 
 const DummyCategory: DummyCategoryType = {
@@ -19,8 +20,16 @@ const DummyCategory: DummyCategoryType = {
   9: '기타',
 } as const;
 
-const Category = () => {
-  const { selectOption } = useSelect<number>();
+type CategoryType = {
+  getSelectedCategoryId: (category: keyof DummyCategoryType | null) => void;
+};
+
+const Category = ({ getSelectedCategoryId }: CategoryType) => {
+  const { selectOption, selectedOption } = useSelect<number>();
+
+  useEffect(() => {
+    getSelectedCategoryId(selectedOption);
+  }, [selectedOption]);
 
   return (
     <SelectBox defaultOpen externalSelectState={selectOption}>

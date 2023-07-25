@@ -1,10 +1,11 @@
 import { useSelect } from '@/hooks/_common/useSelect';
+import { useEffect } from 'react';
 import { Select, SelectBox } from '../selector/selectBox';
 import { S } from './difficulty.styles';
 
 // 임시 더미데이터
-type DummyDifficultyType = {
-  [key: string]: string;
+export type DummyDifficultyType = {
+  [key: number]: string;
 };
 
 const DummyDifficulty: DummyDifficultyType = {
@@ -15,8 +16,17 @@ const DummyDifficulty: DummyDifficultyType = {
   5: '매우어려움',
 };
 
-const Difficulty = () => {
-  const { selectOption } = useSelect<number>();
+type DifficultyType = {
+  getSelectedDifficulty: (difficulty: keyof DummyDifficultyType | null) => void;
+};
+
+const Difficulty = ({ getSelectedDifficulty }: DifficultyType) => {
+  const { selectOption, selectedOption } = useSelect<number>();
+
+  useEffect(() => {
+    getSelectedDifficulty(selectedOption);
+  }, [selectedOption]);
+
   return (
     <SelectBox externalSelectState={selectOption}>
       <Select.Label asChild>
