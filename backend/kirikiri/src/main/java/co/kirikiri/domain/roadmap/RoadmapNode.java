@@ -1,13 +1,11 @@
 package co.kirikiri.domain.roadmap;
 
+import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
@@ -15,16 +13,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoadmapNode {
+public class RoadmapNode extends BaseEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
     private static final int CONTENT_MIN_LENGTH = 1;
     private static final int CONTENT_MAX_LENGTH = 200;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 50, nullable = false)
     private String title;
@@ -45,6 +39,11 @@ public class RoadmapNode {
         this.content = content;
     }
 
+    private void validate(final String title, final String content) {
+        validateTitleLength(title);
+        validateContentLength(content);
+    }
+
     public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
         return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
     }
@@ -57,11 +56,6 @@ public class RoadmapNode {
 
     public void addImages(final RoadmapNodeImages roadmapNodeImages) {
         this.roadmapNodeImages.addAll(roadmapNodeImages);
-    }
-
-    private void validate(final String title, final String content) {
-        validateTitleLength(title);
-        validateContentLength(content);
     }
 
     private void validateTitleLength(final String title) {

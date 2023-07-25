@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.member.vo.Nickname;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -9,9 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
@@ -20,11 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberProfile extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class MemberProfile extends BaseCreatedTimeEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
@@ -51,10 +44,6 @@ public class MemberProfile extends BaseTimeEntity {
         this.birthday = birthday;
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
-    }
-
-    public void updateMemberProfileImage(final MemberProfileImage image) {
-        this.image = image;
     }
 
     public Nickname getNickname() {

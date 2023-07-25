@@ -19,14 +19,14 @@ public class RoadmapNodeImages {
     private final List<RoadmapNodeImage> values = new ArrayList<>();
 
     public RoadmapNodeImages(final List<RoadmapNodeImage> images) {
-        this.values.addAll(images);
+        this.values.addAll(new ArrayList<>(images));
     }
 
     public void addAll(final RoadmapNodeImages images) {
-        this.values.addAll(images.values);
+        this.values.addAll(new ArrayList<>(images.values));
     }
 
     public List<RoadmapNodeImage> getValues() {
-        return values;
+        return new ArrayList<>(values);
     }
 }
