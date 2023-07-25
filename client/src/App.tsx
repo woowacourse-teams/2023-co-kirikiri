@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
@@ -11,6 +12,8 @@ import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
 import GoalRoomListPage from '@components/goalRommListPage/GoalRoomListPage';
 import MainPage from '@components/mainPage/MainPage';
 import GoalRoomDashboardPage from '@pages/goalRoomDashboardPage/GoalRoomDashboardPage';
+import Fallback from '@components/_common/fallback/Fallback';
+import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 
 const App = () => {
   return (
@@ -24,6 +27,14 @@ const App = () => {
               <Route path='/login' element={<LoginPage />} />
               <Route path='/join' element={<SignUpPage />} />
               <Route path='/roadmap-list' element={<RoadmapListPage />} />
+              <Route
+                path='/roadmap/:id'
+                element={
+                  <Suspense fallback={<Fallback />}>
+                    <RoadmapDetailPage />
+                  </Suspense>
+                }
+              />
               <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
               <Route path='/goalroom-list' element={<GoalRoomListPage />} />
               <Route
