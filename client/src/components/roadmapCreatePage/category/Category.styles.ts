@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 const CategoryLabel = styled.h2`
-  ${({ theme }) => theme.fonts.title_large}
   display: flex;
   margin-bottom: 1rem;
+  ${({ theme }) => theme.fonts.title_large}
   color: ${({ theme }) => theme.colors.black};
 
   > p {
@@ -12,8 +12,8 @@ const CategoryLabel = styled.h2`
 `;
 
 const CategoryDescription = styled.p`
-  ${({ theme }) => theme.fonts.description4}
   margin-bottom: 2.5rem;
+  ${({ theme }) => theme.fonts.description5}
   color: ${({ theme }) => theme.colors.gray300};
 `;
 
@@ -25,7 +25,6 @@ const Wrapper = styled.div`
 `;
 
 const CategoryBox = styled.article<{ isSelected?: boolean }>`
-  ${({ theme }) => theme.fonts.description5}
   cursor: pointer;
 
   display: flex;
@@ -42,7 +41,9 @@ const CategoryBox = styled.article<{ isSelected?: boolean }>`
   background-color: ${({ theme, isSelected }) =>
     isSelected !== undefined &&
     (isSelected ? theme.colors.main_light : theme.colors.gray100)};
-    border-radius: 10rem;
+  border-radius: 10rem;
+
+  ${({ theme }) => theme.fonts.title_large}
 `;
 
 export const S = {
