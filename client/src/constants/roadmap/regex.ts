@@ -14,3 +14,8 @@ export const TITLE_MAX_LENGTH = {
   rule: /^.{1,20}$/,
   message: '제목은 필수로 입력해주세요',
 };
+
+export const ROADMAP_MAX_LENGTH = {
+  rule: /^.{1,40}$/,
+  message: '로드맵의 제목은 필수로 입력해주세요',
+};
