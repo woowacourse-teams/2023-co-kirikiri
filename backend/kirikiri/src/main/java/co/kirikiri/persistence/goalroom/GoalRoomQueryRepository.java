@@ -7,5 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface GoalRoomQueryRepository {
 
-    Page<GoalRoom> findGoalRoomsPageByCond(GoalRoomFilterType filterType, Pageable pageable);
+    Page<GoalRoom> findGoalRoomsWithPendingMembersPageByCond(final GoalRoomFilterType filterType,
+                                                             final Pageable pageable);
+
 }

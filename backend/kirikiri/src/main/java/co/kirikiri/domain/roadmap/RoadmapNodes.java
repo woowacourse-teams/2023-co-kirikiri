@@ -17,7 +17,7 @@ public class RoadmapNodes {
     private final List<RoadmapNode> values = new ArrayList<>();
 
     public RoadmapNodes(final List<RoadmapNode> roadmapNodes) {
-        this.values.addAll(roadmapNodes);
+        this.values.addAll(new ArrayList<>(roadmapNodes));
     }
 
     public void add(final RoadmapNode roadmapNode) {
@@ -41,6 +41,6 @@ public class RoadmapNodes {
     }
 
     public List<RoadmapNode> getValues() {
-        return values;
+        return new ArrayList<>(values);
     }
 }

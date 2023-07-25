@@ -11,10 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@Sql(value = "/delete.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class IntegrationTest {
 
     protected static final String API_PREFIX = "/api";

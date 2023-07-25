@@ -3,7 +3,6 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.dto.GoalRoomFilterType;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
@@ -18,11 +17,7 @@ public class GoalRoomMapper {
         if (filterType == null) {
             return GoalRoomFilterType.LATEST;
         }
-        try {
-            return GoalRoomFilterType.valueOf(filterType.name());
-        } catch (final IllegalArgumentException e) {
-            throw new NotFoundException("존재하지 않는 정렬 조건입니다. filterType = " + filterType);
-        }
+        return GoalRoomFilterType.valueOf(filterType.name());
     }
 
     public static PageResponse<GoalRoomForListResponse> convertToGoalRoomsPageResponse(

@@ -47,7 +47,7 @@ public class GoalRoomPendingMember {
     }
 
     public boolean isLeader() {
-        return role.equals(GoalRoomRole.LEADER);
+        return role == GoalRoomRole.LEADER;
     }
 
     public Member getMember() {

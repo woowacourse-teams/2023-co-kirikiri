@@ -57,7 +57,8 @@ class GoalRoomRepositoryTest {
         final RoadmapCategory category = 카테고리를_생성한다("여가");
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(
+                new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
         로드맵을_생성한다(creator, category, new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)),
                 roadmapContent);
 
@@ -84,20 +85,19 @@ class GoalRoomRepositoryTest {
         goalRoom2.joinGoalRoom(GoalRoomRole.LEADER, goalRoomPendingMember2);
 
         // when
-        final Page<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsPageByCond(GoalRoomFilterType.LATEST,
-                PageRequest.of(0, 2));
+        final Page<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(
+                GoalRoomFilterType.LATEST, PageRequest.of(0, 2));
 
         // then
         assertAll(
                 () -> assertThat(goalRoomsPage.getTotalPages()).isEqualTo(2),
-                () -> assertThat(goalRoomsPage.getContent().size()).isEqualTo(2),
-                () -> assertThat(goalRoomsPage.getContent()).usingRecursiveComparison()
-                        .isEqualTo(List.of(goalRoom2, goalRoom1))
+                () -> assertThat(goalRoomsPage.getContent()).hasSize(2),
+                () -> assertThat(goalRoomsPage.getContent()).isEqualTo(List.of(goalRoom2, goalRoom1))
         );
     }
 
     @Test
-    void 골룸을_참여중인_인원순으로_조회한다() {
+    void 골룸을_참여율_순으로_조회한다() {
         //given
         final Member creator = 사용자를_생성한다("name1", "01011111111", "identifier1", "password!1");
         final RoadmapCategory category = 카테고리를_생성한다("여가");
@@ -130,16 +130,15 @@ class GoalRoomRepositoryTest {
         goalRoom2.joinGoalRoom(GoalRoomRole.LEADER, goalRoomPendingMember2);
 
         // when
-        final Page<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsPageByCond(
-                GoalRoomFilterType.PARTICIPANT_COUNT,
+        final Page<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(
+                GoalRoomFilterType.PARTICIPATION_RATE,
                 PageRequest.of(0, 2));
 
         // then
         assertAll(
                 () -> assertThat(goalRoomsPage.getTotalPages()).isEqualTo(2),
-                () -> assertThat(goalRoomsPage.getContent().size()).isEqualTo(2),
-                () -> assertThat(goalRoomsPage.getContent()).usingRecursiveComparison()
-                        .isEqualTo(List.of(goalRoom1, goalRoom2))
+                () -> assertThat(goalRoomsPage.getContent()).hasSize(2),
+                () -> assertThat(goalRoomsPage.getContent()).isEqualTo(List.of(goalRoom1, goalRoom2))
         );
     }
 

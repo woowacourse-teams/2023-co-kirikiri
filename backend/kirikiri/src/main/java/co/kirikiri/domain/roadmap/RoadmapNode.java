@@ -22,7 +22,7 @@ public class RoadmapNode {
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
     private static final int CONTENT_MIN_LENGTH = 1;
-    private static final int CONTENT_MAX_LENGTH = 200;
+    private static final int CONTENT_MAX_LENGTH = 2000;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_node_id")
     private final List<RoadmapNodeImage> images = new ArrayList<>();

@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapContent extends BaseTimeEntity {
 
-    private static final int CONTENT_MAX_LENGTH = 150;
+    private static final int CONTENT_MAX_LENGTH = 2000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -31,6 +31,7 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import co.kirikiri.service.dto.member.GenderType;
 import co.kirikiri.service.dto.member.MemberResponse;
@@ -47,7 +48,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -62,7 +62,6 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
     private final RoadmapNodeRepository roadmapNodeRepository;
     private final MemberRepository memberRepository;
 
-    @Autowired
     public GoalRoomReadIntegrationTest(final GoalRoomRepository goalRoomRepository,
                                        final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
                                        final RoadmapRepository roadmapRepository,
@@ -130,7 +129,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                 List.of(골룸2_예상_응답값, 골룸1_예상_응답값));
 
         // when
-        final ExtractableResponse<Response> 최신순_골룸_목록_조회_응답 = 골룸_목록을_조회한다(1, 10, "LATEST");
+        final ExtractableResponse<Response> 최신순_골룸_목록_조회_응답 = 골룸_목록을_조회한다(1, 10, GoalRoomFilterTypeDto.LATEST.name());
 
         // then
         final PageResponse<GoalRoomForListResponse> 최신순_골룸_목록_조회_응답값 = jsonToClass(최신순_골룸_목록_조회_응답.asString(),
@@ -141,7 +140,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸을_참가_인원순으로_조회한다() throws UnsupportedEncodingException, JsonProcessingException {
+    void 골룸을_참가율_순으로_조회한다() throws UnsupportedEncodingException, JsonProcessingException {
         회원가입을_한다("creator", "creator!1", "creator", "010-1111-1111", GenderType.MALE,
                 LocalDate.of(2023, Month.JULY, 12));
         final String 토큰 = 로그인을_한다("creator", "creator!1");
@@ -187,18 +186,19 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                 골룸2.getCurrentPendingMemberCount(), 골룸2.getLimitedMemberCount(), 골룸2.getCreatedAt(),
                 골룸2.getGoalRoomStartDate(), 골룸2.getGoalRoomEndDate(),
                 new MemberResponse(골룸2에_참여한_사용자.getId(), 골룸2에_참여한_사용자.getNickname().getValue()));
-        final PageResponse<GoalRoomForListResponse> 최신순_골룸_목록_조회_예상_응답값 = new PageResponse<>(1, 1,
+        final PageResponse<GoalRoomForListResponse> 참가율순_골룸_목록_조회_예상_응답값 = new PageResponse<>(1, 1,
                 List.of(골룸1_예상_응답값, 골룸2_예상_응답값));
 
         // when
-        final ExtractableResponse<Response> 최신순_골룸_목록_조회_응답 = 골룸_목록을_조회한다(1, 10, "PARTICIPANT_COUNT");
+        final ExtractableResponse<Response> 참가율순_골룸_목록_조회_응답 = 골룸_목록을_조회한다(1, 10,
+                GoalRoomFilterTypeDto.PARTICIPATION_RATE.name());
 
         // then
-        final PageResponse<GoalRoomForListResponse> 최신순_골룸_목록_조회_응답값 = jsonToClass(최신순_골룸_목록_조회_응답.asString(),
+        final PageResponse<GoalRoomForListResponse> 참가율순_골룸_목록_조회_응답값 = jsonToClass(참가율순_골룸_목록_조회_응답.asString(),
                 new TypeReference<>() {
                 });
 
-        assertThat(최신순_골룸_목록_조회_응답값).isEqualTo(최신순_골룸_목록_조회_예상_응답값);
+        assertThat(참가율순_골룸_목록_조회_응답값).isEqualTo(참가율순_골룸_목록_조회_예상_응답값);
     }
 
     private void 회원가입을_한다(final String 아이디, final String 비밀번호, final String 닉네임, final String 전화번호, final GenderType 성별,

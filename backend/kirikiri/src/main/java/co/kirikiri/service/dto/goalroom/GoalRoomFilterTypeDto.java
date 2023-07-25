@@ -3,7 +3,7 @@ package co.kirikiri.service.dto.goalroom;
 public enum GoalRoomFilterTypeDto {
 
     LATEST("최신순"),
-    PARTICIPANT_COUNT("참여 중인 인원순");
+    PARTICIPATION_RATE("참가율 순");
 
     private final String description;
 

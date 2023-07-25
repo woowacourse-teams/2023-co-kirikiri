@@ -151,16 +151,16 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 로드맵_생성시_로드맵_본문의_길이가_150보다_크면_예외가_발생한다() throws Exception {
+    void 로드맵_생성시_로드맵_본문의_길이가_2000보다_크면_예외가_발생한다() throws Exception {
         // given
-        final String content = "a".repeat(151);
+        final String content = "a".repeat(2001);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", content,
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapService.create(any(), any()))
-                .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 150글자 입니다."));
+                .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 2000글자 입니다."));
 
         // expect
         로드맵_생성_요청(jsonRequest, status().isBadRequest());
@@ -254,9 +254,9 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 로드맵_생성시_로드맵_노드의_설명의_길이가_200보다_크면_예외가_발생한다() throws Exception {
+    void 로드맵_생성시_로드맵_노드의_설명의_길이가_2000보다_크면_예외가_발생한다() throws Exception {
         // given
-        final String nodeContent = "a".repeat(201);
+        final String nodeContent = "a".repeat(2001);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", nodeContent)));
@@ -309,7 +309,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                                 fieldWithPath("introduction").description("로드맵 소개글")
                                         .attributes(new Attributes.Attribute("range", "1-150")),
                                 fieldWithPath("content").description("로드맵 본문 내용").optional()
-                                        .attributes(new Attributes.Attribute("range", "0-150")),
+                                        .attributes(new Attributes.Attribute("range", "0-2000")),
                                 fieldWithPath("difficulty").description(
                                         "로드맵 난이도(VERY_EASY, EASY, NORMAL, DIFFICULT, VERY_DIFFICULT)"),
                                 fieldWithPath("requiredPeriod").description("로드맵 전체 추천 소요 기간")
@@ -318,7 +318,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                                 fieldWithPath("roadmapNodes[0].title").description("로드맵 노드의 제목")
                                         .attributes(new Attributes.Attribute("range", "1-40")),
                                 fieldWithPath("roadmapNodes[0].content").description("로드맵 노드의 설명")
-                                        .attributes(new Attributes.Attribute("range", "1-200"))
+                                        .attributes(new Attributes.Attribute("range", "1-2000"))
                         ),
                         responseHeaders(
                                 headerWithName("Location").description("로드맵 아이디").optional()

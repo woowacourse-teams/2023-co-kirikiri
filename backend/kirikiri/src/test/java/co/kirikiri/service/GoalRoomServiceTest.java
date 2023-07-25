@@ -77,7 +77,7 @@ class GoalRoomServiceTest {
 
         final PageImpl<GoalRoom> goalRoomsPage = new PageImpl<>(List.of(goalRoom2, goalRoom1), PageRequest.of(1, 10),
                 2);
-        given(goalRoomRepository.findGoalRoomsPageByCond(any(), any()))
+        given(goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(any(), any()))
                 .willReturn(goalRoomsPage);
 
         // when

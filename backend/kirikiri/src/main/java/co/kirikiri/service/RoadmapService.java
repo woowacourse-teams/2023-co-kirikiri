@@ -46,7 +46,7 @@ public class RoadmapService {
         final Member member = findMemberByIdentifier(identifier);
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
         final RoadmapSaveDto roadmapSaveDto = RoadmapMapper.convertToRoadmapSaveDto(request);
-        final Roadmap roadmap = makeRoadmap(member, roadmapSaveDto, roadmapCategory);
+        final Roadmap roadmap = createRoadmap(member, roadmapSaveDto, roadmapCategory);
 
         return roadmapRepository.save(roadmap).getId();
     }
@@ -61,13 +61,11 @@ public class RoadmapService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
     }
 
-    private Roadmap makeRoadmap(final Member member, final RoadmapSaveDto roadmapSaveDto,
-                                final RoadmapCategory roadmapCategory) {
+    private Roadmap createRoadmap(final Member member, final RoadmapSaveDto roadmapSaveDto,
+                                  final RoadmapCategory roadmapCategory) {
         final RoadmapNodes roadmapNodes = makeRoadmapNodes(roadmapSaveDto.roadmapNodes());
         final RoadmapContent roadmapContent = makeRoadmapContent(roadmapSaveDto, roadmapNodes);
-        final Roadmap roadmap = new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(),
-                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), member,
-                roadmapCategory);
+        final Roadmap roadmap = makeRoadmap(member, roadmapSaveDto, roadmapCategory);
         roadmap.addContent(roadmapContent);
         return roadmap;
     }
@@ -84,6 +82,12 @@ public class RoadmapService {
         final RoadmapContent roadmapContent = new RoadmapContent(roadmapSaveDto.content());
         roadmapContent.addNodes(roadmapNodes);
         return roadmapContent;
+    }
+
+    private Roadmap makeRoadmap(final Member member, final RoadmapSaveDto roadmapSaveDto, final RoadmapCategory roadmapCategory) {
+        return new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(),
+                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), member,
+                roadmapCategory);
     }
 
     public RoadmapResponse findRoadmap(final Long id) {

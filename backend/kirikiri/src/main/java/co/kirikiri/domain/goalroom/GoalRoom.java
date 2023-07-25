@@ -61,10 +61,7 @@ public class GoalRoom extends BaseTimeEntity {
 
     public GoalRoom(final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
                     final RoadmapContent roadmapContent) {
-        this.name = name;
-        this.limitedMemberCount = limitedMemberCount;
-        this.status = status;
-        this.roadmapContent = roadmapContent;
+        this(null, name, limitedMemberCount, status, roadmapContent);
     }
 
     public GoalRoom(final Long id, final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
@@ -110,5 +107,9 @@ public class GoalRoom extends BaseTimeEntity {
 
     public LocalDate getGoalRoomEndDate() {
         return goalRoomRoadmapNodes.getGoalRoomEndDate();
+    }
+
+    public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
+        return goalRoomRoadmapNodes;
     }
 }

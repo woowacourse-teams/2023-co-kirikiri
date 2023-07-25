@@ -49,7 +49,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                         documentationResultHandler.document(
                                 queryParameters(
                                         parameterWithName("filterCond").description(
-                                                "필터 조건(LATEST, PARTICIPANT_COUNT)").optional(),
+                                                "필터 조건(LATEST, PARTICIPATION_RATE)").optional(),
                                         parameterWithName("page").description("타겟 페이지 (1부터 시작)"),
                                         parameterWithName("size").description("한 페이지에서 받아올 로드맵의 수")),
                                 responseFields(
@@ -63,7 +63,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("data[0].startDate").description("골룸의 시작 날짜"),
                                         fieldWithPath("data[0].endDate").description("골룸의 종료 날짜"),
                                         fieldWithPath("data[0].goalRoomLeader.id").description("골룸 리더의 아이디"),
-                                        fieldWithPath("data[0].goalRoomLeader.name").description("골룸 리더의 닉네"))
+                                        fieldWithPath("data[0].goalRoomLeader.name").description("골룸 리더의 닉네임"))
                         )
                 )
                 .andReturn().getResponse()

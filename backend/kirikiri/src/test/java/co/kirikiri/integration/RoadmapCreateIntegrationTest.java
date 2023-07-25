@@ -191,9 +191,9 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 본문의_길이가_150보다_크면_실패한다() {
+    void 본문의_길이가_2000보다_크면_실패한다() {
         // given
-        final String 로드맵_본문 = "a".repeat(151);
+        final String 로드맵_본문 = "a".repeat(2001);
 
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", 로드맵_본문,
@@ -297,9 +297,9 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_노드의_설명의_길이가_200보다_크면_실패한다() {
+    void 로드맵_노드의_설명의_길이가_2000보다_크면_실패한다() {
         // given
-        final String 로드맵_노드_설명 = "a".repeat(201);
+        final String 로드맵_노드_설명 = "a".repeat(2001);
         final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
         로드맵_카테고리를_저장한다("여행");
 
@@ -312,7 +312,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
         });
         응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.BAD_REQUEST);
-        assertThat(에러_메세지.message()).isEqualTo("로드맵 노드의 설명의 길이는 최소 1글자, 최대 200글자입니다.");
+        assertThat(에러_메세지.message()).isEqualTo("로드맵 노드의 설명의 길이는 최소 1글자, 최대 2000글자입니다.");
     }
 
     @Test

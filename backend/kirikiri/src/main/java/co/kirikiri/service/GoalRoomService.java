@@ -25,8 +25,8 @@ public class GoalRoomService {
                                                                            final CustomPageRequest pageRequest) {
         final GoalRoomFilterType filterType = GoalRoomMapper.convertToGoalRoomFilterType(filterTypeDto);
         final PageRequest generatedPageRequest = PageRequest.of(pageRequest.page(), pageRequest.size());
-        final Page<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsPageByCond(filterType,
-                generatedPageRequest);
-        return GoalRoomMapper.convertToGoalRoomsPageResponse(goalRoomsPage, pageRequest);
+        final Page<GoalRoom> goalRoomsWithPendingMembersPage = goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(
+                filterType, generatedPageRequest);
+        return GoalRoomMapper.convertToGoalRoomsPageResponse(goalRoomsWithPendingMembersPage, pageRequest);
     }
 }

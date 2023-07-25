@@ -3,6 +3,8 @@ package co.kirikiri.persistence.goalroom;
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
+import static co.kirikiri.domain.member.QMember.member;
+import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -12,6 +14,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,21 +29,26 @@ public class GoalRoomQueryRepositoryImpl implements GoalRoomQueryRepository {
     }
 
     @Override
-    public Page<GoalRoom> findGoalRoomsPageByCond(final GoalRoomFilterType filterType, final Pageable pageable) {
+    public Page<GoalRoom> findGoalRoomsWithPendingMembersPageByCond(final GoalRoomFilterType filterType,
+                                                                    final Pageable pageable) {
         final List<GoalRoom> goalRooms = factory
                 .selectFrom(goalRoom)
                 .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .leftJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .leftJoin(goalRoomPendingMember.member, member)
+                .fetchJoin()
+                .leftJoin(member.memberProfile, memberProfile)
+                .fetchJoin()
                 .where(statusCond(GoalRoomStatus.RECRUITING))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(sortCond(filterType), goalRoomRoadmapNode.startDate.asc())
-                .fetchJoin()
+                .orderBy(sortCond(filterType))
                 .fetch();
 
         final JPAQuery<Long> countQuery = factory
                 .select(goalRoom.count())
                 .from(goalRoom)
+                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
                 .leftJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
                 .where(statusCond(GoalRoomStatus.RECRUITING));
 
@@ -55,6 +63,10 @@ public class GoalRoomQueryRepositoryImpl implements GoalRoomQueryRepository {
         if (filterType == GoalRoomFilterType.LATEST) {
             return goalRoom.id.desc();
         }
-        return goalRoom.limitedMemberCount.divide(goalRoom.goalRoomPendingMembers.values.size()).asc();
+        return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount).desc();
+    }
+
+    private OrderSpecifier<LocalDate> goalRoomRoadmapNodeStartDateAsc() {
+        return goalRoomRoadmapNode.startDate.asc();
     }
 }
