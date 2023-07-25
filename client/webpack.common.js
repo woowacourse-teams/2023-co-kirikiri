@@ -13,6 +13,7 @@ module.exports = {
     filename: 'bundle.[fullhash].js',
     assetModuleFilename: 'assets/[hash][ext][query]',
     clean: true,
+    publicPath: '/',
   },
 
   resolve: {
