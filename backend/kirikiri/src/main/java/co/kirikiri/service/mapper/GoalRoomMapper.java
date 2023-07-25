@@ -17,7 +17,8 @@ public final class GoalRoomMapper {
         final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
         final List<GoalRoomNodeResponse> roadmapNodeResponses = convertGoalRoomNodeResponses(nodes.getValues());
         final int period = goalRoom.calculateTotalPeriod();
-        return new GoalRoomResponse(goalRoom.getName(), roadmapNodeResponses, period);
+        return new GoalRoomResponse(goalRoom.getName(), goalRoom.getCurrentPendingMemberCount(),
+                goalRoom.getLimitedMemberCount(), roadmapNodeResponses, period);
     }
 
     private static List<GoalRoomNodeResponse> convertGoalRoomNodeResponses(
@@ -37,7 +38,8 @@ public final class GoalRoomMapper {
         final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
         final List<GoalRoomNodeResponse> roadmapNodeResponses = convertGoalRoomNodeResponses(nodes.getValues());
         final int period = goalRoom.calculateTotalPeriod();
-        return new GoalRoomCertifiedResponse(goalRoom.getName(), roadmapNodeResponses, period, isJoined);
+        return new GoalRoomCertifiedResponse(goalRoom.getName(), goalRoom.getCurrentPendingMemberCount(),
+                goalRoom.getLimitedMemberCount(), roadmapNodeResponses, period, isJoined);
     }
 
 }

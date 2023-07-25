@@ -4,6 +4,8 @@ import java.util.List;
 
 public record GoalRoomCertifiedResponse(
         String name,
+        Integer currentMemberCount,
+        Integer limitedMemberCount,
         List<GoalRoomNodeResponse> goalRoomNodes,
         int period,
         boolean isJoined

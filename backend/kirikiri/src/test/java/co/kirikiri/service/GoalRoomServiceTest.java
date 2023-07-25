@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
+import co.kirikiri.domain.goalroom.GoalRoomPendingMembers;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
@@ -29,7 +30,6 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -52,9 +52,6 @@ class GoalRoomServiceTest {
     private GoalRoomRepository goalRoomRepository;
 
     @Mock
-    private GoalRoomMemberRepository goalRoomMemberRepository;
-
-    @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     @InjectMocks
@@ -68,7 +65,7 @@ class GoalRoomServiceTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
 
         when(goalRoomRepository.findByIdWithRoadmapContent(any()))
                 .thenReturn(Optional.of(goalRoom));
@@ -101,7 +98,7 @@ class GoalRoomServiceTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, creator);
@@ -129,7 +126,7 @@ class GoalRoomServiceTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
 
         when(goalRoomRepository.findByIdWithRoadmapContent(any()))
                 .thenReturn(Optional.of(goalRoom));
@@ -193,7 +190,7 @@ class GoalRoomServiceTest {
         );
     }
 
-    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
+    private GoalRoom 골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
         final GoalRoom goalRoom = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, roadmapContent);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
@@ -210,6 +207,10 @@ class GoalRoomServiceTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
         goalRoom.addGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 15, 12, 0), goalRoom, member);
+        goalRoom.joinGoalRoom(goalRoomPendingMember);
         return goalRoom;
     }
 
@@ -219,7 +220,7 @@ class GoalRoomServiceTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
     }
 
     private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined) {
@@ -228,6 +229,6 @@ class GoalRoomServiceTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomCertifiedResponse("골룸", goalRoomNodeResponses, 17, isJoined);
+        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, isJoined);
     }
 }

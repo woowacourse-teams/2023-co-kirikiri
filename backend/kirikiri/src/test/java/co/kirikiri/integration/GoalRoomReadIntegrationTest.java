@@ -79,6 +79,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
         final List<RoadmapContent> 로드맵_본문_리스트 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답).getValues();
         final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트);
+        골룸_대기_사용자를_저장한다(크리에이터, 골룸);
 
         // when
         final GoalRoomResponse 골룸_응답값 = given()
@@ -254,7 +255,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
     }
 
     private GoalRoomCertifiedResponse 로그인후_예상하는_골룸_응답을_생성한다() {
@@ -263,7 +264,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomCertifiedResponse("골룸", goalRoomNodeResponses, 17, true);
+        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, true);
     }
 
     private void 골룸_대기_사용자를_저장한다(final Member 크리에이터, final GoalRoom 골룸) {

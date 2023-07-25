@@ -53,6 +53,8 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 responseFields(
                                         fieldWithPath("name").description("골룸 제목"),
+                                        fieldWithPath("currentMemberCount").description("현재 참여 인원 수"),
+                                        fieldWithPath("limitedMemberCount").description("모집 인원 수"),
                                         fieldWithPath("goalRoomNodes[0].title").description("골룸 로드맵 노드 제목"),
                                         fieldWithPath("goalRoomNodes[0].startDate").description("골룸 로드맵 노드 시작 날짜"),
                                         fieldWithPath("goalRoomNodes[0].endDate").description("골룸 로드맵 노드 종료 날짜"),
@@ -119,6 +121,8 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 responseFields(
                                         fieldWithPath("name").description("골룸 제목"),
+                                        fieldWithPath("currentMemberCount").description("현재 참여 인원 수"),
+                                        fieldWithPath("limitedMemberCount").description("모집 인원 수"),
                                         fieldWithPath("goalRoomNodes[0].title").description("골룸 로드맵 노드 제목"),
                                         fieldWithPath("goalRoomNodes[0].startDate").description("골룸 로드맵 노드 시작 날짜"),
                                         fieldWithPath("goalRoomNodes[0].endDate").description("골룸 로드맵 노드 종료 날짜"),
@@ -172,7 +176,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", goalRoomNodeResponses, 17);
+        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
     }
 
     private GoalRoomCertifiedResponse 로그인시_골룸_조회_응답을_생성한다(final boolean isJoined) {
@@ -181,6 +185,6 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomCertifiedResponse("골룸", goalRoomNodeResponses, 17, isJoined);
+        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, isJoined);
     }
 }

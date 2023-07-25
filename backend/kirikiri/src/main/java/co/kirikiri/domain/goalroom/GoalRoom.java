@@ -47,6 +47,9 @@ public class GoalRoom extends BaseCreatedTimeEntity {
             orphanRemoval = true, mappedBy = "goalRoom")
     private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
 
+    @Embedded
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
+
     public GoalRoom(final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
                     final RoadmapContent roadmapContent) {
         this.name = name;
@@ -57,6 +60,10 @@ public class GoalRoom extends BaseCreatedTimeEntity {
 
     public void addGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
         this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    }
+
+    public void joinGoalRoom(final GoalRoomPendingMember goalRoomPendingMember) {
+        goalRoomPendingMembers.add(goalRoomPendingMember);
     }
 
     public int calculateTotalPeriod() {
@@ -73,6 +80,14 @@ public class GoalRoom extends BaseCreatedTimeEntity {
 
     public String getName() {
         return name;
+    }
+
+    public Integer getLimitedMemberCount() {
+        return limitedMemberCount;
+    }
+
+    public Integer getCurrentPendingMemberCount() {
+        return goalRoomPendingMembers.size();
     }
 
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
