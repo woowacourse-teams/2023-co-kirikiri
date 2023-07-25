@@ -1,16 +1,16 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.member.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomPendingMembers {
 
@@ -26,15 +26,15 @@ public class GoalRoomPendingMembers {
     }
 
     public void add(final GoalRoomPendingMember goalRoomPendingMember) {
-        values.add(new GoalRoomPendingMember(goalRoomPendingMember));
+        values.add(goalRoomPendingMember);
     }
 
     public int size() {
         return values.size();
     }
 
-    public boolean containMember(final Member member) {
+    public boolean containGaolRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
         return values.stream()
-                .anyMatch(value -> value.isEqualMember(member));
+                .anyMatch(value -> value.equals(goalRoomPendingMember));
     }
 }

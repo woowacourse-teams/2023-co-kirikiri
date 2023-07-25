@@ -24,13 +24,12 @@ import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
 import co.kirikiri.service.mapper.RoadmapMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,7 +55,7 @@ public class RoadmapService {
 
     private Roadmap findRoadmapById(final Long id) {
         return roadmapRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapContentId = " + id));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
     @Transactional

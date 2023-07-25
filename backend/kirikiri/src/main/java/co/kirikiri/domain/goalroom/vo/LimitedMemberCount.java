@@ -25,7 +25,7 @@ public class LimitedMemberCount {
         }
     }
 
-    public boolean isMoreThan(final int comparedValue) {
-        return value > comparedValue;
+    public boolean isLessAndEqualsThan(final int comparedValue) {
+        return value <= comparedValue;
     }
 }

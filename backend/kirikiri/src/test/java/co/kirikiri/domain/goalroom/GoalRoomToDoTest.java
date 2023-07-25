@@ -1,12 +1,12 @@
 package co.kirikiri.domain.goalroom;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.exception.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class GoalRoomToDoTest {
 
@@ -23,7 +23,7 @@ class GoalRoomToDoTest {
 
     @ParameterizedTest
     @ValueSource(ints = {0, 251, 252, 300})
-    void 골룸의_이름_길이가_1미만_40초과일_때_정상적으로_생성된다(final int length) {
+    void 골룸의_이름_길이가_1미만_40초과일_때_예외를_던진다(final int length) {
         //given
         final String value = "a".repeat(length);
 

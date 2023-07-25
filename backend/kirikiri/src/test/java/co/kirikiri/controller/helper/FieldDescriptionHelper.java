@@ -1,20 +1,19 @@
 package co.kirikiri.controller.helper;
 
-import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.restdocs.snippet.Attributes;
-
 import static co.kirikiri.controller.helper.RestDocsHelper.RESTRICT;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.snippet.Attributes;
 
 public class FieldDescriptionHelper {
 
     public static FieldDescriptor getDescriptor(final FieldDescription description) {
         if (description.getRestriction() == null) {
             return fieldWithPath(description.getPath()).description(description.getDescription());
-        } else {
-            return fieldWithPath(description.getPath()).description(description.getDescription())
-                    .attributes(new Attributes.Attribute(RESTRICT, description.getRestriction()));
         }
+        return fieldWithPath(description.getPath()).description(description.getDescription())
+                .attributes(new Attributes.Attribute(RESTRICT, description.getRestriction()));
     }
 
     public static class FieldDescription {
@@ -22,6 +21,10 @@ public class FieldDescriptionHelper {
         private final String path;
         private final String description;
         private final String restriction;
+
+        public FieldDescription(final String path, final String description) {
+            this(path, description, null);
+        }
 
         public FieldDescription(final String path, final String description, final String restriction) {
             this.path = path;

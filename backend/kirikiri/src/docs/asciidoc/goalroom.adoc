@@ -18,44 +18,24 @@ endif::[]
 
 === *1-1* 성공
 
-operation::goal-room-controller-test/정상적으로_골룸을_생성한다[snippets='http-request,http-response,request-fields']
+operation::goal-room-create-api-test/정상적으로_골룸을_생성한다[snippets='http-request,http-response,request-fields']
 
-=== *1-2* 실패 - 골룸 생성 시 골룸 이름이 공백일 경우
+=== *1-2* 실패 - 골룸 생성 시 요청에 빈값이 있을 경우
 
-operation::goal-room-controller-test/골룸_생성_시_골룸_이름이_공백일_경우[snippets='http-request,http-response']
+operation::goal-room-create-api-test/골룸_생성_시_요청에_빈값이_있을_경우[snippets='http-request,http-response']
 
-=== *1-3* 실패 - 골룸 생성 시 골룸 제한 인원이 null일 경우
+=== *1-3* 실패 - 골룸 생성 시 로드맵에 존재하지 않는 노드일 경우
 
-operation::goal-room-controller-test/골룸_생성_시_골룸_제한_인원이_null일_경우[snippets='http-request,http-response']
+operation::goal-room-create-api-test/골룸_생성_시_로드맵에_존재하지_않는_노드일_경우[snippets='http-request,http-response']
 
-=== *1-4* 실패 - 골룸 생성 시 로드맵 노드 아이디가 공백일 경우
+=== *1-4* 실패 - 골룸 생성 시 로드맵의 노드 크기와 요청의 노드 크기가 일치하지 않을 경우
 
-operation::goal-room-controller-test/골룸_생성_시_로드맵_노드_아이디가_공백일_경우[snippets='http-request,http-response']
+operation::goal-room-create-api-test/골룸_생성_시_로드맵의_노드_크기와_요청의_노드_크기가_일치하지_않을_경우[snippets='http-request,http-response']
 
-=== *1-5* 실패 - 골룸 생성 시 로드맵 노드 인증 횟수가 공백일 경우
+=== *1-5* 실패 - 골룸 생성 시 로드맵이 존재하지 않을 경우
 
-operation::goal-room-controller-test/골룸_생성_시_로드맵_노드_인증_횟수가_공백일_경우[snippets='http-request,http-response']
+operation::goal-room-create-api-test/골룸_생성_시_로드맵이_존재하지_않을_경우[snippets='http-request,http-response']
 
-=== *1-6* 실패 - 골룸 생성 시 로드맵 컨텐츠 id가 null일 경우
+=== *1-6* 실패 - 골룸 생성 시 존재하지 않는 회원일 경우
 
-operation::goal-room-controller-test/골룸_생성_시_로드맵_컨텐츠_id가_null일_경우[snippets='http-request,http-response']
-
-=== *1-7* 실패 - 골룸 생성 시 로드맵에 존재하지 않는 노드일 경우
-
-operation::goal-room-controller-test/골룸_생성_시_로드맵에_존재하지_않는_노드일_경우[snippets='http-request,http-response']
-
-=== *1-8* 실패 - 골룸 생성 시 로드맵의 노드 크기와 요청의 노드 크기가 일치하지 않을 경우
-
-operation::goal-room-controller-test/골룸_생성_시_로드맵의_노드_크기와_요청의_노드_크기가_일치하지_않을_경우[snippets='http-request,http-response']
-
-=== *1-9* 실패 - 골룸 생성 시 로드맵이 존재하지 않을 경우
-
-operation::goal-room-controller-test/골룸_생성_시_로드맵이_존재하지_않을_경우[snippets='http-request,http-response']
-
-=== *1-10* 실패 - 골룸 생성 시 존재하지 않는 회원일 경우
-
-operation::goal-room-controller-test/골룸_생성_시_존재하지_않는_회원일_경우[snippets='http-request,http-response']
-
-=== *1-11* 실패 - 골룸 생성 시 투두 컨텐츠가 공백일 경우
-
-operation::goal-room-controller-test/골룸_생성_시_투두_컨텐츠가_공백일_경우[snippets='http-request,http-response']
+operation::goal-room-create-api-test/골룸_생성_시_존재하지_않는_회원일_경우[snippets='http-request,http-response']

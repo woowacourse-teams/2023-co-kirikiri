@@ -1,7 +1,13 @@
 package co.kirikiri.common.resolver;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,13 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MemberIdentifierArgumentResolverTest {
@@ -106,7 +105,7 @@ class MemberIdentifierArgumentResolverTest {
     }
 
     @Test
-    void AUTHORIZATION_HEADER에_BEARER이_안붙은_경우_토큰을_인증한다() {
+    void AUTHORIZATION_HEADER에_BEARER이_안붙은_경우_예외를_터트린다() {
         // given
         final String token = "testToken";
 
@@ -121,7 +120,7 @@ class MemberIdentifierArgumentResolverTest {
     }
 
     @Test
-    void AUTHORIZATION_HEADER가_비어있을_경우_토큰을_인증한다() {
+    void AUTHORIZATION_HEADER가_비어있을_경우_예외를_터트린다() {
         // given
         when(webRequest.getHeader(HttpHeaders.AUTHORIZATION))
                 .thenReturn(null);
@@ -133,14 +132,14 @@ class MemberIdentifierArgumentResolverTest {
     }
 
     @Test
-    void 적절하지_않은_토큰이_들어올_경우_토큰을_인증한다() {
+    void 적절하지_않은_토큰이_들어올_경우_예외를_터트린다() {
         // given
         final String token = "testToken";
 
         when(webRequest.getHeader(HttpHeaders.AUTHORIZATION))
                 .thenReturn(BEARER + token);
         when(authService.findIdentifierByToken(anyString()))
-                .thenThrow(new AuthenticationException("인증 헤더가 적절하지 않습니다."));
+                .thenThrow(new AuthenticationException("토큰이 유효하지 않습니다."));
 
         // when
         // then

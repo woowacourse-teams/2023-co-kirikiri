@@ -1,7 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ServerException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -12,12 +12,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -41,11 +41,6 @@ public class GoalRoomPendingMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-
-    public GoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
-        this(goalRoomPendingMember.id, goalRoomPendingMember.role, goalRoomPendingMember.joinedAt,
-                goalRoomPendingMember.goalRoom, goalRoomPendingMember.member);
-    }
 
     public GoalRoomPendingMember(final GoalRoomRole role, final Member member) {
         this(null, role, null, null, member);
@@ -72,11 +67,24 @@ public class GoalRoomPendingMember {
         if (this.goalRoom.equals(goalRoom)) {
             return;
         }
-        throw new BadRequestException("골룸을 변경할 수 없습니다.");
+        throw new ServerException("골룸을 변경할 수 없습니다.");
     }
 
-    public boolean isEqualMember(final Member member) {
-        return this.member.equals(member);
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final GoalRoomPendingMember that = (GoalRoomPendingMember) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Member getMember() {

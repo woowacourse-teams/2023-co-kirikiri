@@ -1,30 +1,5 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.RoadmapService;
-import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.snippet.Attributes;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
-
-import java.util.Collections;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -42,15 +17,35 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.service.RoadmapService;
+import co.kirikiri.service.dto.PageResponse;
+import co.kirikiri.service.dto.member.MemberResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
+import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.snippet.Attributes;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
+
 @WebMvcTest(RoadmapController.class)
 class RoadmapControllerTest extends ControllerTestHelper {
 
     @MockBean
     private RoadmapService roadmapService;
-
-    // TODO: 제거
-//    @MockBean
-//    private MemberRepository memberRepository;
 
     @Test
     void 정상적으로_로드맵을_생성한다() throws Exception {
@@ -354,7 +349,7 @@ class RoadmapControllerTest extends ControllerTestHelper {
                                 responseFields(
                                         fieldWithPath("currentPage").description("현재 페이지 값"),
                                         fieldWithPath("totalPage").description("총 페이지 수"),
-                                        fieldWithPath("data[0].roadmapContentId").description("로드맵 아이디"),
+                                        fieldWithPath("data[0].roadmapId").description("로드맵 아이디"),
                                         fieldWithPath("data[0].roadmapTitle").description("로드맵 제목"),
                                         fieldWithPath("data[0].introduction").description("로드맵 소개글"),
                                         fieldWithPath("data[0].difficulty").description("로드맵 난이도"),
@@ -473,7 +468,7 @@ class RoadmapControllerTest extends ControllerTestHelper {
                 .andExpect(status().isOk())
                 .andDo(documentationResultHandler.document(
                         responseFields(
-                                fieldWithPath("roadmapContentId").description("로드맵 아이디"),
+                                fieldWithPath("roadmapId").description("로드맵 아이디"),
                                 fieldWithPath("category.id").description("로드맵 카테고리 아이디"),
                                 fieldWithPath("category.name").description("로드맵 카테고리 이름"),
                                 fieldWithPath("title").description("로드맵 제목"),
@@ -502,7 +497,7 @@ class RoadmapControllerTest extends ControllerTestHelper {
     void 존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다() throws Exception {
         // given
         when(roadmapService.findRoadmap(anyLong())).thenThrow(
-                new NotFoundException("존재하지 않는 로드맵입니다. roadmapContentId = 2"));
+                new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 2"));
 
         // when
         // then
@@ -510,7 +505,7 @@ class RoadmapControllerTest extends ControllerTestHelper {
                         .content(MediaType.APPLICATION_JSON_VALUE)
                         .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("존재하지 않는 로드맵입니다. roadmapContentId = 2"))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 로드맵입니다. roadmapId = 2"))
                 .andDo(documentationResultHandler.document(
                         responseFields(
                                 fieldWithPath("message").description("예외 메세지")

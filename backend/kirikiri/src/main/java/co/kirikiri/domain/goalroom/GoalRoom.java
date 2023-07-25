@@ -17,11 +17,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,7 +37,7 @@ public class GoalRoom extends BaseTimeEntity {
     private LimitedMemberCount limitedMemberCount;
 
     @Enumerated(value = EnumType.STRING)
-    private final GoalRoomStatus status = GoalRoomStatus.RECRUITING;
+    private GoalRoomStatus status = GoalRoomStatus.RECRUITING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
@@ -59,9 +58,7 @@ public class GoalRoom extends BaseTimeEntity {
     private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
-        this.name = name;
-        this.limitedMemberCount = limitedMemberCount;
-        this.roadmapContent = roadmapContent;
+        this(null, name, limitedMemberCount, roadmapContent);
     }
 
     public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
@@ -72,17 +69,16 @@ public class GoalRoom extends BaseTimeEntity {
     }
 
     public void participate(final GoalRoomPendingMember goalRoomPendingMember) {
-        if (limitedMemberCount.isMoreThan(goalRoomPendingMembers.size())) {
-            checkParticipated(goalRoomPendingMember);
-            goalRoomPendingMembers.add(goalRoomPendingMember);
-            goalRoomPendingMember.updateGoalRoom(this);
-            return;
+        if (limitedMemberCount.isLessAndEqualsThan(goalRoomPendingMembers.size())) {
+            throw new BadRequestException("정원 초과입니다.");
         }
-        throw new BadRequestException("정원 초과입니다.");
+        checkParticipated(goalRoomPendingMember);
+        goalRoomPendingMembers.add(goalRoomPendingMember);
+        goalRoomPendingMember.updateGoalRoom(this);
     }
 
     private void checkParticipated(final GoalRoomPendingMember goalRoomPendingMember) {
-        if (goalRoomPendingMembers.containMember(goalRoomPendingMember.getMember())) {
+        if (goalRoomPendingMembers.containGaolRoomPendingMember(goalRoomPendingMember)) {
             throw new BadRequestException("이미 참여 중인 상태입니다.");
         }
     }

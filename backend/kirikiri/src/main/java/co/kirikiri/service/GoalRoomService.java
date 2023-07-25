@@ -18,12 +18,10 @@ import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +34,7 @@ public class GoalRoomService {
     @Transactional
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
-        final RoadmapContent roadmapContent = findRoadmapContent(goalRoomCreateDto.roadmapContentId());
+        final RoadmapContent roadmapContent = findRoadmapContentById(goalRoomCreateDto.roadmapContentId());
         checkNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
         final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(), roadmapContent);
@@ -48,21 +46,21 @@ public class GoalRoomService {
         return goalRoom.getId();
     }
 
-    private RoadmapContent findRoadmapContent(final Long roadmapContentId) {
+    private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
         return roadmapContentRepository.findById(roadmapContentId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다."));
     }
 
-    private void checkNodeSizeEqual(final int nodesSize, final int goalRoomRoadmapNodeDtosSize) {
-        if (nodesSize != goalRoomRoadmapNodeDtosSize) {
-            throw new BadRequestException("모든 노드에 대해 기간이 설정 돼야합니다.");
+    private void checkNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {
+        if (roadmapNodesSize != goalRoomRoadmapNodeDtosSize) {
+            throw new BadRequestException("골룸의 노드 수는 로드맵의 노드 수와 같아야 합니다.");
         }
     }
 
     private GoalRoomRoadmapNodes makeGoalRoomRoadmapNodes(final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos, final RoadmapContent roadmapContent) {
         final List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = goalRoomRoadmapNodeDtos.stream()
                 .map(it -> new GoalRoomRoadmapNode(it.startDate(), it.endDate(), it.checkCount(), findRoadmapNode(roadmapContent, it.roadmapNodeId())))
-                .collect(Collectors.toList());
+                .toList();
         return new GoalRoomRoadmapNodes(goalRoomRoadmapNodes);
     }
 
@@ -72,11 +70,11 @@ public class GoalRoomService {
     }
 
     private GoalRoomPendingMember makeGoalRoomPendingMember(final String memberIdentifier, final GoalRoom savedGoalRoom) {
-        final Member member = findMember(memberIdentifier);
+        final Member member = findMemberByIdentifier(memberIdentifier);
         return new GoalRoomPendingMember(GoalRoomRole.LEADER, savedGoalRoom, member);
     }
 
-    private Member findMember(final String memberIdentifier) {
+    private Member findMemberByIdentifier(final String memberIdentifier) {
         return memberRepository.findByIdentifier(new Identifier(memberIdentifier))
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
