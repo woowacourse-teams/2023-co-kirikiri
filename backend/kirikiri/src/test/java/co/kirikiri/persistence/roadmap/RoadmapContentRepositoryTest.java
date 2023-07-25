@@ -51,7 +51,8 @@ class RoadmapContentRepositoryTest {
 
         assertAll(
                 () -> assertThat(oldRoadmapContent).isNotEqualTo(expectedRoadmapContent),
-                () -> assertThat(expectedRoadmapContent).usingRecursiveComparison()
+                () -> assertThat(expectedRoadmapContent)
+                        .usingRecursiveComparison()
                         .isEqualTo(newRoadmapContent)
         );
     }

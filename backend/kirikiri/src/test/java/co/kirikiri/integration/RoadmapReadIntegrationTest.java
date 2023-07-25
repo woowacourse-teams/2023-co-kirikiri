@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+@SuppressWarnings("NonAsciiCharacters")
 class RoadmapReadIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
@@ -46,7 +47,6 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final MemberRepository memberRepository;
-    private String accessToken;
 
     public RoadmapReadIntegrationTest(final MemberRepository memberRepository,
                                       final RoadmapRepository roadmapRepository,
@@ -139,7 +139,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final PageResponse<RoadmapResponse> pageResponse = given()
                 .log().all()
                 .when()
-                .get("/api/roadmaps?page=1&size=10&filterType=LATEST&categoryId=" + travelCategory.getId())
+                .get("/api/roadmaps?page=1&size=10&filterCond=LATEST&categoryId=" + travelCategory.getId())
                 .then().log().all()
                 .extract()
                 .response()
@@ -149,10 +149,10 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         // then
         final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(savedFirstRoadmap.getId(), "첫 번째 로드맵",
                 "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+                new MemberResponse(1L, "nickname"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
         final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(savedSecondRoadmap.getId(), "두 번째 로드맵",
                 "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+                new MemberResponse(1L, "nickname"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
                 List.of(secondRoadmapResponse, firstRoadmapResponse));
 
@@ -219,7 +219,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final PageResponse<RoadmapResponse> pageResponse = given()
                 .log().all()
                 .when()
-                .get("/api/roadmaps?page=1&size=10&filterType=LATEST")
+                .get("/api/roadmaps?page=1&size=10&filterCond=LATEST")
                 .then().log().all()
                 .extract()
                 .response()
@@ -229,13 +229,13 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         // then
         final RoadmapResponse firstRoadmapResponse = new RoadmapResponse(savedFirstRoadmap.getId(), "첫 번째 로드맵",
                 "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+                new MemberResponse(1L, "nickname"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
         final RoadmapResponse secondRoadmapResponse = new RoadmapResponse(savedSecondRoadmap.getId(), "두 번째 로드맵",
                 "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
+                new MemberResponse(1L, "nickname"), new RoadmapCategoryResponse(travelCategory.getId(), "여행"));
         final RoadmapResponse thirdRoadmapResponse = new RoadmapResponse(thirdSecondRoadmap.getId(), "세 번째 로드맵",
                 "로드맵 소개글", "NORMAL", 10,
-                new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(gameCategory.getId(), "게임"));
+                new MemberResponse(1L, "nickname"), new RoadmapCategoryResponse(gameCategory.getId(), "게임"));
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
                 List.of(thirdRoadmapResponse, secondRoadmapResponse, firstRoadmapResponse));
 
@@ -366,7 +366,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     private Roadmap 로드맵을_생성한다(final RoadmapCategory category) {
         final AuthenticationResponse authenticationResponse = 로그인(new LoginRequest(IDENTIFIER, PASSWORD))
                 .as(AuthenticationResponse.class);
-        accessToken = authenticationResponse.accessToken();
+        final String accessToken = authenticationResponse.accessToken();
 
         final List<RoadmapNodeSaveRequest> nodes = List.of(
                 new RoadmapNodeSaveRequest("노드 제목 1", "노드 내용 1"),

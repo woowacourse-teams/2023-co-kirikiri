@@ -7,8 +7,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -42,14 +40,15 @@ class GoalRoomServiceTest {
     private GoalRoomRepository goalRoomRepository;
 
     @InjectMocks
-    GoalRoomService goalRoomService;
+    private GoalRoomService goalRoomService;
 
     @Test
     void 골룸에_참가한다() {
         //given
         final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
         final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
+        final int limitedMemberCount = 20;
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
         final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
@@ -69,7 +68,7 @@ class GoalRoomServiceTest {
     void 골룸_참가_요청시_유효한_사용자_아이디가_아니면_예외가_발생한다() {
         //given
         when(memberRepository.findByIdentifier(any()))
-                .thenThrow(new AuthenticationException("존재하지 않는 회원입니다."));
+                .thenReturn(Optional.empty());
 
         //when, then
         assertThatThrownBy(() -> goalRoomService.join("identifier2", 1L))
@@ -85,7 +84,7 @@ class GoalRoomServiceTest {
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
         when(goalRoomRepository.findById(anyLong()))
-                .thenThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"));
+                .thenReturn(Optional.empty());
 
         //when, then
         assertThatThrownBy(() -> goalRoomService.join("identifier1", 1L))
@@ -98,7 +97,8 @@ class GoalRoomServiceTest {
         //given
         final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
         final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 1);
+        final int limitedMemberCount = 1;
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
         final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
@@ -117,7 +117,8 @@ class GoalRoomServiceTest {
         //given
         final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
         final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
+        final int limitedMemberCount = 20;
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
         final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
         goalRoom.updateStatus(GoalRoomStatus.RUNNING);
 
@@ -142,11 +143,6 @@ class GoalRoomServiceTest {
 
     private GoalRoom 골룸을_생성한다(final Member creator, final RoadmapContent roadmapContent,
                               final Integer limitedMemberCount) {
-        return new GoalRoom(
-                "골룸 이름",
-                new LimitedMemberCount(limitedMemberCount),
-                roadmapContent,
-                new GoalRoomPendingMember(creator, GoalRoomRole.LEADER)
-        );
+        return new GoalRoom("골룸 이름", new LimitedMemberCount(limitedMemberCount), roadmapContent, creator);
     }
 }

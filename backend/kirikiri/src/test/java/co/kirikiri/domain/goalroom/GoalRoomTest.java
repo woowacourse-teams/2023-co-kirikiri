@@ -1,6 +1,5 @@
 package co.kirikiri.domain.goalroom;
 
-import static co.kirikiri.domain.goalroom.GoalRoomRole.LEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -22,29 +21,29 @@ class GoalRoomTest {
     void 골룸에_사용자를_추가한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom("골룸 이름", new LimitedMemberCount(10), new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"), LEADER));
-        final GoalRoomPendingMember member = new GoalRoomPendingMember(사용자를_생성한다("identifier2", "팔로워"),
-                GoalRoomRole.FOLLOWER);
+                사용자를_생성한다("identifier1", "시진이"));
+        final Member member = 사용자를_생성한다("identifier2", "팔로워");
 
         //when
-        goalRoom.addMember(member);
+        goalRoom.join(member);
 
         //then
         final Integer currentMemberCount = goalRoom.getCurrentMemberCount();
-        assertThat(currentMemberCount).isEqualTo(2);
+        assertThat(currentMemberCount)
+                .isEqualTo(2);
     }
 
     @Test
     void 모집중이_아닌_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom("골룸 이름", new LimitedMemberCount(10), new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"), LEADER));
+                사용자를_생성한다("identifier1", "시진이"));
         goalRoom.updateStatus(GoalRoomStatus.RUNNING);
-        final GoalRoomPendingMember member = new GoalRoomPendingMember(사용자를_생성한다("identifier2", "팔로워"),
-                GoalRoomRole.FOLLOWER);
+        final Member member = 사용자를_생성한다("identifier2", "팔로워");
 
         //when, then
-        assertThatThrownBy(() -> goalRoom.addMember(member)).isInstanceOf(BadRequestException.class)
+        assertThatThrownBy(() -> goalRoom.join(member))
+                .isInstanceOf(BadRequestException.class)
                 .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
     }
 
@@ -52,12 +51,12 @@ class GoalRoomTest {
     void 제한_인원이_가득_찬_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom("골룸 이름", new LimitedMemberCount(1), new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMember(사용자를_생성한다("identifier1", "시진이"), LEADER));
-        final GoalRoomPendingMember member = new GoalRoomPendingMember(사용자를_생성한다("identifier2", "팔로워"),
-                GoalRoomRole.FOLLOWER);
+                사용자를_생성한다("identifier1", "시진이"));
+        final Member member = 사용자를_생성한다("identifier2", "팔로워");
 
         //when,then
-        assertThatThrownBy(() -> goalRoom.addMember(member)).isInstanceOf(BadRequestException.class)
+        assertThatThrownBy(() -> goalRoom.join(member))
+                .isInstanceOf(BadRequestException.class)
                 .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
     }
 
@@ -65,12 +64,12 @@ class GoalRoomTest {
     void 이미_참여_중인_사용자를_골룸에_추가하면_예외가_발생한다() {
         //given
         final Member member = 사용자를_생성한다("identifier1", "시진이");
-        final GoalRoom goalRoom = new GoalRoom("골룸 이름", new LimitedMemberCount(2), new RoadmapContent("로드맵 내용"),
-                new GoalRoomPendingMember(member, GoalRoomRole.LEADER));
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(member, GoalRoomRole.FOLLOWER);
+        final GoalRoom goalRoom = new GoalRoom("골룸 이름", new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
 
         //when,then
-        assertThatThrownBy(() -> goalRoom.addMember(goalRoomPendingMember)).isInstanceOf(BadRequestException.class)
+        assertThatThrownBy(() -> goalRoom.join(member))
+                .isInstanceOf(BadRequestException.class)
                 .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
     }
 

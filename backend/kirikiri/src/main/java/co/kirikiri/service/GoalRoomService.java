@@ -1,8 +1,6 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.exception.AuthenticationException;
@@ -25,8 +23,7 @@ public class GoalRoomService {
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
         final GoalRoom goalRoom = findById(goalRoomId);
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(member, GoalRoomRole.FOLLOWER);
-        goalRoom.addMember(goalRoomPendingMember);
+        goalRoom.join(member);
     }
 
     private Member findMemberByIdentifier(final String identifier) {

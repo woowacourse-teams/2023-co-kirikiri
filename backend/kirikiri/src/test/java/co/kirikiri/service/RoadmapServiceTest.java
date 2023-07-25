@@ -155,7 +155,7 @@ class RoadmapServiceTest {
 
         //when
         when(roadmapRepository.findById(anyLong()))
-                .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1L"));
+                .thenReturn(Optional.empty());
 
         //then
         assertThatThrownBy(() -> roadmapService.findRoadmap(1L))
@@ -166,7 +166,7 @@ class RoadmapServiceTest {
     void 로드맵_목록_조회시_카테고리_아이디가_유효하지_않으면_예외가_발생한다() {
         // given
         when(roadmapCategoryRepository.findById(any()))
-                .thenThrow(new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 1L"));
+                .thenReturn(Optional.empty());
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
@@ -206,9 +206,7 @@ class RoadmapServiceTest {
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
                 List.of(firstRoadmapResponse, secondRoadmapResponse));
 
-        assertThat(roadmapPageResponses)
-                .usingRecursiveComparison()
-                .isEqualTo(expected);
+        assertThat(roadmapPageResponses).isEqualTo(expected);
     }
 
     @Test
@@ -238,9 +236,7 @@ class RoadmapServiceTest {
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1,
                 List.of(firstRoadmapResponse, secondRoadmapResponse));
 
-        assertThat(roadmapPageResponses)
-                .usingRecursiveComparison()
-                .isEqualTo(expected);
+        assertThat(roadmapPageResponses).isEqualTo(expected);
     }
 
     @Test
@@ -269,9 +265,7 @@ class RoadmapServiceTest {
                 new RoadmapCategoryResponse(1, "여행"));
         final PageResponse<RoadmapResponse> expected = new PageResponse<>(1, 1, List.of(roadmapResponse));
 
-        assertThat(roadmapPageResponses)
-                .usingRecursiveComparison()
-                .isEqualTo(expected);
+        assertThat(roadmapPageResponses).isEqualTo(expected);
     }
 
     @Test
@@ -286,9 +280,8 @@ class RoadmapServiceTest {
 
         // then
         final List<RoadmapCategoryResponse> expected = 로드맵_카테고리_응답_리스트를_반환한다();
-        assertThat(categoryResponses)
-                .usingRecursiveComparison()
-                .isEqualTo(expected);
+
+        assertThat(categoryResponses).isEqualTo(expected);
     }
 
     private Member 사용자를_생성한다() {

@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -17,14 +18,14 @@ public class GoalRoomRoadmapNodes {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private List<GoalRoomRoadmapNode> values;
+    private final List<GoalRoomRoadmapNode> values = new ArrayList<>();
 
     public GoalRoomRoadmapNodes(final List<GoalRoomRoadmapNode> nodes) {
-        this.values = nodes;
+        this.values.addAll(new ArrayList<>(nodes));
     }
 
     public void addAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.values.addAll(goalRoomRoadmapNodes.getValues());
+        values.addAll(new ArrayList<>(goalRoomRoadmapNodes.getValues()));
     }
 
     public List<GoalRoomRoadmapNode> getValues() {

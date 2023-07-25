@@ -1,5 +1,6 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.GoalRoomService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class GoalRoomController {
 
     private final GoalRoomService goalRoomService;
 
+    @Authenticated
     @PostMapping("/{goalRoomId}/join")
     public ResponseEntity<Void> joinGoalRoom(@MemberIdentifier final String identifier,
                                              @PathVariable final Long goalRoomId) {

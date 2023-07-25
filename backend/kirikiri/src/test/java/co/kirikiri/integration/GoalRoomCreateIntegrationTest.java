@@ -5,10 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -49,6 +47,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+@SuppressWarnings("NonAsciiCharacters")
 class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
@@ -118,7 +117,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         assertAll(
                 () -> assertThat(참가_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
-                () -> assertThat(예외_메시지)
+                () -> assertThat(예외_메시지).contains("존재하지 않는 골룸입니다. goalRoomId = " + 1)
         );
     }
 
@@ -358,8 +357,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private GoalRoom 골룸을_저장한다(final List<RoadmapContent> 로드맵_본문_리스트, final Member 크리에이터, final Integer 제한_인원,
                               final GoalRoomStatus status) {
         final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
-        final GoalRoom 골룸 = new GoalRoom("골룸", new LimitedMemberCount(제한_인원), 로드맵_본문,
-                new GoalRoomPendingMember(크리에이터, GoalRoomRole.LEADER));
+        final GoalRoom 골룸 = new GoalRoom("골룸", new LimitedMemberCount(제한_인원), 로드맵_본문, 크리에이터);
         final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
 
         final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);

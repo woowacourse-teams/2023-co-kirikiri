@@ -1,6 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomPendingMembers {
 

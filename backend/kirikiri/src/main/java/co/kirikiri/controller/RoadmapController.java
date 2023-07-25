@@ -37,22 +37,21 @@ public class RoadmapController {
         return ResponseEntity.created(URI.create("/api/roadmaps/" + id)).build();
     }
 
+    @GetMapping
+    public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
+            @RequestParam(value = "categoryId", required = false) final Long categoryId,
+            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest roadmapFilterTypeRequest,
+            @ModelAttribute final CustomPageRequest pageRequest
+    ) {
+        final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
+                categoryId, roadmapFilterTypeRequest, pageRequest);
+        return ResponseEntity.ok(roadmapPageResponse);
+    }
+
     @GetMapping("/{roadmapId}")
     public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
         final RoadmapResponse response = roadmapService.findRoadmap(roadmapId);
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping
-    public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
-            @RequestParam(value = "categoryId", required = false) final Long categoryId,
-            @RequestParam(value = "roadmapFilterTypeRequest", required = false) final RoadmapFilterTypeRequest roadmapFilterTypeRequest,
-            @ModelAttribute final CustomPageRequest pageRequest
-    ) {
-        final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
-                categoryId,
-                roadmapFilterTypeRequest, pageRequest);
-        return ResponseEntity.ok(roadmapPageResponse);
     }
 
     @GetMapping("/categories")

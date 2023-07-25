@@ -77,7 +77,6 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         });
 
         assertThat(roadmapResponse)
-                .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
     }
 
@@ -150,7 +149,6 @@ class RoadmapReadApiTest extends ControllerTestHelper {
 
         final PageResponse<RoadmapResponse> 예상되는_로드맵_페이지_응답 = 로드맵_페이지_응답을_생성한다();
         assertThat(응답값으로_생성한_로드맵_페이지)
-                .usingRecursiveComparison()
                 .isEqualTo(예상되는_로드맵_페이지_응답);
     }
 
@@ -211,7 +209,6 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 });
 
         assertThat(roadmapCategoryResponses)
-                .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
 

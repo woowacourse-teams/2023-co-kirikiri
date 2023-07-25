@@ -92,17 +92,19 @@ class RoadmapRepositoryTest {
         assertAll(
                 () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(2),
                 () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
+                () -> assertThat(firstPageRoadmaps.getContent()).hasSize(2),
 
                 () -> assertThat(secondPageRoadmaps.getTotalPages()).isEqualTo(2),
                 () -> assertThat(secondPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(secondPageRoadmaps.getContent().size()).isEqualTo(1),
+                () -> assertThat(secondPageRoadmaps.getContent()).hasSize(1),
 
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps.getContent())
+                        .usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(travelRoadmap, gameRoadmap2)),
 
-                () -> assertThat(secondPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(secondPageRoadmaps.getContent())
+                        .usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap))
         );
@@ -133,8 +135,9 @@ class RoadmapRepositoryTest {
         assertAll(
                 () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(1),
                 () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps.getContent()).hasSize(2),
+                () -> assertThat(firstPageRoadmaps.getContent())
+                        .usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
         );

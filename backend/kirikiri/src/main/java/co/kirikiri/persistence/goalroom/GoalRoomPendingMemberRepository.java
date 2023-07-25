@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomPendingMember, Long> {
 
-    public List<GoalRoomPendingMember> findAllByGoalRoom(final GoalRoom goalRoom);
+    List<GoalRoomPendingMember> findByGoalRoom(final GoalRoom goalRoom);
 }

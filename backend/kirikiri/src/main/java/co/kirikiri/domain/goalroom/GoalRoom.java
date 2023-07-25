@@ -1,6 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
@@ -42,14 +43,8 @@ public class GoalRoom extends BaseTimeEntity {
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     private RoadmapContent roadmapContent;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true)
-    @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
-
     @Embedded
-    private GoalRoomRoadmapNodes goalRoomRoadmapNodes;
+    private GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     @Embedded
     private GoalRoomMembers goalRoomMembers;
@@ -57,35 +52,47 @@ public class GoalRoom extends BaseTimeEntity {
     @Embedded
     private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
 
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
+    @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
+    private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
+
     public GoalRoom(final String name, final LimitedMemberCount limitedMemberCount,
-                    final RoadmapContent roadmapContent, final GoalRoomPendingMember goalRoomPendingMember) {
-        this(null, name, limitedMemberCount, roadmapContent, goalRoomPendingMember);
+                    final RoadmapContent roadmapContent, final Member member) {
+        this(null, name, limitedMemberCount, roadmapContent, member);
     }
 
     public GoalRoom(final Long id, final String name, final LimitedMemberCount limitedMemberCount,
-                    final RoadmapContent roadmapContent, final GoalRoomPendingMember goalRoomPendingMember) {
+                    final RoadmapContent roadmapContent, final Member member) {
         this.id = id;
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
         this.roadmapContent = roadmapContent;
-        goalRoomPendingMembers.add(goalRoomPendingMember);
-        goalRoomPendingMember.updateGoalRoom(this);
+        setLeader(member);
+    }
+
+    private void setLeader(final Member member) {
+        final GoalRoomPendingMember leader = new GoalRoomPendingMember(member, GoalRoomRole.LEADER);
+        leader.updateGoalRoom(this);
+        goalRoomPendingMembers.add(leader);
     }
 
     public void updateStatus(final GoalRoomStatus status) {
         this.status = status;
     }
 
-    public void addMember(final GoalRoomPendingMember member) {
-        validateJoinGoalRoom(member);
-        goalRoomPendingMembers.add(member);
-        member.updateGoalRoom(this);
+    public void join(final Member member) {
+        final GoalRoomPendingMember newMember = new GoalRoomPendingMember(member, GoalRoomRole.FOLLOWER);
+        validateJoinGoalRoom(newMember);
+        newMember.updateGoalRoom(this);
+        goalRoomPendingMembers.add(newMember);
     }
 
     private void validateJoinGoalRoom(final GoalRoomPendingMember member) {
         validateMemberCount();
         validateStatus();
-        validateParticipation(member);
+        validateAlreadyParticipated(member);
     }
 
     private void validateMemberCount() {
@@ -95,19 +102,19 @@ public class GoalRoom extends BaseTimeEntity {
     }
 
     private void validateStatus() {
-        if (!status.equals(GoalRoomStatus.RECRUITING)) {
+        if (status != GoalRoomStatus.RECRUITING) {
             throw new BadRequestException("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
         }
     }
 
-    private void validateParticipation(final GoalRoomPendingMember member) {
+    private void validateAlreadyParticipated(final GoalRoomPendingMember member) {
         if (goalRoomPendingMembers.contains(member)) {
             throw new BadRequestException("이미 참여한 골룸에는 참여할 수 없습니다.");
         }
     }
 
     public void addGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.goalRoomRoadmapNodes = goalRoomRoadmapNodes;
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
     }
 
     public Long getId() {
