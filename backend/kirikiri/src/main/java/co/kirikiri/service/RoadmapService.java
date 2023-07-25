@@ -17,8 +17,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import co.kirikiri.service.dto.CustomPageRequest;
-import co.kirikiri.service.dto.PageResponse;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
@@ -30,8 +29,6 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,20 +110,19 @@ public class RoadmapService {
     }
 
     private Roadmap findRoadmapById(final Long id) {
-        return roadmapRepository.findById(id)
+        return roadmapRepository.findRoadmapById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-    public PageResponse<RoadmapForListResponse> findRoadmapsByFilterType(final Long categoryId,
-                                                                         final RoadmapFilterTypeRequest filterType,
-                                                                         final CustomPageRequest pageRequest) {
+    public List<RoadmapForListResponse> findRoadmapsByFilterType(final Long categoryId,
+                                                                 final RoadmapFilterTypeRequest filterType,
+                                                                 final CustomScrollRequest scrollRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
 
-        final PageRequest generatedPageRequest = PageRequest.of(pageRequest.page(), pageRequest.size());
-        final Page<Roadmap> roadmapPages = roadmapRepository.findRoadmapPagesByCond(category, orderType,
-                generatedPageRequest);
-        return RoadmapMapper.convertRoadmapPageResponse(roadmapPages, pageRequest);
+        final List<Roadmap> roadmapPages = roadmapRepository.findRoadmapPagesByCond(category, orderType,
+                scrollRequest.lastId(), scrollRequest.size());
+        return RoadmapMapper.convertRoadmapPageResponse(roadmapPages);
     }
 
     private RoadmapCategory findCategoryById(final Long categoryId) {

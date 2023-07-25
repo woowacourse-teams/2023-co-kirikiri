@@ -14,4 +14,5 @@ public record RoadmapResponse(
         int recommendedRoadmapPeriod,
         List<RoadmapTagResponse> tags
 ) {
+
 }

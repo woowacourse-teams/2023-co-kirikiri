@@ -2,8 +2,7 @@ package co.kirikiri.controller;
 
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapService;
-import co.kirikiri.service.dto.CustomPageRequest;
-import co.kirikiri.service.dto.PageResponse;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
@@ -44,13 +43,13 @@ public class RoadmapController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<RoadmapForListResponse>> findRoadmapsByFilterType(
+    public ResponseEntity<List<RoadmapForListResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
             @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest roadmapFilterTypeRequest,
-            @ModelAttribute final CustomPageRequest pageRequest
+            @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
-        final PageResponse<RoadmapForListResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
-                categoryId, roadmapFilterTypeRequest, pageRequest);
+        final List<RoadmapForListResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
+                categoryId, roadmapFilterTypeRequest, scrollRequest);
         return ResponseEntity.ok(roadmapPageResponse);
     }
 

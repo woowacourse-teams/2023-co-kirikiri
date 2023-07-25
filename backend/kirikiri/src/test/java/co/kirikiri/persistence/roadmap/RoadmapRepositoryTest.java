@@ -20,8 +20,6 @@ import co.kirikiri.persistence.member.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 @RepositoryTest
 class RoadmapRepositoryTest {
@@ -80,30 +78,23 @@ class RoadmapRepositoryTest {
 
         final RoadmapCategory category = null;
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final PageRequest firstPage = PageRequest.of(0, 2);
-        final PageRequest secondPage = PageRequest.of(1, 2);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
-                firstPage);
-        final Page<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
-                secondPage);
+        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
+                null, 2);
+        final List<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
+                gameRoadmap2.getId(), 2);
 
         // then
         assertAll(
-                () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
+                () -> assertThat(firstPageRoadmaps.size()).isEqualTo(2),
+                () -> assertThat(secondPageRoadmaps.size()).isEqualTo(1),
 
-                () -> assertThat(secondPageRoadmaps.getTotalPages()).isEqualTo(2),
-                () -> assertThat(secondPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(secondPageRoadmaps.getContent().size()).isEqualTo(1),
-
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(travelRoadmap, gameRoadmap2)),
 
-                () -> assertThat(secondPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(secondPageRoadmaps).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap))
         );
@@ -124,18 +115,15 @@ class RoadmapRepositoryTest {
         roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, deletedGameRoadmap));
 
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final PageRequest firstPage = PageRequest.of(0, 10);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(gameCategory, orderType,
-                firstPage);
+        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(gameCategory, orderType,
+                null, 10);
 
         // then
         assertAll(
-                () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(1),
-                () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps.size()).isEqualTo(2),
+                () -> assertThat(firstPageRoadmaps).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
         );

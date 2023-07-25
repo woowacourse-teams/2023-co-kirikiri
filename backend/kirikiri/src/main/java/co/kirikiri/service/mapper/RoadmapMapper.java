@@ -9,8 +9,6 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
-import co.kirikiri.service.dto.CustomPageRequest;
-import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
@@ -28,7 +26,6 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -104,14 +101,10 @@ public final class RoadmapMapper {
                 .toList();
     }
 
-    public static PageResponse<RoadmapForListResponse> convertRoadmapPageResponse(final Page<Roadmap> roadmapPages,
-                                                                                  final CustomPageRequest pageRequest) {
-        final int currentPage = pageRequest.getOriginPage();
-        final int totalPages = roadmapPages.getTotalPages();
-        final List<RoadmapForListResponse> roadmapResponses = roadmapPages.getContent()
-                .stream().map(RoadmapMapper::convertRoadmapResponse)
+    public static List<RoadmapForListResponse> convertRoadmapPageResponse(final List<Roadmap> roadmaps) {
+        return roadmaps.stream()
+                .map(RoadmapMapper::convertRoadmapResponse)
                 .toList();
-        return new PageResponse<>(currentPage, totalPages, roadmapResponses);
     }
 
     private static RoadmapForListResponse convertRoadmapResponse(final Roadmap roadmap) {
@@ -119,8 +112,8 @@ public final class RoadmapMapper {
         final RoadmapCategoryResponse categoryResponse = new RoadmapCategoryResponse(category.getId(),
                 category.getName());
         final Member creator = roadmap.getCreator();
-        final MemberResponse creatorResponse = new MemberResponse(creator.getId(),
-                creator.getNickname().getValue());
+        final MemberResponse creatorResponse = new MemberResponse(creator.getId(), creator.getNickname().getValue());
+        final List<RoadmapTagResponse> roadmapTagResponses = convertRoadmapTagResponses(roadmap.getTags());
 
         return new RoadmapForListResponse(
                 roadmap.getId(),
@@ -129,7 +122,8 @@ public final class RoadmapMapper {
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
                 creatorResponse,
-                categoryResponse
+                categoryResponse,
+                roadmapTagResponses
         );
     }
 
