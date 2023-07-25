@@ -1,8 +1,5 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.integration.helper.IntegrationTest;
@@ -24,13 +21,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class GoalRoomIntegrationTest extends IntegrationTest {
 
@@ -44,6 +46,7 @@ class GoalRoomIntegrationTest extends IntegrationTest {
     private static final String 카테고리_이름 = "여가";
     private static final LocalDate 오늘 = LocalDate.now();
     private static final LocalDate 십일_후 = 오늘.plusDays(10L);
+    private static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
 
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
@@ -64,7 +67,7 @@ class GoalRoomIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
 
         //when

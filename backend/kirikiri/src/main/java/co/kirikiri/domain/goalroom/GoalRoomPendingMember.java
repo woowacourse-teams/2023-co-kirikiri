@@ -2,22 +2,14 @@ package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.ServerException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
-import java.util.Objects;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -85,9 +77,5 @@ public class GoalRoomPendingMember {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public Member getMember() {
-        return member;
     }
 }

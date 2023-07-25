@@ -2,9 +2,11 @@ package co.kirikiri.domain.goalroom.vo;
 
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LimitedMemberCount {
 

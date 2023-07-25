@@ -1,10 +1,7 @@
 package co.kirikiri.service;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
+import co.kirikiri.domain.goalroom.*;
+import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.RoadmapContent;
@@ -18,10 +15,11 @@ import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +57,7 @@ public class GoalRoomService {
 
     private GoalRoomRoadmapNodes makeGoalRoomRoadmapNodes(final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos, final RoadmapContent roadmapContent) {
         final List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = goalRoomRoadmapNodeDtos.stream()
-                .map(it -> new GoalRoomRoadmapNode(it.startDate(), it.endDate(), it.checkCount(), findRoadmapNode(roadmapContent, it.roadmapNodeId())))
+                .map(it -> new GoalRoomRoadmapNode(new Period(it.startDate(), it.endDate()), it.checkCount(), findRoadmapNode(roadmapContent, it.roadmapNodeId())))
                 .toList();
         return new GoalRoomRoadmapNodes(goalRoomRoadmapNodes);
     }

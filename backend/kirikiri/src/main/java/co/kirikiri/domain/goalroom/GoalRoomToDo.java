@@ -2,12 +2,8 @@ package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseTimeEntity;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDate;
+import co.kirikiri.domain.goalroom.vo.Period;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -22,18 +18,16 @@ public class GoalRoomToDo extends BaseTimeEntity {
     @Embedded
     private GoalRoomTodoContent content;
 
-    private LocalDate startDate;
+    @Embedded
+    private Period period;
 
-    private LocalDate endDate;
-
-    public GoalRoomToDo(final GoalRoomTodoContent content, final LocalDate startDate, final LocalDate endDate) {
-        this(null, content, startDate, endDate);
+    public GoalRoomToDo(final GoalRoomTodoContent content, final Period period) {
+        this(null, content, period);
     }
 
-    private GoalRoomToDo(final Long id, final GoalRoomTodoContent content, final LocalDate startDate, final LocalDate endDate) {
+    public GoalRoomToDo(final Long id, final GoalRoomTodoContent content, final Period period) {
         this.id = id;
         this.content = content;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.period = period;
     }
 }

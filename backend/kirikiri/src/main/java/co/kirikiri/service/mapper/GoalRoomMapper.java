@@ -4,6 +4,7 @@ import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
+import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
@@ -28,7 +29,7 @@ public class GoalRoomMapper {
 
     private static GoalRoomToDo makeGoalRoomToDo(final GoalRoomTodoRequest goalRoomTodoRequest) {
         return new GoalRoomToDo(new GoalRoomTodoContent(goalRoomTodoRequest.content()),
-                goalRoomTodoRequest.startDate(), goalRoomTodoRequest.endDate());
+                new Period(goalRoomTodoRequest.startDate(), goalRoomTodoRequest.endDate()));
     }
 
     private static List<GoalRoomRoadmapNodeDto> makeGoalRoomRoadmapNodeDtos(final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests) {

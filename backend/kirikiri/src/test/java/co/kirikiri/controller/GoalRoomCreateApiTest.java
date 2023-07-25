@@ -1,15 +1,5 @@
 package co.kirikiri.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.BadRequestException;
@@ -21,9 +11,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,10 +20,26 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomCreateApiTest extends ControllerTestHelper {
 
     private static final String IDENTIFIER = "identifier1";
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
 
     @MockBean
     private GoalRoomService goalRoomService;
@@ -48,8 +51,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 정상적으로_골룸을_생성한다() throws Exception {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", LocalDate.MIN, LocalDate.MAX),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, LocalDate.MIN, LocalDate.MAX))));
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
         given(goalRoomService.create(any(), any()))
                 .willReturn(1L);
@@ -102,8 +105,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 골룸_생성_시_로드맵이_존재하지_않을_경우() throws Exception {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", LocalDate.MIN, LocalDate.MAX),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 20, LocalDate.MIN, LocalDate.MAX))));
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new NotFoundException("존재하지 않는 로드맵입니다."))
                 .when(goalRoomService)
@@ -124,8 +127,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 골룸_생성_시_로드맵의_노드_크기와_요청의_노드_크기가_일치하지_않을_경우() throws Exception {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", LocalDate.MIN, LocalDate.MAX),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 20, LocalDate.MIN, LocalDate.MAX))));
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("모든 노드에 대해 기간이 설정 돼야합니다."))
                 .when(goalRoomService)
@@ -146,8 +149,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 골룸_생성_시_로드맵에_존재하지_않는_노드일_경우() throws Exception {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", LocalDate.MIN, LocalDate.MAX),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 20, LocalDate.MIN, LocalDate.MAX))));
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new NotFoundException("로드맵에 존재하지 않는 노드입니다."))
                 .when(goalRoomService)
@@ -168,8 +171,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 골룸_생성_시_존재하지_않는_회원일_경우() throws Exception {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", LocalDate.MIN, LocalDate.MAX),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 20, LocalDate.MIN, LocalDate.MAX))));
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new NotFoundException("존재하지 않는 회원입니다."))
                 .when(goalRoomService)
@@ -181,6 +184,138 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
         //then
         final ErrorResponse expectedResponse = new ErrorResponse("존재하지 않는 회원입니다.");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 골룸_생성_시_골룸_투두의_시작_날짜보다_종료_날짜가_빠른_경우() throws Exception {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TEN_DAY_LATER, TODAY),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new BadRequestException("시작일은 종료일보다 후일 수 없습니다."))
+                .when(goalRoomService)
+                .create(any(), any());
+
+        //when
+        final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isBadRequest())
+                .andReturn();
+
+        //then
+        final ErrorResponse expectedResponse = new ErrorResponse("시작일은 종료일보다 후일 수 없습니다.");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 골룸_생성_시_골룸_투두의_시작_날짜가_오늘보다_전일_경우() throws Exception {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TODAY.minusDays(10), TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new BadRequestException("시작일은 오늘보다 전일 수 없습니다."))
+                .when(goalRoomService)
+                .create(any(), any());
+
+        //when
+        final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isBadRequest())
+                .andReturn();
+
+        //then
+        final ErrorResponse expectedResponse = new ErrorResponse("시작일은 오늘보다 전일 수 없습니다.");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 골룸_생성_시_골룸_노드의_시작_날짜보다_종료_날짜가_빠른_경우() throws Exception {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TEN_DAY_LATER, TODAY))));
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new BadRequestException("시작일은 종료일보다 후일 수 없습니다."))
+                .when(goalRoomService)
+                .create(any(), any());
+
+        //when
+        final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isBadRequest())
+                .andReturn();
+
+        //then
+        final ErrorResponse expectedResponse = new ErrorResponse("시작일은 종료일보다 후일 수 없습니다.");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 골룸_생성_시_골룸_노드의_시작_날짜가_오늘보다_전일_경우() throws Exception {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY.minusDays(10), TEN_DAY_LATER))));
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new BadRequestException("시작일은 오늘보다 전일 수 없습니다."))
+                .when(goalRoomService)
+                .create(any(), any());
+
+        //when
+        final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isBadRequest())
+                .andReturn();
+
+        //then
+        final ErrorResponse expectedResponse = new ErrorResponse("시작일은 오늘보다 전일 수 없습니다.");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 골룸_생성_시_골룸_노드의_인증_횟수가_0보다_작을_경우() throws Exception {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 0, TODAY, TEN_DAY_LATER))));
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new BadRequestException("시골름 노드의 인증 횟수는 0보다 커야합니다."))
+                .when(goalRoomService)
+                .create(any(), any());
+
+        //when
+        final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isBadRequest())
+                .andReturn();
+
+        //then
+        final ErrorResponse expectedResponse = new ErrorResponse("시골름 노드의 인증 횟수는 0보다 커야합니다.");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 골룸_생성_시_골룸_노드의_인증_횟수가_기간보다_클_경우() throws Exception {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 11, TODAY, TEN_DAY_LATER))));
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new BadRequestException("골름 노드의 인증 횟수가 설정 기간보다 클 수 없습니다."))
+                .when(goalRoomService)
+                .create(any(), any());
+
+        //when
+        final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isBadRequest())
+                .andReturn();
+
+        //then
+        final ErrorResponse expectedResponse = new ErrorResponse("골름 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(expectedResponse);
