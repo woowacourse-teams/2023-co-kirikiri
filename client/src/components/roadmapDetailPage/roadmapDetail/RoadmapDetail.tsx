@@ -1,9 +1,5 @@
 import type { RoadmapItemType } from '@myTypes/roadmap';
 
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
-import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
-import { getRoadmapById } from '@apis/roadmap';
 import RoadmapItem from '../../_common/roadmapItem/RoadmapItem';
 import OpenNodeListButton from '../openNodeListButton/OpenNodeListButton';
 import Button from '../../_common/button/Button';
@@ -27,18 +23,6 @@ const DummyData: RoadmapItemType = {
 };
 
 const RoadmapDetail = () => {
-  const { id } = useParams();
-
-  const { data } = useQuery(
-    [QUERY_KEYS.roadmap.list, id],
-    () => (id ? getRoadmapById(id) : null),
-    {
-      enabled: !!id,
-    }
-  );
-
-  console.log(data);
-
   return (
     <S.RoadmapDetail>
       <S.PageOnTop>

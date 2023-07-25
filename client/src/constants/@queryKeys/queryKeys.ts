@@ -3,8 +3,8 @@ const QUERY_KEYS = {
     user: 'user',
   },
   roadmap: {
-    list: ['roadmapList'],
-    detail: ['roadmapDetail'],
+    list: 'roadmapList',
+    detail: 'roadmapDetail',
   },
 } as const;
 
