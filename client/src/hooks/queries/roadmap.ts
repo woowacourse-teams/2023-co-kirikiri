@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
 import { getRoadmapById, getRoadmapList } from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 import { CategoriesInfo } from '@constants/roadmap/category';
+import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 
 export const useRoadmapList = (
   categoryId?: keyof typeof CategoriesInfo,
@@ -9,13 +9,13 @@ export const useRoadmapList = (
   size = 10,
   filterCond = 'LATEST'
 ) => {
-  return useQuery(['roadmapList', categoryId, page, size, filterCond], () =>
+  return useSuspendedQuery(['roadmapList', categoryId, page, size, filterCond], () =>
     getRoadmapList(categoryId, page, size, filterCond)
   );
 };
 
 export const useRoadmapDetail = (id: string) => {
-  return useQuery(
+  return useSuspendedQuery(
     [QUERY_KEYS.roadmap.detail, id],
     () => (id ? getRoadmapById(id) : null),
     {

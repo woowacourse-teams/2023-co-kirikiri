@@ -6,7 +6,6 @@ import { ThemeProvider } from 'styled-components';
 import ResponsiveContainer from '@components/_common/responsiveContainer/ResponsiveContainer';
 import SignUpPage from '@pages/signUpPage/SignUpPage';
 import LoginPage from '@pages/loginPage/LoginPage';
-import RoadmapCreatePage from './pages/roadmapCreatePage/roadmapCreatePage';
 import PageLayout from '@components/_common/pageLayout/PageLayout';
 import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
 import GoalRoomListPage from '@components/goalRommListPage/GoalRoomListPage';
@@ -14,6 +13,7 @@ import MainPage from '@components/mainPage/MainPage';
 import GoalRoomDashboardPage from '@pages/goalRoomDashboardPage/GoalRoomDashboardPage';
 import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
+import RoadmapCreatePage from '@pages/roadmapCreatePage/roadmapCreatePage';
 
 const App = () => {
   return (

@@ -20,7 +20,6 @@ module.exports = merge(common, {
       new TerserPlugin({
         parallel: true,
       }),
-      new OptimizeCSSAssetsPlugin({}),
     ],
   },
 

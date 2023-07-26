@@ -1,4 +1,4 @@
-import type { RoadmapItemType } from '@myTypes/roadmap';
+import type { RoadmapItemType } from '@myTypes/roadmap/internal';
 
 import RoadmapItem from '../../_common/roadmapItem/RoadmapItem';
 import OpenNodeListButton from '../openNodeListButton/OpenNodeListButton';

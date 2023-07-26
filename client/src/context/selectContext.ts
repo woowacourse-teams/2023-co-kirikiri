@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { SelectContextType } from '@/types/_common/select';
+import { SelectContextType } from '@/myTypes/_common/select';
 
 export const SelectContext = createContext<SelectContextType>({
   isSelecBoxOpen: false,

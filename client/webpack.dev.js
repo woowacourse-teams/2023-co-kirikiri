@@ -11,7 +11,7 @@ module.exports = merge(common, {
   plugins: [new ReactRefreshWebpackPlugin()],
 
   devServer: {
-    static: path.resolve(__dirname, 'dist'),
+    static: path.resolve(__dirname, 'public'),
     compress: true,
     port: 3000,
     historyApiFallback: true,

@@ -28,3 +28,8 @@ export type RoadmapListResponseType = {
   totalPage: number;
   data: RoadmapItemType[];
 };
+
+export type PatternType = {
+  rule: RegExp;
+  message: string;
+};

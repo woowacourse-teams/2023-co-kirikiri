@@ -1,5 +1,5 @@
-import { PatternType } from '@/myTypes/roadmap/roadmapCreate';
 import { ChangeEvent, useState } from 'react';
+import { PatternType } from '@myTypes/roadmap/internal';
 
 export const useValidateInput = (pattern: PatternType) => {
   const { rule, message } = pattern;

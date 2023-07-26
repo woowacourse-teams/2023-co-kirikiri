@@ -11,7 +11,7 @@ import {
   SelectBoxProps,
   SelectContextType,
   TriggerProps,
-} from '@/types/_common/select';
+} from '@/myTypes/_common/select';
 import { useSelect } from '@/hooks/_common/useSelect';
 import { SelectContext } from '@/context/selectContext';
 import { S } from './selectBox.styles';
