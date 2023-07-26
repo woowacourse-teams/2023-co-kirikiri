@@ -3,11 +3,11 @@ import { useValidateInput } from '@/hooks/_common/useValidateInput';
 import InputField from '../input/inputField/inputField';
 import * as S from './roadmap.styles';
 
-type RaodmapItemType = {
+type RoadmapItemType = {
   roadmapNumber: number;
 };
 
-const RoadmapItem = ({ roadmapNumber }: RaodmapItemType) => {
+const RoadmapItem = ({ roadmapNumber }: RoadmapItemType) => {
   const { handleInputChange, validateInput, resetErrorMessage } =
     useValidateInput(ROADMAP_MAX_LENGTH);
 
