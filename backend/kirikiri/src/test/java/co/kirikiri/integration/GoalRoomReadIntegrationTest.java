@@ -256,7 +256,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
+        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 18);
     }
 
     private GoalRoomCertifiedResponse 로그인후_예상하는_골룸_응답을_생성한다() {
@@ -265,7 +265,7 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, true);
+        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 18, true);
     }
 
     private void 골룸_대기_사용자를_저장한다(final Member 크리에이터, final GoalRoom 골룸) {

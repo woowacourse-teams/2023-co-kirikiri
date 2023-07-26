@@ -219,7 +219,7 @@ class GoalRoomServiceTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
+        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 18);
     }
 
     private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined) {
@@ -228,6 +228,6 @@ class GoalRoomServiceTest {
                         LocalDate.of(2023, 7, 30), 10),
                 new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, isJoined);
+        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 18, isJoined);
     }
 }

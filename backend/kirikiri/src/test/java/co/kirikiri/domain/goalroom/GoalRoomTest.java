@@ -39,7 +39,7 @@ class GoalRoomTest {
 
         // then
         assertThat(totalPeriod)
-                .isSameAs(17);
+                .isSameAs(18);
     }
 
     private Member 크리에이터를_생성한다() {

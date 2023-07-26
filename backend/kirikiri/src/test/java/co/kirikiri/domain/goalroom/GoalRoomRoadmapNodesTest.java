@@ -19,13 +19,13 @@ class GoalRoomRoadmapNodesTest {
 
         // then
         assertThat(totalPeriod)
-                .isSameAs(17);
+                .isSameAs(18);
     }
 
     private GoalRoomRoadmapNodes 골룸_노드를_생성한다() {
         final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
                 LocalDate.of(2023, 7, 19),
-                LocalDate.of(2023, 7, 30), 10, new RoadmapNode("로드맵 제목 1", "로드맵 내용 1"));
+                LocalDate.of(2023, 7, 25), 10, new RoadmapNode("로드맵 제목 1", "로드맵 내용 1"));
 
         final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
                 LocalDate.of(2023, 8, 1),
