@@ -26,4 +26,4 @@ jobs:
           npm run test:coverage
 
       - name: Display Coverage Report
-        run: cat coverage.txt
+        run: cat ./coverage.txt
