@@ -9,6 +9,7 @@ module.exports = {
   entry: './src/index.tsx',
 
   output: {
+    publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.[fullhash].js',
     assetModuleFilename: 'assets/[hash][ext][query]',
