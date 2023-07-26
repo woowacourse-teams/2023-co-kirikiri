@@ -106,12 +106,58 @@ class GoalRoomPendingMemberRepositoryTest {
                 .isEmpty();
     }
 
+    @Test
+    void 골룸으로_사용자_대기_목록과_멤버를_함께_조회한다() {
+        // given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, member1);
+        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.of(2023, 7, 20, 12, 0, 0), savedGoalRoom, member2);
+        final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.of(2023, 7, 21, 12, 0, 0), savedGoalRoom, member3);
+        final List<GoalRoomPendingMember> expected = goalRoomPendingMemberRepository.saveAll(
+                List.of(goalRoomPendingMember1, goalRoomPendingMember2, goalRoomPendingMember3));
+
+        // when
+        final List<GoalRoomPendingMember> findGoalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
+                goalRoom);
+
+        // then
+        assertThat(findGoalRoomPendingMembers)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(expected);
+    }
+
     private Member 크리에이터를_저장한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 new Nickname("코끼리"), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
         return memberRepository.save(creator);
+    }
+
+    private Member 사용자를_생성한다(final String identifier, final String password, final String nickname,
+                             final String phoneNumber) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
+                new Nickname(nickname), phoneNumber);
+        final Member member = new Member(new Identifier(identifier),
+                new EncryptedPassword(new Password(password)), memberProfile);
+        return memberRepository.save(member);
     }
 
     private RoadmapCategory 카테고리를_저장한다(final String name) {

@@ -34,6 +34,8 @@ import org.junit.jupiter.api.Test;
 @RepositoryTest
 class GoalRoomRepositoryTest {
 
+    private static final LocalDate TODAY = LocalDate.now();
+
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -69,6 +71,33 @@ class GoalRoomRepositoryTest {
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(goalRoom);
+    }
+
+    @Test
+    void 골룸의_노드의_시작날짜가_오늘인_골룸을_골룸의_노드와_함께_시작날짜_오름차순으로_조회한다() {
+        // given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom1 = 골룸을_생성한다(targetRoadmapContent, TODAY);
+        final GoalRoom goalRoom2 = 골룸을_생성한다(targetRoadmapContent, TODAY);
+        final GoalRoom goalRoom3 = 골룸을_생성한다(targetRoadmapContent, TODAY.plusDays(10));
+        final GoalRoom savedGoalRoom1 = goalRoomRepository.save(goalRoom1);
+        final GoalRoom savedGoalRoom2 = goalRoomRepository.save(goalRoom2);
+        final GoalRoom savedGoalRoom3 = goalRoomRepository.save(goalRoom3);
+
+        // when
+        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode();
+
+        // then
+        assertThat(findGoalRooms)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(List.of(savedGoalRoom1, savedGoalRoom2));
     }
 
     private Member 크리에이터를_저장한다() {
@@ -118,13 +147,29 @@ class GoalRoomRepositoryTest {
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
         final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                LocalDate.of(2023, 7, 19),
-                LocalDate.of(2023, 7, 30), 10, firstRoadmapNode);
+                TODAY, TODAY.plusDays(10), 10, firstRoadmapNode);
 
         final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
         final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                LocalDate.of(2023, 8, 1),
-                LocalDate.of(2023, 8, 5), 10, secondRoadmapNode);
+                TODAY.plusDays(11), TODAY.plusDays(20), 10, secondRoadmapNode);
+
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
+                List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
+        goalRoom.addGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+        return goalRoom;
+    }
+
+    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final LocalDate startDate) {
+        final GoalRoom goalRoom = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, roadmapContent);
+        final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
+
+        final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
+        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                startDate, startDate.plusDays(10), 10, firstRoadmapNode);
+
+        final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
+        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                startDate.plusDays(11), startDate.plusDays(20), 10, secondRoadmapNode);
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
