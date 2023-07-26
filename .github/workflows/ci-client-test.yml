@@ -23,7 +23,7 @@ jobs:
           cd client
           npm ci
           npm run build --if-present
-          npm test -- --coverage
+          npm run test:coverage
 
       - name: Display Coverage Report
-        run: cat client/coverage/lcov-report/text.txt
+        run: cat coverage.txt
