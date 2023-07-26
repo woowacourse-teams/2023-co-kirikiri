@@ -11,6 +11,7 @@ module.exports = {
   },
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
+  coverageReporters: ['text'],
   moduleFileExtensions: ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'json', 'node'],
   testEnvironment: 'jsdom',
   testMatch: [
