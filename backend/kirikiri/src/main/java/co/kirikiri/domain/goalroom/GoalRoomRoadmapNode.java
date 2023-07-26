@@ -6,12 +6,13 @@ import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNode {
+
+    private static final int MIN_CHECK_COUNT = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,14 +40,14 @@ public class GoalRoomRoadmapNode {
     }
 
     private void validateCheckCountPositive(final Integer checkCount) {
-        if (checkCount < 0) {
-            throw new BadRequestException("골름 노드의 인증 횟수는 0보다 커야합니다.");
+        if (checkCount < MIN_CHECK_COUNT) {
+            throw new BadRequestException("골룸 노드의 인증 횟수는 0보다 커야합니다.");
         }
     }
 
     private void validateCheckCountWithDaysBetween(final Period period, final int checkCount) {
         if (checkCount > period.getTimeInterval()) {
-            throw new BadRequestException("골름 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
+            throw new BadRequestException("골룸 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
         }
     }
 

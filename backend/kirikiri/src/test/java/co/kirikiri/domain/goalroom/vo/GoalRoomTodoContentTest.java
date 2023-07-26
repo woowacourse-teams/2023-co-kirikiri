@@ -22,7 +22,7 @@ class GoalRoomTodoContentTest {
 
     @ParameterizedTest
     @ValueSource(ints = {0, 251, 252, 300})
-    void 골룸의_이름_길이가_1미만_40초과일_때_예외를_던진다(final int length) {
+    void 투두_컨텐츠의_길이가_1미만_250초과일_때_예외를_던진다(final int length) {
         //given
         final String value = "a".repeat(length);
 

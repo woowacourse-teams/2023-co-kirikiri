@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         //when
-        final List<FieldDescription> requestFieldDescription = makSuccessRequestFieldDescription();
+        final List<FieldDescription> requestFieldDescription = makeSuccessRequestFieldDescription();
 
         final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isCreated())
                 .andDo(documentationResultHandler.document(
@@ -284,7 +283,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 0, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
-        doThrow(new BadRequestException("시골름 노드의 인증 횟수는 0보다 커야합니다."))
+        doThrow(new BadRequestException("골름 노드의 인증 횟수는 0보다 커야합니다."))
                 .when(goalRoomService)
                 .create(any(), any());
 
@@ -293,7 +292,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andReturn();
 
         //then
-        final ErrorResponse expectedResponse = new ErrorResponse("시골름 노드의 인증 횟수는 0보다 커야합니다.");
+        final ErrorResponse expectedResponse = new ErrorResponse("골름 노드의 인증 횟수는 0보다 커야합니다.");
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(expectedResponse);
@@ -331,7 +330,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andDo(print());
     }
 
-    private List<FieldDescription> makSuccessRequestFieldDescription() {
+    private List<FieldDescription> makeSuccessRequestFieldDescription() {
         return List.of(
                 new FieldDescription("roadmapContentId", "로드맵 컨텐츠 id"),
                 new FieldDescription("name", "골룸 이름", "- 길이 : 1 ~ 40"),

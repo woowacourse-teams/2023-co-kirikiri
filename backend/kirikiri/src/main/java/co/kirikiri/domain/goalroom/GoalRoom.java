@@ -5,22 +5,11 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -78,7 +67,7 @@ public class GoalRoom extends BaseTimeEntity {
     }
 
     private void checkParticipated(final GoalRoomPendingMember goalRoomPendingMember) {
-        if (goalRoomPendingMembers.containGaolRoomPendingMember(goalRoomPendingMember)) {
+        if (goalRoomPendingMembers.containGoalRoomPendingMember(goalRoomPendingMember)) {
             throw new BadRequestException("이미 참여 중인 상태입니다.");
         }
     }

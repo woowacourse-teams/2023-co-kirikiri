@@ -1,8 +1,5 @@
 package co.kirikiri.domain.goalroom;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -14,9 +11,12 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
-import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class GoalRoomTest {
 
@@ -69,7 +69,7 @@ class GoalRoomTest {
     }
 
     @Test
-    void 골룸_참여_시_이미_참여한_사람이_참여할_떼_예외를_던진다() {
+    void 골룸_참여_시_이미_참여한_사람이_참여할_때_예외를_던진다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(20), new RoadmapContent("content"));
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
