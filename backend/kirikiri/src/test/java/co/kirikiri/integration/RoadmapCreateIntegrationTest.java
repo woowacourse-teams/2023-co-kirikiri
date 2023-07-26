@@ -216,7 +216,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
         });
         응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.BAD_REQUEST);
-        assertThat(에러_메세지.message()).isEqualTo("로드맵 본문의 길이는 최대 150글자 입니다.");
+        assertThat(에러_메세지.message()).isEqualTo("로드맵 본문의 길이는 최대 2000글자입니다.");
     }
 
     @Test

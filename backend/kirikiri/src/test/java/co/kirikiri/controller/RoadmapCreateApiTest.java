@@ -172,7 +172,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapService.create(any(), any()))
-                .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 2000글자 입니다."));
+                .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 2000글자입니다."));
 
         // expect
         로드맵_생성_요청(jsonRequest, status().isBadRequest());
