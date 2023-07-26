@@ -19,6 +19,7 @@ const Title = () => {
           maxLength={20}
           validateInput={validateInput}
           resetErrorMessage={resetErrorMessage}
+          name='roadmapTitle'
         />
         <TextCount maxCount={20} currentCount={value.length} />
       </S.FieldWrapper>

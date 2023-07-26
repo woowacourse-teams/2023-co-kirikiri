@@ -19,6 +19,8 @@ const MainText = () => {
           maxLength={2000}
           validateInput={validateInput}
           resetErrorMessage={resetErrorMessage}
+          name='content'
+          data-valid={validateInput}
         />
         <S.TextCountWrapper>
           <TextCount maxCount={2000} currentCount={value.length} />

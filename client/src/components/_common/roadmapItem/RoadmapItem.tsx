@@ -1,4 +1,4 @@
-import type { RoadmapItemType } from '@myTypes/roadmap';
+import type { RoadmapItemType } from '@myTypes/roadmap/internal';
 
 import { Link } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';

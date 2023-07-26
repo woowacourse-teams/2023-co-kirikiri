@@ -1,26 +1,25 @@
+import { CategoriesInfo } from '@/constants/roadmap/category';
 import { useSelect } from '@/hooks/_common/useSelect';
+import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
+import { useEffect } from 'react';
 import { Select, SelectBox } from '../selector/selectBox';
 import { S } from './category.styles';
 
 // 임시 더미데이터
-type DummyCategoryType = {
-  [key: string]: string;
+export type DummyCategoryType = {
+  [key: number]: string;
 };
 
-const DummyCategory: DummyCategoryType = {
-  1: '어학',
-  2: 'IT',
-  3: '시험',
-  4: '운동',
-  5: '게임',
-  6: '음악',
-  7: '라이프',
-  8: '여가',
-  9: '기타',
-} as const;
+type CategoryProps = {
+  getSelectedCategoryId: (category: keyof DummyCategoryType | null) => void;
+};
 
-const Category = () => {
-  const { selectOption } = useSelect<number>();
+const Category = ({ getSelectedCategoryId }: CategoryProps) => {
+  const { selectOption, selectedOption } = useSelect<number>();
+
+  useEffect(() => {
+    getSelectedCategoryId(selectedOption);
+  }, [selectedOption]);
 
   return (
     <SelectBox defaultOpen externalSelectState={selectOption}>
@@ -36,10 +35,10 @@ const Category = () => {
       </Select.Description>
       <Select.OptionGroup asChild>
         <S.Wrapper>
-          {Object.keys(DummyCategory).map((categoryId) => {
+          {getInvariantObjectKeys(invariantOf(CategoriesInfo)).map((categoryId) => {
             return (
               <Select.Option id={Number(categoryId)} asChild>
-                <S.CategoryBox>{DummyCategory[Number(categoryId)]}</S.CategoryBox>
+                <S.CategoryBox>{CategoriesInfo[categoryId].name}</S.CategoryBox>
               </Select.Option>
             );
           })}

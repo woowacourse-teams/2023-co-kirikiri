@@ -1,5 +1,5 @@
 import { Attributes, Children, cloneElement, isValidElement, ReactElement } from 'react';
-import { CombineStateType } from '@/types/_common/compound';
+import { CombineStateType } from '@/myTypes/_common/compound';
 
 export const combineStates: CombineStateType = (externalState, innerState) => {
   return (params) => {
