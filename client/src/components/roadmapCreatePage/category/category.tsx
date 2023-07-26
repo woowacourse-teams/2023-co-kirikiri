@@ -1,9 +1,6 @@
-import {
-  CategoriesInfo,
-  getKeysOfCategoryInfo,
-  invariantOf,
-} from '@/constants/roadmap/category';
+import { CategoriesInfo } from '@/constants/roadmap/category';
 import { useSelect } from '@/hooks/_common/useSelect';
+import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
 import { useEffect } from 'react';
 import { Select, SelectBox } from '../selector/selectBox';
 import { S } from './category.styles';
@@ -38,7 +35,7 @@ const Category = ({ getSelectedCategoryId }: CategoryProps) => {
       </Select.Description>
       <Select.OptionGroup asChild>
         <S.Wrapper>
-          {getKeysOfCategoryInfo(invariantOf(CategoriesInfo)).map((categoryId) => {
+          {getInvariantObjectKeys(invariantOf(CategoriesInfo)).map((categoryId) => {
             return (
               <Select.Option id={Number(categoryId)} asChild>
                 <S.CategoryBox>{CategoriesInfo[categoryId].name}</S.CategoryBox>
