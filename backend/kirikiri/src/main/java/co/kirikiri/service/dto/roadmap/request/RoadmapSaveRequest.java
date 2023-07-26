@@ -28,7 +28,7 @@ public record RoadmapSaveRequest(
         @NotEmpty(message = "로드맵의 첫 번째 단계를 입력해주세요.")
         List<@Valid RoadmapNodeSaveRequest> roadmapNodes,
 
-        List<RoadmapTagSaveRequest> tags
+        List<RoadmapTagSaveRequest> roadmapTags
 ) {
 
 }
