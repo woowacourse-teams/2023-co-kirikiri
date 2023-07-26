@@ -105,7 +105,7 @@ class GoalRoomIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸_생성_시_골름_이름이_빈값일_경우() throws JsonProcessingException {
+    void 골룸_생성_시_골룸_이름이_빈값일_경우() throws JsonProcessingException {
         //given
         final String 액세스_토큰 = 회원을_생성하고_로그인을_한다();
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);

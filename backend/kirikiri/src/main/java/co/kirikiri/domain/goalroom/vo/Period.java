@@ -43,8 +43,8 @@ public class Period {
                 || this.endDate.isAfter(other.startDate);
     }
 
-    public long getTimeInterval() {
-        return ChronoUnit.DAYS.between(startDate, endDate);
+    public long getDayCount() {
+        return ChronoUnit.DAYS.between(startDate, endDate) + 1;
     }
 
     public LocalDate getStartDate() {

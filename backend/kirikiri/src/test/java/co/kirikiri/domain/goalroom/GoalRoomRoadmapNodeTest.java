@@ -5,7 +5,6 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,12 +21,12 @@ class GoalRoomRoadmapNodeTest {
 
         //when
         //then
-        assertDoesNotThrow(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), daysToAdd, new RoadmapNode("title", "content")));
+        assertDoesNotThrow(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), daysToAdd + 1, new RoadmapNode("title", "content")));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {-1, -2, -3, -4, -5, -6, -7})
-    void 골름_노드의_인증_횟수가_음수일때_예외를_던진다(final int checkCount) {
+    void 골룸_노드의_인증_횟수가_음수일때_예외를_던진다(final int checkCount) {
         //given
         final LocalDate startDate = LocalDate.now();
         final LocalDate endDate = startDate.plusDays(0);
@@ -39,7 +38,7 @@ class GoalRoomRoadmapNodeTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7})
+    @ValueSource(ints = {2, 3, 4, 5, 6, 7})
     void 골룸_로드맵_노드를_생성할때_기간보다_인증_횟수가_크면_예외를_던진다(final int checkCount) {
         //given
         final LocalDate startDate = LocalDate.now();

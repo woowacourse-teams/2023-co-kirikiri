@@ -34,7 +34,7 @@ public class GoalRoomRoadmapNodes {
                 .filter(index -> nodes.get(index).isEndDateEqualOrAfterOtherStartDate(nodes.get(index + 1)))
                 .findAny()
                 .ifPresent(it -> {
-                    throw new BadRequestException("골름 노드의 기간이 겹칠 수 없습니다.");
+                    throw new BadRequestException("골룸 노드의 기간이 겹칠 수 없습니다.");
                 });
     }
 

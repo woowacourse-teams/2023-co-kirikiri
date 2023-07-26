@@ -46,7 +46,7 @@ public class GoalRoomRoadmapNode {
     }
 
     private void validateCheckCountWithDaysBetween(final Period period, final int checkCount) {
-        if (checkCount > period.getTimeInterval()) {
+        if (checkCount > period.getDayCount()) {
             throw new BadRequestException("골룸 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
         }
     }

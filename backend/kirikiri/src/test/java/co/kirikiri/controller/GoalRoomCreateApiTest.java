@@ -287,7 +287,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 0, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
-        doThrow(new BadRequestException("골름 노드의 인증 횟수는 0보다 커야합니다."))
+        doThrow(new BadRequestException("골룸 노드의 인증 횟수는 0보다 커야합니다."))
                 .when(goalRoomService)
                 .create(any(), any());
 
@@ -296,7 +296,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andReturn();
 
         //then
-        final ErrorResponse expectedResponse = new ErrorResponse("골름 노드의 인증 횟수는 0보다 커야합니다.");
+        final ErrorResponse expectedResponse = new ErrorResponse("골룸 노드의 인증 횟수는 0보다 커야합니다.");
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(expectedResponse);
@@ -309,7 +309,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 11, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
-        doThrow(new BadRequestException("골름 노드의 인증 횟수가 설정 기간보다 클 수 없습니다."))
+        doThrow(new BadRequestException("골룸 노드의 인증 횟수가 설정 기간보다 클 수 없습니다."))
                 .when(goalRoomService)
                 .create(any(), any());
 
@@ -318,7 +318,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andReturn();
 
         //then
-        final ErrorResponse expectedResponse = new ErrorResponse("골름 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
+        final ErrorResponse expectedResponse = new ErrorResponse("골룸 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(expectedResponse);
