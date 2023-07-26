@@ -71,10 +71,6 @@ public class GoalRoom extends BaseTimeEntity {
         goalRoomMembers.add(goalRoomMember);
     }
 
-    public boolean isCompleted() {
-        return status == GoalRoomStatus.COMPLETED;
-    }
-
     public void complete() {
         status = GoalRoomStatus.COMPLETED;
     }

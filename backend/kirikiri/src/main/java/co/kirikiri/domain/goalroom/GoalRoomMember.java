@@ -44,10 +44,6 @@ public class GoalRoomMember {
         this.goalRoom = goalRoom;
         this.member = member;
     }
-    
-    public GoalRoom getGoalRoom() {
-        return goalRoom;
-    }
 
     public Member getMember() {
         return member;

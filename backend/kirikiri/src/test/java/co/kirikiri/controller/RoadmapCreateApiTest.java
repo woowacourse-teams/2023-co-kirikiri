@@ -30,7 +30,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.snippet.Attributes.Attribute;
 
 @WebMvcTest(RoadmapController.class)
-public class RoadmapApiTest extends ControllerTestHelper {
+public class RoadmapCreateApiTest extends ControllerTestHelper {
 
     @MockBean
     private RoadmapService roadmapService;
@@ -216,9 +216,9 @@ public class RoadmapApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_로드맵에_참여한_사용자가_아니면_예외가_발생한다() throws Exception {
+    void 로드맵_리뷰_생성시_완료한_골룸이_없으면_예외가_발생한다() throws Exception {
         // given
-        doThrow(new ForbiddenException("로드맵에 참여한 사용자가 아닙니다. roadmapId = 1L memberIdentifier = cokirikiri"))
+        doThrow(new ForbiddenException("로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri"))
                 .when(roadmapService)
                 .createReview(any(), any(), any());
 
@@ -235,7 +235,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
                 .andExpectAll(
                         status().is4xxClientError(),
                         jsonPath("$.message")
-                                .value("로드맵에 참여한 사용자가 아닙니다. roadmapId = 1L memberIdentifier = cokirikiri"))
+                                .value("로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri"))
                 .andDo(documentationResultHandler.document(
                         requestHeaders(
                                 headerWithName(AUTHORIZATION).description("액세스 토큰")),
@@ -250,7 +250,7 @@ public class RoadmapApiTest extends ControllerTestHelper {
         // then
         final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
         final ErrorResponse expected = new ErrorResponse(
-                "로드맵에 참여한 사용자가 아닙니다. roadmapId = 1L memberIdentifier = cokirikiri");
+                "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri");
         assertThat(errorResponse)
                 .isEqualTo(expected);
     }

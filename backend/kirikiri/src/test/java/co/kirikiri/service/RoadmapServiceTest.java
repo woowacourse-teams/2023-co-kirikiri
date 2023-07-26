@@ -26,7 +26,6 @@ import co.kirikiri.domain.roadmap.RoadmapContents;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -146,7 +145,7 @@ class RoadmapServiceTest {
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifier(anyLong(), any()))
+        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
                 .thenReturn(goalRoomMembers);
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.empty());
@@ -172,7 +171,7 @@ class RoadmapServiceTest {
     }
 
     @Test
-    void 로드맵_리뷰_작성시_존재하지_않는_사용자_아이디를_받으면_예외가_발생한다() {
+    void 로드맵_리뷰_작성시_완료한_골룸이_없으면_예외가_발생한다() {
         // given
         final Member creator = 사용자를_생성한다("크리에이터", "cokirikiri");
         final RoadmapCategory category = 로드맵_카테고리를_생성한다("운동");
@@ -181,7 +180,7 @@ class RoadmapServiceTest {
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifier(anyLong(), any()))
+        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("리뷰 내용", null);
@@ -189,7 +188,7 @@ class RoadmapServiceTest {
         // expected
         assertThatThrownBy(() ->
                 roadmapService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
-                .isInstanceOf(ForbiddenException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -207,38 +206,10 @@ class RoadmapServiceTest {
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifier(anyLong(), any()))
+        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
                 .thenReturn(goalRoomMembers);
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.of(new RoadmapReview("로드맵 짱!", 5.0, member)));
-
-        final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("최고의 로드맵이네요", 5.0);
-
-        // expected
-        assertThatThrownBy(() ->
-                roadmapService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
-                .isInstanceOf(BadRequestException.class);
-    }
-
-    @Test
-    void 로드맵_리뷰_작성시_참여한_골룸중_완료한게_없으면_예외가_발생한다() {
-        // given
-        final Member creator = 사용자를_생성한다("크리에이터", "cokirikiri");
-        final RoadmapCategory category = 로드맵_카테고리를_생성한다("운동");
-
-        final Roadmap roadmap = 로드맵을_생성한다(creator, category);
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
-
-        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
-
-        when(roadmapRepository.findById(anyLong()))
-                .thenReturn(Optional.of(roadmap));
-        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifier(anyLong(), any()))
-                .thenReturn(goalRoomMembers);
-        when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
-                .thenReturn(Optional.empty());
 
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("최고의 로드맵이네요", 5.0);
 

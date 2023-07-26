@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class RoadmapIntegrationTest extends IntegrationTest {
+public class RoadmapCreateIntegrationTest extends IntegrationTest {
 
     private static final String PASSWORD = "password1!";
 
@@ -59,10 +59,10 @@ public class RoadmapIntegrationTest extends IntegrationTest {
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
-    public RoadmapIntegrationTest(final RoadmapRepository roadmapRepository,
-                                  final GoalRoomRepository goalRoomRepository,
-                                  final GoalRoomMemberRepository goalRoomMemberRepository,
-                                  final RoadmapCategoryRepository roadmapCategoryRepository) {
+    public RoadmapCreateIntegrationTest(final RoadmapRepository roadmapRepository,
+                                        final GoalRoomRepository goalRoomRepository,
+                                        final GoalRoomMemberRepository goalRoomMemberRepository,
+                                        final RoadmapCategoryRepository roadmapCategoryRepository) {
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
@@ -195,15 +195,14 @@ public class RoadmapIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_로드맵에_참여한_사용자가_아니면_예외가_발생한다() {
+    void 로드맵_리뷰_생성시_완료한_골룸이_없다면_예외가_발생한다() {
         // given
         final Member 크리에이터 = 사용자를_생성한다("크리에이터", "creator");
         final Member 리더 = 사용자를_생성한다("리더", "leader");
         final Member 팔로워 = 사용자를_생성한다("팔로워", "follower");
-        final Member 팔로워2 = 사용자를_생성한다("팔로워2", "follower2");
 
         final String 크리에이터_토큰_정보 = 로그인(크리에이터.getIdentifier().getValue());
-        final String 팔로워2_토큰_정보 = 로그인(팔로워2.getIdentifier().getValue());
+        final String 팔로워2_토큰_정보 = 로그인(팔로워.getIdentifier().getValue());
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(크리에이터_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
@@ -211,7 +210,7 @@ public class RoadmapIntegrationTest extends IntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
         final Roadmap 저장된_로드맵 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답);
         final List<RoadmapContent> 로드맵_본문_리스트 = 저장된_로드맵.getContents().getValues();
-        final GoalRoom 골룸 = 골룸을_생성한다(로드맵_본문_리스트, GoalRoomStatus.COMPLETED);
+        final GoalRoom 골룸 = 골룸을_생성한다(로드맵_본문_리스트, GoalRoomStatus.RECRUITING);
         골룸에_대한_참여자_리스트를_생성한다(리더, 팔로워, 골룸);
 
         final RoadmapReviewSaveRequest 로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
@@ -221,9 +220,9 @@ public class RoadmapIntegrationTest extends IntegrationTest {
 
         // then
         final ErrorResponse 예외_응답 = 리뷰_생성_요청_결과.as(ErrorResponse.class);
-        assertThat(리뷰_생성_요청_결과.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
-        assertThat(예외_응답.message()).isEqualTo("로드맵에 참여한 사용자가 아닙니다. roadmapId = " + 저장된_로드맵.getId() +
-                " memberIdentifier = follower2");
+        assertThat(리뷰_생성_요청_결과.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(예외_응답.message()).isEqualTo("로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = " + 저장된_로드맵.getId() +
+                " memberIdentifier = follower");
     }
 
     @Test

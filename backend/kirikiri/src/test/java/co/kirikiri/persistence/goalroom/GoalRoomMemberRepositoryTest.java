@@ -55,7 +55,7 @@ class GoalRoomMemberRepositoryTest {
     }
 
     @Test
-    void 로드맵_아이디와_멤버_아이디로_골룸_멤버를_조회한다() {
+    void 로드맵_아이디와_멤버_아이디와_골룸_상태로_골룸_멤버를_조회한다() {
         // given
         final Member creator = 사용자를_저장한다("코끼리", "cokirikiri");
         final RoadmapCategory category = 카테고리를_저장한다("게임");
@@ -65,8 +65,8 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoomMember savedGoalRoomMember = 골룸_참가자를_저장한다(goalRoom, follower);
 
         // when
-        final List<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifier(
-                roadmap.getId(), new Identifier("kirikirico"));
+        final List<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
+                roadmap.getId(), new Identifier("kirikirico"), GoalRoomStatus.RECRUITING);
 
         // then
         assertThat(findGoalRoomMember)
@@ -77,18 +77,17 @@ class GoalRoomMemberRepositoryTest {
     }
 
     @Test
-    void 로드맵_아이디와_멤버_아이디로_골룸_멤버_조회시_없으면_빈값을_반환한다() {
+    void 로드맵_아이디와_멤버_아이디와_골룸_상태로_골룸_멤버_조회시_없으면_빈값을_반환한다() {
         // given
         final Member creator = 사용자를_저장한다("코끼리", "cokirikiri");
         final RoadmapCategory category = 카테고리를_저장한다("게임");
         final Roadmap roadmap = 로드맵을_저장한다(creator, category);
         final GoalRoom goalRoom = 골룸을_저장한다(roadmap, creator);
-        final Member follower = 사용자를_저장한다("끼리코", "kirikirico");
-        골룸_참가자를_저장한다(goalRoom, follower);
+        골룸_참가자를_저장한다(goalRoom, creator);
 
         // expected
-        final List<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifier(
-                roadmap.getId(), new Identifier("kirikirico2"));
+        final List<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
+                roadmap.getId(), new Identifier("kirikirico2"), GoalRoomStatus.COMPLETED);
 
         assertThat(findGoalRoomMember)
                 .hasSize(0);
