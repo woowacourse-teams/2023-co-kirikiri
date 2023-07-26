@@ -11,7 +11,7 @@ module.exports = {
   },
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
-  coverageReporters: ['text', 'text-summary', 'lcov', 'text-file'],
+  coverageReporters: ['text', 'text-summary', 'lcov'],
   moduleFileExtensions: ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'json', 'node'],
   testEnvironment: 'jsdom',
   testMatch: [
