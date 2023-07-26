@@ -1,5 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
+import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
@@ -8,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -29,9 +32,23 @@ public class RoadmapTags {
     }
 
     private void validate(final List<RoadmapTag> roadmapTags) {
+        validateCount(roadmapTags);
+        validateDuplicatedName(roadmapTags);
+    }
+
+    private void validateCount(final List<RoadmapTag> roadmapTags) {
         if (roadmapTags.size() > MAX_COUNT) {
             throw new BadRequestException(
                     String.format("태그의 개수는 최대 %d개까지 가능합니다.", MAX_COUNT));
+        }
+    }
+
+    private void validateDuplicatedName(final List<RoadmapTag> roadmapTags) {
+        final Set<RoadmapTagName> nonDuplicatedNames = roadmapTags.stream()
+                .map(RoadmapTag::getName)
+                .collect(Collectors.toSet());
+        if (roadmapTags.size() != nonDuplicatedNames.size()) {
+            throw new BadRequestException("태그 이름은 중복될 수 없습니다.");
         }
     }
 

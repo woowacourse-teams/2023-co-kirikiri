@@ -97,7 +97,7 @@ public final class RoadmapMapper {
     private static List<RoadmapTagResponse> convertRoadmapTagResponses(final RoadmapTags roadmapTags) {
         return roadmapTags.getValues()
                 .stream()
-                .map(tag -> new RoadmapTagResponse(tag.getId(), tag.getName()))
+                .map(tag -> new RoadmapTagResponse(tag.getId(), tag.getName().getValue()))
                 .toList();
     }
 

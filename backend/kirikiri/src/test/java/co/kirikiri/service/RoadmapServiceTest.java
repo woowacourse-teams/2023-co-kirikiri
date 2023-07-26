@@ -23,6 +23,7 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
+import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
@@ -326,7 +327,8 @@ class RoadmapServiceTest {
                 RoadmapDifficulty.valueOf("DIFFICULT"), member, category);
 
         final RoadmapTags roadmapTags = new RoadmapTags(
-                List.of(new RoadmapTag(1L, "태그1"), new RoadmapTag(2L, "태그2")));
+                List.of(new RoadmapTag(1L, new RoadmapTagName("태그1")),
+                        new RoadmapTag(2L, new RoadmapTagName("태그2"))));
         roadmap.addTags(roadmapTags);
 
         final RoadmapContent roadmapContent = new RoadmapContent(1L, "로드맵 본문");

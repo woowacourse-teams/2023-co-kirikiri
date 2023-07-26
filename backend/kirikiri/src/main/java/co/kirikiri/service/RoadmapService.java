@@ -11,6 +11,7 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
+import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -86,7 +87,7 @@ public class RoadmapService {
     private RoadmapTags makeRoadmapTags(final List<RoadmapTagSaveDto> roadmapTagSaveDto) {
         return new RoadmapTags(
                 roadmapTagSaveDto.stream()
-                        .map(tag -> new RoadmapTag(tag.name()))
+                        .map(tag -> new RoadmapTag(new RoadmapTagName(tag.name())))
                         .toList()
         );
     }
