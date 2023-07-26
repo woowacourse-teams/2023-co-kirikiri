@@ -5,8 +5,8 @@ import Description from '../description/description';
 import Difficulty, { DummyDifficultyType } from '../difficulty/difficulty';
 import MainText from '../mainText/mainText';
 import Period from '../period/period';
-import Roadmap from '../roadmap/Roadmap';
 import Title from '../title/title';
+import Roadmap from '@components/roadmapCreatePage/roadmap/roadmap';
 
 // ref공유를 위한 context - 다음 브랜치에서 파일 옮길 예정
 const FormRefContext = createContext<{ ref: React.MutableRefObject<undefined> | null }>({
