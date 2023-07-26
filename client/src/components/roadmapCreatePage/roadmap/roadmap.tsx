@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import * as S from './roadmap.styles';
 import InputLabel from '../input/inputLabel/inputLebel';
-import RoadmapItem from './RoadmapItem';
 import { START_NUMBER } from '@/constants/roadmap/roadmap';
+import RoadmapItem from '@components/roadmapCreatePage/roadmap/roadmapItem';
 
 const Roadmap = () => {
   const [roadmapNumber, setRoadmapNumber] = useState(START_NUMBER);
