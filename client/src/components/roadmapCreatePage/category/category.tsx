@@ -1,3 +1,8 @@
+import {
+  CategoriesInfo,
+  getKeysOfCategoryInfo,
+  invariantOf,
+} from '@/constants/roadmap/category';
 import { useSelect } from '@/hooks/_common/useSelect';
 import { useEffect } from 'react';
 import { Select, SelectBox } from '../selector/selectBox';
@@ -8,23 +13,11 @@ export type DummyCategoryType = {
   [key: number]: string;
 };
 
-const DummyCategory: DummyCategoryType = {
-  1: '어학',
-  2: 'IT',
-  3: '시험',
-  4: '운동',
-  5: '게임',
-  6: '음악',
-  7: '라이프',
-  8: '여가',
-  9: '기타',
-} as const;
-
-type CategoryType = {
+type CategoryProps = {
   getSelectedCategoryId: (category: keyof DummyCategoryType | null) => void;
 };
 
-const Category = ({ getSelectedCategoryId }: CategoryType) => {
+const Category = ({ getSelectedCategoryId }: CategoryProps) => {
   const { selectOption, selectedOption } = useSelect<number>();
 
   useEffect(() => {
@@ -45,10 +38,10 @@ const Category = ({ getSelectedCategoryId }: CategoryType) => {
       </Select.Description>
       <Select.OptionGroup asChild>
         <S.Wrapper>
-          {Object.keys(DummyCategory).map((categoryId) => {
+          {getKeysOfCategoryInfo(invariantOf(CategoriesInfo)).map((categoryId) => {
             return (
               <Select.Option id={Number(categoryId)} asChild>
-                <S.CategoryBox>{DummyCategory[Number(categoryId)]}</S.CategoryBox>
+                <S.CategoryBox>{CategoriesInfo[categoryId].name}</S.CategoryBox>
               </Select.Option>
             );
           })}
