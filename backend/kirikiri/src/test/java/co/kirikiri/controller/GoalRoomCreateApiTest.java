@@ -28,6 +28,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -64,7 +66,9 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
         final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isCreated())
                 .andDo(documentationResultHandler.document(
-                        requestFields(makeFieldDescriptor(requestFieldDescription))))
+                        requestFields(makeFieldDescriptor(requestFieldDescription)),
+                        requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token"))
+                ))
                 .andReturn();
 
 
@@ -129,7 +133,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
-        doThrow(new BadRequestException("모든 노드에 대해 기간이 설정 돼야합니다."))
+        doThrow(new BadRequestException("모든 노드에 대해 기간이 설정돼야 합니다."))
                 .when(goalRoomService)
                 .create(any(), any());
 
@@ -138,7 +142,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andReturn();
 
         //then
-        final ErrorResponse expectedResponse = new ErrorResponse("모든 노드에 대해 기간이 설정 돼야합니다.");
+        final ErrorResponse expectedResponse = new ErrorResponse("모든 노드에 대해 기간이 설정돼야 합니다.");
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(expectedResponse);

@@ -1,16 +1,17 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNodes {
 

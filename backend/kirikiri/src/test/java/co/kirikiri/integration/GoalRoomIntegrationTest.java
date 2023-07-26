@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
@@ -208,7 +207,7 @@ class GoalRoomIntegrationTest extends IntegrationTest {
         assertThat(골룸_생성_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
         final ErrorResponse errorResponse = 골룸_생성_응답.as(ErrorResponse.class);
-        assertThat(errorResponse.message()).isEqualTo("골룸의 노드 수는 로드맵의 노드 수와 같아야 합니다.");
+        assertThat(errorResponse.message()).isEqualTo("모든 노드에 대해 기간이 설정돼야 합니다.");
     }
 
     @Test

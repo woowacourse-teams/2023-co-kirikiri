@@ -51,8 +51,8 @@ public class GoalRoomRoadmapNode {
         }
     }
 
-    public boolean isEndDateEqualOrAfterOtherStartDate(final GoalRoomRoadmapNode nextNode) {
-        return this.period.isEndDateEqualOrAfterOtherStartDate(nextNode.period);
+    public boolean isEndDateEqualOrAfterOtherStartDate(final GoalRoomRoadmapNode other) {
+        return this.period.isEndDateEqualOrAfterOtherStartDate(other.period);
     }
 
     public LocalDate getStartDate() {

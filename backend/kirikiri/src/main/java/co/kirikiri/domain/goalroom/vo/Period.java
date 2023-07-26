@@ -4,7 +4,6 @@ import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -39,9 +38,9 @@ public class Period {
         }
     }
 
-    public boolean isEndDateEqualOrAfterOtherStartDate(final Period period) {
-        return this.endDate.isEqual(period.startDate)
-                || this.endDate.isAfter(period.startDate);
+    public boolean isEndDateEqualOrAfterOtherStartDate(final Period other) {
+        return this.endDate.isEqual(other.startDate)
+                || this.endDate.isAfter(other.startDate);
     }
 
     public long getTimeInterval() {

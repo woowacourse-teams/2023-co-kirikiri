@@ -1,5 +1,6 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +83,8 @@ class GoalRoomServiceTest {
                 .willReturn(Optional.of(ROADMAP_CONTENT));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
+        given(goalRoomRepository.save(any()))
+                .willReturn(new GoalRoom(1L, null, null, null));
 
         //when
         assertDoesNotThrow(() -> goalRoomService.create(request, member.getIdentifier().getValue()));
