@@ -83,11 +83,11 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     private PageResponse<GoalRoomForListResponse> 골룸_페이지_응답을_생성한다() {
         final GoalRoomForListResponse goalRoomForListResponse1 = new GoalRoomForListResponse(1L, "골룸 이름1", 3, 6,
                 LocalDateTime.of(2023, 7, 20, 13, 0, 0),
-                LocalDate.of(2023, 8, 1), LocalDate.of(2023, 9, 1),
+                LocalDate.now(), LocalDate.now().plusDays(100),
                 new MemberResponse(1L, "황시진"));
         final GoalRoomForListResponse goalRoomForListResponse2 = new GoalRoomForListResponse(2L, "골룸 이름2", 4, 10,
                 LocalDateTime.of(2023, 7, 10, 13, 0, 0),
-                LocalDate.of(2023, 7, 15), LocalDate.of(2023, 12, 31),
+                LocalDate.now(), LocalDate.now().plusDays(100),
                 new MemberResponse(2L, "시진이"));
         return new PageResponse<>(1, 2, List.of(goalRoomForListResponse1, goalRoomForListResponse2));
     }

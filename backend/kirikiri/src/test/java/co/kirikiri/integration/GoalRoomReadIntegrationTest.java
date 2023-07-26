@@ -54,6 +54,8 @@ import org.springframework.http.MediaType;
 @SuppressWarnings("NonAsciiCharacters")
 public class GoalRoomReadIntegrationTest extends IntegrationTest {
 
+    private static final LocalDate TODAY = LocalDate.now();
+
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final RoadmapRepository roadmapRepository;
@@ -92,17 +94,13 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
         final List<RoadmapNode> 로드맵_노드들 = 로드맵_본문으로부터_노드들을_가져온다(로드맵_본문);
 
         // TODO: 골룸 생성 API 추가 시 수정
-        final GoalRoomRoadmapNode 골룸_로드맵_노드1 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 1),
-                LocalDate.of(2023, 7, 8), 로드맵_노드들.get(0));
-        final GoalRoomRoadmapNode 골룸_로드맵_노드2 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 16), 로드맵_노드들.get(1));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), 로드맵_노드들.get(0));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드2 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20), 로드맵_노드들.get(1));
         final GoalRoom 골룸1 = 골룸을_생성한다("goalroom1", 6, GoalRoomStatus.RECRUITING, 로드맵_본문,
                 new GoalRoomRoadmapNodes(List.of(골룸_로드맵_노드1, 골룸_로드맵_노드2)));
 
-        final GoalRoomRoadmapNode 골룸_로드맵_노드3 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 6, 30),
-                LocalDate.of(2023, 7, 8), 로드맵_노드들.get(0));
-        final GoalRoomRoadmapNode 골룸_로드맵_노드4 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 30), 로드맵_노드들.get(1));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드3 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), 로드맵_노드들.get(0));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드4 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20), 로드맵_노드들.get(1));
         final GoalRoom 골룸2 = 골룸을_생성한다("goalroom2", 20, GoalRoomStatus.RECRUITING, 로드맵_본문,
                 new GoalRoomRoadmapNodes(List.of(골룸_로드맵_노드3, 골룸_로드맵_노드4)));
 
@@ -153,17 +151,13 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
         final List<RoadmapNode> 로드맵_노드들 = 로드맵_본문으로부터_노드들을_가져온다(로드맵_본문);
 
         // TODO: 골룸 생성 API 추가 시 수정
-        final GoalRoomRoadmapNode 골룸_로드맵_노드1 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 1),
-                LocalDate.of(2023, 7, 8), 로드맵_노드들.get(0));
-        final GoalRoomRoadmapNode 골룸_로드맵_노드2 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 16), 로드맵_노드들.get(1));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), 로드맵_노드들.get(0));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드2 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20), 로드맵_노드들.get(1));
         final GoalRoom 골룸1 = 골룸을_생성한다("goalroom1", 6, GoalRoomStatus.RECRUITING, 로드맵_본문,
                 new GoalRoomRoadmapNodes(List.of(골룸_로드맵_노드1, 골룸_로드맵_노드2)));
 
-        final GoalRoomRoadmapNode 골룸_로드맵_노드3 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 6, 30),
-                LocalDate.of(2023, 7, 8), 로드맵_노드들.get(0));
-        final GoalRoomRoadmapNode 골룸_로드맵_노드4 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 30), 로드맵_노드들.get(1));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드3 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), 로드맵_노드들.get(0));
+        final GoalRoomRoadmapNode 골룸_로드맵_노드4 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20), 로드맵_노드들.get(1));
         final GoalRoom 골룸2 = 골룸을_생성한다("goalroom2", 20, GoalRoomStatus.RECRUITING, 로드맵_본문,
                 new GoalRoomRoadmapNodes(List.of(골룸_로드맵_노드3, 골룸_로드맵_노드4)));
 

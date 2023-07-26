@@ -39,6 +39,8 @@ import org.springframework.data.domain.PageRequest;
 @ExtendWith(MockitoExtension.class)
 class GoalRoomServiceTest {
 
+    private static final LocalDate TODAY = LocalDate.now();
+
     @Mock
     private GoalRoomRepository goalRoomRepository;
 
@@ -54,14 +56,14 @@ class GoalRoomServiceTest {
         final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
         roadmapContent.addNodes(roadmapNodes);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(LocalDate.of(2023, 7, 1),
-                LocalDate.of(2023, 7, 10), roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = new GoalRoomRoadmapNode(LocalDate.of(2023, 7, 11),
-                LocalDate.of(2023, 7, 20), roadmapNode2);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = new GoalRoomRoadmapNode(LocalDate.of(2023, 8, 1),
-                LocalDate.of(2023, 8, 10), roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = new GoalRoomRoadmapNode(LocalDate.of(2023, 8, 11),
-                LocalDate.of(2023, 8, 20), roadmapNode2);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(TODAY, TODAY.plusDays(10),
+                roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = new GoalRoomRoadmapNode(TODAY.plusDays(11), TODAY.plusDays(20),
+                roadmapNode2);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = new GoalRoomRoadmapNode(TODAY, TODAY.plusDays(10),
+                roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = new GoalRoomRoadmapNode(TODAY.plusDays(11), TODAY.plusDays(20),
+                roadmapNode2);
 
         final GoalRoom goalRoom1 = new GoalRoom(1L, "goalroom1", 10, GoalRoomStatus.RECRUITING,
                 roadmapContent);
@@ -87,10 +89,10 @@ class GoalRoomServiceTest {
         final PageResponse<GoalRoomForListResponse> expected = new PageResponse<>(1, 2,
                 List.of(
                         new GoalRoomForListResponse(2L, "goalroom2", 1, 10, LocalDateTime.now(),
-                                LocalDate.of(2023, 8, 1), LocalDate.of(2023, 8, 20),
+                                TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue())),
                         new GoalRoomForListResponse(1L, "goalroom1", 1, 10, LocalDateTime.now(),
-                                LocalDate.of(2023, 7, 1), LocalDate.of(2023, 7, 20),
+                                TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member1.getId(), member1.getNickname().getValue()))
                 )
         );

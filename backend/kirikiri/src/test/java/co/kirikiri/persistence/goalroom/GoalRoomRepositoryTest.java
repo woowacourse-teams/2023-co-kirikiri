@@ -35,6 +35,8 @@ import org.springframework.data.domain.PageRequest;
 @RepositoryTest
 class GoalRoomRepositoryTest {
 
+    private static final LocalDate TODAY = LocalDate.now();
+
     private final GoalRoomRepository goalRoomRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -62,22 +64,16 @@ class GoalRoomRepositoryTest {
         로드맵을_생성한다(creator, category, new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)),
                 roadmapContent);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 1),
-                LocalDate.of(2023, 7, 8),
-                roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 16),
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20),
                 roadmapNode2);
         final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 6, GoalRoomStatus.RECRUITING, roadmapContent,
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
         final Member goalRoomPendingMember1 = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
         goalRoom1.joinGoalRoom(GoalRoomRole.LEADER, goalRoomPendingMember1);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 6, 30),
-                LocalDate.of(2023, 7, 8),
-                roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 30),
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20),
                 roadmapNode2);
         final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 20, GoalRoomStatus.RECRUITING, roadmapContent,
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)));
@@ -107,22 +103,16 @@ class GoalRoomRepositoryTest {
         로드맵을_생성한다(creator, category, new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)),
                 roadmapContent);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 1),
-                LocalDate.of(2023, 7, 8),
-                roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 16),
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20),
                 roadmapNode2);
         final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 6, GoalRoomStatus.RECRUITING, roadmapContent,
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
         final Member goalRoomPendingMember1 = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
         goalRoom1.joinGoalRoom(GoalRoomRole.LEADER, goalRoomPendingMember1);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 6, 30),
-                LocalDate.of(2023, 7, 8),
-                roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = 골룸_로드맵_노드를_생성한다(LocalDate.of(2023, 7, 9),
-                LocalDate.of(2023, 7, 30),
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20),
                 roadmapNode2);
         final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 20, GoalRoomStatus.RECRUITING, roadmapContent,
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)));
