@@ -1,4 +1,4 @@
-import { RaodmapValueType } from '@/myTypes/roadmap/roadmapCreate';
+import { RoadmapValueType } from '@/myTypes/roadmap/remote';
 import { createContext, PropsWithChildren, useRef, useState } from 'react';
 import Category, { DummyCategoryType } from '../category/category';
 import Description from '../description/description';
@@ -21,7 +21,7 @@ const RefProvider = ({ children }: PropsWithChildren) => {
 //
 
 const RoadmapCreateForm = () => {
-  const [, setRoadmapValue] = useState<RaodmapValueType>({
+  const [, setRoadmapValue] = useState<RoadmapValueType>({
     categoryId: null,
     title: null,
     introduction: null,

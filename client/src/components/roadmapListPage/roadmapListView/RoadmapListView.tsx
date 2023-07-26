@@ -1,4 +1,4 @@
-import type { RoadmapListResponseType } from '@myTypes/roadmap';
+import type { RoadmapListResponseType } from '@myTypes/roadmap/internal';
 import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
 import Categories from '../categories/Categories';
 

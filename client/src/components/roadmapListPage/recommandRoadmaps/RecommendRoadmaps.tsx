@@ -1,4 +1,4 @@
-import { RoadmapItemType } from '@myTypes/roadmap';
+import { RoadmapItemType } from '@myTypes/roadmap/internal';
 import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
 import * as S from './RecommendRoadmaps.styles';
 

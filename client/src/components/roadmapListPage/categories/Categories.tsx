@@ -1,4 +1,4 @@
-import type { CategoryType } from '@myTypes/roadmap';
+import type { CategoryType } from '@myTypes/roadmap/internal';
 import { CategoriesInfo } from '@constants/roadmap/category';
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './Categories.styles';

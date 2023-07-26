@@ -1,9 +1,4 @@
-export type PatternType = {
-  rule: RegExp;
-  message: string;
-};
-
-export type RaodmapValueType = {
+export type RoadmapValueType = {
   categoryId: null | number;
   title: null | string;
   introduction: null | string;
