@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.exception.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class RoadmapTagNameTest {
@@ -30,5 +31,19 @@ class RoadmapTagNameTest {
         // expected
         assertThatThrownBy(() -> new RoadmapTagName(name))
                 .isInstanceOf(BadRequestException.class);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"우와 안녕:우와안녕", "공 백:공백", " 공백없애기:공백없애기", "우와아 :우와아"}, delimiter = ':')
+    void 로드맵_태그_이름에_공백이_들어오면_제거한다(final String name, final String removedSpaceValue) {
+        // given
+        final RoadmapTagName expected = new RoadmapTagName(removedSpaceValue);
+
+        // when
+        final RoadmapTagName roadmapTagName = assertDoesNotThrow(() -> new RoadmapTagName(name));
+
+        // expected
+        assertThat(roadmapTagName)
+                .isEqualTo(expected);
     }
 }

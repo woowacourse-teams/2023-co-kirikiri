@@ -16,8 +16,9 @@ public class RoadmapTagName {
     private String value;
 
     public RoadmapTagName(final String value) {
-        validate(value);
-        this.value = value;
+        final String removedSpaceValue = value.replaceAll(" ", "");
+        validate(removedSpaceValue);
+        this.value = removedSpaceValue;
     }
 
     private void validate(final String name) {
