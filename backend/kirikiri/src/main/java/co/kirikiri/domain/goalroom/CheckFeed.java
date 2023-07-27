@@ -2,6 +2,7 @@ package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.ImageContentType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,7 +29,17 @@ public class CheckFeed extends BaseCreatedTimeEntity {
     @JoinColumn(name = "goal_room_roadmap_node_id", nullable = false)
     private GoalRoomRoadmapNode goalRoomRoadmapNode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "goal_room_member_id", nullable = false)
     private GoalRoomMember goalRoomMember;
+
+    public CheckFeed(final String serverFilePath, final ImageContentType imageContentType,
+                     final String originalFileName, final GoalRoomRoadmapNode goalRoomRoadmapNode,
+                     final GoalRoomMember goalRoomMember) {
+        this.serverFilePath = serverFilePath;
+        this.imageContentType = imageContentType;
+        this.originalFileName = originalFileName;
+        this.goalRoomRoadmapNode = goalRoomRoadmapNode;
+        this.goalRoomMember = goalRoomMember;
+    }
 }

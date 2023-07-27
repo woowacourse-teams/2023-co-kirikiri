@@ -14,10 +14,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -50,11 +50,13 @@ public class GoalRoom extends BaseCreatedTimeEntity {
             orphanRemoval = true, mappedBy = "goalRoom")
     private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
 
-    public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
+    public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
+                    final RoadmapContent roadmapContent) {
         this(null, name, limitedMemberCount, roadmapContent);
     }
 
-    public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
+    public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
+                    final RoadmapContent roadmapContent) {
         this.id = id;
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
@@ -99,6 +101,10 @@ public class GoalRoom extends BaseCreatedTimeEntity {
         goalRoomToDos.add(goalRoomToDo);
     }
 
+    public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
+        this.goalRoomMembers.addAll(new ArrayList<>(members));
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -120,5 +126,7 @@ public class GoalRoom extends BaseCreatedTimeEntity {
         return goalRoomRoadmapNodes;
     }
 
-
+    public List<GoalRoomMember> getGoalRoomMembers() {
+        return goalRoomMembers;
+    }
 }
