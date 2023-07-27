@@ -1,6 +1,6 @@
 import { PERIOD } from '@/constants/roadmap/regex';
 import { useValidateInput } from '@/hooks/_common/useValidateInput';
-import InputDescription from '../input/inputDescription/inputDescription';
+import InputDescription from '../input/inputDescription/InputDescription';
 import InputField from '../input/inputField/InputField';
 import InputLabel from '../input/inputLabel/InputLebel';
 import * as S from './period.styles';
