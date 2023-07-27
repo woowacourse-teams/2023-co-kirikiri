@@ -1,6 +1,6 @@
 import { useSelect } from '@/hooks/_common/useSelect';
 import { useEffect } from 'react';
-import { Select, SelectBox } from '../selector/selectBox';
+import { Select, SelectBox } from '../selector/SelectBox';
 import { S } from './difficulty.styles';
 
 // 임시 더미데이터

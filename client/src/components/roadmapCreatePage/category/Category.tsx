@@ -2,7 +2,7 @@ import { CategoriesInfo } from '@/constants/roadmap/category';
 import { useSelect } from '@/hooks/_common/useSelect';
 import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
 import { useEffect } from 'react';
-import { Select, SelectBox } from '../selector/selectBox';
+import { Select, SelectBox } from '../selector/SelectBox';
 import { S } from './category.styles';
 
 // 임시 더미데이터

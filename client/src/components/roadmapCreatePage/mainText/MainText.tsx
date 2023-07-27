@@ -1,8 +1,8 @@
 import { MAIN_TEXT_MAX_LENGTH } from '@/constants/roadmap/regex';
 import { useValidateInput } from '@/hooks/_common/useValidateInput';
-import InputField from '../input/inputField/inputField';
-import InputLabel from '../input/inputLabel/inputLebel';
-import TextCount from '../input/textCount/textCount';
+import InputField from '../input/inputField/InputField';
+import InputLabel from '../input/inputLabel/InputLebel';
+import TextCount from '../input/textCount/TextCount';
 import * as S from './mainText.styles';
 
 const MainText = () => {

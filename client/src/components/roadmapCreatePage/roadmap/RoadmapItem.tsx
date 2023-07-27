@@ -1,6 +1,6 @@
 import { ROADMAP_MAX_LENGTH } from '@/constants/roadmap/regex';
 import { useValidateInput } from '@/hooks/_common/useValidateInput';
-import InputField from '../input/inputField/inputField';
+import InputField from '../input/inputField/InputField';
 import * as S from './roadmap.styles';
 
 type RoadmapItemType = {
