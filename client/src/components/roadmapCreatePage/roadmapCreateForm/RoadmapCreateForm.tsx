@@ -1,12 +1,12 @@
 import { RoadmapValueType } from '@/myTypes/roadmap/remote';
 import { createContext, PropsWithChildren, useRef, useState } from 'react';
-import Category, { DummyCategoryType } from '../category/category';
-import Description from '../description/description';
+import Category, { DummyCategoryType } from '../category/Category';
 import Difficulty, { DummyDifficultyType } from '../difficulty/difficulty';
+import Description from '../description/description';
 import MainText from '../mainText/mainText';
 import Period from '../period/period';
+import Roadmap from '../roadmap/roadmap';
 import Title from '../title/title';
-import Roadmap from '@components/roadmapCreatePage/roadmap/roadmap';
 
 // ref공유를 위한 context - 다음 브랜치에서 파일 옮길 예정
 const FormRefContext = createContext<{ ref: React.MutableRefObject<undefined> | null }>({
