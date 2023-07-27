@@ -1,46 +1,39 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.Optional;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoadmapContent extends BaseTimeEntity {
+public class RoadmapContent extends BaseCreatedTimeEntity {
 
     private static final int CONTENT_MAX_LENGTH = 150;
-    
-    @Embedded
-    private final RoadmapNodes nodes = new RoadmapNodes();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 2200)
     private String content;
+
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
 
     public RoadmapContent(final String content) {
-        validate(content);
-        this.content = content;
+        this(null, content);
     }
 
     public RoadmapContent(final Long id, final String content) {
+        validate(content);
         this.id = id;
         this.content = content;
     }

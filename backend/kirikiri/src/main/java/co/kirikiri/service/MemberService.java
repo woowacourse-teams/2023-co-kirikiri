@@ -23,7 +23,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
 
-    public void join(final MemberJoinRequest memberJoinRequest) {
+    public Long join(final MemberJoinRequest memberJoinRequest) {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
         checkIdentifierDuplicate(memberJoinDto.identifier());
         checkNicknameDuplicate(memberJoinDto.nickname());
@@ -31,7 +31,7 @@ public class MemberService {
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.birthday(),
                 memberJoinDto.nickname(), memberJoinDto.phoneNumber());
         final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberProfile);
-        memberRepository.save(member);
+        return memberRepository.save(member).getId();
     }
 
     private void checkNicknameDuplicate(final Nickname nickname) {

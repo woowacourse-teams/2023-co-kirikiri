@@ -1,19 +1,16 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.Period;
-import jakarta.persistence.*;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoomToDo extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class GoalRoomToDo extends BaseCreatedTimeEntity {
 
     @Embedded
     private GoalRoomTodoContent content;

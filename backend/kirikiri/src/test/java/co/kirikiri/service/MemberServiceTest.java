@@ -1,5 +1,10 @@
 package co.kirikiri.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -10,21 +15,15 @@ import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.dto.member.GenderType;
+import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDate;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -46,6 +45,8 @@ class MemberServiceTest {
                 .willReturn(Optional.empty());
         given(memberProfileRepository.findByNickname(any()))
                 .willReturn(Optional.empty());
+        given(memberRepository.save(any()))
+                .willReturn(new Member(1L, null, null, null));
 
         //when
         //then

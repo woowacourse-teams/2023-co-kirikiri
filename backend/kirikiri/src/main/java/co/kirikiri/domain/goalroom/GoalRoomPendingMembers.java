@@ -1,6 +1,9 @@
 package co.kirikiri.domain.goalroom;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.util.ArrayList;
@@ -12,9 +15,7 @@ public class GoalRoomPendingMembers {
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            mappedBy = "goalRoom",
-            orphanRemoval = true)
-    @Column(nullable = false)
+            orphanRemoval = true, mappedBy = "goalRoom")
     private final List<GoalRoomPendingMember> values = new ArrayList<>();
 
     public GoalRoomPendingMembers(final List<GoalRoomPendingMember> values) {

@@ -21,7 +21,7 @@ class RoadmapContentsTest {
         roadmapContents.add(updatedRoadmapContent);
 
         // then
-        assertThat(roadmapContents.getContents()).usingRecursiveComparison()
+        assertThat(roadmapContents.getValues()).usingRecursiveComparison()
                 .isEqualTo(List.of(roadmapContent, updatedRoadmapContent));
     }
 }

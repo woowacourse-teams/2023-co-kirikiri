@@ -8,12 +8,16 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GoalRoomService {
 
     private final GoalRoomRepository goalRoomRepository;
     private final RoadmapContentRepository roadmapContentRepository;
     private final MemberRepository memberRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
 
     @Transactional
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
@@ -77,5 +84,28 @@ public class GoalRoomService {
     private Member findMemberByIdentifier(final String memberIdentifier) {
         return memberRepository.findByIdentifier(new Identifier(memberIdentifier))
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    public GoalRoomResponse findGoalRoom(final Long goalRoomId) {
+        final GoalRoom goalRoom = findById(goalRoomId);
+        return GoalRoomMapper.convertGoalRoomResponse(goalRoom);
+    }
+
+    private GoalRoom findById(final Long goalRoomId) {
+        return goalRoomRepository.findByIdWithRoadmapContent(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId));
+    }
+
+    public GoalRoomCertifiedResponse findGoalRoom(final String identifier, final Long goalRoomId) {
+        final GoalRoom goalRoom = findById(goalRoomId);
+        final boolean isJoined = isMemberGoalRoomJoin(new Identifier(identifier), goalRoom);
+        return GoalRoomMapper.convertGoalRoomCertifiedResponse(goalRoom, isJoined);
+    }
+
+    private boolean isMemberGoalRoomJoin(final Identifier identifier, final GoalRoom goalRoom) {
+        if (goalRoom.isRecruiting()) {
+            return goalRoomPendingMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, identifier).isPresent();
+        }
+        return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, identifier).isPresent();
     }
 }

@@ -1,4 +1,4 @@
-package co.kirikiri.service.dto.roadmap;
+package co.kirikiri.service.dto.roadmap.request;
 
 import jakarta.validation.constraints.NotBlank;
 

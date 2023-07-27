@@ -1,11 +1,19 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.util.ArrayList;
@@ -13,11 +21,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoom extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class GoalRoom extends BaseCreatedTimeEntity {
 
     @Embedded
     private GoalRoomName name;
@@ -72,9 +76,17 @@ public class GoalRoom extends BaseTimeEntity {
         }
     }
 
+    public int calculateTotalPeriod() {
+        return goalRoomRoadmapNodes.addTotalPeriod();
+    }
+
+    public boolean isRecruiting() {
+        return status == GoalRoomStatus.RECRUITING;
+    }
+
     public void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
         checkTotalSize(goalRoomRoadmapNodes.size() + this.goalRoomRoadmapNodes.size());
-        goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
     }
 
     private void checkTotalSize(final int totalSize) {
@@ -87,7 +99,26 @@ public class GoalRoom extends BaseTimeEntity {
         goalRoomToDos.add(goalRoomToDo);
     }
 
+    @Override
     public Long getId() {
         return id;
     }
+
+    public GoalRoomName getName() {
+        return name;
+    }
+
+    public LimitedMemberCount getLimitedMemberCount() {
+        return limitedMemberCount;
+    }
+
+    public Integer getCurrentPendingMemberCount() {
+        return goalRoomPendingMembers.size();
+    }
+
+    public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
+        return goalRoomRoadmapNodes;
+    }
+
+
 }

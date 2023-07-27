@@ -1,5 +1,7 @@
 package co.kirikiri.persistence.member;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -10,11 +12,8 @@ import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RepositoryTest
 class MemberProfileRepositoryTest {

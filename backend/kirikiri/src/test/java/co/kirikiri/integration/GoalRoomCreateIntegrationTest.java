@@ -1,5 +1,8 @@
 package co.kirikiri.integration;
 
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.integration.helper.IntegrationTest;
@@ -11,11 +14,11 @@ import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import co.kirikiri.service.dto.member.GenderType;
+import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
+import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.http.Header;
@@ -30,10 +33,7 @@ import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
-
-class GoalRoomIntegrationTest extends IntegrationTest {
+class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
     private static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
     private static final int 정상적인_골룸_제한_인원 = 20;
@@ -50,7 +50,7 @@ class GoalRoomIntegrationTest extends IntegrationTest {
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
 
-    public GoalRoomIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository, final RoadmapNodeRepository roadmapNodeRepository) {
+    public GoalRoomCreateIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository, final RoadmapNodeRepository roadmapNodeRepository) {
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapNodeRepository = roadmapNodeRepository;
     }
@@ -234,17 +234,6 @@ class GoalRoomIntegrationTest extends IntegrationTest {
         assertThat(errorResponse.message()).isEqualTo("제한 인원 수가 적절하지 않습니다.");
     }
 
-    private ExtractableResponse<Response> 회원가입(final MemberJoinRequest 회원가입_요청) {
-        return given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(회원가입_요청)
-                .post(API_PREFIX + "/members/join")
-                .then()
-                .log().all()
-                .extract();
-    }
-
     private ExtractableResponse<Response> 로그인(final LoginRequest 로그인_요청) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -297,10 +286,22 @@ class GoalRoomIntegrationTest extends IntegrationTest {
         return 액세스_토큰;
     }
 
+    private ExtractableResponse<Response> 회원가입(final MemberJoinRequest 회원가입_요청) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(회원가입_요청)
+                .post(API_PREFIX + "/members/join")
+                .then()
+                .log().all()
+                .extract();
+    }
+
     private Long 로드맵을_생성하고_id를_알아낸다(final String 액세스_토큰, final RoadmapSaveRequest 로드맵_생성_요청) {
         final ExtractableResponse<Response> 로드맵_응답 = 로드맵_생성(로드맵_생성_요청, 액세스_토큰);
         final String Location_헤더 = 로드맵_응답.response().header("Location");
-        final Long 로드맵_id = Long.parseLong(Location_헤더.substring(10));
+        System.out.println("~~~~~~~~~~~~~~~" + Location_헤더);
+        final Long 로드맵_id = Long.parseLong(Location_헤더.substring(14));
         return 로드맵_id;
     }
 }

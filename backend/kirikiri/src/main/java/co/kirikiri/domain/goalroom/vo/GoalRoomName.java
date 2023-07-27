@@ -26,4 +26,8 @@ public class GoalRoomName {
             throw new BadRequestException("골룸 이름의 길이가 적절하지 않습니다.");
         }
     }
+
+    public String getValue() {
+        return value;
+    }
 }

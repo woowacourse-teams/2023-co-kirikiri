@@ -1,6 +1,8 @@
 package co.kirikiri.persistence.roadmap;
 
-import co.kirikiri.domain.ImageContentType;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -8,16 +10,14 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.*;
+import co.kirikiri.domain.roadmap.Roadmap;
+import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapContentRepositoryTest {
@@ -60,8 +60,7 @@ class RoadmapContentRepositoryTest {
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
         final RoadmapContent content = new RoadmapContent("로드맵 제목");
 
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
-                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
         roadmap.addContent(content);
 
         return roadmap;
@@ -79,19 +78,5 @@ class RoadmapContentRepositoryTest {
     private RoadmapCategory 로드맵_카테고리를_생성한다() {
         final RoadmapCategory category = new RoadmapCategory("운동");
         return roadmapCategoryRepository.save(category);
-    }
-
-    private List<RoadmapNode> 로드맵_노드들을_생성한다() {
-        return List.of(
-                new RoadmapNode("1단계", "준비운동"),
-                new RoadmapNode("2단계", "턱걸이")
-        );
-    }
-
-    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
-        return List.of(
-                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
-                        ImageContentType.PNG)
-        );
     }
 }

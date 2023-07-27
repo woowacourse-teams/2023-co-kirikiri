@@ -1,5 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
+import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
@@ -8,21 +9,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-
 import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Roadmap {
+public class Roadmap extends BaseEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
@@ -30,10 +27,6 @@ public class Roadmap {
     private static final int INTRODUCTION_MAX_LENGTH = 150;
     private static final int REQUIRED_MIN_PERIOD = 0;
     private static final int REQUIRED_MAX_PERIOD = 1000;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 50, nullable = false)
     private String title;
@@ -65,13 +58,7 @@ public class Roadmap {
 
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
-        validate(title, introduction, requiredPeriod);
-        this.title = title;
-        this.introduction = introduction;
-        this.requiredPeriod = requiredPeriod;
-        this.difficulty = difficulty;
-        this.creator = creator;
-        this.category = category;
+        this(null, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
     }
 
     public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
@@ -81,8 +68,14 @@ public class Roadmap {
     }
 
     public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
+        this(id, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
+    }
+
+    public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
                    final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
                    final RoadmapCategory category) {
+        validate(title, introduction, requiredPeriod);
         this.id = id;
         this.title = title;
         this.introduction = introduction;
@@ -132,6 +125,10 @@ public class Roadmap {
         }
     }
 
+    public void delete() {
+        this.status = RoadmapStatus.DELETED;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -153,6 +150,7 @@ public class Roadmap {
         return creator;
     }
 
+    @Override
     public Long getId() {
         return id;
     }

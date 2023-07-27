@@ -13,29 +13,17 @@ public class RoadmapContents {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmap")
     @Column(nullable = false)
-    private final List<RoadmapContent> contents = new ArrayList<>();
+    private final List<RoadmapContent> values = new ArrayList<>();
 
     public RoadmapContents(final List<RoadmapContent> contents) {
-        this.contents.addAll(contents);
+        this.values.addAll(new ArrayList<>(contents));
     }
 
     public void add(final RoadmapContent content) {
-        this.contents.add(content);
+        this.values.add(content);
     }
 
-    public List<RoadmapContent> getContents() {
-        return contents;
-    }
-
-    public boolean isEmpty() {
-        return contents.isEmpty();
-    }
-
-    public boolean hasContent(final RoadmapContent content) {
-        return contents.contains(content);
-    }
-
-    public void removeContent(final RoadmapContent content) {
-        contents.remove(content);
+    public List<RoadmapContent> getValues() {
+        return new ArrayList<>(values);
     }
 }

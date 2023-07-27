@@ -1,25 +1,24 @@
 package co.kirikiri.domain.roadmap;
 
+import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoadmapNode {
+public class RoadmapNode extends BaseEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
     private static final int CONTENT_MIN_LENGTH = 1;
     private static final int CONTENT_MAX_LENGTH = 200;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 50, nullable = false)
     private String title;
@@ -27,18 +26,15 @@ public class RoadmapNode {
     @Column(length = 2200, nullable = false)
     private String content;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roadmap_node_id")
-    private final List<RoadmapNodeImage> images = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     private RoadmapContent roadmapContent;
 
+    @Embedded
+    private final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
+
     public RoadmapNode(final String title, final String content) {
-        validate(title, content);
-        this.title = title;
-        this.content = content;
+        this(null, title, content);
     }
 
     public RoadmapNode(final Long id, final String title, final String content) {
@@ -51,6 +47,20 @@ public class RoadmapNode {
     private void validate(final String title, final String content) {
         validateTitleLength(title);
         validateContentLength(content);
+    }
+
+    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
+        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
+    }
+
+    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
+        if (this.roadmapContent == null) {
+            this.roadmapContent = roadmapContent;
+        }
+    }
+
+    public void addImages(final RoadmapNodeImages roadmapNodeImages) {
+        this.roadmapNodeImages.addAll(roadmapNodeImages);
     }
 
     private void validateTitleLength(final String title) {
@@ -67,20 +77,6 @@ public class RoadmapNode {
         }
     }
 
-    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
-        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
-    }
-
-    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
-        if (this.roadmapContent == null) {
-            this.roadmapContent = roadmapContent;
-        }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -93,7 +89,7 @@ public class RoadmapNode {
         return roadmapContent;
     }
 
-    public List<RoadmapNodeImage> getImages() {
-        return images;
+    public RoadmapNodeImages getImages() {
+        return roadmapNodeImages;
     }
 }

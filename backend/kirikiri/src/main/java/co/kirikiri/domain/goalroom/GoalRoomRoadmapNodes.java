@@ -1,12 +1,15 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.stream.IntStream;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNodes {
+
+    private static final int DATE_OFFSET = 1;
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
@@ -43,10 +48,32 @@ public class GoalRoomRoadmapNodes {
     }
 
     public void addAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        values.addAll(new ArrayList<>(goalRoomRoadmapNodes.values));
+        this.values.addAll(new ArrayList<>(goalRoomRoadmapNodes.values));
+    }
+
+    public LocalDate getGoalRoomStartDate() {
+        return values.stream()
+                .min(Comparator.comparing(GoalRoomRoadmapNode::getStartDate))
+                .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
+                .getStartDate();
+    }
+
+    public LocalDate getGoalRoomEndDate() {
+        return values.stream()
+                .max(Comparator.comparing(GoalRoomRoadmapNode::getEndDate))
+                .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
+                .getEndDate();
+    }
+
+    public int addTotalPeriod() {
+        return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
     }
 
     public int size() {
         return values.size();
+    }
+
+    public List<GoalRoomRoadmapNode> getValues() {
+        return new ArrayList<>(values);
     }
 }

@@ -1,22 +1,23 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.*;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoomRoadmapNode {
+public class GoalRoomRoadmapNode extends BaseEntity {
 
     private static final int MIN_CHECK_COUNT = 0;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Embedded
     private Period period;
@@ -57,5 +58,17 @@ public class GoalRoomRoadmapNode {
 
     public LocalDate getStartDate() {
         return period.getStartDate();
+    }
+
+    public LocalDate getEndDate() {
+        return period.getEndDate();
+    }
+
+    public RoadmapNode getRoadmapNode() {
+        return roadmapNode;
+    }
+
+    public int getCheckCount() {
+        return checkCount;
     }
 }
