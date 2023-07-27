@@ -1,14 +1,19 @@
 package co.kirikiri.service;
 
+import static co.kirikiri.domain.goalroom.GoalRoomStatus.RECRUITING;
+import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMembers;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
@@ -30,6 +35,7 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -48,8 +54,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class GoalRoomServiceTest {
 
+    private static final LocalDate TODAY = LocalDate.now();
+
     @Mock
     private GoalRoomRepository goalRoomRepository;
+
+    @Mock
+    private GoalRoomMemberRepository goalRoomMemberRepository;
 
     @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
@@ -154,11 +165,100 @@ class GoalRoomServiceTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
+    @Test
+    void 골룸의_시작날짜가_되면_골룸의_상태가_진행중으로_변경된다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom1 = 골룸을_생성한다(targetRoadmapContent, TODAY);
+        final GoalRoom goalRoom2 = 골룸을_생성한다(targetRoadmapContent, TODAY.plusDays(10));
+
+        final Member follower1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member follower2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member follower3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+
+        final GoalRoomPendingMember goalRoomPendingMember1 = 골룸_대기자를_생성한다(goalRoom1, follower1);
+        final GoalRoomPendingMember goalRoomPendingMember2 = 골룸_대기자를_생성한다(goalRoom1, follower2);
+        final GoalRoomPendingMember goalRoomPendingMember3 = 골룸_대기자를_생성한다(goalRoom2, follower3);
+
+        goalRoom1.joinGoalRoom(goalRoomPendingMember1);
+        goalRoom1.joinGoalRoom(goalRoomPendingMember2);
+        goalRoom2.joinGoalRoom(goalRoomPendingMember3);
+
+        when(goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode())
+                .thenReturn(List.of(goalRoom1));
+        when(goalRoomPendingMemberRepository.findAllByGoalRoom(any()))
+                .thenReturn(List.of(goalRoomPendingMember1, goalRoomPendingMember2));
+
+        // when
+        goalRoomService.startGoalRooms();
+
+        // then
+        verify(goalRoomMemberRepository, times(1)).saveAll(anyList());
+        verify(goalRoomPendingMemberRepository, times(1)).deleteAll(anyList());
+
+        assertAll(
+                () -> assertThat(goalRoom1.getStatus()).isEqualTo(RUNNING),
+                () -> assertThat(goalRoom2.getStatus()).isEqualTo(RECRUITING)
+        );
+    }
+
+    @Test
+    void 골룸의_시작날짜가_아직_지나지_않았다면_골룸의_상태가_변경되지_않는다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom1 = 골룸을_생성한다(targetRoadmapContent, TODAY.plusDays(10));
+        final GoalRoom goalRoom2 = 골룸을_생성한다(targetRoadmapContent, TODAY.plusDays(10));
+
+        final Member follower1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member follower2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member follower3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+
+        final GoalRoomPendingMember goalRoomPendingMember1 = 골룸_대기자를_생성한다(goalRoom1, follower1);
+        final GoalRoomPendingMember goalRoomPendingMember2 = 골룸_대기자를_생성한다(goalRoom1, follower2);
+        final GoalRoomPendingMember goalRoomPendingMember3 = 골룸_대기자를_생성한다(goalRoom2, follower3);
+
+        goalRoom1.joinGoalRoom(goalRoomPendingMember1);
+        goalRoom1.joinGoalRoom(goalRoomPendingMember2);
+        goalRoom2.joinGoalRoom(goalRoomPendingMember3);
+
+        when(goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode())
+                .thenReturn(List.of());
+
+        // when
+        goalRoomService.startGoalRooms();
+
+        // then
+        verify(goalRoomPendingMemberRepository, times(0)).findAllByGoalRoom(any());
+        verify(goalRoomMemberRepository, times(0)).saveAll(anyList());
+        verify(goalRoomPendingMemberRepository, times(0)).deleteAll(anyList());
+
+        assertAll(
+                () -> assertThat(goalRoom1.getStatus()).isEqualTo(RECRUITING),
+                () -> assertThat(goalRoom2.getStatus()).isEqualTo(RECRUITING)
+        );
+    }
+
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 new Nickname("코끼리"), "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), memberProfile);
+    }
+
+    private Member 사용자를_생성한다(final String identifier, final String password, final String nickname,
+                             final String phoneNumber) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
+                new Nickname(nickname), phoneNumber);
+        return new Member(new Identifier(identifier),
+                new EncryptedPassword(new Password(password)), memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {
@@ -212,6 +312,30 @@ class GoalRoomServiceTest {
                 LocalDateTime.of(2023, 7, 15, 12, 0), goalRoom, member);
         goalRoom.joinGoalRoom(goalRoomPendingMember);
         return goalRoom;
+    }
+
+    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final LocalDate startDate) {
+        final GoalRoom goalRoom = new GoalRoom("골룸", 10, RECRUITING, roadmapContent);
+        final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
+
+        final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
+        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                startDate, startDate.plusDays(10), 10, firstRoadmapNode);
+
+        final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
+        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                startDate.plusDays(11), startDate.plusDays(20), 2, secondRoadmapNode);
+
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
+                List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
+        goalRoom.addGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+
+        return goalRoom;
+    }
+
+    private GoalRoomPendingMember 골룸_대기자를_생성한다(final GoalRoom goalRoom, final Member follower) {
+        return new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, follower);
     }
 
     private static GoalRoomResponse 예상하는_골룸_응답을_생성한다() {

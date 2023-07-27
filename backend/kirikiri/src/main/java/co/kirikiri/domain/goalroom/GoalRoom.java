@@ -74,6 +74,10 @@ public class GoalRoom extends BaseCreatedTimeEntity {
         return status == GoalRoomStatus.RECRUITING;
     }
 
+    public void updateStatus(final GoalRoomStatus status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }
@@ -84,6 +88,10 @@ public class GoalRoom extends BaseCreatedTimeEntity {
 
     public Integer getLimitedMemberCount() {
         return limitedMemberCount;
+    }
+
+    public GoalRoomStatus getStatus() {
+        return status;
     }
 
     public Integer getCurrentPendingMemberCount() {

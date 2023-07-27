@@ -41,4 +41,20 @@ public class GoalRoomPendingMember extends BaseEntity {
         this.goalRoom = goalRoom;
         this.member = member;
     }
+
+    public GoalRoomRole getRole() {
+        return role;
+    }
+
+    public LocalDateTime getJoinedAt() {
+        return joinedAt;
+    }
+
+    public GoalRoom getGoalRoom() {
+        return goalRoom;
+    }
+
+    public Member getMember() {
+        return member;
+    }
 }
