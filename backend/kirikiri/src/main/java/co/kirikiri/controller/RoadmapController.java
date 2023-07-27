@@ -5,6 +5,7 @@ import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
@@ -45,11 +46,22 @@ public class RoadmapController {
     @GetMapping
     public ResponseEntity<List<RoadmapForListResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
-            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest roadmapFilterTypeRequest,
+            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest filterTypeRequest,
             @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
         final List<RoadmapForListResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
-                categoryId, roadmapFilterTypeRequest, scrollRequest);
+                categoryId, filterTypeRequest, scrollRequest);
+        return ResponseEntity.ok(roadmapPageResponse);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<RoadmapForListResponse>> search(
+            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest filterTypeRequest,
+            @ModelAttribute final RoadmapSearchRequest searchRequest,
+            @ModelAttribute final CustomScrollRequest scrollRequest
+    ) {
+        final List<RoadmapForListResponse> roadmapPageResponse = roadmapService.search(
+                filterTypeRequest, searchRequest, scrollRequest);
         return ResponseEntity.ok(roadmapPageResponse);
     }
 
