@@ -14,7 +14,7 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import java.time.LocalDate;
@@ -80,9 +80,9 @@ class RoadmapRepositoryTest {
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
 
         // when
-        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
+        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapsByCond(category, orderType,
                 null, 2);
-        final List<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
+        final List<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapsByCond(category, orderType,
                 gameRoadmap2.getId(), 2);
 
         // then
@@ -117,7 +117,7 @@ class RoadmapRepositoryTest {
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
 
         // when
-        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(gameCategory, orderType,
+        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapsByCond(gameCategory, orderType,
                 null, 10);
 
         // then

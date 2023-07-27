@@ -180,7 +180,7 @@ class RoadmapServiceTest {
 
         when(roadmapCategoryRepository.findById(any()))
                 .thenReturn(Optional.of(category));
-        when(roadmapRepository.findRoadmapPagesByCond(any(), any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
         final Long categoryId = 1L;
@@ -222,7 +222,7 @@ class RoadmapServiceTest {
                 로드맵을_생성한다("첫 번째 로드맵", category),
                 로드맵을_생성한다("두 번째 로드맵", category));
 
-        when(roadmapRepository.findRoadmapPagesByCond(any(), any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
         final Long categoryId = null;
@@ -264,7 +264,7 @@ class RoadmapServiceTest {
 
         when(roadmapCategoryRepository.findById(any()))
                 .thenReturn(Optional.of(new RoadmapCategory("여행")));
-        when(roadmapRepository.findRoadmapPagesByCond(any(), any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
         final Long categoryId = 1L;

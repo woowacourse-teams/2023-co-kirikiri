@@ -37,7 +37,7 @@ public class RoadmapController {
     }
 
     @GetMapping("/{roadmapId}")
-    public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
+    public ResponseEntity<RoadmapResponse> findRoadmap(@PathVariable final Long roadmapId) {
         final RoadmapResponse response = roadmapService.findRoadmap(roadmapId);
         return ResponseEntity.ok(response);
     }

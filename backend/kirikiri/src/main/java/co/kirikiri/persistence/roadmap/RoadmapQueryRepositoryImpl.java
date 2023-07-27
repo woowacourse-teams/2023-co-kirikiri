@@ -7,7 +7,7 @@ import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -32,8 +32,8 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public List<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
-                                                final Long lastRoadmapId, final int pageSize) {
+    public List<Roadmap> findRoadmapsByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
+                                            final Long lastRoadmapId, final int pageSize) {
 
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)

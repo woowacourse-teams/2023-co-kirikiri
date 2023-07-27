@@ -10,10 +10,10 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
@@ -121,7 +121,7 @@ public class RoadmapService {
         final RoadmapCategory category = findCategoryById(categoryId);
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
 
-        final List<Roadmap> roadmapPages = roadmapRepository.findRoadmapPagesByCond(category, orderType,
+        final List<Roadmap> roadmapPages = roadmapRepository.findRoadmapsByCond(category, orderType,
                 scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertRoadmapPageResponse(roadmapPages);
     }
