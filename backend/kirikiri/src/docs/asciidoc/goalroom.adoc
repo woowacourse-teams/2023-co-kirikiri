@@ -64,7 +64,6 @@ operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_인증_�
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_인증_횟수가_기간보다_클_경우[snippets='http-request,http-response']
 
-
 [[골룸단일조회-API]]
 == *1. 골룸 단일 조회 API (비로그인)*
 
@@ -85,3 +84,17 @@ operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_�
 === *2-2* 실패
 
 operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸_조회시_골룸_아이디가_유효하지_않으면_예외_발생[snippets='http-request,request-headers,http-response,response-fields']
+
+== *3. 인증 피드 추가 API*
+
+=== *3-1* 성공
+
+operation::goal-room-create-api-test/인증_피드_등록_요청을_보낸다[snippets='http-request,http-response,request-headers,path-parameters,response-headers']
+
+=== *3-2* 실패 - 인증 피드 요청 시 존재하지 않는 사용자 아이디일 경우
+
+operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+=== *3-3* 실패 - 인증 피드 요청 시 존재하지 않는 골룸일 경우
+
+operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']

@@ -3,19 +3,21 @@ package co.kirikiri.controller;
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.GoalRoomService;
+import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.net.URI;
 
 @RestController
 @RequestMapping("/goal-rooms")
@@ -44,5 +46,14 @@ public class GoalRoomController {
                                                                   @PathVariable("goalRoomId") final Long goalRoomId) {
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomService.findGoalRoom(identifier, goalRoomId);
         return ResponseEntity.ok(goalRoomResponse);
+    }
+
+    @Authenticated
+    @PostMapping("/{goalRoomId}/checkFeeds")
+    public ResponseEntity<Void> createCheckFeed(@MemberIdentifier final String identifier,
+                                                @PathVariable("goalRoomId") final Long goalRoomId,
+                                                @ModelAttribute final CheckFeedRequest checkFeedRequest) {
+        final String imageUrl = goalRoomService.createCheckFeed(identifier, goalRoomId, checkFeedRequest);
+        return ResponseEntity.created(URI.create(imageUrl)).build();
     }
 }

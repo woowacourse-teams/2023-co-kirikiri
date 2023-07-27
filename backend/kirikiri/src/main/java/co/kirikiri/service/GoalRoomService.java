@@ -1,6 +1,10 @@
 package co.kirikiri.service;
 
-import co.kirikiri.domain.goalroom.*;
+import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -15,14 +19,15 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
+import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,8 +45,10 @@ public class GoalRoomService {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
         final RoadmapContent roadmapContent = findRoadmapContentById(goalRoomCreateDto.roadmapContentId());
         checkNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
-        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
-        final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(), roadmapContent);
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(
+                goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
+        final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(),
+                roadmapContent);
         final GoalRoomPendingMember goalRoomPendingMember = makeGoalRoomPendingMember(memberIdentifier);
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         goalRoom.addGoalRoomTodo(goalRoomCreateDto.goalRoomToDo());
@@ -60,15 +67,18 @@ public class GoalRoomService {
         }
     }
 
-    private GoalRoomRoadmapNodes makeGoalRoomRoadmapNodes(final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos, final RoadmapContent roadmapContent) {
+    private GoalRoomRoadmapNodes makeGoalRoomRoadmapNodes(final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos,
+                                                          final RoadmapContent roadmapContent) {
         final List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = goalRoomRoadmapNodeDtos.stream()
                 .map(it -> makeGoalRoomRoadmapNode(roadmapContent, it))
                 .toList();
         return new GoalRoomRoadmapNodes(goalRoomRoadmapNodes);
     }
 
-    private GoalRoomRoadmapNode makeGoalRoomRoadmapNode(final RoadmapContent roadmapContent, final GoalRoomRoadmapNodeDto it) {
-        return new GoalRoomRoadmapNode(new Period(it.startDate(), it.endDate()), it.checkCount(), findRoadmapNode(roadmapContent, it.roadmapNodeId()));
+    private GoalRoomRoadmapNode makeGoalRoomRoadmapNode(final RoadmapContent roadmapContent,
+                                                        final GoalRoomRoadmapNodeDto it) {
+        return new GoalRoomRoadmapNode(new Period(it.startDate(), it.endDate()), it.checkCount(),
+                findRoadmapNode(roadmapContent, it.roadmapNodeId()));
     }
 
     private RoadmapNode findRoadmapNode(final RoadmapContent roadmapContent, final Long roadmapNodeId) {
@@ -107,5 +117,13 @@ public class GoalRoomService {
             return goalRoomPendingMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, identifier).isPresent();
         }
         return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, identifier).isPresent();
+    }
+
+    @Transactional
+    public String createCheckFeed(final String identifier, final Long goalRoomId,
+                                  final CheckFeedRequest checkFeedRequest) {
+        //final Member member = findMemberByIdentifier(identifier);
+        //final GoalRoom goalRoom = findById(goalRoomId);
+        return null;
     }
 }
