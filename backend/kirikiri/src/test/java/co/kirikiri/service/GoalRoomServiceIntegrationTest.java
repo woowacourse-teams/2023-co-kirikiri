@@ -135,13 +135,6 @@ public class GoalRoomServiceIntegrationTest extends IntegrationTest {
         );
     }
 
-//    @Test
-//    public void test() throws InterruptedException {
-//        Thread.sleep(1000000000000L);
-//        System.out.println(LocalDateTime.now());
-//        goalRoomService.test();
-//    }
-
     private Member 사용자를_생성한다(final String 아이디, final String 비밀번호, final String 닉네임,
                              final String 전화번호) {
         final MemberProfile 사용자_프로필 = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
