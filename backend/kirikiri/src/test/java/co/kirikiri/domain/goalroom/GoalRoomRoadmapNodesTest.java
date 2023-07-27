@@ -2,17 +2,18 @@ package co.kirikiri.domain.goalroom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class GoalRoomRoadmapNodesTest {
 
@@ -30,12 +31,15 @@ class GoalRoomRoadmapNodesTest {
         final LocalDate secondStartDate = firstEndDate.plusDays(daysToAdd);
         final LocalDate secondEndDate = secondStartDate.plusDays(daysToAdd);
 
-        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(new Period(firstStartDate, firstEndDate), 0, null);
-        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(new Period(secondStartDate, secondEndDate), 0, null);
+        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(firstStartDate, firstEndDate), 0, null);
+        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(secondStartDate, secondEndDate), 0, null);
 
         //when
         //then
-        assertDoesNotThrow(() -> new GoalRoomRoadmapNodes(List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode)));
+        assertDoesNotThrow(
+                () -> new GoalRoomRoadmapNodes(List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode)));
     }
 
     @ParameterizedTest
@@ -47,8 +51,10 @@ class GoalRoomRoadmapNodesTest {
         final LocalDate secondStartDate = firstEndDate.minusDays(value);
         final LocalDate secondEndDate = secondStartDate.plusDays(value);
 
-        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(new Period(firstStartDate, firstEndDate), 0, null);
-        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(new Period(secondStartDate, secondEndDate), 0, null);
+        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(firstStartDate, firstEndDate), 0, null);
+        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(secondStartDate, secondEndDate), 0, null);
 
         //when
         //then
@@ -75,6 +81,20 @@ class GoalRoomRoadmapNodesTest {
         // then
         assertThat(totalPeriod)
                 .isSameAs(31);
+    }
+
+    @Test
+    void 해당_날짜에_진행하는_골룸_노드를_반환한다() {
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = 골룸_노드를_생성한다();
+
+        assertAll(
+                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TODAY))
+                        .isEqualTo(new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER),
+                                10, new RoadmapNode("로드맵 제목 1", "로드맵 내용 1"))),
+                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TEN_DAY_LATER))
+                        .isEqualTo(new GoalRoomRoadmapNode(new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER),
+                                10, new RoadmapNode("로드맵 제목 2", "로드맵 내용 2")))
+        );
     }
 
     private GoalRoomRoadmapNodes 골룸_노드를_생성한다() {

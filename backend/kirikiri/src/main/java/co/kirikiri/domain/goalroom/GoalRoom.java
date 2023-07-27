@@ -14,6 +14,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -99,6 +100,10 @@ public class GoalRoom extends BaseCreatedTimeEntity {
 
     public void addGoalRoomTodo(final GoalRoomToDo goalRoomToDo) {
         goalRoomToDos.add(goalRoomToDo);
+    }
+
+    public GoalRoomRoadmapNode getNodeByDate(final LocalDate date) {
+        return goalRoomRoadmapNodes.getNodeByDate(date);
     }
 
     public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {

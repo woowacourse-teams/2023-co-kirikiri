@@ -9,9 +9,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -54,6 +54,10 @@ public class GoalRoomRoadmapNode extends BaseEntity {
 
     public boolean isEndDateEqualOrAfterOtherStartDate(final GoalRoomRoadmapNode other) {
         return this.period.isEndDateEqualOrAfterOtherStartDate(other.period);
+    }
+
+    public boolean isDayOfNode(final LocalDate date) {
+        return period.contains(date);
     }
 
     public LocalDate getStartDate() {

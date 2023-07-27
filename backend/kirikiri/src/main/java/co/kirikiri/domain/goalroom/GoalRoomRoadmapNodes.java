@@ -6,14 +6,14 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNodes {
@@ -71,6 +71,15 @@ public class GoalRoomRoadmapNodes {
 
     public int size() {
         return values.size();
+    }
+
+    public GoalRoomRoadmapNode getNodeByDate(final LocalDate date) {
+        sortByStartDateAsc(values);
+
+        return values.stream()
+                .filter(node -> node.isDayOfNode(date))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("잘못된 인증 피드 요청입니다."));
     }
 
     public List<GoalRoomRoadmapNode> getValues() {

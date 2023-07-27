@@ -1,14 +1,15 @@
 package co.kirikiri.domain.goalroom;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
+import java.time.LocalDate;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class GoalRoomRoadmapNodeTest {
 
@@ -21,7 +22,8 @@ class GoalRoomRoadmapNodeTest {
 
         //when
         //then
-        assertDoesNotThrow(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), daysToAdd + 1, new RoadmapNode("title", "content")));
+        assertDoesNotThrow(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), daysToAdd + 1,
+                new RoadmapNode("title", "content")));
     }
 
     @ParameterizedTest
@@ -33,7 +35,8 @@ class GoalRoomRoadmapNodeTest {
 
         //when
         //then
-        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount, new RoadmapNode("title", "content")))
+        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
+                new RoadmapNode("title", "content")))
                 .isInstanceOf(BadRequestException.class);
     }
 
@@ -46,7 +49,8 @@ class GoalRoomRoadmapNodeTest {
 
         //when
         //then
-        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount, new RoadmapNode("title", "content")))
+        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
+                new RoadmapNode("title", "content")))
                 .isInstanceOf(BadRequestException.class);
     }
 
@@ -60,7 +64,8 @@ class GoalRoomRoadmapNodeTest {
 
         //when
         //then
-        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount, new RoadmapNode("title", "content")))
+        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
+                new RoadmapNode("title", "content")))
                 .isInstanceOf(BadRequestException.class);
     }
 
@@ -74,7 +79,30 @@ class GoalRoomRoadmapNodeTest {
 
         //when
         //then
-        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount, new RoadmapNode("title", "content")))
+        assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
+                new RoadmapNode("title", "content")))
                 .isInstanceOf(BadRequestException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2300-07-01", "2300-07-06", "2300-07-15"})
+    void 노드가_진행_중인_날짜면_true를_반환한다(final LocalDate date) {
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(LocalDate.of(2300, 7, 1),
+                        LocalDate.of(2300, 7, 15)),
+                7, new RoadmapNode("제목", "내용"));
+
+        assertThat(goalRoomRoadmapNode.isDayOfNode(date)).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2300-06-10", "2300-06-30", "2300-07-16", "2301-07-03"})
+    void 노드가_진행_중인_날짜가_아니면_false를_반환한다(final LocalDate date) {
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(LocalDate.of(2300, 7, 1),
+                        LocalDate.of(2300, 7, 15)),
+                7, new RoadmapNode("제목", "내용"));
+
+        assertThat(goalRoomRoadmapNode.isDayOfNode(date)).isFalse();
     }
 }

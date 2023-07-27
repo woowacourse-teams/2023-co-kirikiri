@@ -2,10 +2,10 @@ package co.kirikiri.domain.goalroom.vo;
 
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,6 +41,12 @@ public class Period {
     public boolean isEndDateEqualOrAfterOtherStartDate(final Period other) {
         return this.endDate.isEqual(other.startDate)
                 || this.endDate.isAfter(other.startDate);
+    }
+
+    public boolean contains(final LocalDate date) {
+        return (startDate.isBefore(date) && endDate.isAfter(date))
+                || startDate.isEqual(date)
+                || endDate.isEqual(date);
     }
 
     public long getDayCount() {
