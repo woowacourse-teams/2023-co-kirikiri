@@ -141,12 +141,12 @@ class RoadmapServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
         goalRoom.complete();
-        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
+        final Optional<GoalRoomMember> goalRoomMember = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(goalRoomMembers);
+                .thenReturn(goalRoomMember);
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.empty());
 
@@ -181,7 +181,7 @@ class RoadmapServiceTest {
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(Collections.emptyList());
+                .thenReturn(Optional.empty());
 
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("리뷰 내용", null);
 
@@ -202,12 +202,12 @@ class RoadmapServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
 
-        final List<GoalRoomMember> goalRoomMembers = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
+        final Optional<GoalRoomMember> goalRoomMember = 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(goalRoom);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(goalRoomMembers);
+                .thenReturn(goalRoomMember);
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.of(new RoadmapReview("로드맵 짱!", 5.0, member)));
 
@@ -451,14 +451,13 @@ class RoadmapServiceTest {
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
-        return new GoalRoom("골룸", 10, 5, GoalRoomStatus.RECRUITING, roadmapContent);
+        return new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, roadmapContent);
     }
 
-    private List<GoalRoomMember> 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(final GoalRoom goalRoom) {
+    private Optional<GoalRoomMember> 사용자가_참여한_특정_로드맵의_골룸_멤버_목록을_생성한다(final GoalRoom goalRoom) {
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.FOLLOWER,
                 LocalDateTime.of(2022, 7, 20, 17, 10), goalRoom, member);
         goalRoom.addMember(goalRoomMember);
-        return List.of(goalRoomMember);
+        return Optional.of(goalRoomMember);
     }
-
 }

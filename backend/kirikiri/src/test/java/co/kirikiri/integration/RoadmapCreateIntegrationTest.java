@@ -386,7 +386,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
 
     private GoalRoom 골룸을_생성한다(final List<RoadmapContent> 로드맵_본문_리스트, final GoalRoomStatus status) {
         final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
-        final GoalRoom 골룸 = new GoalRoom("골룸", 10, 5, status, 로드맵_본문);
+        final GoalRoom 골룸 = new GoalRoom("골룸", 10, status, 로드맵_본문);
         final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
 
         final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);

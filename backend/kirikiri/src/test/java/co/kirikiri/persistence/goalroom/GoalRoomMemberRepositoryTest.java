@@ -31,6 +31,7 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -65,15 +66,13 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoomMember savedGoalRoomMember = 골룸_참가자를_저장한다(goalRoom, follower);
 
         // when
-        final List<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
+        final Optional<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
                 roadmap.getId(), new Identifier("kirikirico"), GoalRoomStatus.RECRUITING);
 
         // then
-        assertThat(findGoalRoomMember)
-                .hasSize(1);
-        assertThat(findGoalRoomMember)
+        assertThat(findGoalRoomMember.get())
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(savedGoalRoomMember));
+                .isEqualTo(savedGoalRoomMember);
     }
 
     @Test
@@ -86,11 +85,11 @@ class GoalRoomMemberRepositoryTest {
         골룸_참가자를_저장한다(goalRoom, creator);
 
         // expected
-        final List<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
+        final Optional<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
                 roadmap.getId(), new Identifier("kirikirico2"), GoalRoomStatus.COMPLETED);
 
         assertThat(findGoalRoomMember)
-                .hasSize(0);
+                .isEmpty();
     }
 
     private Member 사용자를_저장한다(final String name, final String identifier) {
@@ -131,7 +130,7 @@ class GoalRoomMemberRepositoryTest {
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom("골룸", 10, 5, GoalRoomStatus.RECRUITING, roadmapContent);
+        final GoalRoom goalRoom = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, roadmapContent);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);

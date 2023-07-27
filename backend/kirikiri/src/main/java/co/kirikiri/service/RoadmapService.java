@@ -27,6 +27,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
@@ -102,11 +103,13 @@ public class RoadmapService {
     @Transactional
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final List<GoalRoomMember> goalRoomMembers = findCompletedGoalRoomMembers(roadmapId, identifier);
-        final Member member = goalRoomMembers.get(0).getMember();
+        final GoalRoomMember goalRoomMember = findCompletedGoalRoomMember(roadmapId, identifier);
+        final Member member = goalRoomMember.getMember();
+        final RoadmapReviewDto roadmapReviewDto = RoadmapMapper.convertRoadmapReviewDto(request, member);
         validateReviewQualification(roadmap, member);
         validateReviewCount(roadmap, member);
-        final RoadmapReview roadmapReview = new RoadmapReview(request.content(), request.rate(), member);
+        final RoadmapReview roadmapReview = new RoadmapReview(roadmapReviewDto.content(), roadmapReviewDto.rate(),
+                roadmapReviewDto.member());
         roadmap.addReview(roadmapReview);
     }
 
@@ -115,14 +118,11 @@ public class RoadmapService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-    private List<GoalRoomMember> findCompletedGoalRoomMembers(final Long roadmapId, final String identifier) {
-        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
-                roadmapId, new Identifier(identifier), GoalRoomStatus.COMPLETED);
-        if (goalRoomMembers.size() == 0) {
-            throw new BadRequestException(
-                    "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = " + roadmapId + " memberIdentifier = " + identifier);
-        }
-        return goalRoomMembers;
+    private GoalRoomMember findCompletedGoalRoomMember(final Long roadmapId, final String identifier) {
+        return goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(roadmapId,
+                        new Identifier(identifier), GoalRoomStatus.COMPLETED)
+                .orElseThrow(() -> new BadRequestException(
+                        "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = " + roadmapId + " memberIdentifier = " + identifier));
     }
 
     private void validateReviewQualification(final Roadmap roadmap, final Member member) {

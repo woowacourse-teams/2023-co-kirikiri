@@ -15,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -218,7 +217,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
     @Test
     void 로드맵_리뷰_생성시_완료한_골룸이_없으면_예외가_발생한다() throws Exception {
         // given
-        doThrow(new ForbiddenException("로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri"))
+        doThrow(new BadRequestException("로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri"))
                 .when(roadmapService)
                 .createReview(any(), any(), any());
 

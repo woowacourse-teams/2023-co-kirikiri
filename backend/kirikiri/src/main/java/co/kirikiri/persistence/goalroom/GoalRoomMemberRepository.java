@@ -1,23 +1,8 @@
 package co.kirikiri.persistence.goalroom;
 
 import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.domain.member.vo.Identifier;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-public interface GoalRoomMemberRepository extends JpaRepository<GoalRoomMember, Long> {
+public interface GoalRoomMemberRepository extends JpaRepository<GoalRoomMember, Long>, GoalRoomMemberQueryRepository {
 
-    @Query("select gm from GoalRoomMember gm "
-            + "inner join gm.goalRoom g "
-            + "inner join gm.member m "
-            + "where g.roadmapContent.roadmap.id = :roadmapId "
-            + "and m.identifier = :identifier "
-            + "and g.status = :status")
-    List<GoalRoomMember> findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(
-            @Param("roadmapId") final Long roadmapId,
-            @Param("identifier") final Identifier identifier,
-            @Param("status") final GoalRoomStatus status);
 }
