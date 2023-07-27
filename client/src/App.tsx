@@ -12,8 +12,8 @@ import GoalRoomListPage from '@components/goalRommListPage/GoalRoomListPage';
 import MainPage from '@components/mainPage/MainPage';
 import GoalRoomDashboardPage from '@pages/goalRoomDashboardPage/GoalRoomDashboardPage';
 import Fallback from '@components/_common/fallback/Fallback';
-import RoadmapCreatePage from './pages/roadmapCreatePage/roadmapCreatePage';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
+import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
 
 const App = () => {
   return (
