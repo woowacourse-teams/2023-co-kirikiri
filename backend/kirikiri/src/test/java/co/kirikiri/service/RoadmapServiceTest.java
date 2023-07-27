@@ -35,6 +35,7 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
@@ -303,6 +304,48 @@ class RoadmapServiceTest {
         // then
         final List<RoadmapCategoryResponse> expected = 로드맵_카테고리_응답_리스트를_반환한다();
         assertThat(categoryResponses)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵을_검색한다() {
+        // given
+        final RoadmapCategory category = new RoadmapCategory(1L, "여행");
+        final List<Roadmap> roadmaps = List.of(
+                로드맵을_생성한다("첫 번째 로드맵", category),
+                로드맵을_생성한다("두 번째 로드맵", category));
+
+        when(roadmapRepository.searchRoadmaps(any(), any(), any(), anyInt()))
+                .thenReturn(roadmaps);
+
+        final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", null, null);
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
+
+        // when
+        final List<RoadmapForListResponse> roadmapResponses = roadmapService.search(
+                filterType, roadmapSearchRequest, scrollRequest);
+
+        // then
+        final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
+                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30,
+                new MemberResponse(1L, "닉네임"),
+                new RoadmapCategoryResponse(1, "여행"),
+                List.of(
+                        new RoadmapTagResponse(1L, "태그1"),
+                        new RoadmapTagResponse(2L, "태그2")));
+
+        final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
+                "DIFFICULT", 30,
+                new MemberResponse(1L, "닉네임"),
+                new RoadmapCategoryResponse(1, "여행"),
+                List.of(
+                        new RoadmapTagResponse(1L, "태그1"),
+                        new RoadmapTagResponse(2L, "태그2")));
+
+        final List<RoadmapForListResponse> expected = List.of(firstRoadmapResponse, secondRoadmapResponse);
+
+        assertThat(roadmapResponses)
                 .isEqualTo(expected);
     }
 

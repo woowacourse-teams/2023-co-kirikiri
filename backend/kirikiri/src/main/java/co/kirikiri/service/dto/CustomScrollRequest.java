@@ -1,7 +1,7 @@
 package co.kirikiri.service.dto;
 
 public record CustomScrollRequest(
-        Long lastId,
+        Long lastValue,
         int size
 ) {
 
