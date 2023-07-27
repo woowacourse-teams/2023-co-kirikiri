@@ -1,5 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
+import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
@@ -8,9 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.Objects;
@@ -21,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Roadmap {
+public class Roadmap extends BaseEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
@@ -29,10 +27,6 @@ public class Roadmap {
     private static final int INTRODUCTION_MAX_LENGTH = 150;
     private static final int REQUIRED_MIN_PERIOD = 0;
     private static final int REQUIRED_MAX_PERIOD = 1000;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 50, nullable = false)
     private String title;
@@ -171,22 +165,5 @@ public class Roadmap {
 
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Roadmap roadmap = (Roadmap) o;
-        return Objects.equals(id, roadmap.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

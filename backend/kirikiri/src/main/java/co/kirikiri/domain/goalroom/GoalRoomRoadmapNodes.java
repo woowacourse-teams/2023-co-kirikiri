@@ -23,14 +23,14 @@ public class GoalRoomRoadmapNodes {
     private final List<GoalRoomRoadmapNode> values = new ArrayList<>();
 
     public GoalRoomRoadmapNodes(final List<GoalRoomRoadmapNode> goalRoomRoadmapNodes) {
-        this.values.addAll(goalRoomRoadmapNodes);
+        this.values.addAll(new ArrayList<>(goalRoomRoadmapNodes));
     }
 
     public void addAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.values.addAll(goalRoomRoadmapNodes.values);
+        this.values.addAll(new ArrayList<>(goalRoomRoadmapNodes.values));
     }
 
     public List<GoalRoomRoadmapNode> getValues() {
-        return values;
+        return new ArrayList<>(values);
     }
 }

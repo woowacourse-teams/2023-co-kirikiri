@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -9,9 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -22,18 +19,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoom extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class GoalRoom extends BaseUpdatedTimeEntity {
 
     @Column(nullable = false, length = 50)
     private String name;
 
     private Integer limitedMemberCount = 0;
-
-    private Integer currentMemberCount = 0;
 
     @Enumerated(value = EnumType.STRING)
     private GoalRoomStatus status;
@@ -49,16 +40,15 @@ public class GoalRoom extends BaseTimeEntity {
     private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
 
     @Embedded
-    private GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     @Embedded
-    private GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
 
-    public GoalRoom(final String name, final Integer limitedMemberCount, final Integer currentMemberCount,
-                    final GoalRoomStatus status, final RoadmapContent roadmapContent) {
+    public GoalRoom(final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
+                    final RoadmapContent roadmapContent) {
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
-        this.currentMemberCount = currentMemberCount;
         this.status = status;
         this.roadmapContent = roadmapContent;
     }

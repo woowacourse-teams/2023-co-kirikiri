@@ -1,14 +1,11 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.regex.Pattern;
@@ -17,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoadmapReview extends BaseTimeEntity {
+public class RoadmapReview extends BaseUpdatedTimeEntity {
 
     private static final int MIN_RATE = 0;
     private static final int MAX_RATE = 5;
@@ -26,13 +23,10 @@ public class RoadmapReview extends BaseTimeEntity {
             MIN_RATE, MAX_RATE - 1, RATE_UNIT);
     private static final int CONTENT_MAX_LENGTH = 1000;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(length = 1200)
     private String content;
 
+    @Column(nullable = false)
     private Double rate = 0.0;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,10 +38,10 @@ public class RoadmapReview extends BaseTimeEntity {
     private Roadmap roadmap;
 
     public RoadmapReview(final String content, final Double rate, final Member member) {
-        validate(content, rate);
         if (content != null) {
-            this.content = content;
+            validate(content, rate);
         }
+        this.content = content;
         this.rate = rate;
         this.member = member;
     }
@@ -58,7 +52,7 @@ public class RoadmapReview extends BaseTimeEntity {
     }
 
     private void validateContentLength(final String content) {
-        if (content != null && content.length() > CONTENT_MAX_LENGTH) {
+        if (content.length() > CONTENT_MAX_LENGTH) {
             throw new BadRequestException(String.format("리뷰는 최대 %d글자까지 입력할 수 있습니다.", CONTENT_MAX_LENGTH));
         }
     }

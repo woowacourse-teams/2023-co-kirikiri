@@ -18,14 +18,6 @@ public class RoadmapNodeImages {
     @JoinColumn(name = "roadmap_node_id", nullable = false, updatable = false)
     private final List<RoadmapNodeImage> values = new ArrayList<>();
 
-    public RoadmapNodeImages(final List<RoadmapNodeImage> images) {
-        this.values.addAll(images);
-    }
-
-    public void addAll(final RoadmapNodeImages images) {
-        this.values.addAll(images.values);
-    }
-
     public List<RoadmapNodeImage> getValues() {
         return values;
     }
