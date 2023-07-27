@@ -119,7 +119,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
             return null;
         }
 
-        return removeBlank(roadmap.tags.values.any().name.value).equalsIgnoreCase(tagName.getValue());
+        return roadmap.tags.values.any().name.value.equalsIgnoreCase(tagName.getValue());
     }
 
     private OrderSpecifier<?> sortCond(final RoadmapFilterType orderType) {
