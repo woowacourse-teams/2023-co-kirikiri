@@ -46,8 +46,8 @@ class GoalRoomTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber);
-        member = new Member(identifier, encryptedPassword, memberProfile);
+        memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        member = new Member(identifier, encryptedPassword, nickname, memberProfile);
     }
 
     @Test
@@ -69,7 +69,7 @@ class GoalRoomTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        final Member member2 = new Member(identifier, encryptedPassword, new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber));
+        final Member member2 = new Member(identifier, encryptedPassword, nickname, new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member2);
 
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(1), new RoadmapContent("content"));
@@ -117,10 +117,9 @@ class GoalRoomTest {
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname("코끼리"), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {

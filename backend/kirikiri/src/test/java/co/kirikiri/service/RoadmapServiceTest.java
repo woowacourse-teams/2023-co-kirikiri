@@ -33,10 +33,6 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,13 +40,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapServiceTest {
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")),
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), new Nickname("닉네임"), "010-1234-5678"));
+            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
     @Mock
     private RoadmapRepository roadmapRepository;
@@ -285,11 +285,10 @@ class RoadmapServiceTest {
     }
 
     private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("썬샷"), "01083004367");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
 
         return new Member(1L, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {

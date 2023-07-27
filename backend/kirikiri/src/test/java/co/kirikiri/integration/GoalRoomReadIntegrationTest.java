@@ -154,8 +154,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .getHeader(LOCATION)
                 .replace("/api/members/", "");
         return new Member(Long.valueOf(저장된_크리에이터_아이디), new Identifier(IDENTIFIER),
-                new EncryptedPassword(new Password(PASSWORD)),
-                new MemberProfile(Gender.MALE, 생년월일, new Nickname(닉네임), 전화번호));
+                new EncryptedPassword(new Password(PASSWORD)), new Nickname(닉네임),
+                new MemberProfile(Gender.MALE, 생년월일, 전화번호));
     }
 
     private String 로그인() {

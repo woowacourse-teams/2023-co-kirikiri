@@ -6,6 +6,7 @@ import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,12 +17,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoom extends BaseCreatedTimeEntity {
+
+    private static final int DATE_OFFSET = 1;
 
     @Embedded
     private GoalRoomName name;
@@ -35,6 +40,12 @@ public class GoalRoom extends BaseCreatedTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     private RoadmapContent roadmapContent;
+
+    @Column(nullable = false)
+    private LocalDate startDate;
+
+    @Column(nullable = false)
+    private LocalDate endDate;
 
     @Embedded
     private GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
@@ -77,9 +88,9 @@ public class GoalRoom extends BaseCreatedTimeEntity {
     }
 
     public int calculateTotalPeriod() {
-        return goalRoomRoadmapNodes.addTotalPeriod();
+        return (int) ChronoUnit.DAYS.between(startDate, endDate) + DATE_OFFSET;
     }
-
+    
     public boolean isRecruiting() {
         return status == GoalRoomStatus.RECRUITING;
     }
@@ -87,6 +98,8 @@ public class GoalRoom extends BaseCreatedTimeEntity {
     public void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
         checkTotalSize(goalRoomRoadmapNodes.size() + this.goalRoomRoadmapNodes.size());
         this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+        this.startDate = goalRoomRoadmapNodes.getGoalRoomStartDate();
+        this.endDate = goalRoomRoadmapNodes.getGoalRoomEndDate();
     }
 
     private void checkTotalSize(final int totalSize) {

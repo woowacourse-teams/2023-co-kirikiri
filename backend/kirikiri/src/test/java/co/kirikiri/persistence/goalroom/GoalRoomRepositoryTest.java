@@ -79,10 +79,9 @@ class GoalRoomRepositoryTest {
     }
 
     private Member 크리에이터를_저장한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname("코끼리"), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
         return memberRepository.save(creator);
     }
 

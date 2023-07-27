@@ -23,24 +23,26 @@ public class Member extends BaseCreatedTimeEntity {
     @Embedded
     private EncryptedPassword encryptedPassword;
 
+    @Embedded
+    private Nickname nickname;
+
     @OneToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "member_profile_id", nullable = false, unique = true)
     private MemberProfile memberProfile;
 
+    public Member(final Identifier identifier, final EncryptedPassword encryptedPassword,
+                  final Nickname nickname, final MemberProfile memberProfile) {
+        this(null, identifier, encryptedPassword, nickname, memberProfile);
+    }
+
     public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
-                  final MemberProfile memberProfile) {
+                  final Nickname nickname, final MemberProfile memberProfile) {
         this.id = id;
         this.identifier = identifier;
         this.encryptedPassword = encryptedPassword;
-        this.memberProfile = memberProfile;
-    }
-
-    public Member(final Identifier identifier, final EncryptedPassword encryptedPassword,
-                  final MemberProfile memberProfile) {
-        this.identifier = identifier;
-        this.encryptedPassword = encryptedPassword;
+        this.nickname = nickname;
         this.memberProfile = memberProfile;
     }
 
@@ -52,11 +54,12 @@ public class Member extends BaseCreatedTimeEntity {
         return identifier;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
     public Nickname getNickname() {
-        return memberProfile.getNickname();
+        return nickname;
     }
 }

@@ -99,8 +99,8 @@ class GoalRoomServiceTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        memberProfile = new MemberProfile(Gender.MALE, TODAY, nickname, phoneNumber);
-        member = new Member(identifier, encryptedPassword, memberProfile);
+        memberProfile = new MemberProfile(Gender.MALE, TODAY, phoneNumber);
+        member = new Member(identifier, encryptedPassword, nickname, memberProfile);
     }
 
     @Test
@@ -290,10 +290,9 @@ class GoalRoomServiceTest {
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname("코끼리"), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {

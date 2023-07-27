@@ -9,7 +9,6 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -63,10 +62,6 @@ public class GoalRoomRoadmapNodes {
                 .max(Comparator.comparing(GoalRoomRoadmapNode::getEndDate))
                 .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
                 .getEndDate();
-    }
-
-    public int addTotalPeriod() {
-        return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
     }
 
     public int size() {
