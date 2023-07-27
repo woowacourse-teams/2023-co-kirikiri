@@ -34,7 +34,12 @@ public class RoadmapNode extends BaseEntity {
     private final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
 
     public RoadmapNode(final String title, final String content) {
+        this(null, title, content);
+    }
+
+    public RoadmapNode(final Long id, final String title, final String content) {
         validate(title, content);
+        this.id = id;
         this.title = title;
         this.content = content;
     }

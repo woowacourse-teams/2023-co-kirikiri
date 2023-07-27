@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.Optional;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,19 +21,19 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
     @Column(length = 2200)
     private String content;
 
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
 
-    @Embedded
-    private final RoadmapNodes nodes = new RoadmapNodes();
-
     public RoadmapContent(final String content) {
-        validate(content);
-        this.content = content;
+        this(null, content);
     }
 
     public RoadmapContent(final Long id, final String content) {
+        validate(content);
         this.id = id;
         this.content = content;
     }
@@ -65,11 +66,23 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
         }
     }
 
+    public int nodesSize() {
+        return nodes.size();
+    }
+
+    public Optional<RoadmapNode> findRoadmapNodeById(final Long id) {
+        return nodes.findById(id);
+    }
+
     public String getContent() {
         return content;
     }
 
     public RoadmapNodes getNodes() {
         return nodes;
+    }
+
+    public Roadmap getRoadmap() {
+        return roadmap;
     }
 }

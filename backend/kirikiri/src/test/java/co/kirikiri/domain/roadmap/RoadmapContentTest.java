@@ -1,11 +1,5 @@
 package co.kirikiri.domain.roadmap;
 
-import static co.kirikiri.domain.roadmap.RoadmapDifficulty.DIFFICULT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -14,9 +8,16 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.BadRequestException;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.Test;
+
+import static co.kirikiri.domain.roadmap.RoadmapDifficulty.DIFFICULT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class RoadmapContentTest {
 

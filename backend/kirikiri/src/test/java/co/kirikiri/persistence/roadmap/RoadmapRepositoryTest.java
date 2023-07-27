@@ -18,14 +18,14 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import java.time.LocalDate;
-import java.util.List;
+import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import java.time.LocalDate;
+import java.util.List;
 
 @RepositoryTest
 class RoadmapRepositoryTest {

@@ -8,7 +8,9 @@ import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
+import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -42,17 +44,21 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 
-public class GoalRoomReadIntegrationTest extends IntegrationTest {
+class GoalRoomReadIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
+    private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
+    private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
 
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
@@ -231,40 +237,36 @@ public class GoalRoomReadIntegrationTest extends IntegrationTest {
 
     private GoalRoom 골룸을_저장한다(final List<RoadmapContent> 로드맵_본문_리스트) {
         final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
-        final GoalRoom 골룸 = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, 로드맵_본문);
+        final GoalRoom 골룸 = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), 로드맵_본문);
         final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
 
         final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);
         final GoalRoomRoadmapNode 첫번째_골룸_노드 = new GoalRoomRoadmapNode(
-                LocalDate.of(2023, 7, 19),
-                LocalDate.of(2023, 7, 30), 10, 첫번째_로드맵_노드);
+                new Period(TODAY, TEN_DAY_LATER),
+                10, 첫번째_로드맵_노드);
 
         final RoadmapNode 두번째_로드맵_노드 = 로드맵_노드_리스트.get(1);
         final GoalRoomRoadmapNode 두번째_골룸_노드 = new GoalRoomRoadmapNode(
-                LocalDate.of(2023, 8, 1),
-                LocalDate.of(2023, 8, 5), 2, 두번째_로드맵_노드);
+                new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER),
+                2, 두번째_로드맵_노드);
 
         final GoalRoomRoadmapNodes 골룸_노드들 = new GoalRoomRoadmapNodes(List.of(첫번째_골룸_노드, 두번째_골룸_노드));
-        골룸.addGoalRoomRoadmapNodes(골룸_노드들);
+        골룸.addAllGoalRoomRoadmapNodes(골룸_노드들);
         return goalRoomRepository.save(골룸);
     }
 
     private GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
-                        LocalDate.of(2023, 7, 30), 10),
-                new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
-                        LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
+                new GoalRoomNodeResponse("로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new GoalRoomNodeResponse("로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 31);
     }
 
     private GoalRoomCertifiedResponse 로그인후_예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
-                        LocalDate.of(2023, 7, 30), 10),
-                new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
-                        LocalDate.of(2023, 8, 5), 2));
-        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, true);
+                new GoalRoomNodeResponse("로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new GoalRoomNodeResponse("로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 31, true);
     }
 
     private void 골룸_대기_사용자를_저장한다(final Member 크리에이터, final GoalRoom 골룸) {

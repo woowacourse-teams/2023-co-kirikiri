@@ -5,8 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import java.util.Objects;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.Objects;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -31,5 +31,9 @@ public class BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
     }
 }

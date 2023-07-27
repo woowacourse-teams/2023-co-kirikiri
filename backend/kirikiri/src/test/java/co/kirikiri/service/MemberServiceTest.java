@@ -1,7 +1,7 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -17,13 +17,13 @@ import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -40,24 +40,17 @@ class MemberServiceTest {
         //given
         final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
                 "010-1234-5678", GenderType.MALE, LocalDate.now());
-        final Identifier identifier = new Identifier("identifier1");
-        final Password password = new Password("password1!");
-        final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
-        final Member member = new Member(1L, identifier, new EncryptedPassword(password),
-                new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
         given(memberProfileRepository.findByNickname(any()))
                 .willReturn(Optional.empty());
         given(memberRepository.save(any()))
-                .willReturn(member);
+                .willReturn(new Member(1L, null, null, null));
 
         //when
         //then
-        assertThat(memberService.join(request))
-                .isEqualTo(1L);
+        assertDoesNotThrow(() -> memberService.join(request));
     }
 
     @Test

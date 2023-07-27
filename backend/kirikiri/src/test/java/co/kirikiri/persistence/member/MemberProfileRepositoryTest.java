@@ -10,10 +10,10 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.helper.RepositoryTest;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @RepositoryTest
 class MemberProfileRepositoryTest {

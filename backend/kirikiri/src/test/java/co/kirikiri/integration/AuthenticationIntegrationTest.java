@@ -1,8 +1,5 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
@@ -14,13 +11,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthenticationIntegrationTest extends IntegrationTest {
 
@@ -76,7 +77,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 아이디와_비밀번호에_빈값이_있을때() throws UnsupportedEncodingException, JsonProcessingException {
+    void 아이디와_비밀번호에_빈값이_있을때() throws JsonProcessingException {
         //given
         final LoginRequest 로그인_요청 = new LoginRequest("", "");
 

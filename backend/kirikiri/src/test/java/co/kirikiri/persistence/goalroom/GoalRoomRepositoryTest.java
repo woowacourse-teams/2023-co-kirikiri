@@ -6,7 +6,9 @@ import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
+import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -27,12 +29,17 @@ import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class GoalRoomRepositoryTest {
+
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
+    private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
+    private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
@@ -113,22 +120,22 @@ class GoalRoomRepositoryTest {
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, roadmapContent);
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
         final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                LocalDate.of(2023, 7, 19),
-                LocalDate.of(2023, 7, 30), 10, firstRoadmapNode);
+                new Period(TODAY, TEN_DAY_LATER),
+                10, firstRoadmapNode);
 
         final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
         final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                LocalDate.of(2023, 8, 1),
-                LocalDate.of(2023, 8, 5), 10, secondRoadmapNode);
+                new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER),
+                10, secondRoadmapNode);
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
-        goalRoom.addGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         return goalRoom;
     }
 }

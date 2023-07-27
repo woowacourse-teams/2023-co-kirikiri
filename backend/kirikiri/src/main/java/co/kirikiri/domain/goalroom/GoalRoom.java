@@ -1,9 +1,11 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,58 +14,66 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoom extends BaseCreatedTimeEntity {
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Embedded
+    private GoalRoomName name;
 
-    private Integer limitedMemberCount = 0;
+    @Embedded
+    private LimitedMemberCount limitedMemberCount;
 
     @Enumerated(value = EnumType.STRING)
-    private GoalRoomStatus status;
+    private GoalRoomStatus status = GoalRoomStatus.RECRUITING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     private RoadmapContent roadmapContent;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true)
-    @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private final List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
+    @Embedded
+    private GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
 
     @Embedded
-    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
+    private GoalRoomToDos goalRoomToDos = new GoalRoomToDos(new ArrayList<>());
+
+    @Embedded
+    private GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
     private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
 
-    @Embedded
-    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
+    public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
+        this(null, name, limitedMemberCount, roadmapContent);
+    }
 
-    public GoalRoom(final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
-                    final RoadmapContent roadmapContent) {
+    public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
+        this.id = id;
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
-        this.status = status;
         this.roadmapContent = roadmapContent;
     }
 
-    public void addGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    public void participate(final GoalRoomPendingMember goalRoomPendingMember) {
+        if (limitedMemberCount.isLessAndEqualsThan(goalRoomPendingMembers.size())) {
+            throw new BadRequestException("정원 초과입니다.");
+        }
+        checkParticipated(goalRoomPendingMember);
+        goalRoomPendingMembers.add(goalRoomPendingMember);
+        goalRoomPendingMember.updateGoalRoom(this);
     }
 
-    public void joinGoalRoom(final GoalRoomPendingMember goalRoomPendingMember) {
-        goalRoomPendingMembers.add(goalRoomPendingMember);
+    private void checkParticipated(final GoalRoomPendingMember goalRoomPendingMember) {
+        if (goalRoomPendingMembers.containGoalRoomPendingMember(goalRoomPendingMember)) {
+            throw new BadRequestException("이미 참여 중인 상태입니다.");
+        }
     }
 
     public int calculateTotalPeriod() {
@@ -74,15 +84,31 @@ public class GoalRoom extends BaseCreatedTimeEntity {
         return status == GoalRoomStatus.RECRUITING;
     }
 
+    public void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        checkTotalSize(goalRoomRoadmapNodes.size() + this.goalRoomRoadmapNodes.size());
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    }
+
+    private void checkTotalSize(final int totalSize) {
+        if (totalSize > roadmapContent.nodesSize()) {
+            throw new BadRequestException("로드맵의 노드 수보다 골룸의 노드 수가 큽니다.");
+        }
+    }
+
+    public void addGoalRoomTodo(final GoalRoomToDo goalRoomToDo) {
+        goalRoomToDos.add(goalRoomToDo);
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
 
-    public String getName() {
+    public GoalRoomName getName() {
         return name;
     }
 
-    public Integer getLimitedMemberCount() {
+    public LimitedMemberCount getLimitedMemberCount() {
         return limitedMemberCount;
     }
 
@@ -93,4 +119,6 @@ public class GoalRoom extends BaseCreatedTimeEntity {
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
         return goalRoomRoadmapNodes;
     }
+
+
 }
