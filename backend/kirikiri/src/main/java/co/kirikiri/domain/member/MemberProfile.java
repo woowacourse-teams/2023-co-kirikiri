@@ -30,7 +30,7 @@ public class MemberProfile extends BaseCreatedTimeEntity {
     @OneToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
-    @JoinColumn(name = "member_profile_image_id")
+    @JoinColumn(name = "member_image_id")
     private MemberImage image;
 
     public MemberProfile(final Gender gender, final LocalDate birthday, final String phoneNumber) {
