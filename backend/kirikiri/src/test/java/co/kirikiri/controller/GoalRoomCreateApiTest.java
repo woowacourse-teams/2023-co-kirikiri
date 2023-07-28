@@ -17,7 +17,7 @@ import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.AuthService;
-import co.kirikiri.service.GoalRoomService;
+import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
@@ -43,7 +43,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
 
     @MockBean
-    private GoalRoomService goalRoomService;
+    private GoalRoomCreateService goalRoomService;
 
     @MockBean
     private AuthService authService;

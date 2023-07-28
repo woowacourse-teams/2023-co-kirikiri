@@ -14,7 +14,7 @@ import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.RoadmapService;
+import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 public class RoadmapCreateApiTest extends ControllerTestHelper {
 
     @MockBean
-    private RoadmapService roadmapService;
+    private RoadmapCreateService roadmapService;
 
     @Test
     void 정상적으로_로드맵을_생성한다() throws Exception {

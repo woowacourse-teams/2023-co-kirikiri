@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.GoalRoomService;
+import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -38,7 +38,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class GoalRoomReadApiTest extends ControllerTestHelper {
 
     @MockBean
-    private GoalRoomService goalRoomService;
+    private GoalRoomReadService goalRoomService;
 
     @Test
     void 골룸_아이디로_골룸을_조회한다() throws Exception {

@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.RoadmapService;
+import co.kirikiri.service.RoadmapReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -30,7 +30,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class RoadmapReadApiTest extends ControllerTestHelper {
 
     @MockBean
-    private RoadmapService roadmapService;
+    private RoadmapReadService roadmapService;
 
     @Test
     void 로드맵_목록을_조건에_따라_조회한다() throws Exception {
