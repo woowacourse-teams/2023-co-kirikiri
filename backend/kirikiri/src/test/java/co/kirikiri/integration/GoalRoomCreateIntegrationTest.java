@@ -24,21 +24,22 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
     private static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
     private static final int 정상적인_골룸_제한_인원 = 20;
     private static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
-    private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname", "010-1234-5678",
+    private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname",
+            "010-1234-5678",
             GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
     private static final LoginRequest 로그인_요청 = new LoginRequest(회원가입_요청.identifier(), 회원가입_요청.password());
     private static final String BEARER = "Bearer ";
@@ -50,7 +51,8 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
 
-    public GoalRoomCreateIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository, final RoadmapNodeRepository roadmapNodeRepository) {
+    public GoalRoomCreateIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
+                                         final RoadmapNodeRepository roadmapNodeRepository) {
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapNodeRepository = roadmapNodeRepository;
     }
@@ -66,8 +68,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
 
         //when
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_생성_요청, 액세스_토큰);
@@ -88,8 +92,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
-        final GoalRoomCreateRequest 로드맵_id가_빈값인_골룸_생성_요청 = new GoalRoomCreateRequest(null, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
+        final GoalRoomCreateRequest 로드맵_id가_빈값인_골룸_생성_요청 = new GoalRoomCreateRequest(null, 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
+                골룸_투두_요청, 골룸_노드_별_기간_요청);
 
         //when
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(로드맵_id가_빈값인_골룸_생성_요청, 액세스_토큰);
@@ -115,8 +121,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_이름이_빈값인_골룸_생성_요청 = new GoalRoomCreateRequest(1L, null, 정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_이름이_빈값인_골룸_생성_요청 = new GoalRoomCreateRequest(1L, null, 정상적인_골룸_제한_인원, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
 
         //when
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_이름이_빈값인_골룸_생성_요청, 액세스_토큰);
@@ -142,8 +150,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_제한_인원이_빈값인_골룸_생성_요청 = new GoalRoomCreateRequest(1L, 정상적인_골룸_이름, null, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_제한_인원이_빈값인_골룸_생성_요청 = new GoalRoomCreateRequest(1L, 정상적인_골룸_이름, null, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
 
         //when
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_제한_인원이_빈값인_골룸_생성_요청, 액세스_토큰);
@@ -171,8 +181,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 적절하지_않은_길이의_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 적절하지_않은_길이의_골룸_이름, 정상적인_골룸_제한_인원,
+                골룸_투두_요청, 골룸_노드_별_기간_요청);
 
         //when
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_생성_요청, 액세스_토큰);
@@ -197,8 +209,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
 
         //when
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_생성_요청, 액세스_토큰);
@@ -221,8 +235,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 21, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 20, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 21, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
 
         //when
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_생성_요청, 액세스_토큰);
@@ -300,7 +316,6 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private Long 로드맵을_생성하고_id를_알아낸다(final String 액세스_토큰, final RoadmapSaveRequest 로드맵_생성_요청) {
         final ExtractableResponse<Response> 로드맵_응답 = 로드맵_생성(로드맵_생성_요청, 액세스_토큰);
         final String Location_헤더 = 로드맵_응답.response().header("Location");
-        System.out.println("~~~~~~~~~~~~~~~" + Location_헤더);
         final Long 로드맵_id = Long.parseLong(Location_헤더.substring(14));
         return 로드맵_id;
     }

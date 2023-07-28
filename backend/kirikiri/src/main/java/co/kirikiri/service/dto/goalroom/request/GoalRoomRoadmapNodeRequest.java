@@ -17,4 +17,5 @@ public record GoalRoomRoadmapNodeRequest(
         @JsonFormat(pattern = "yyMMdd")
         LocalDate endDate
 ) {
+
 }

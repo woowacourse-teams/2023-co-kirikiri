@@ -3,6 +3,7 @@ package co.kirikiri.domain.goalroom;
 import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
+import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
@@ -15,12 +16,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,7 +36,7 @@ public class GoalRoom extends BaseCreatedTimeEntity {
     private LimitedMemberCount limitedMemberCount;
 
     @Enumerated(value = EnumType.STRING)
-    private GoalRoomStatus status = GoalRoomStatus.RECRUITING;
+    private final GoalRoomStatus status = GoalRoomStatus.RECRUITING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
@@ -48,24 +49,26 @@ public class GoalRoom extends BaseCreatedTimeEntity {
     private LocalDate endDate;
 
     @Embedded
-    private GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
 
     @Embedded
-    private GoalRoomToDos goalRoomToDos = new GoalRoomToDos(new ArrayList<>());
+    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos(new ArrayList<>());
 
     @Embedded
-    private GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
     private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
 
-    public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
+    public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
+                    final RoadmapContent roadmapContent) {
         this(null, name, limitedMemberCount, roadmapContent);
     }
 
-    public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount, final RoadmapContent roadmapContent) {
+    public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
+                    final RoadmapContent roadmapContent) {
         this.id = id;
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
@@ -87,10 +90,14 @@ public class GoalRoom extends BaseCreatedTimeEntity {
         }
     }
 
+    public void joinGoalRoom(final GoalRoomRole role, final Member member) {
+        goalRoomPendingMembers.add(new GoalRoomPendingMember(role, this, member));
+    }
+
     public int calculateTotalPeriod() {
         return (int) ChronoUnit.DAYS.between(startDate, endDate) + DATE_OFFSET;
     }
-    
+
     public boolean isRecruiting() {
         return status == GoalRoomStatus.RECRUITING;
     }
@@ -112,6 +119,14 @@ public class GoalRoom extends BaseCreatedTimeEntity {
         goalRoomToDos.add(goalRoomToDo);
     }
 
+    public Member findGoalRoomLeaderInPendingMember() {
+        return goalRoomPendingMembers.findGoalRoomLeader();
+    }
+
+    public Integer getCurrentPendingMemberCount() {
+        return goalRoomPendingMembers.size();
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -125,13 +140,16 @@ public class GoalRoom extends BaseCreatedTimeEntity {
         return limitedMemberCount;
     }
 
-    public Integer getCurrentPendingMemberCount() {
-        return goalRoomPendingMembers.size();
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
         return goalRoomRoadmapNodes;
     }
-
 
 }

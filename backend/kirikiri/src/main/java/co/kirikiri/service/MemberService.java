@@ -28,7 +28,8 @@ public class MemberService {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(),
                 memberJoinDto.birthday(), memberJoinDto.phoneNumber());
-        final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberJoinDto.nickname(), memberProfile);
+        final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberJoinDto.nickname(),
+                memberProfile);
         return memberRepository.save(member).getId();
     }
 

@@ -13,12 +13,12 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.BadRequestException;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import java.time.LocalDate;
-import java.util.List;
 
 class RoadmapTest {
 
@@ -83,7 +83,8 @@ class RoadmapTest {
         private Member 크리에이터를_생성한다() {
             final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
 
-            return new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")), new Nickname("nickname"), profile);
+            return new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")),
+                    new Nickname("nickname"), profile);
         }
 
         private RoadmapCategory 카테고리를_생성한다() {

@@ -1,28 +1,5 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.AuthService;
-import co.kirikiri.service.GoalRoomService;
-import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,6 +12,29 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
+import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.service.AuthService;
+import co.kirikiri.service.GoalRoomCreateService;
+import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomCreateApiTest extends ControllerTestHelper {
 
@@ -43,7 +43,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
 
     @MockBean
-    private GoalRoomService goalRoomService;
+    private GoalRoomCreateService goalRoomService;
 
     @MockBean
     private AuthService authService;
@@ -70,7 +70,6 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                         requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token"))
                 ))
                 .andReturn();
-
 
         //then
         assertThat(mvcResult.getResponse().getHeader("Location")).isEqualTo("/api/goal-rooms/" + 1);
@@ -100,7 +99,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
         assertThat(responses).usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(List.of(roadmapCheckCountIdErrorResponse, roadmapNodeIdErrorResponse, goalRoomTodoContentErrorResponse,
+                .isEqualTo(List.of(roadmapCheckCountIdErrorResponse, roadmapNodeIdErrorResponse,
+                        goalRoomTodoContentErrorResponse,
                         limitedMemberCountErrorResponse, goalRoomNameErrorResponse, roadmapContentIdErrorResponse));
     }
 

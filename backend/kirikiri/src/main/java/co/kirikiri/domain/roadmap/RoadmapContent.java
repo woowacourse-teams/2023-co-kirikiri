@@ -16,7 +16,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapContent extends BaseCreatedTimeEntity {
 
-    private static final int CONTENT_MAX_LENGTH = 150;
+    private static final int CONTENT_MAX_LENGTH = 2000;
 
     @Column(length = 2200)
     private String content;
@@ -29,7 +29,8 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
     private Roadmap roadmap;
 
     public RoadmapContent(final String content) {
-        this(null, content);
+        validate(content);
+        this.content = content;
     }
 
     public RoadmapContent(final Long id, final String content) {

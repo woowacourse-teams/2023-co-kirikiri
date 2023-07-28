@@ -66,22 +66,29 @@ operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_인증_�
 
 
 [[골룸단일조회-API]]
-== *1. 골룸 단일 조회 API (비로그인)*
-
-=== *1-1* 성공
-
-operation::goal-room-read-api-test/골룸_아이디로_골룸을_조회한다[snippets='http-request,http-response,response-fields']
-
-=== *1-2* 실패
-
-operation::goal-room-read-api-test/골룸_아이디로_골룸_조회시_아이디가_유효하지_않으면_예외가_발생한다[snippets='http-request,http-response,response-fields']
-
-== *2. 골룸 단일 조회 API (로그인)*
+== *2. 골룸 단일 조회 API (비로그인)*
 
 === *2-1* 성공
 
-operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸을_조회한다[snippets='http-request,request-headers,http-response,response-fields']
+operation::goal-room-read-api-test/골룸_아이디로_골룸을_조회한다[snippets='http-request,http-response,response-fields']
 
 === *2-2* 실패
 
+operation::goal-room-read-api-test/골룸_아이디로_골룸_조회시_아이디가_유효하지_않으면_예외가_발생한다[snippets='http-request,http-response,response-fields']
+
+== *3. 골룸 단일 조회 API (로그인)*
+
+=== *3-1* 성공
+
+operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸을_조회한다[snippets='http-request,request-headers,http-response,response-fields']
+
+=== *3-2* 실패
+
 operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸_조회시_골룸_아이디가_유효하지_않으면_예외_발생[snippets='http-request,request-headers,http-response,response-fields']
+
+[[골룸목록조회-API]]
+== *4. 골룸 목록 조회 API*
+
+=== *4-1* 성공
+
+operation::goal-room-read-api-test/골룸_목록을_조건에_따라_조회한다[snippets='http-request,query-parameters,http-response,response-fields']

@@ -21,9 +21,9 @@ import java.util.List;
 class RoadmapContentTest {
 
     @Test
-    void 로드맵_본문의_길이가_150보다_크면_예외가_발생한다() {
+    void 로드맵_본문의_길이가_2000보다_크면_예외가_발생한다() {
         // given
-        final String content = "a".repeat(151);
+        final String content = "a".repeat(2001);
 
         // expect
         assertThatThrownBy(() -> new RoadmapContent(content))

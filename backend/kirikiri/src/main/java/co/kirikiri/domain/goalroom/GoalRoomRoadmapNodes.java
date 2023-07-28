@@ -17,8 +17,6 @@ import java.util.stream.IntStream;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNodes {
 
-    private static final int DATE_OFFSET = 1;
-
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)

@@ -23,11 +23,11 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.BadRequestException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class GoalRoomTest {
 
@@ -54,7 +54,8 @@ class GoalRoomTest {
     void 정상적으로_골룸에_참여한다() {
         //given
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(20), new RoadmapContent("content"));
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(20),
+                new RoadmapContent("content"));
 
         //when
         //then
@@ -69,10 +70,12 @@ class GoalRoomTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        final Member member2 = new Member(identifier, encryptedPassword, nickname, new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
+        final Member member2 = new Member(identifier, encryptedPassword, nickname,
+                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member2);
 
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(1), new RoadmapContent("content"));
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(1),
+                new RoadmapContent("content"));
         goalRoom.participate(goalRoomPendingMember2);
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
@@ -87,7 +90,8 @@ class GoalRoomTest {
     @Test
     void 골룸_참여_시_이미_참여한_사람이_참여할_때_예외를_던진다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(20), new RoadmapContent("content"));
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(20),
+                new RoadmapContent("content"));
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
         goalRoom.participate(goalRoomPendingMember);
 
@@ -114,6 +118,26 @@ class GoalRoomTest {
         // then
         assertThat(totalPeriod)
                 .isSameAs(31);
+    }
+
+    @Test
+    void 골룸에_대기중인_인원수를_계산한다() {
+        // given
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
+                new RoadmapContent("content"));
+        final Member member1 = new Member(new Identifier("identifier"),
+                new EncryptedPassword(new Password("password1")), new Nickname("nickname"),
+                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+        final Member member2 = new Member(new Identifier("identifier"),
+                new EncryptedPassword(new Password("password1")), new Nickname("nickname"),
+                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+
+        // when
+        goalRoom.joinGoalRoom(GoalRoomRole.LEADER, member1);
+        goalRoom.joinGoalRoom(GoalRoomRole.FOLLOWER, member2);
+
+        // then
+        assertThat(goalRoom.getCurrentPendingMemberCount()).isEqualTo(2);
     }
 
     private Member 크리에이터를_생성한다() {

@@ -78,4 +78,5 @@ class RoadmapContentRepositoryTest {
         final RoadmapCategory category = new RoadmapCategory("운동");
         return roadmapCategoryRepository.save(category);
     }
+
 }
