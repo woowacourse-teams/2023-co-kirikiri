@@ -33,9 +33,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
 
     @MockBean
     private MemberService memberService;
-    @MockBean
-    private AuthService authService;
-
+    
     @Test
     void 정상적으로_회원가입에_성공한다() throws Exception {
         //given

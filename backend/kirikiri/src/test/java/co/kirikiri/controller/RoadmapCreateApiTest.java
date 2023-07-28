@@ -15,6 +15,7 @@ import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapCreateService;
+import co.kirikiri.service.RoadmapReadService;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
@@ -31,7 +32,10 @@ import org.springframework.test.web.servlet.ResultMatcher;
 public class RoadmapCreateApiTest extends ControllerTestHelper {
 
     @MockBean
-    private RoadmapCreateService roadmapService;
+    private RoadmapCreateService roadmapCreateService;
+
+    @MockBean
+    private RoadmapReadService roadmapReadService;
 
     @Test
     void 정상적으로_로드맵을_생성한다() throws Exception {
@@ -41,7 +45,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willReturn(1L);
 
         // expect
@@ -56,7 +60,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new AuthenticationException("존재하지 않는 회원입니다."));
 
         // expect
@@ -72,7 +76,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 10"));
 
         // expect
@@ -101,7 +105,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
@@ -130,7 +134,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 소개글의 길이는 최소 1글자, 최대 150글자입니다."));
 
         // expect
@@ -159,7 +163,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 2000글자 입니다."));
 
         // expect
@@ -188,7 +192,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 추천 소요 기간은 최소 0일, 최대 1000일입니다."));
 
         // expect
@@ -204,7 +208,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 추천 소요 기간은 최소 0일, 최대 1000일입니다."));
 
         // expect
@@ -233,7 +237,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest(nodeTitle, "로드맵 1주차에는 알고리즘을 배울거에요.")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 노드의 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
@@ -262,7 +266,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", nodeContent)));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 노드의 설명의 길이는 최소 1글자, 최대 200글자입니다."));
 
         // expect

@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.PageResponse;
@@ -27,16 +28,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @WebMvcTest(RoadmapController.class)
-public class RoadmapReadApiTest extends ControllerTestHelper {
+class RoadmapReadApiTest extends ControllerTestHelper {
 
     @MockBean
-    private RoadmapReadService roadmapService;
+    private RoadmapReadService roadmapReadService;
+
+    @MockBean
+    private RoadmapCreateService roadmapCreateService;
 
     @Test
     void 로드맵_목록을_조건에_따라_조회한다() throws Exception {
         // given
         final PageResponse<RoadmapResponse> expected = 로드맵_페이지_응답을_생성한다();
-        when(roadmapService.findRoadmapsByFilterType(any(), any(), any()))
+        when(roadmapReadService.findRoadmapsByFilterType(any(), any(), any()))
                 .thenReturn(expected);
 
         // when
@@ -84,7 +88,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다() throws Exception {
         // given
-        when(roadmapService.findRoadmapsByFilterType(any(), any(), any())).thenThrow(
+        when(roadmapReadService.findRoadmapsByFilterType(any(), any(), any())).thenThrow(
                 new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 1L"));
 
         // when
@@ -121,7 +125,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
     void 로드맵_카테고리_목록을_조회한다() throws Exception {
         // given
         final List<RoadmapCategoryResponse> expected = 로드맵_카테고리_응답_리스트를_반환한다();
-        when(roadmapService.findAllRoadmapCategories())
+        when(roadmapReadService.findAllRoadmapCategories())
                 .thenReturn(expected);
 
         // when

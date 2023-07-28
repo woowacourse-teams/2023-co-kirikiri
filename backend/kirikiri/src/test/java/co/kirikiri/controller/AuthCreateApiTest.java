@@ -31,6 +31,8 @@ class AuthCreateApiTest extends ControllerTestHelper {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
+
+
     @MockBean
     private AuthService authService;
 

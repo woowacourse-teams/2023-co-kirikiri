@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.PageResponse;
@@ -38,13 +39,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class GoalRoomReadApiTest extends ControllerTestHelper {
 
     @MockBean
-    private GoalRoomReadService goalRoomService;
+    private GoalRoomReadService goalRoomReadService;
+
+    @MockBean
+    private GoalRoomCreateService goalRoomCreateService;
 
     @Test
     void 골룸_아이디로_골룸을_조회한다() throws Exception {
         // given
         final GoalRoomResponse expected = 골룸_조회_응답을_생성한다();
-        when(goalRoomService.findGoalRoom(any()))
+        when(goalRoomReadService.findGoalRoom(any()))
                 .thenReturn(expected);
 
         // when
@@ -79,7 +83,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 골룸_아이디로_골룸_조회시_아이디가_유효하지_않으면_예외가_발생한다() throws Exception {
         // given
-        when(goalRoomService.findGoalRoom(any()))
+        when(goalRoomReadService.findGoalRoom(any()))
                 .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"));
 
         // when
@@ -106,7 +110,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
     void 골룸_아이디와_사용자_아이디로_골룸을_조회한다() throws Exception {
         // given
         final GoalRoomCertifiedResponse expected = 로그인시_골룸_조회_응답을_생성한다(true);
-        when(goalRoomService.findGoalRoom(any(), any()))
+        when(goalRoomReadService.findGoalRoom(any(), any()))
                 .thenReturn(expected);
 
         // when
@@ -146,7 +150,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 골룸_아이디와_사용자_아이디로_골룸_조회시_골룸_아이디가_유효하지_않으면_예외_발생() throws Exception {
         // given
-        when(goalRoomService.findGoalRoom(any(), any()))
+        when(goalRoomReadService.findGoalRoom(any(), any()))
                 .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"));
 
         // when
@@ -177,7 +181,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
     void 골룸_목록을_조건에_따라_조회한다() throws Exception {
         // given
         final PageResponse<GoalRoomForListResponse> 골룸_페이지_응답 = 골룸_페이지_응답을_생성한다();
-        given(goalRoomService.findGoalRoomsByFilterType(any(), any()))
+        given(goalRoomReadService.findGoalRoomsByFilterType(any(), any()))
                 .willReturn(골룸_페이지_응답);
 
         // when
