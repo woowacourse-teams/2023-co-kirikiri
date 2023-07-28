@@ -1,6 +1,9 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
@@ -12,6 +15,8 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.exception.ServerException;
+import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -24,10 +29,14 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,6 +48,7 @@ public class GoalRoomService {
     private final MemberRepository memberRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final CheckFeedRepository checkFeedRepository;
 
     @Transactional
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
@@ -122,8 +132,54 @@ public class GoalRoomService {
     @Transactional
     public String createCheckFeed(final String identifier, final Long goalRoomId,
                                   final CheckFeedRequest checkFeedRequest) {
-        //final Member member = findMemberByIdentifier(identifier);
-        //final GoalRoom goalRoom = findById(goalRoomId);
-        return null;
+        // TODO : 이미지가 저장될 경로는 반드시 추후에 다시 확인
+        final String uploadFilePath = "src/test/resources/testImage/";
+
+        final GoalRoom goalRoom = findById(goalRoomId);
+        final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
+        final GoalRoomRoadmapNode currentNode = goalRoom.getNodeByDate(LocalDate.now());
+        validateCheckCount(goalRoomMember, currentNode);
+
+        try {
+            final MultipartFile checkFeedImage = checkFeedRequest.image();
+            final String fileName = System.currentTimeMillis() + "_" + checkFeedImage.getOriginalFilename();
+            final String serverFilePath = uploadFilePath + fileName;
+            final File dest = new File(serverFilePath);
+            checkFeedImage.transferTo(dest);
+
+            final CheckFeed checkFeed = checkFeedRepository.save(
+                    new CheckFeed(serverFilePath, getImageContentType(checkFeedImage),
+                            checkFeedImage.getOriginalFilename(), currentNode, goalRoomMember));
+            checkFeed.addDescription(checkFeedRequest.description());
+
+            return checkFeed.getServerFilePath();
+        } catch (final IOException e) {
+            e.printStackTrace();
+            throw new ServerException("이미지 업로드에 실패했습니다.");
+        }
+    }
+
+    private GoalRoomMember findGoalRoomMemberByGoalRoomAndIdentifier(final GoalRoom goalRoom, final String identifier) {
+        return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
+                .orElseThrow(() -> new NotFoundException("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + identifier));
+    }
+
+    private void validateCheckCount(final GoalRoomMember member,
+                                    final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+        if (checkFeedRepository.isMemberUploadCheckFeedToday(member, goalRoomRoadmapNode,
+                LocalDate.now().atStartOfDay(), LocalDate.now().plusDays(1).atStartOfDay())) {
+            throw new BadRequestException("이미 오늘 인증 피드를 등록하였습니다.");
+        }
+
+        if (checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(member, goalRoomRoadmapNode)
+                >= goalRoomRoadmapNode.getCheckCount()) {
+            throw new BadRequestException(
+                    "이번 노드에는 최대 " + goalRoomRoadmapNode.getCheckCount() + "번만 인증 피드를 등록할 수 있습니다.");
+        }
+    }
+
+    private ImageContentType getImageContentType(final MultipartFile checkFeedImage) {
+        return ImageContentType.of(checkFeedImage.getContentType())
+                .orElseThrow(() -> new BadRequestException("요청할 수 없는 파일 확장자 형식입니다."));
     }
 }

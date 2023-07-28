@@ -9,7 +9,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
@@ -35,32 +37,37 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
+import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.mock.web.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomServiceTest {
 
+    private static final String UPLOAD_FILE_PATH = "src/test/resources/testImage/";
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
     private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
@@ -87,6 +94,9 @@ class GoalRoomServiceTest {
 
     @Mock
     private GoalRoomMemberRepository goalRoomMemberRepository;
+
+    @Mock
+    private CheckFeedRepository checkFeedRepository;
 
     @InjectMocks
     private GoalRoomService goalRoomService;
@@ -163,7 +173,6 @@ class GoalRoomServiceTest {
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(wrongRoadmapNodId, 10, TODAY, TEN_DAY_LATER))));
-
 
         given(roadmapContentRepository.findById(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
@@ -289,6 +298,157 @@ class GoalRoomServiceTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
+    @Test
+    void 인증_피드_등록을_요청한다() {
+        // given
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final CheckFeed checkFeed = 인증_피드를_생성한다(goalRoomRoadmapNode, goalRoomLeader);
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomLeader));
+        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
+                .thenReturn(false);
+        when(checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
+                .thenReturn(goalRoomRoadmapNode.getCheckCount() - 1);
+        when(checkFeedRepository.save(any()))
+                .thenReturn(checkFeed);
+
+        // when
+        final String response = goalRoomService.createCheckFeed("identifier", 1L, request);
+        테스트용으로_생성된_파일을_제거한다(UPLOAD_FILE_PATH);
+
+        // then
+        assertThat(response).contains(UPLOAD_FILE_PATH, "originalFileName");
+    }
+
+    @Test
+    void 하루에_두_번_이상_인증_피드_등록_요청_시_예외를_반환한다() {
+        // given
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
+        final CheckFeed checkFeed = 인증_피드를_생성한다(goalRoom.getGoalRoomRoadmapNodes().getValues().get(0), goalRoomLeader);
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomLeader));
+        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
+                .thenReturn(true);
+
+        //expect
+        assertThatThrownBy(
+                () -> goalRoomService.createCheckFeed("identifier", 1L, request))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("이미 오늘 인증 피드를 등록하였습니다.");
+    }
+
+    @Test
+    void 골룸노드에서_허가된_인증횟수보다_많은_인증_피드_등록_요청_시_예외를_반환한다() {
+        // given
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final CheckFeed checkFeed = 인증_피드를_생성한다(goalRoom.getGoalRoomRoadmapNodes().getValues().get(0), goalRoomLeader);
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomLeader));
+        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
+                .thenReturn(false);
+        when(checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
+                .thenReturn(goalRoomRoadmapNode.getCheckCount() + 1);
+
+        //expect
+        assertThatThrownBy(
+                () -> goalRoomService.createCheckFeed("identifier", 1L, request))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("이번 노드에는 최대 " + goalRoomRoadmapNode.getCheckCount() + "번만 인증 피드를 등록할 수 있습니다.");
+    }
+
+    @Test
+    void 인증_피드_등록_요청_시_존재하지_않는_골룸이라면_예외를_반환한다() {
+        // given
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.empty());
+
+        //expect
+        assertThatThrownBy(
+                () -> goalRoomService.createCheckFeed("identifier", 1L, request))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("골룸 정보가 존재하지 않습니다. goalRoomId = 1");
+    }
+
+    @Test
+    void 인증_피드_등록_요청_시_사용자가_참여하지_않은_골룸이라면_예외를_반환한다() {
+        // given
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.empty());
+
+        //expect
+        assertThatThrownBy(
+                () -> goalRoomService.createCheckFeed("identifier", 1L, request))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + "identifier");
+    }
+
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 new Nickname("코끼리"), "010-1234-5678");
@@ -359,5 +519,33 @@ class GoalRoomServiceTest {
                 new GoalRoomNodeResponse("로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
                 new GoalRoomNodeResponse("로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
         return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 31, isJoined);
+    }
+
+    private CheckFeedRequest 인증_피드_요청_DTO를_생성한다() {
+        return new CheckFeedRequest(
+                new MockMultipartFile("image", "originalFileName.jpeg", "image/jpeg",
+                        "test image".getBytes()), "인증 피드 설명");
+    }
+
+    private CheckFeed 인증_피드를_생성한다(final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember joinedMember) {
+        return new CheckFeed("src/test/resources/testImage/originalFileName.jpeg",
+                ImageContentType.JPEG, "image.jpeg", goalRoomRoadmapNode, joinedMember);
+    }
+
+    private void 테스트용으로_생성된_파일을_제거한다(final String path) {
+        final File directory = new File(path);
+
+        if (!directory.exists() || !directory.isDirectory()) {
+            throw new IllegalArgumentException("Invalid directory path: " + path);
+        }
+
+        final File[] files = directory.listFiles();
+        if (files != null) {
+            for (final File file : files) {
+                if (file.isFile()) {
+                    file.delete();
+                }
+            }
+        }
     }
 }

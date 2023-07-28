@@ -23,7 +23,10 @@ public class CheckFeed extends BaseCreatedTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private ImageContentType imageContentType;
 
+    @Column(nullable = false)
     private String originalFileName;
+
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_room_roadmap_node_id", nullable = false)
@@ -41,5 +44,17 @@ public class CheckFeed extends BaseCreatedTimeEntity {
         this.originalFileName = originalFileName;
         this.goalRoomRoadmapNode = goalRoomRoadmapNode;
         this.goalRoomMember = goalRoomMember;
+    }
+
+    public void addDescription(final String description) {
+        this.description = description;
+    }
+
+    public String getServerFilePath() {
+        return serverFilePath;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
