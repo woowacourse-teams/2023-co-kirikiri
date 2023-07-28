@@ -1,8 +1,11 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -10,13 +13,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -24,92 +25,131 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoom extends BaseTimeEntity {
+public class GoalRoom extends BaseCreatedTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private static final int DATE_OFFSET = 1;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Embedded
+    private GoalRoomName name;
 
-    private Integer limitedMemberCount = 0;
+    @Embedded
+    private LimitedMemberCount limitedMemberCount;
 
     @Enumerated(value = EnumType.STRING)
-    private GoalRoomStatus status;
+    private final GoalRoomStatus status = GoalRoomStatus.RECRUITING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     private RoadmapContent roadmapContent;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true)
-    @JoinColumn(name = "goal_room_id", nullable = false, updatable = false)
-    private List<GoalRoomToDo> goalRoomToDos = new ArrayList<>();
+    @Column(nullable = false)
+    private LocalDate startDate;
+
+    @Column(nullable = false)
+    private LocalDate endDate;
 
     @Embedded
-    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
+
+    @Embedded
+    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos(new ArrayList<>());
+
+    @Embedded
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
-    private List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
+    private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
 
-    @Embedded
-    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
-
-    public GoalRoom(final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
+    public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent) {
-        this(null, name, limitedMemberCount, status, roadmapContent);
+        this(null, name, limitedMemberCount, roadmapContent);
     }
 
-    public GoalRoom(final Long id, final String name, final Integer limitedMemberCount, final GoalRoomStatus status,
+    public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent) {
         this.id = id;
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
-        this.status = status;
         this.roadmapContent = roadmapContent;
     }
 
-    public void addRoadmapNodesAll(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    public void participate(final GoalRoomPendingMember goalRoomPendingMember) {
+        if (limitedMemberCount.isLessAndEqualsThan(goalRoomPendingMembers.size())) {
+            throw new BadRequestException("정원 초과입니다.");
+        }
+        checkParticipated(goalRoomPendingMember);
+        goalRoomPendingMembers.add(goalRoomPendingMember);
+        goalRoomPendingMember.updateGoalRoom(this);
+    }
+
+    private void checkParticipated(final GoalRoomPendingMember goalRoomPendingMember) {
+        if (goalRoomPendingMembers.containGoalRoomPendingMember(goalRoomPendingMember)) {
+            throw new BadRequestException("이미 참여 중인 상태입니다.");
+        }
     }
 
     public void joinGoalRoom(final GoalRoomRole role, final Member member) {
         goalRoomPendingMembers.add(new GoalRoomPendingMember(role, this, member));
     }
 
-    public Long getId() {
-        return id;
+    public int calculateTotalPeriod() {
+        return (int) ChronoUnit.DAYS.between(startDate, endDate) + DATE_OFFSET;
     }
 
-    public String getName() {
-        return name;
+    public boolean isRecruiting() {
+        return status == GoalRoomStatus.RECRUITING;
     }
 
-    public Integer getLimitedMemberCount() {
-        return limitedMemberCount;
+    public void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        checkTotalSize(goalRoomRoadmapNodes.size() + this.goalRoomRoadmapNodes.size());
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+        this.startDate = goalRoomRoadmapNodes.getGoalRoomStartDate();
+        this.endDate = goalRoomRoadmapNodes.getGoalRoomEndDate();
+    }
+
+    private void checkTotalSize(final int totalSize) {
+        if (totalSize > roadmapContent.nodesSize()) {
+            throw new BadRequestException("로드맵의 노드 수보다 골룸의 노드 수가 큽니다.");
+        }
+    }
+
+    public void addGoalRoomTodo(final GoalRoomToDo goalRoomToDo) {
+        goalRoomToDos.add(goalRoomToDo);
+    }
+
+    public Member findGoalRoomLeaderInPendingMember() {
+        return goalRoomPendingMembers.findGoalRoomLeader();
     }
 
     public Integer getCurrentPendingMemberCount() {
         return goalRoomPendingMembers.size();
     }
 
-    public GoalRoomPendingMembers getGoalRoomPendingMembers() {
-        return new GoalRoomPendingMembers(goalRoomPendingMembers.getValues());
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public LocalDate getGoalRoomStartDate() {
-        return goalRoomRoadmapNodes.getGoalRoomStartDate();
+    public GoalRoomName getName() {
+        return name;
     }
 
-    public LocalDate getGoalRoomEndDate() {
-        return goalRoomRoadmapNodes.getGoalRoomEndDate();
+    public LimitedMemberCount getLimitedMemberCount() {
+        return limitedMemberCount;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
         return goalRoomRoadmapNodes;
     }
+
 }

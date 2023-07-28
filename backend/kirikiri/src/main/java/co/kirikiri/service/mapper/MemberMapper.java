@@ -10,7 +10,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class MemberMapper {
+public final class MemberMapper {
 
     public static MemberJoinDto convertToMemberJoinDto(final MemberJoinRequest request) {
         final Identifier identifier = new Identifier(request.identifier());

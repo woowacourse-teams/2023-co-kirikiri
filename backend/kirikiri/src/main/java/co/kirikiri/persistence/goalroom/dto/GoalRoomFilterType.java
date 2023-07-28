@@ -1,4 +1,4 @@
-package co.kirikiri.domain.roadmap.dto;
+package co.kirikiri.persistence.goalroom.dto;
 
 public enum GoalRoomFilterType {
     LATEST, PARTICIPATION_RATE

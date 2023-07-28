@@ -7,17 +7,17 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
-import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
+import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
+import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import java.util.List;
@@ -41,15 +41,11 @@ public final class RoadmapMapper {
 
     }
 
-    public static RoadmapFilterType convertRoadmapOrderType(final RoadmapFilterTypeDto filterType) {
+    public static RoadmapFilterType convertRoadmapOrderType(final RoadmapFilterTypeRequest filterType) {
         if (filterType == null) {
             return RoadmapFilterType.LATEST;
         }
-        try {
-            return RoadmapFilterType.valueOf(filterType.name());
-        } catch (final IllegalArgumentException e) {
-            throw new NotFoundException("존재하지 않는 정렬 조건입니다. filterType = " + filterType);
-        }
+        return RoadmapFilterType.valueOf(filterType.name());
     }
 
     public static PageResponse<RoadmapResponse> convertRoadmapPageResponse(final Page<Roadmap> roadmapPages,
@@ -86,6 +82,9 @@ public final class RoadmapMapper {
     public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content) {
         final RoadmapCategory category = roadmap.getCategory();
         final Member creator = roadmap.getCreator();
+        final RoadmapContentResponse roadmapContentResponse = new RoadmapContentResponse(
+                content.getContent(),
+                convertRoadmapNodeResponse(content.getNodes()));
 
         return new RoadmapResponse(
                 roadmap.getId(),
@@ -93,10 +92,9 @@ public final class RoadmapMapper {
                 roadmap.getTitle(),
                 roadmap.getIntroduction(),
                 new MemberResponse(creator.getId(), creator.getNickname().getValue()),
-                content.getContent(),
+                roadmapContentResponse,
                 roadmap.getDifficulty().name(),
-                roadmap.getRequiredPeriod(),
-                convertRoadmapNodeResponse(content.getNodes())
+                roadmap.getRequiredPeriod()
         );
     }
 
@@ -108,7 +106,7 @@ public final class RoadmapMapper {
     }
 
     private static RoadmapNodeResponse convertNode(final RoadmapNode node) {
-        final List<String> images = node.getImages()
+        final List<String> images = node.getImages().getValues()
                 .stream()
                 .map(RoadmapNodeImage::getServerFilePath)
                 .toList();

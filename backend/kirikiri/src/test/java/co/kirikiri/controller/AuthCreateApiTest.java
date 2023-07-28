@@ -4,13 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -18,18 +17,17 @@ import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import java.util.List;
 
 @WebMvcTest(AuthController.class)
-class AuthControllerTest extends ControllerTestHelper {
+class AuthCreateApiTest extends ControllerTestHelper {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
@@ -45,26 +43,14 @@ class AuthControllerTest extends ControllerTestHelper {
         given(authService.login(request))
                 .willReturn(expectedResponse);
 
+        final List<FieldDescription> requestFieldDescription = makeSuccessRequestFieldDescription();
+        final List<FieldDescription> responseFieldDescription = makeSuccessResponseFieldDescription();
+
         //when
         final MvcResult mvcResult = 로그인(jsonRequest, status().isOk())
-                .andDo(
-                        documentationResultHandler.document(
-                                requestFields(
-                                        fieldWithPath("identifier").description("사용자 아이디")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 4 ~ 20  +" + "\n" +
-                                                                "- 영어 소문자, 숫자 가능")),
-                                        fieldWithPath("password").description("사용자 비밀번호")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 8 ~ 15  +" + "\n" +
-                                                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
-                                                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능"))
-                                ),
-                                responseFields(
-                                        fieldWithPath("refreshToken").description("리프레시 토큰"),
-                                        fieldWithPath("accessToken").description("액세스 토큰")
-                                )
-                        )
+                .andDo(documentationResultHandler.document(
+                        requestFields(makeFieldDescriptor(requestFieldDescription)),
+                        responseFields(makeFieldDescriptor(responseFieldDescription)))
                 )
                 .andReturn();
 
@@ -72,8 +58,7 @@ class AuthControllerTest extends ControllerTestHelper {
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
-        assertThat(response).usingRecursiveComparison()
-                .isEqualTo(expectedResponse);
+        assertThat(response).isEqualTo(expectedResponse);
     }
 
     @Test
@@ -207,8 +192,7 @@ class AuthControllerTest extends ControllerTestHelper {
         //then
         final AuthenticationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
-        assertThat(response).usingRecursiveComparison()
-                .isEqualTo(expectedResponse);
+        assertThat(response).isEqualTo(expectedResponse);
     }
 
     @Test
@@ -287,5 +271,24 @@ class AuthControllerTest extends ControllerTestHelper {
                         .contextPath(API_PREFIX))
                 .andExpect(result)
                 .andDo(print());
+    }
+
+    private List<FieldDescription> makeSuccessRequestFieldDescription() {
+        return List.of(
+                new FieldDescription("identifier", "사용자 아이디",
+                        "- 길이 : 4 ~ 20  +" + "\n" +
+                                "- 영어 소문자, 숫자 가능"),
+                new FieldDescription("password", "사용자 비밀번호",
+                        "- 길이 : 8 ~ 15  +" + "\n" +
+                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
+                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능")
+        );
+    }
+
+    private List<FieldDescription> makeSuccessResponseFieldDescription() {
+        return List.of(
+                new FieldDescription("refreshToken", "리프레시 토큰"),
+                new FieldDescription("accessToken", "액세스 토큰")
+        );
     }
 }

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -8,29 +8,23 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class Member extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Member extends BaseCreatedTimeEntity {
 
     @Embedded
     private Identifier identifier;
 
     @Embedded
     private EncryptedPassword encryptedPassword;
+
+    @Embedded
+    private Nickname nickname;
 
     @OneToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
@@ -39,9 +33,16 @@ public class Member extends BaseTimeEntity {
     private MemberProfile memberProfile;
 
     public Member(final Identifier identifier, final EncryptedPassword encryptedPassword,
-                  final MemberProfile memberProfile) {
+                  final Nickname nickname, final MemberProfile memberProfile) {
+        this(null, identifier, encryptedPassword, nickname, memberProfile);
+    }
+
+    public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
+                  final Nickname nickname, final MemberProfile memberProfile) {
+        this.id = id;
         this.identifier = identifier;
         this.encryptedPassword = encryptedPassword;
+        this.nickname = nickname;
         this.memberProfile = memberProfile;
     }
 
@@ -53,11 +54,12 @@ public class Member extends BaseTimeEntity {
         return identifier;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
     public Nickname getNickname() {
-        return memberProfile.getNickname();
+        return nickname;
     }
 }

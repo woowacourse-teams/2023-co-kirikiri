@@ -5,11 +5,10 @@ import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapService;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -34,10 +33,9 @@ public class RoadmapController {
     @PostMapping
     @Authenticated
     public ResponseEntity<Void> create(@MemberIdentifier final String identifier,
-                                       @RequestBody @Valid final RoadmapSaveRequest request,
-                                       final HttpServletRequest httpServletRequest) {
-        final Long id = roadmapService.create(request, identifier);
-        return ResponseEntity.created(URI.create(httpServletRequest.getRequestURI() + "/" + id)).build();
+                                       @RequestBody @Valid final RoadmapSaveRequest request) {
+        final Long roadmapId = roadmapService.create(request, identifier);
+        return ResponseEntity.created(URI.create("/api/roadmaps/" + roadmapId)).build();
     }
 
     @GetMapping("/{roadmapId}")
@@ -49,17 +47,17 @@ public class RoadmapController {
     @GetMapping
     public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
-            @RequestParam(value = "roadmapFilterTypeDto", required = false) final RoadmapFilterTypeDto roadmapFilterTypeDto,
+            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest roadmapFilterTypeRequest,
             @ModelAttribute final CustomPageRequest pageRequest
     ) {
         final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
-                categoryId, roadmapFilterTypeDto, pageRequest);
+                categoryId, roadmapFilterTypeRequest, pageRequest);
         return ResponseEntity.ok(roadmapPageResponse);
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<RoadmapCategoryResponse>> getAllRoadmapCategories() {
-        final List<RoadmapCategoryResponse> roadmapCategoryResponses = roadmapService.getAllRoadmapCategories();
+    public ResponseEntity<List<RoadmapCategoryResponse>> findAllRoadmapCategories() {
+        final List<RoadmapCategoryResponse> roadmapCategoryResponses = roadmapService.findAllRoadmapCategories();
         return ResponseEntity.ok(roadmapCategoryResponses);
     }
 }

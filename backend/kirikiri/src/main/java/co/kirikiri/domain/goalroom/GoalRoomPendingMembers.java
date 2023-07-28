@@ -18,7 +18,7 @@ public class GoalRoomPendingMembers {
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
-    private List<GoalRoomPendingMember> values = new ArrayList<>();
+    private final List<GoalRoomPendingMember> values = new ArrayList<>();
 
     public GoalRoomPendingMembers(final List<GoalRoomPendingMember> values) {
         this.values.addAll(new ArrayList<>(values));
@@ -30,6 +30,11 @@ public class GoalRoomPendingMembers {
 
     public int size() {
         return values.size();
+    }
+
+    public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
+        return values.stream()
+                .anyMatch(value -> value.equals(goalRoomPendingMember));
     }
 
     public Member findGoalRoomLeader() {
