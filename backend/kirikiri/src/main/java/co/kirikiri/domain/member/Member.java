@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseCreatedTimeEntity {
+public class Member extends BaseUpdatedTimeEntity {
 
     @Embedded
     private Identifier identifier;

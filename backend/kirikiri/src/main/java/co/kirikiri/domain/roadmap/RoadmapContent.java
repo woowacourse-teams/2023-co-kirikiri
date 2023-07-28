@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoadmapContent extends BaseCreatedTimeEntity {
+public class RoadmapContent extends BaseUpdatedTimeEntity {
 
     private static final int CONTENT_MAX_LENGTH = 2000;
 

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberProfile extends BaseCreatedTimeEntity {
+public class MemberProfile extends BaseUpdatedTimeEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
