@@ -23,6 +23,7 @@ import io.restassured.response.Response;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,21 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
                 List.of(new RoadmapTagSaveRequest("태그")));
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, accessToken);
+
+        // expect
+        응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.CREATED);
+        final Long 로드맵_ID = 아이디를_반환한다(로드맵_생성_응답값);
+        assertThat(로드맵_ID).isEqualTo(1L);
+    }
+
+    @Test
+    void 태그없이_로드맵을_생성한다() {
+        // given
+        // when
+        final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                Collections.emptyList());
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, accessToken);
 
         // expect
