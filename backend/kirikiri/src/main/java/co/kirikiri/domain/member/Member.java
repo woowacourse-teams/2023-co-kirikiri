@@ -29,6 +29,12 @@ public class Member extends BaseCreatedTimeEntity {
     @OneToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
+    @JoinColumn(name = "member_image_id")
+    private MemberImage image;
+
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     @JoinColumn(name = "member_profile_id", nullable = false, unique = true)
     private MemberProfile memberProfile;
 

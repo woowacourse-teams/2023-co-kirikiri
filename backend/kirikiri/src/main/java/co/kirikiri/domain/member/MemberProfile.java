@@ -1,14 +1,10 @@
 package co.kirikiri.domain.member;
 
 import co.kirikiri.domain.BaseCreatedTimeEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -26,12 +22,6 @@ public class MemberProfile extends BaseCreatedTimeEntity {
 
     @Column(length = 20, nullable = false)
     private String phoneNumber;
-
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true)
-    @JoinColumn(name = "member_image_id")
-    private MemberImage image;
 
     public MemberProfile(final Gender gender, final LocalDate birthday, final String phoneNumber) {
         this.gender = gender;
