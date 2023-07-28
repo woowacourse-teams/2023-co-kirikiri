@@ -120,7 +120,7 @@ public class Roadmap extends BaseEntity {
     }
 
     public void addTags(final RoadmapTags tags) {
-        this.tags = tags;
+        this.tags.addAll(tags);
     }
 
     public void delete() {
