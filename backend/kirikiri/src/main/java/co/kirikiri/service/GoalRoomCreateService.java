@@ -142,10 +142,8 @@ public class GoalRoomCreateService {
         final File dest = new File(serverFilePath);
         checkFeedImage.transferTo(dest);
 
-        final CheckFeed checkFeed = checkFeedRepository.save(
-                new CheckFeed(serverFilePath, imageType,
-                        checkFeedImage.getOriginalFilename(), currentNode, goalRoomMember));
-        checkFeed.addDescription(checkFeedRequest.description());
+        checkFeedRepository.save(new CheckFeed(serverFilePath, imageType, checkFeedImage.getOriginalFilename(),
+                checkFeedRequest.description(), currentNode, goalRoomMember));
         return serverFilePath;
     }
 

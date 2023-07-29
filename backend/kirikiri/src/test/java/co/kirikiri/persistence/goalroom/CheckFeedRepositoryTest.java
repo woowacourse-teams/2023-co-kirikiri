@@ -1,6 +1,6 @@
 package co.kirikiri.persistence.goalroom;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.ImageContentType;
@@ -164,6 +164,55 @@ class CheckFeedRepositoryTest {
         assertThat(checkCount).isEqualTo(6);
     }
 
+    @Test
+    void 골룸의_특정_노드_동안_등록된_인증_피드들을_조회한다() {
+        //given
+        final Member creator = 사용자를_저장한다("cokiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                member);
+        goalRoom.addAllGoalRoomMembers(List.of(
+                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator), joinedMember));
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
+
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+
+        //when
+        final List<CheckFeed> checkFeeds1 = checkFeedRepository.findByGoalRoomRoadmapNode(goalRoomRoadmapNode1);
+        final List<CheckFeed> checkFeeds2 = checkFeedRepository.findByGoalRoomRoadmapNode(goalRoomRoadmapNode2);
+
+        //then
+        final CheckFeed expected1 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
+                "originalFileName", "인증 피드 본문", goalRoomRoadmapNode1, joinedMember);
+        final CheckFeed expected2 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
+                "originalFileName", "인증 피드 본문", goalRoomRoadmapNode2, joinedMember);
+
+        assertAll(
+                () -> assertThat(checkFeeds1)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt")
+                        .isEqualTo(List.of(expected1, expected1, expected1)),
+                () -> assertThat(checkFeeds2).hasSize(3)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt")
+                        .isEqualTo(List.of(expected2, expected2, expected2))
+        );
+    }
+
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
@@ -227,7 +276,8 @@ class CheckFeedRepositoryTest {
     }
 
     private CheckFeed 인증_피드를_저장한다(final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember joinedMember) {
-        return checkFeedRepository.save(new CheckFeed("src/test/resources/testImage",
-                ImageContentType.JPEG, "image.jpeg", goalRoomRoadmapNode, joinedMember));
+        return checkFeedRepository.save(
+                new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
+                        "originalFileName", "인증 피드 본문", goalRoomRoadmapNode, joinedMember));
     }
 }

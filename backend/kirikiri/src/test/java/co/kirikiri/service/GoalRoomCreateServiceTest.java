@@ -533,8 +533,8 @@ class GoalRoomCreateServiceTest {
     }
 
     private CheckFeed 인증_피드를_생성한다(final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember joinedMember) {
-        return new CheckFeed("src/test/resources/testImage/originalFileName.jpeg",
-                ImageContentType.JPEG, "originalFileName.jpeg", goalRoomRoadmapNode, joinedMember);
+        return new CheckFeed("src/test/resources/testImage/originalFileName.jpeg", ImageContentType.JPEG,
+                "originalFileName.jpeg", "인증 피드 설명", goalRoomRoadmapNode, joinedMember);
     }
 
     private void 테스트용으로_생성된_파일을_제거한다(final String filePath) {

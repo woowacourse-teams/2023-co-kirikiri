@@ -4,6 +4,7 @@ import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -30,4 +31,6 @@ public interface CheckFeedRepository extends JpaRepository<CheckFeed, Long> {
             + " AND cf.goalRoomRoadmapNode = :goalRoomRoadmapNode")
     int findCountByGoalRoomMemberAndGoalRoomRoadmapNode(final GoalRoomMember goalRoomMember, final
     GoalRoomRoadmapNode goalRoomRoadmapNode);
+
+    List<CheckFeed> findByGoalRoomRoadmapNode(final GoalRoomRoadmapNode goalRoomRoadmapNode);
 }

@@ -37,17 +37,14 @@ public class CheckFeed extends BaseCreatedTimeEntity {
     private GoalRoomMember goalRoomMember;
 
     public CheckFeed(final String serverFilePath, final ImageContentType imageContentType,
-                     final String originalFileName, final GoalRoomRoadmapNode goalRoomRoadmapNode,
-                     final GoalRoomMember goalRoomMember) {
+                     final String originalFileName, final String description,
+                     final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember goalRoomMember) {
         this.serverFilePath = serverFilePath;
         this.imageContentType = imageContentType;
         this.originalFileName = originalFileName;
+        this.description = description;
         this.goalRoomRoadmapNode = goalRoomRoadmapNode;
         this.goalRoomMember = goalRoomMember;
-    }
-
-    public void addDescription(final String description) {
-        this.description = description;
     }
 
     public String getServerFilePath() {
