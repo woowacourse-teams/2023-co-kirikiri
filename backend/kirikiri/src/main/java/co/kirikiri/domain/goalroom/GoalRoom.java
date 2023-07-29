@@ -6,7 +6,6 @@ import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -15,11 +14,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -52,13 +49,13 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
 
     @Embedded
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
+
+    @Embedded
     private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos(new ArrayList<>());
 
     @Embedded
     private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
-
-    @Embedded
-    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent, final Member member) {
@@ -125,6 +122,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public boolean isRecruiting() {
         return status == GoalRoomStatus.RECRUITING;
+    }
+
+    public boolean isRunning() {
+        return status == GoalRoomStatus.RUNNING;
     }
 
     public void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
