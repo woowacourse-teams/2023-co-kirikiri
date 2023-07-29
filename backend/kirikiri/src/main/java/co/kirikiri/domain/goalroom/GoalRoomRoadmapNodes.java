@@ -85,4 +85,10 @@ public class GoalRoomRoadmapNodes {
     public List<GoalRoomRoadmapNode> getValues() {
         return new ArrayList<>(values);
     }
+
+    public int calculateAllCheckCount() {
+        return values.stream()
+                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
+                .sum();
+    }
 }

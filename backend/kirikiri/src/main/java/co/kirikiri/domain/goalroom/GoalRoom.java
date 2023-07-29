@@ -125,6 +125,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return (int) ChronoUnit.DAYS.between(startDate, endDate) + DATE_OFFSET;
     }
 
+    public int getAllCheckCount() {
+        return goalRoomRoadmapNodes.calculateAllCheckCount();
+    }
+
     public boolean isRecruiting() {
         return status == GoalRoomStatus.RECRUITING;
     }

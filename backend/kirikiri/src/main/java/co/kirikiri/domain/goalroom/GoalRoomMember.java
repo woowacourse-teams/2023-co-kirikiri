@@ -21,7 +21,7 @@ public class GoalRoomMember extends BaseEntity {
 
     private LocalDateTime joinedAt;
 
-    private final Double accomplishmentRate = 0.0;
+    private Double accomplishmentRate = 0.0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_room_id", nullable = false)
@@ -37,5 +37,9 @@ public class GoalRoomMember extends BaseEntity {
         this.joinedAt = joinedAt;
         this.goalRoom = goalRoom;
         this.member = member;
+    }
+
+    public void updateAccomplishmentRate(final Double rate) {
+        this.accomplishmentRate = rate;
     }
 }
