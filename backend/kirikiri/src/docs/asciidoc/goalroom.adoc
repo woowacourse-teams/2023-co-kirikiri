@@ -112,3 +112,22 @@ operation::goal-room-create-api-test/이미_참여한_골룸에_대한_참가_�
 === *5-4* 실패 - 골룸의 제한 인원이 가득 참
 
 operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+[[골룸나가기-API]]
+== *5. 골룸 나가기 API*
+
+=== *5-1* 성공
+
+operation::goal-room-create-api-test/정상적으로_골룸을_나간다[snippets='http-request,http-response,request-headers,path-parameters']
+
+=== *5-2* 실패 - 존재하지 않는 회원임
+
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_회원이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *5-3* 실패 - 골룸의 아이디가 유효하지 않음
+
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *5-4* 실패 - 참여하지 않은 골룸임
+
+operation::goal-room-create-api-test/골룸을_나갈때_참여하지_않은_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
