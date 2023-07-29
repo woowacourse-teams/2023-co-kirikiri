@@ -78,6 +78,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomPendingMembers.add(leader);
     }
 
+    public void updateStatus(final GoalRoomStatus status) {
+        this.status = status;
+    }
+
     public void join(final Member member) {
         final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
         newMember.updateGoalRoom(this);

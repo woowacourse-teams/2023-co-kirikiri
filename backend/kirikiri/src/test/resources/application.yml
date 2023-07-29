@@ -10,6 +10,10 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
 logging:
   level:
     org:

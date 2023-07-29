@@ -117,12 +117,12 @@ operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대�
 
 === *6-1* 성공
 
-operation::goal-room-create-api-test/인증_피드_등록_요청을_보낸다[snippets='http-request,http-response,request-headers,path-parameters,response-headers']
+operation::goal-room-create-api-test/인증_피드_등록_요청을_보낸다[snippets='http-request,http-response,request-headers,path-parameters,request-parts,form-parameters,response-headers']
 
 === *6-2* 실패 - 인증 피드 요청 시 존재하지 않는 사용자 아이디일 경우
 
-operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,request-parts,response-fields']
 
 === *6-3* 실패 - 인증 피드 요청 시 존재하지 않는 골룸일 경우
 
-operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,request-parts,response-fields']

@@ -62,7 +62,6 @@ import org.springframework.mock.web.MockMultipartFile;
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
 
-    private static final String UPLOAD_FILE_PATH = "src/test/resources/testImage/";
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
     private static final LocalDate TWENTY_DAY_LATER = TODAY.plusDays(20);
@@ -288,7 +287,7 @@ class GoalRoomCreateServiceTest {
     @Test
     void 인증_피드_등록을_요청한다() {
         // given
-        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
 
         final Member creator = 크리에이터를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -315,16 +314,16 @@ class GoalRoomCreateServiceTest {
 
         // when
         final String response = goalRoomCreateService.createCheckFeed("identifier", 1L, request);
-        테스트용으로_생성된_파일을_제거한다(UPLOAD_FILE_PATH);
+        테스트용으로_생성된_파일을_제거한다(response);
 
         // then
-        assertThat(response).contains(UPLOAD_FILE_PATH, "originalFileName");
+        assertThat(response).contains("originalFileName");
     }
 
     @Test
     void 하루에_두_번_이상_인증_피드_등록_요청_시_예외를_반환한다() {
         // given
-        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
 
         final Member creator = 크리에이터를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -351,9 +350,9 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
-    void 골룸노드에서_허가된_인증횟수보다_많은_인증_피드_등록_요청_시_예외를_반환한다() {
+    void 골룸_노드에서_허가된_인증_횟수보다_많은_인증_피드_등록_요청_시_예외를_반환한다() {
         // given
-        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
 
         final Member creator = 크리에이터를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -370,8 +369,6 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.of(goalRoom));
         when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .thenReturn(Optional.of(goalRoomLeader));
-        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
-                .thenReturn(false);
         when(checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
                 .thenReturn(goalRoomRoadmapNode.getCheckCount() + 1);
 
@@ -383,9 +380,41 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
+    void 인증_피드_등록_요청_시_허용되지_않는_확장자_형식이라면_예외를_반환한다() {
+        // given
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/gif");
+
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent, 20);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+
+        when(goalRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomLeader));
+        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
+                .thenReturn(false);
+        when(checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
+                .thenReturn(goalRoomRoadmapNode.getCheckCount() - 1);
+
+        // when
+        assertThatThrownBy(
+                () -> goalRoomCreateService.createCheckFeed("identifier", 1L, request))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("image/gif는 요청할 수 없는 파일 확장자 형식입니다.");
+    }
+
+    @Test
     void 인증_피드_등록_요청_시_존재하지_않는_골룸이라면_예외를_반환한다() {
         // given
-        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
 
         final Member creator = 크리에이터를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -409,7 +438,7 @@ class GoalRoomCreateServiceTest {
     @Test
     void 인증_피드_등록_요청_시_사용자가_참여하지_않은_골룸이라면_예외를_반환한다() {
         // given
-        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다();
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
 
         final Member creator = 크리에이터를_생성한다();
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -494,31 +523,26 @@ class GoalRoomCreateServiceTest {
         );
     }
 
-    private CheckFeedRequest 인증_피드_요청_DTO를_생성한다() {
+    private CheckFeedRequest 인증_피드_요청_DTO를_생성한다(final String contentType) {
         return new CheckFeedRequest(
-                new MockMultipartFile("image", "originalFileName.jpeg", "image/jpeg",
+                new MockMultipartFile("image", "originalFileName.jpeg", contentType,
                         "test image".getBytes()), "인증 피드 설명");
     }
 
     private CheckFeed 인증_피드를_생성한다(final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember joinedMember) {
         return new CheckFeed("src/test/resources/testImage/originalFileName.jpeg",
-                ImageContentType.JPEG, "image.jpeg", goalRoomRoadmapNode, joinedMember);
+                ImageContentType.JPEG, "originalFileName.jpeg", goalRoomRoadmapNode, joinedMember);
     }
 
-    private void 테스트용으로_생성된_파일을_제거한다(final String path) {
-        final File directory = new File(path);
+    private void 테스트용으로_생성된_파일을_제거한다(final String filePath) {
+        final File file = new File(filePath);
 
-        if (!directory.exists() || !directory.isDirectory()) {
-            throw new IllegalArgumentException("Invalid directory path: " + path);
+        if (!file.exists() || !file.isFile()) {
+            throw new IllegalArgumentException("Invalid file path: " + filePath);
         }
 
-        final File[] files = directory.listFiles();
-        if (files != null) {
-            for (final File file : files) {
-                if (file.isFile()) {
-                    file.delete();
-                }
-            }
+        if (!file.delete()) {
+            throw new RuntimeException("Failed to delete the file: " + filePath);
         }
     }
 }

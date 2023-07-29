@@ -11,6 +11,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -51,7 +52,7 @@ public class GoalRoomController {
     }
 
     @Authenticated
-    @PostMapping("/{goalRoomId}/checkFeeds")
+    @PostMapping(value = "/{goalRoomId}/checkFeeds", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> createCheckFeed(@MemberIdentifier final String identifier,
                                                 @PathVariable("goalRoomId") final Long goalRoomId,
                                                 @ModelAttribute final CheckFeedRequest checkFeedRequest) {

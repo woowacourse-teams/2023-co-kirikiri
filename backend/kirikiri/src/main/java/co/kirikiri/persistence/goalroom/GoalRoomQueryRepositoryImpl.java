@@ -2,6 +2,7 @@ package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
+import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
@@ -13,6 +14,7 @@ import co.kirikiri.persistence.goalroom.dto.GoalRoomFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -73,5 +75,19 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
             return goalRoom.id.desc();
         }
         return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
+    }
+
+    @Override
+    public List<GoalRoom> findAllByStartDateWithGoalRoomRoadmapNode() {
+        return selectFrom(goalRoom)
+                .join(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(startDateEqualsToNow())
+                .orderBy(goalRoomRoadmapNode.period.startDate.asc())
+                .fetch();
+    }
+
+    private BooleanExpression startDateEqualsToNow() {
+        return goalRoomRoadmapNode.period.startDate.eq(LocalDate.now());
     }
 }

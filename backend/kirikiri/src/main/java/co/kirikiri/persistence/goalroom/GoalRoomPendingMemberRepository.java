@@ -19,5 +19,12 @@ public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomP
     Optional<GoalRoomPendingMember> findByGoalRoomAndMemberIdentifier(
             @Param("goalRoom") final GoalRoom goalRoom, @Param("identifier") final Identifier identifier);
 
+    @Query("select gp from GoalRoomPendingMember gp "
+            + "join fetch gp.goalRoom g "
+            + "join fetch gp.member m "
+            + "where g=:goalRoom "
+            + "and gp.member = m")
+    List<GoalRoomPendingMember> findAllByGoalRoom(@Param("goalRoom") final GoalRoom goalRoom);
+    
     List<GoalRoomPendingMember> findByGoalRoom(final GoalRoom goalRoom);
 }
