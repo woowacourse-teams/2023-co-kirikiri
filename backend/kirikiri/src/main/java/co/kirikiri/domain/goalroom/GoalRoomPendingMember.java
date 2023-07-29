@@ -11,11 +11,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -73,6 +73,10 @@ public class GoalRoomPendingMember extends BaseEntity {
         return role == GoalRoomRole.LEADER;
     }
 
+    public Member getMember() {
+        return member;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -82,15 +86,12 @@ public class GoalRoomPendingMember extends BaseEntity {
             return false;
         }
         final GoalRoomPendingMember that = (GoalRoomPendingMember) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(goalRoom, that.goalRoom) && Objects.equals(member,
+                that.member);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    public Member getMember() {
-        return member;
+        return Objects.hash(goalRoom, member);
     }
 }

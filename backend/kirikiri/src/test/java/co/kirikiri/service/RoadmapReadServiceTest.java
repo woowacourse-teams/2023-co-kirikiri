@@ -84,7 +84,7 @@ class RoadmapReadServiceTest {
                 "로드맵 제목",
                 "로드맵 설명",
                 new MemberResponse(1L, "썬샷"),
-                new RoadmapContentResponse("콘텐츠 제목", Collections.emptyList()),
+                new RoadmapContentResponse(1L, "콘텐츠 제목", Collections.emptyList()),
                 "NORMAL",
                 100
         );
@@ -252,7 +252,7 @@ class RoadmapReadServiceTest {
     }
 
     private RoadmapContent 로드맵_컨텐츠를_생성한다() {
-        return new RoadmapContent("콘텐츠 제목");
+        return new RoadmapContent(1L, "콘텐츠 제목");
     }
 
     private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {

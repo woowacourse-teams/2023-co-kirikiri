@@ -19,7 +19,7 @@ public class RoadmapContents {
     private final List<RoadmapContent> values = new ArrayList<>();
 
     public RoadmapContents(final List<RoadmapContent> contents) {
-        this.values.addAll(new ArrayList<>(contents));
+        this.values.addAll(contents);
     }
 
     public void add(final RoadmapContent content) {
@@ -39,6 +39,6 @@ public class RoadmapContents {
     }
 
     public List<RoadmapContent> getValues() {
-        return new ArrayList<>(values);
+        return values;
     }
 }

@@ -1,10 +1,8 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -39,12 +37,12 @@ public class GoalRoomCreateService {
         checkNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(
                 goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
+        final Member leader = findMemberByIdentifier(memberIdentifier);
+
         final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(),
-                roadmapContent);
-        final GoalRoomPendingMember goalRoomPendingMember = makeGoalRoomPendingMember(memberIdentifier);
+                roadmapContent, leader);
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         goalRoom.addGoalRoomTodo(goalRoomCreateDto.goalRoomToDo());
-        goalRoom.participate(goalRoomPendingMember);
         return goalRoomRepository.save(goalRoom).getId();
     }
 
@@ -78,13 +76,19 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("로드맵에 존재하지 않는 노드입니다."));
     }
 
-    private GoalRoomPendingMember makeGoalRoomPendingMember(final String memberIdentifier) {
-        final Member member = findMemberByIdentifier(memberIdentifier);
-        return new GoalRoomPendingMember(GoalRoomRole.LEADER, member);
-    }
-
     private Member findMemberByIdentifier(final String memberIdentifier) {
         return memberRepository.findByIdentifier(new Identifier(memberIdentifier))
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    public void join(final String identifier, final Long goalRoomId) {
+        final Member member = findMemberByIdentifier(identifier);
+        final GoalRoom goalRoom = findById(goalRoomId);
+        goalRoom.join(member);
+    }
+
+    private GoalRoom findById(final Long goalRoomId) {
+        return goalRoomRepository.findById(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 }

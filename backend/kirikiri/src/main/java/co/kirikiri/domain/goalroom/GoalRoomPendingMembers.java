@@ -28,13 +28,13 @@ public class GoalRoomPendingMembers {
         values.add(goalRoomPendingMember);
     }
 
-    public int size() {
-        return values.size();
-    }
-
     public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
         return values.stream()
                 .anyMatch(value -> value.equals(goalRoomPendingMember));
+    }
+
+    public int size() {
+        return values.size();
     }
 
     public Member findGoalRoomLeader() {

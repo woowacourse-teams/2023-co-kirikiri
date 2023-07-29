@@ -2,9 +2,11 @@ package co.kirikiri.integration;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
@@ -16,23 +18,97 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class RoadmapReadIntegrationTest extends IntegrationTest {
+@SuppressWarnings("NonAsciiCharacters")
+class RoadmapReadIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
-
+    private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
-    public RoadmapReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository) {
+    public RoadmapReadIntegrationTest(final MemberRepository memberRepository,
+                                      final RoadmapCategoryRepository roadmapCategoryRepository) {
+        this.memberRepository = memberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+    }
+
+    @Test
+    void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보를_조회를_성공한다() {
+        //given
+        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다();
+        final String 로그인_토큰_정보 = 로그인();
+        final RoadmapCategory 게임_카테고리 = 로드맵_카테고리를_저장한다("게임");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "게임 로드맵");
+
+        //when
+        final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = given()
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 로드맵_아이디)
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
+        });
+
+        final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(
+                로드맵_아이디,
+                new RoadmapCategoryResponse(게임_카테고리.getId(), "게임"),
+                "게임 로드맵",
+                "로드맵 소개글",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"),
+                new RoadmapContentResponse(
+                        1L, "로드맵 본문",
+                        List.of(
+                                new RoadmapNodeResponse(1L, "로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())
+                        )),
+                RoadmapDifficultyType.DIFFICULT.name(),
+                30
+        );
+
+        assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(단일_로드맵_응답).isEqualTo(예상되는_단일_로드맵_응답);
+    }
+
+    @Test
+    void 존재하지_않는_로드맵_아이디로_요청했을_때_조회를_실패한다() {
+        //given
+        final Long 존재하지_않는_로드맵_아이디 = 1L;
+
+        //when
+        final ExtractableResponse<Response> 요청에_대한_응답 = given()
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 존재하지_않는_로드맵_아이디)
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        final String 예외_메시지 = 요청에_대한_응답.asString();
+
+        assertAll(
+                () -> assertThat(요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
+                () -> assertThat(예외_메시지).contains("존재하지 않는 로드맵입니다. roadmapId = " + 존재하지_않는_로드맵_아이디)
+        );
     }
 
     @Test
@@ -279,40 +355,40 @@ public class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     private List<RoadmapCategory> 모든_로드맵_카테고리를_저장한다() {
-        final RoadmapCategory 카테고리1 = new RoadmapCategory("어학");
-        final RoadmapCategory 카테고리2 = new RoadmapCategory("IT");
-        final RoadmapCategory 카테고리3 = new RoadmapCategory("시험");
-        final RoadmapCategory 카테고리4 = new RoadmapCategory("운동");
-        final RoadmapCategory 카테고리5 = new RoadmapCategory("게임");
-        final RoadmapCategory 카테고리6 = new RoadmapCategory("음악");
-        final RoadmapCategory 카테고리7 = new RoadmapCategory("라이프");
-        final RoadmapCategory 카테고리8 = new RoadmapCategory("여가");
-        final RoadmapCategory 카테고리9 = new RoadmapCategory("기타");
+        final RoadmapCategory category1 = new RoadmapCategory("어학");
+        final RoadmapCategory category2 = new RoadmapCategory("IT");
+        final RoadmapCategory category3 = new RoadmapCategory("시험");
+        final RoadmapCategory category4 = new RoadmapCategory("운동");
+        final RoadmapCategory category5 = new RoadmapCategory("게임");
+        final RoadmapCategory category6 = new RoadmapCategory("음악");
+        final RoadmapCategory category7 = new RoadmapCategory("라이프");
+        final RoadmapCategory category8 = new RoadmapCategory("여가");
+        final RoadmapCategory category9 = new RoadmapCategory("기타");
         return roadmapCategoryRepository.saveAll(
-                List.of(카테고리1, 카테고리2, 카테고리3, 카테고리4, 카테고리5, 카테고리6, 카테고리7, 카테고리8,
-                        카테고리9));
+                List.of(category1, category2, category3, category4, category5, category6, category7, category8,
+                        category9));
     }
 
-    private List<RoadmapCategoryResponse> 로드맵_카테고리_응답_리스트를_반환한다(final List<RoadmapCategory> 로드맵_카테고리_리스트) {
-        final RoadmapCategoryResponse 카테고리1 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(0).getId(),
+    private List<RoadmapCategoryResponse> 로드맵_카테고리_응답_리스트를_반환한다(final List<RoadmapCategory> roadmapCategories) {
+        final RoadmapCategoryResponse category1 = new RoadmapCategoryResponse(roadmapCategories.get(0).getId(),
                 "어학");
-        final RoadmapCategoryResponse 카테고리2 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(1).getId(),
+        final RoadmapCategoryResponse category2 = new RoadmapCategoryResponse(roadmapCategories.get(1).getId(),
                 "IT");
-        final RoadmapCategoryResponse 카테고리3 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(2).getId(),
+        final RoadmapCategoryResponse category3 = new RoadmapCategoryResponse(roadmapCategories.get(2).getId(),
                 "시험");
-        final RoadmapCategoryResponse 카테고리4 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(3).getId(),
+        final RoadmapCategoryResponse category4 = new RoadmapCategoryResponse(roadmapCategories.get(3).getId(),
                 "운동");
-        final RoadmapCategoryResponse 카테고리5 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(4).getId(),
+        final RoadmapCategoryResponse category5 = new RoadmapCategoryResponse(roadmapCategories.get(4).getId(),
                 "게임");
-        final RoadmapCategoryResponse 카테고리6 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(5).getId(),
+        final RoadmapCategoryResponse category6 = new RoadmapCategoryResponse(roadmapCategories.get(5).getId(),
                 "음악");
-        final RoadmapCategoryResponse 카테고리7 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(6).getId(),
+        final RoadmapCategoryResponse category7 = new RoadmapCategoryResponse(roadmapCategories.get(6).getId(),
                 "라이프");
-        final RoadmapCategoryResponse 카테고리8 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(7).getId(),
+        final RoadmapCategoryResponse category8 = new RoadmapCategoryResponse(roadmapCategories.get(7).getId(),
                 "여가");
-        final RoadmapCategoryResponse 카테고리9 = new RoadmapCategoryResponse(로드맵_카테고리_리스트.get(8).getId(),
+        final RoadmapCategoryResponse category9 = new RoadmapCategoryResponse(roadmapCategories.get(8).getId(),
                 "기타");
-        return List.of(카테고리1, 카테고리2, 카테고리3, 카테고리4, 카테고리5, 카테고리6, 카테고리7, 카테고리8,
-                카테고리9);
+        return List.of(category1, category2, category3, category4, category5, category6, category7, category8,
+                category9);
     }
 }

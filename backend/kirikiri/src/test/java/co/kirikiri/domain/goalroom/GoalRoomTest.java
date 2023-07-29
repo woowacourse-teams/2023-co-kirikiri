@@ -2,7 +2,6 @@ package co.kirikiri.domain.goalroom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
@@ -31,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 class GoalRoomTest {
 
+    private static final GoalRoomName GOAL_ROOM_NAME = new GoalRoomName("골룸 이름");
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
     private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
@@ -48,58 +48,6 @@ class GoalRoomTest {
         final String phoneNumber = "010-1234-5678";
         memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
         member = new Member(identifier, encryptedPassword, nickname, memberProfile);
-    }
-
-    @Test
-    void 정상적으로_골룸에_참여한다() {
-        //given
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(20),
-                new RoadmapContent("content"));
-
-        //when
-        //then
-        assertDoesNotThrow(() -> goalRoom.participate(goalRoomPendingMember));
-    }
-
-    @Test
-    void 골룸_참여_시_정원이_다_찼을때_예외를_던진다() {
-        //given
-        final Identifier identifier = new Identifier("identifier2");
-        final Password password = new Password("password1!");
-        final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
-        final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
-        final Member member2 = new Member(identifier, encryptedPassword, nickname,
-                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
-        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member2);
-
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(1),
-                new RoadmapContent("content"));
-        goalRoom.participate(goalRoomPendingMember2);
-
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
-
-        //when
-        //then
-        assertThatThrownBy(() -> goalRoom.participate(goalRoomPendingMember))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage("정원 초과입니다.");
-    }
-
-    @Test
-    void 골룸_참여_시_이미_참여한_사람이_참여할_때_예외를_던진다() {
-        //given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalRoomName"), new LimitedMemberCount(20),
-                new RoadmapContent("content"));
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
-        goalRoom.participate(goalRoomPendingMember);
-
-        //when
-        //then
-        assertThatThrownBy(() -> goalRoom.participate(goalRoomPendingMember))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage("이미 참여 중인 상태입니다.");
     }
 
     @Test
@@ -124,24 +72,78 @@ class GoalRoomTest {
     void 골룸에_대기중인_인원수를_계산한다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content"));
-        final Member member1 = new Member(new Identifier("identifier"),
-                new EncryptedPassword(new Password("password1")), new Nickname("nickname"),
+                new RoadmapContent("content"), member);
+        final Member member1 = new Member(new Identifier("identifier2"),
+                new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
                 new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
-        final Member member2 = new Member(new Identifier("identifier"),
-                new EncryptedPassword(new Password("password1")), new Nickname("nickname"),
+        final Member member2 = new Member(new Identifier("identifier3"),
+                new EncryptedPassword(new Password("password1")), new Nickname("닉네임3"),
                 new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
 
         // when
-        goalRoom.joinGoalRoom(GoalRoomRole.LEADER, member1);
-        goalRoom.joinGoalRoom(GoalRoomRole.FOLLOWER, member2);
+        goalRoom.join(member1);
+        goalRoom.join(member2);
 
         // then
-        assertThat(goalRoom.getCurrentPendingMemberCount()).isEqualTo(2);
+        assertThat(goalRoom.getCurrentPendingMemberCount()).isEqualTo(3);
+    }
+
+    @Test
+    void 골룸에_사용자를_추가한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10),
+                new RoadmapContent("로드맵 내용"), member);
+        final Member follower = 사용자를_생성한다("identifier12", "시진이");
+
+        //when
+        goalRoom.join(follower);
+
+        //then
+        final Integer currentMemberCount = goalRoom.getCurrentPendingMemberCount();
+        assertThat(currentMemberCount)
+                .isEqualTo(2);
+    }
+
+    @Test
+    void 모집중이_아닌_골룸에_사용자를_추가하면_예외가_발생한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), new RoadmapContent("로드맵 내용"),
+                사용자를_생성한다("identifier1", "시진이"));
+        goalRoom.updateStatus(GoalRoomStatus.RUNNING);
+
+        //when, then
+        assertThatThrownBy(() -> goalRoom.join(member))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
+    }
+
+    @Test
+    void 제한_인원이_가득_찬_골룸에_사용자를_추가하면_예외가_발생한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), new RoadmapContent("로드맵 내용"),
+                사용자를_생성한다("identifier1", "시진이"));
+
+        //when,then
+        assertThatThrownBy(() -> goalRoom.join(member))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
+    }
+
+    @Test
+    void 이미_참여_중인_사용자를_골룸에_추가하면_예외가_발생한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
+
+        //when,then
+        assertThatThrownBy(() -> goalRoom.join(member))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
+                "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
     }
@@ -169,7 +171,9 @@ class GoalRoomTest {
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent);
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"),
+                new LimitedMemberCount(10), roadmapContent,
+                사용자를_생성한다("identifier1", "닉네임"));
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -184,5 +188,13 @@ class GoalRoomTest {
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         return goalRoom;
+    }
+
+    private Member 사용자를_생성한다(final String identifier, final String nickname) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1995, 9, 30), "010-1234-5678");
+
+        return new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
     }
 }

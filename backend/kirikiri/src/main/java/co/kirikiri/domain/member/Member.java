@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -60,12 +61,33 @@ public class Member extends BaseUpdatedTimeEntity {
         return identifier;
     }
 
+    public Nickname getNickname() {
+        return nickname;
+    }
+
     @Override
     public Long getId() {
         return id;
     }
 
-    public Nickname getNickname() {
-        return nickname;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final Member member = (Member) o;
+        return Objects.equals(identifier, member.identifier) && Objects.equals(nickname,
+                member.nickname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), identifier, nickname);
     }
 }

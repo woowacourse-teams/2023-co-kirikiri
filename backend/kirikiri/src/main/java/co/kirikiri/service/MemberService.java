@@ -25,6 +25,7 @@ public class MemberService {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
         checkIdentifierDuplicate(memberJoinDto.identifier());
         checkNicknameDuplicate(memberJoinDto.nickname());
+
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(),
                 memberJoinDto.birthday(), memberJoinDto.phoneNumber());

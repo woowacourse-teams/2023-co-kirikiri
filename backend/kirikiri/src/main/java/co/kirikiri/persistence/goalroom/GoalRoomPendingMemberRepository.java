@@ -4,6 +4,7 @@ import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.member.vo.Identifier;
 import java.util.Optional;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,6 @@ public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomP
             + "and m.identifier =:identifier")
     Optional<GoalRoomPendingMember> findByGoalRoomAndMemberIdentifier(
             @Param("goalRoom") final GoalRoom goalRoom, @Param("identifier") final Identifier identifier);
+
+    List<GoalRoomPendingMember> findByGoalRoom(final GoalRoom goalRoom);
 }

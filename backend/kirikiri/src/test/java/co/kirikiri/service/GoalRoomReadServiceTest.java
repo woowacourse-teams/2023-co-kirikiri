@@ -61,7 +61,7 @@ class GoalRoomReadServiceTest {
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
     private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
     private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
-    
+
     @Mock
     private GoalRoomRepository goalRoomRepository;
 
@@ -190,19 +190,17 @@ class GoalRoomReadServiceTest {
                 new Period(TODAY.plusDays(11), TODAY.plusDays(20)), 1,
                 roadmapNode2);
 
+        final Member member1 = 사용자를_생성한다(1L);
         final GoalRoom goalRoom1 = new GoalRoom(1L, new GoalRoomName("goalroom1"), new LimitedMemberCount(10),
-                roadmapContent);
+                roadmapContent, member1);
         goalRoom1.addAllGoalRoomRoadmapNodes(
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
-        final Member member1 = 사용자를_생성한다(1L);
-        goalRoom1.joinGoalRoom(GoalRoomRole.LEADER, member1);
 
+        final Member member2 = 사용자를_생성한다(2L);
         final GoalRoom goalRoom2 = new GoalRoom(2L, new GoalRoomName("goalroom2"), new LimitedMemberCount(10),
-                roadmapContent);
+                roadmapContent, member2);
         goalRoom2.addAllGoalRoomRoadmapNodes(
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)));
-        final Member member2 = 사용자를_생성한다(2L);
-        goalRoom2.joinGoalRoom(GoalRoomRole.LEADER, member2);
 
         final PageImpl<GoalRoom> goalRoomsPage = new PageImpl<>(List.of(goalRoom2, goalRoom1), PageRequest.of(1, 10),
                 2);
@@ -272,7 +270,8 @@ class GoalRoomReadServiceTest {
     }
 
     private GoalRoom 골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent);
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
+                roadmapContent, member);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -287,9 +286,6 @@ class GoalRoomReadServiceTest {
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
 
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                LocalDateTime.of(2023, 7, 15, 12, 0), goalRoom, member);
-        goalRoom.participate(goalRoomPendingMember);
         return goalRoom;
     }
 

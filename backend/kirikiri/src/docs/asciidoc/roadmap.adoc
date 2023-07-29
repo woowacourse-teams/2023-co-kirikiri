@@ -35,7 +35,7 @@ operation::roadmap-create-api-test/로드맵_생성시_카테고리_아이디를
 
 === *1-5* 실패 - 로드맵 제목의 길이가 40보다 큼
 
-operation::roadmap-controller-test/로드맵_생성시_로드맵_제목의_길이가_40보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_제목의_길이가_40보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-6* 실패 - 로드맵 제목을 입력하지 않음
 
@@ -49,9 +49,9 @@ operation::roadmap-create-api-test/로드맵_생성시_로드맵_소개글의_�
 
 operation::roadmap-create-api-test/로드맵_생성시_로드맵_소개글을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== *1-9* 실패 - 로드맵 본문의 길이가 150보다 큼
+=== *1-9* 실패 - 로드맵 본문의 길이가 2000보다 큼
 
-operation::roadmap-create-api-test/로드맵_생성시_로드맵_본문의_길이가_150보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_본문의_길이가_2000보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-10* 실패 - 로드맵 난이도를 입력하지 않음
 
@@ -77,15 +77,13 @@ operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_제�
 
 operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_제목을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
 
-=== *1-16* 실패 - 로드맵 노드의 설명의 길이가 200보다 큼
+=== *1-16* 실패 - 로드맵 노드의 설명의 길이가 2000보다 큼
 
-operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_설명의_길이가_200보다_크면_예외가_발생한다[snippets='http-request,http-response']
+operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_설명의_길이가_2000보다_크면_예외가_발생한다[snippets='http-request,http-response']
 
 === *1-17* 실패 - 로드맵 노드의 설명을 입력하지 않음
 
 operation::roadmap-create-api-test/로드맵_생성시_로드맵_노드의_설명을_입력하지_않으면_예외가_발생한다[snippets='http-request,http-response']
-
----
 
 [[로드맵목록조회-API]]
 == *2. 로드맵 목록 조회 API*
@@ -98,8 +96,6 @@ operation::roadmap-read-api-test/로드맵_목록을_조건에_따라_조회한�
 
 operation::roadmap-read-api-test/로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,response-fields']
 
----
-
 [[로드맵카테고리목록조회-API]]
 == *3. 로드맵 카테고리 목록 조회 API*
 
@@ -108,14 +104,12 @@ operation::roadmap-read-api-test/로드맵_목록_조회시_유효하지_않은_
 operation::roadmap-read-api-test/로드맵_카테고리_목록을_조회한다[snippets='http-request,http-response,response-fields']
 
 [[로드맵조회-API]]
-== *1. 로드맵 조회 API*
+== *4. 로드맵 조회 API*
 
-=== *1-1* 성공
+=== *4-1* 성공
 
-operation::roadmap-read-api-test/단일_로드맵_정보를_조회한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/단일_로드맵_정보를_조회한다[snippets='http-request,http-response,path-parameters,response-fields']
 
----
+=== *4-2* 실패 - 로드맵 아이디가 유효하지 않음
 
-=== *1-2* 실패 - 로드맵 아이디가 유효하지 않음
-
-operation::roadmap-read-api-test/존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다[snippets='http-request,http-response,response-fields']
+operation::roadmap-read-api-test/존재하지_않는_로드맵_아이디로_요청_시_예외를_반환한다[snippets='http-request,http-response,path-parameters,response-fields']

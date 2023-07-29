@@ -4,10 +4,8 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -52,7 +50,6 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -101,8 +98,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
         final List<RoadmapContent> 로드맵_본문_리스트 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답).getValues();
-        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트);
-        골룸_대기_사용자를_저장한다(크리에이터, 골룸);
+        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트, 크리에이터);
 
         // when
         final GoalRoomResponse 골룸_응답값 = given()
@@ -131,8 +127,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
         final List<RoadmapContent> 로드맵_본문_리스트 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답).getValues();
-        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트);
-        골룸_대기_사용자를_저장한다(크리에이터, 골룸);
+        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트, 크리에이터);
 
         // when
         final GoalRoomCertifiedResponse 골룸_응답값 = given()
@@ -367,9 +362,10 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         return 저장된_로드맵.getContents();
     }
 
-    private GoalRoom 골룸을_저장한다(final List<RoadmapContent> 로드맵_본문_리스트) {
+    private GoalRoom 골룸을_저장한다(final List<RoadmapContent> 로드맵_본문_리스트, final Member 크리에이터) {
         final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
-        final GoalRoom 골룸 = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), 로드맵_본문);
+        final GoalRoom 골룸 = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
+                로드맵_본문, 크리에이터);
         final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
 
         final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);
@@ -385,12 +381,6 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomRoadmapNodes 골룸_노드들 = new GoalRoomRoadmapNodes(List.of(첫번째_골룸_노드, 두번째_골룸_노드));
         골룸.addAllGoalRoomRoadmapNodes(골룸_노드들);
         return goalRoomRepository.save(골룸);
-    }
-
-    private void 골룸_대기_사용자를_저장한다(final Member 크리에이터, final GoalRoom 골룸) {
-        final GoalRoomPendingMember 골룸_대기_사용자 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                LocalDateTime.of(2023, 7, 19, 12, 0, 0), 골룸, 크리에이터);
-        goalRoomPendingMemberRepository.save(골룸_대기_사용자);
     }
 
     private GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
@@ -487,13 +477,13 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         return new GoalRoomRoadmapNode(new Period(startDate, endDate), 1, roadmapNode);
     }
 
-    private GoalRoom 골룸을_생성한다(final String name, final Integer limitedMemberCount, final RoadmapContent roadmapContent,
-                              final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName(name), new LimitedMemberCount(limitedMemberCount),
-                roadmapContent);
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-        return goalRoomRepository.save(goalRoom);
-    }
+//    private GoalRoom 골룸을_생성한다(final String name, final Integer limitedMemberCount, final RoadmapContent roadmapContent,
+//                              final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+//        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName(name), new LimitedMemberCount(limitedMemberCount),
+//                roadmapContent);
+//        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+//        return goalRoomRepository.save(goalRoom);
+//    }
 
     private Member 사용자를_생성한다(final String nickname, final String phoneNumber, final String identifier,
                              final String password) {

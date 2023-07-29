@@ -29,7 +29,7 @@ import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @WebMvcTest(RoadmapController.class)
-public class RoadmapCreateApiTest extends ControllerTestHelper {
+class RoadmapCreateApiTest extends ControllerTestHelper {
 
     @MockBean
     private RoadmapCreateService roadmapCreateService;

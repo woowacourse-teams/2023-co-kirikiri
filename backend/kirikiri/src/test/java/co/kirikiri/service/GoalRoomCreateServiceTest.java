@@ -1,12 +1,17 @@
 package co.kirikiri.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -37,7 +42,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class GoalRoomCreateServiceTest {
+class GoalRoomCreateServiceTest {
 
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
@@ -85,7 +90,7 @@ public class GoalRoomCreateServiceTest {
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(goalRoomRepository.save(any()))
-                .willReturn(new GoalRoom(1L, null, null, null));
+                .willReturn(new GoalRoom(1L, null, null, null, null));
 
         //when
         assertDoesNotThrow(() -> goalRoomService.create(request, member.getIdentifier().getValue()));
@@ -159,5 +164,110 @@ public class GoalRoomCreateServiceTest {
         //then
         assertThatThrownBy(() -> goalRoomService.create(request, member.getIdentifier().getValue()))
                 .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸에_참가한다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final int limitedMemberCount = 20;
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
+
+        when(memberRepository.findByIdentifier(any()))
+                .thenReturn(Optional.of(follower));
+        when(goalRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(goalRoom));
+
+        //when
+        goalRoomService.join("identifier2", 1L);
+
+        //then
+        assertThat(goalRoom.getCurrentPendingMemberCount())
+                .isEqualTo(2);
+    }
+
+    @Test
+    void 골룸_참가_요청시_유효한_사용자_아이디가_아니면_예외가_발생한다() {
+        //given
+        when(memberRepository.findByIdentifier(any()))
+                .thenReturn(Optional.empty());
+
+        //when, then
+        assertThatThrownBy(() -> goalRoomService.join("identifier2", 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("존재하지 않는 회원입니다.");
+    }
+
+    @Test
+    void 골룸_참가_요청시_유효한_골룸_아이디가_아니면_예외가_발생한다() {
+        //given
+        final Member follower = 사용자를_생성한다(1L, "identifier1", "팔로워");
+
+        when(memberRepository.findByIdentifier(any()))
+                .thenReturn(Optional.of(follower));
+        when(goalRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        //when, then
+        assertThatThrownBy(() -> goalRoomService.join("identifier1", 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("존재하지 않는 골룸입니다. goalRoomId = 1");
+    }
+
+    @Test
+    void 골룸_참가_요청시_제한_인원이_가득_찼을_경우_예외가_발생한다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final int limitedMemberCount = 1;
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
+
+        when(memberRepository.findByIdentifier(any()))
+                .thenReturn(Optional.of(follower));
+        when(goalRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(goalRoom));
+
+        //when, then
+        assertThatThrownBy(() -> goalRoomService.join("identifier2", 1L))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
+    }
+
+    @Test
+    void 골룸_참가_요청시_모집_중이_아닌_경우_예외가_발생한다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final int limitedMemberCount = 20;
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
+        goalRoom.updateStatus(GoalRoomStatus.RUNNING);
+
+        when(memberRepository.findByIdentifier(any()))
+                .thenReturn(Optional.of(follower));
+        when(goalRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(goalRoom));
+
+        //when, then
+        assertThatThrownBy(() -> goalRoomService.join("identifier2", 1L))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
+    }
+
+    private Member 사용자를_생성한다(final Long memberId, final String identifier, final String nickname) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1995, 9, 30), "010-1234-5678");
+
+        return new Member(memberId, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
+    }
+
+    private GoalRoom 골룸을_생성한다(final Member creator, final RoadmapContent roadmapContent,
+                              final Integer limitedMemberCount) {
+        return new GoalRoom(new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount), roadmapContent,
+                creator);
     }
 }

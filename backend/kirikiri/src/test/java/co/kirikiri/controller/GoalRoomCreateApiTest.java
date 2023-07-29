@@ -2,21 +2,27 @@ package co.kirikiri.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.AuthService;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -122,6 +128,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final ErrorResponse expectedResponse = new ErrorResponse("존재하지 않는 로드맵입니다.");
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
+
         assertThat(response).isEqualTo(expectedResponse);
     }
 
@@ -321,6 +328,114 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void 골룸_참가_요청을_성공한다() throws Exception {
+        //given
+        final Long goalRoomId = 1L;
+        doNothing().when(goalRoomCreateService)
+                .join(anyString(), anyLong());
+
+        //when
+        //then
+        mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/join", goalRoomId)
+                        .header(AUTHORIZATION, "Bearer <AccessToken>")
+                        .contextPath(API_PREFIX))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        )))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void 존재하지_않는_골룸에_대한_참가_요청은_실패한다() throws Exception {
+        //given
+        final Long goalRoomId = 1L;
+        doThrow(new NotFoundException("존재하지 않는 골룸입니다. roadmapId = 1"))
+                .when(goalRoomCreateService)
+                .join(anyString(), anyLong());
+
+        //when
+        //given
+        mockMvc.perform(
+                        post(API_PREFIX + "/goal-rooms/{goalRoomId}/join", goalRoomId)
+                                .header("Authorization", "Bearer <AccessToken>")
+                                .content(MediaType.APPLICATION_JSON_VALUE)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("존재하지 않는 골룸입니다. roadmapId = 1"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )));
+    }
+
+    @Test
+    void 이미_참여한_골룸에_대한_참가_요청은_실패한다() throws Exception {
+        //given
+        final Long goalRoomId = 1L;
+        doThrow(new BadRequestException("이미 참가되어 있는 골룸입니다."))
+                .when(goalRoomCreateService)
+                .join(anyString(), anyLong());
+
+        //when
+        //then
+        mockMvc.perform(
+                        post(API_PREFIX + "/goal-rooms/{goalRoomId}/join", goalRoomId)
+                                .header("Authorization", "Bearer <AccessToken>")
+                                .content(MediaType.APPLICATION_JSON_VALUE)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("이미 참가되어 있는 골룸입니다."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )));
+    }
+
+    @Test
+    void 제한_인원이_가득_찬_골룸에_대한_참가_요청은_실패한다() throws Exception {
+        //given
+        final Long goalRoomId = 1L;
+        doThrow(new BadRequestException("제한 인원이 가득 찬 골룸에는 참가할 수 없습니다."))
+                .when(goalRoomCreateService)
+                .join(anyString(), anyLong());
+
+        //when
+        mockMvc.perform(
+                        post(API_PREFIX + "/goal-rooms/{goalRoomId}/join", goalRoomId)
+                                .header("Authorization", "Bearer <AccessToken>")
+                                .content(MediaType.APPLICATION_JSON_VALUE)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("제한 인원이 가득 찬 골룸에는 참가할 수 없습니다."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )));
     }
 
     private ResultActions 골룸_생성(final String jsonRequest, final ResultMatcher result) throws Exception {

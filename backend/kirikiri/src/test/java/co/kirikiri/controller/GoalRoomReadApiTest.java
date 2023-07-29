@@ -36,7 +36,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @WebMvcTest(GoalRoomController.class)
-public class GoalRoomReadApiTest extends ControllerTestHelper {
+class GoalRoomReadApiTest extends ControllerTestHelper {
 
     @MockBean
     private GoalRoomReadService goalRoomReadService;

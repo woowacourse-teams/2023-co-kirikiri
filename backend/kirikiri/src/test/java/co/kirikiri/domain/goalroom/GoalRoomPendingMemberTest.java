@@ -20,10 +20,10 @@ class GoalRoomPendingMemberTest {
     @Test
     void 골룸의_리더이면_True를_반환한다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content"));
         final Member member = new Member(new Identifier("identifier"), new EncryptedPassword(new Password("password1")),
                 new Nickname("nickname"), new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
+                new RoadmapContent("content"), member);
 
         // when
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom,
@@ -36,10 +36,10 @@ class GoalRoomPendingMemberTest {
     @Test
     void 골룸의_리더가_아니면_false를_반환한다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content"));
         final Member member = new Member(new Identifier("identifier"), new EncryptedPassword(new Password("password1")),
                 new Nickname("nickname"), new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
+                new RoadmapContent("content"), member);
 
         // when
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom,

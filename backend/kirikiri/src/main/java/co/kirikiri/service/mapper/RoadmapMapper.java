@@ -83,6 +83,7 @@ public final class RoadmapMapper {
         final RoadmapCategory category = roadmap.getCategory();
         final Member creator = roadmap.getCreator();
         final RoadmapContentResponse roadmapContentResponse = new RoadmapContentResponse(
+                content.getId(),
                 content.getContent(),
                 convertRoadmapNodeResponse(content.getNodes()));
 
@@ -106,11 +107,11 @@ public final class RoadmapMapper {
     }
 
     private static RoadmapNodeResponse convertNode(final RoadmapNode node) {
-        final List<String> images = node.getImages().getValues()
+        final List<String> images = node.getRoadmapNodeImages().getValues()
                 .stream()
                 .map(RoadmapNodeImage::getServerFilePath)
                 .toList();
 
-        return new RoadmapNodeResponse(node.getTitle(), node.getContent(), images);
+        return new RoadmapNodeResponse(node.getId(), node.getTitle(), node.getContent(), images);
     }
 }

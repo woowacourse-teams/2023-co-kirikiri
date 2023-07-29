@@ -14,6 +14,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -62,5 +63,13 @@ public class GoalRoomController {
         final PageResponse<GoalRoomForListResponse> goalRoomsPageResponse = goalRoomReadService.findGoalRoomsByFilterType(
                 goalRoomFilterTypeDto, pageRequest);
         return ResponseEntity.ok(goalRoomsPageResponse);
+    }
+
+    @Authenticated
+    @PostMapping("/{goalRoomId}/join")
+    public ResponseEntity<Void> joinGoalRoom(@MemberIdentifier final String identifier,
+                                             @PathVariable final Long goalRoomId) {
+        goalRoomCreateService.join(identifier, goalRoomId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

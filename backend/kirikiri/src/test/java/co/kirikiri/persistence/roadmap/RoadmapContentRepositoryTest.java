@@ -16,8 +16,8 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapContentRepositoryTest {
@@ -78,5 +78,4 @@ class RoadmapContentRepositoryTest {
         final RoadmapCategory category = new RoadmapCategory("운동");
         return roadmapCategoryRepository.save(category);
     }
-
 }
