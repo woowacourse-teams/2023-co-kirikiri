@@ -47,8 +47,8 @@ public class GoalRoomController {
         return ResponseEntity.ok(goalRoomResponse);
     }
 
-    @Authenticated
     @GetMapping(value = "/{goalRoomId}", headers = "Authorization")
+    @Authenticated
     public ResponseEntity<GoalRoomCertifiedResponse> findGoalRoom(@MemberIdentifier final String identifier,
                                                                   @PathVariable("goalRoomId") final Long goalRoomId) {
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(identifier, goalRoomId);
@@ -65,11 +65,19 @@ public class GoalRoomController {
         return ResponseEntity.ok(goalRoomsPageResponse);
     }
 
-    @Authenticated
     @PostMapping("/{goalRoomId}/join")
+    @Authenticated
     public ResponseEntity<Void> joinGoalRoom(@MemberIdentifier final String identifier,
                                              @PathVariable final Long goalRoomId) {
         goalRoomCreateService.join(identifier, goalRoomId);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/{goalRoomId}/leave")
+    @Authenticated
+    public ResponseEntity<Void> leave(@MemberIdentifier final String identifier,
+                                      @PathVariable("goalRoomId") final Long goalRoomId) {
+        goalRoomCreateService.leave(identifier, goalRoomId);
+        return ResponseEntity.ok().build();
     }
 }
