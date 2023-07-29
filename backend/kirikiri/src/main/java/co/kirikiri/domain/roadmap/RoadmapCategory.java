@@ -4,10 +4,12 @@ import co.kirikiri.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class RoadmapCategory extends BaseEntity {
 
     @Column(length = 15, nullable = false)
@@ -18,12 +20,8 @@ public class RoadmapCategory extends BaseEntity {
     }
 
     public RoadmapCategory(final Long id, final String name) {
-        this.id = id;
+        super.id = id;
         this.name = name;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {

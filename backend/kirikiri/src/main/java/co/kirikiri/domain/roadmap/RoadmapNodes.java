@@ -6,15 +6,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapNodes {
 
-    @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmapContent")
     private final List<RoadmapNode> values = new ArrayList<>();
 
@@ -40,6 +39,16 @@ public class RoadmapNodes {
         if (roadmapNode.isNotSameRoadmapContent(content)) {
             roadmapNode.updateRoadmapContent(content);
         }
+    }
+
+    public Optional<RoadmapNode> findById(final Long roadmapNodeId) {
+        return values.stream()
+                .filter(it -> roadmapNodeId.equals(it.getId()))
+                .findAny();
+    }
+
+    public int size() {
+        return values.size();
     }
 
     public List<RoadmapNode> getValues() {

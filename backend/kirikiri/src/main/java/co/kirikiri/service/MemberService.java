@@ -6,7 +6,6 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
-import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
@@ -21,21 +20,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberProfileRepository memberProfileRepository;
 
     public Long join(final MemberJoinRequest memberJoinRequest) {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
         checkIdentifierDuplicate(memberJoinDto.identifier());
         checkNicknameDuplicate(memberJoinDto.nickname());
+
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
-        final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.birthday(),
-                memberJoinDto.nickname(), memberJoinDto.phoneNumber());
-        final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberProfile);
+        final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(),
+                memberJoinDto.birthday(), memberJoinDto.phoneNumber());
+        final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberJoinDto.nickname(),
+                memberProfile);
         return memberRepository.save(member).getId();
     }
 
     private void checkNicknameDuplicate(final Nickname nickname) {
-        if (memberProfileRepository.findByNickname(nickname).isPresent()) {
+        if (memberRepository.findByNickname(nickname).isPresent()) {
             throw new ConflictException("이미 존재하는 닉네임입니다.");
         }
     }

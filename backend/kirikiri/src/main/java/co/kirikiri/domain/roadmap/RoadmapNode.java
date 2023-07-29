@@ -8,17 +8,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class RoadmapNode extends BaseEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
     private static final int CONTENT_MIN_LENGTH = 1;
-    private static final int CONTENT_MAX_LENGTH = 200;
+    private static final int CONTENT_MAX_LENGTH = 2000;
 
     @Column(length = 50, nullable = false)
     private String title;
@@ -34,7 +38,12 @@ public class RoadmapNode extends BaseEntity {
     private final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
 
     public RoadmapNode(final String title, final String content) {
+        this(null, title, content);
+    }
+
+    public RoadmapNode(final Long id, final String title, final String content) {
         validate(title, content);
+        this.id = id;
         this.title = title;
         this.content = content;
     }
@@ -58,6 +67,10 @@ public class RoadmapNode extends BaseEntity {
         }
     }
 
+    public void addImages(final RoadmapNodeImages roadmapNodeImages) {
+        this.roadmapNodeImages.addAll(roadmapNodeImages);
+    }
+
     public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
         return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
     }
@@ -78,9 +91,5 @@ public class RoadmapNode extends BaseEntity {
 
     public RoadmapContent getRoadmapContent() {
         return roadmapContent;
-    }
-
-    public RoadmapNodeImages getImages() {
-        return roadmapNodeImages;
     }
 }

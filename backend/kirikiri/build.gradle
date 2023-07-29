@@ -115,4 +115,6 @@ bootJar {
     from("${asciidoctor.outputDir}/html5") {
         into 'static/docs'
     }
+    archivesBaseName = 'co-kirikiri'
+    archiveFileName = 'co-kirikiri.jar'
 }

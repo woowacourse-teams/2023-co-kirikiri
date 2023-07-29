@@ -2,12 +2,10 @@ package co.kirikiri.persistence.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.MemberProfileImage;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -84,14 +82,9 @@ class RoadmapReviewRepositoryTest {
     }
 
     private Member 사용자를_저장한다(final String name, final String identifier) {
-        final MemberProfileImage memberProfileImage = new MemberProfileImage("member-profile.png",
-                "member-profile-save-path", ImageContentType.PNG);
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname(name), "010-1234-5678");
-        memberProfile.updateMemberProfileImage(memberProfileImage);
-
-        final Member creator = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(name), memberProfile);
         return memberRepository.save(creator);
     }
 

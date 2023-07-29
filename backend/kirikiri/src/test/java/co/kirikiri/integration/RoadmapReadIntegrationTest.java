@@ -2,37 +2,113 @@ package co.kirikiri.integration;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.dto.member.GenderType;
-import co.kirikiri.service.dto.member.MemberResponse;
+import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
+import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class RoadmapReadIntegrationTest extends IntegrationTest {
+@SuppressWarnings("NonAsciiCharacters")
+class RoadmapReadIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
-
+    private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
-    public RoadmapReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository) {
+    public RoadmapReadIntegrationTest(final MemberRepository memberRepository,
+                                      final RoadmapCategoryRepository roadmapCategoryRepository) {
+        this.memberRepository = memberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+    }
+
+    @Test
+    void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보를_조회를_성공한다() {
+        //given
+        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다();
+        final String 로그인_토큰_정보 = 로그인();
+        final RoadmapCategory 게임_카테고리 = 로드맵_카테고리를_저장한다("게임");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "게임 로드맵");
+
+        //when
+        final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = given()
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 로드맵_아이디)
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
+        });
+
+        final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(
+                로드맵_아이디,
+                new RoadmapCategoryResponse(게임_카테고리.getId(), "게임"),
+                "게임 로드맵",
+                "로드맵 소개글",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"),
+                new RoadmapContentResponse(
+                        1L, "로드맵 본문",
+                        List.of(
+                                new RoadmapNodeResponse(1L, "로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())
+                        )),
+                RoadmapDifficultyType.DIFFICULT.name(),
+                30
+        );
+
+        assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(단일_로드맵_응답).isEqualTo(예상되는_단일_로드맵_응답);
+    }
+
+    @Test
+    void 존재하지_않는_로드맵_아이디로_요청했을_때_조회를_실패한다() {
+        //given
+        final Long 존재하지_않는_로드맵_아이디 = 1L;
+
+        //when
+        final ExtractableResponse<Response> 요청에_대한_응답 = given()
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 존재하지_않는_로드맵_아이디)
+                .then()
+                .log().all()
+                .extract();
+
+        //then
+        final String 예외_메시지 = 요청에_대한_응답.asString();
+
+        assertAll(
+                () -> assertThat(요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
+                () -> assertThat(예외_메시지).contains("존재하지 않는 로드맵입니다. roadmapId = " + 존재하지_않는_로드맵_아이디)
+        );
     }
 
     @Test

@@ -61,22 +61,30 @@ public class Roadmap extends BaseEntity {
 
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
-        validate(title, introduction, requiredPeriod);
-        this.title = title;
-        this.introduction = introduction;
-        this.requiredPeriod = requiredPeriod;
-        this.difficulty = difficulty;
-        this.creator = creator;
-        this.category = category;
+        this(null, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
+    }
+
+    public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
+                   final RoadmapCategory category) {
+        this(null, title, introduction, requiredPeriod, difficulty, status, creator, category);
     }
 
     public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
+        this(id, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
+    }
+
+    public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
+                   final RoadmapCategory category) {
+        validate(title, introduction, requiredPeriod);
         this.id = id;
         this.title = title;
         this.introduction = introduction;
         this.requiredPeriod = requiredPeriod;
         this.difficulty = difficulty;
+        this.status = status;
         this.creator = creator;
         this.category = category;
     }
@@ -137,10 +145,6 @@ public class Roadmap extends BaseEntity {
 
     public Member getCreator() {
         return creator;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getTitle() {

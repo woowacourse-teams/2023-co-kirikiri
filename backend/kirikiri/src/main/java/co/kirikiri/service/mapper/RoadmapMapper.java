@@ -7,21 +7,21 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
+import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.member.MemberResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapCategoryResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapContentResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapFilterTypeRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeResponse;
+import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
-import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
-import co.kirikiri.service.dto.roadmap.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
-import co.kirikiri.service.dto.roadmap.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -85,6 +85,7 @@ public final class RoadmapMapper {
         final RoadmapCategory category = roadmap.getCategory();
         final Member creator = roadmap.getCreator();
         final RoadmapContentResponse roadmapContentResponse = new RoadmapContentResponse(
+                content.getId(),
                 content.getContent(),
                 convertRoadmapNodeResponse(content.getNodes()));
 
@@ -108,12 +109,12 @@ public final class RoadmapMapper {
     }
 
     private static RoadmapNodeResponse convertNode(final RoadmapNode node) {
-        final List<String> images = node.getImages().getValues()
+        final List<String> images = node.getRoadmapNodeImages().getValues()
                 .stream()
                 .map(RoadmapNodeImage::getServerFilePath)
                 .toList();
 
-        return new RoadmapNodeResponse(node.getTitle(), node.getContent(), images);
+        return new RoadmapNodeResponse(node.getId(), node.getTitle(), node.getContent(), images);
     }
 
     public static RoadmapReviewDto convertRoadmapReviewDto(final RoadmapReviewSaveRequest request,
