@@ -311,12 +311,15 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(goalRoomRoadmapNode.getCheckCount() - 1);
         when(checkFeedRepository.save(any()))
                 .thenReturn(checkFeed);
+        when(checkFeedRepository.findCountByGoalRoomMember(any()))
+                .thenReturn(1);
 
         // when
         final String response = goalRoomCreateService.createCheckFeed("identifier", 1L, request);
         테스트용으로_생성된_파일을_제거한다(response);
 
         // then
+        assertThat(goalRoomLeader.getAccomplishmentRate()).isEqualTo(100 * 1 / (double) 10);
         assertThat(response).contains("originalFileName");
     }
 

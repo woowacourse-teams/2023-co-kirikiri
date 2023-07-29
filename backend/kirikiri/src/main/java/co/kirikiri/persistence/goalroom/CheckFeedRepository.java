@@ -21,6 +21,11 @@ public interface CheckFeedRepository extends JpaRepository<CheckFeed, Long> {
 
     @Query("SELECT COUNT(cf)"
             + " FROM CheckFeed cf"
+            + " WHERE cf.goalRoomMember = :goalRoomMember")
+    int findCountByGoalRoomMember(final GoalRoomMember goalRoomMember);
+
+    @Query("SELECT COUNT(cf)"
+            + " FROM CheckFeed cf"
             + " WHERE cf.goalRoomMember = :goalRoomMember"
             + " AND cf.goalRoomRoadmapNode = :goalRoomRoadmapNode")
     int findCountByGoalRoomMemberAndGoalRoomRoadmapNode(final GoalRoomMember goalRoomMember, final

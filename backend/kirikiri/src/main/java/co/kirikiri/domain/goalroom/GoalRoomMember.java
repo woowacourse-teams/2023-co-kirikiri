@@ -42,4 +42,8 @@ public class GoalRoomMember extends BaseEntity {
     public void updateAccomplishmentRate(final Double rate) {
         this.accomplishmentRate = rate;
     }
+
+    public Double getAccomplishmentRate() {
+        return accomplishmentRate;
+    }
 }

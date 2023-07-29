@@ -114,33 +114,46 @@ public class GoalRoomCreateService {
     @Transactional
     public String createCheckFeed(final String identifier, final Long goalRoomId,
                                   final CheckFeedRequest checkFeedRequest) {
-        // TODO : 이미지가 저장될 경로는 반드시 추후에 다시 확인
-        final String uploadFilePath = "C:/";
         validateEmptyImage(checkFeedRequest.image());
-
         final GoalRoom goalRoom = findById(goalRoomId);
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
         final GoalRoomRoadmapNode currentNode = goalRoom.getNodeByDate(LocalDate.now());
         validateCheckCount(goalRoomMember, currentNode);
 
         try {
-            final MultipartFile checkFeedImage = checkFeedRequest.image();
-            final String fileName = System.currentTimeMillis() + "_" + checkFeedImage.getOriginalFilename();
-            final String serverFilePath = uploadFilePath + fileName;
-            final ImageContentType imageType = getImageContentType(checkFeedImage);
-            final File dest = new File(serverFilePath);
-            checkFeedImage.transferTo(dest);
-
-            final CheckFeed checkFeed = checkFeedRepository.save(
-                    new CheckFeed(serverFilePath, imageType,
-                            checkFeedImage.getOriginalFilename(), currentNode, goalRoomMember));
-            checkFeed.addDescription(checkFeedRequest.description());
-
+            final String serverFilePath = uploadFileAndReturnAddress(checkFeedRequest, goalRoomMember, currentNode);
+            updateAccomplishmentRate(goalRoom, goalRoomMember);
             return serverFilePath;
         } catch (final IOException e) {
             e.printStackTrace();
             throw new ServerException("이미지 업로드에 실패했습니다.");
         }
+    }
+
+    private String uploadFileAndReturnAddress(final CheckFeedRequest checkFeedRequest,
+                                              final GoalRoomMember goalRoomMember,
+                                              final GoalRoomRoadmapNode currentNode) throws IOException {
+        // TODO : 이미지가 저장될 경로는 반드시 추후에 다시 확인
+        final String uploadFilePath = "C:/";
+        final MultipartFile checkFeedImage = checkFeedRequest.image();
+        final String fileName = System.currentTimeMillis() + "_" + checkFeedImage.getOriginalFilename();
+        final String serverFilePath = uploadFilePath + fileName;
+        final ImageContentType imageType = getImageContentType(checkFeedImage);
+        final File dest = new File(serverFilePath);
+        checkFeedImage.transferTo(dest);
+
+        final CheckFeed checkFeed = checkFeedRepository.save(
+                new CheckFeed(serverFilePath, imageType,
+                        checkFeedImage.getOriginalFilename(), currentNode, goalRoomMember));
+        checkFeed.addDescription(checkFeedRequest.description());
+        return serverFilePath;
+    }
+
+    private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember) {
+        final int wholeCheckCount = goalRoom.getAllCheckCount();
+        final int memberCheckCount = checkFeedRepository.findCountByGoalRoomMember(goalRoomMember);
+        final Double accomplishmentRate = 100 * memberCheckCount / (double) wholeCheckCount;
+        goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
     }
 
     private void validateEmptyImage(final MultipartFile image) {

@@ -4,9 +4,11 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
 import co.kirikiri.service.GoalRoomCreateService;
@@ -58,13 +60,16 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private final GoalRoomCreateService goalRoomCreateService;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
 
     public GoalRoomCreateIntegrationTest(final GoalRoomCreateService goalRoomCreateService,
                                          final RoadmapCategoryRepository roadmapCategoryRepository,
-                                         final RoadmapNodeRepository roadmapNodeRepository) {
+                                         final RoadmapNodeRepository roadmapNodeRepository,
+                                         final GoalRoomMemberRepository goalRoomMemberRepository) {
         this.goalRoomCreateService = goalRoomCreateService;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapNodeRepository = roadmapNodeRepository;
+        this.goalRoomMemberRepository = goalRoomMemberRepository;
     }
 
     @Test
@@ -429,9 +434,13 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ErrorResponse 예외_메세지 = 인증_피드_등록_응답.as(ErrorResponse.class);
 
         //then
+        // TODO : 달성률 업데이트 확인 테스트는 사용자 골룸 기능 구현 때 옮기기
+        final GoalRoomMember joinedMember = goalRoomMemberRepository.findById(1L).get();
+
         assertAll(
                 () -> assertThat(인증_피드_등록_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
-                () -> assertThat(예외_메세지.message()).isEqualTo("이미 오늘 인증 피드를 등록하였습니다.")
+                () -> assertThat(예외_메세지.message()).isEqualTo("이미 오늘 인증 피드를 등록하였습니다."),
+                () -> assertThat(joinedMember.getAccomplishmentRate()).isEqualTo(100 * 1 / (double) 10)
         );
     }
 

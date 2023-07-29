@@ -130,6 +130,40 @@ class CheckFeedRepositoryTest {
         assertThat(checkCount).isEqualTo(4);
     }
 
+    @Test
+    void 사용자가_골룸에서_등록한_인증_피드_횟수를_확인한다() {
+        //given
+        final Member creator = 사용자를_저장한다("cokiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                member);
+        goalRoom.addAllGoalRoomMembers(List.of(
+                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator), joinedMember));
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
+
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+
+        //when
+        final int checkCount = checkFeedRepository.findCountByGoalRoomMember(joinedMember);
+
+        //then
+        assertThat(checkCount).isEqualTo(6);
+    }
+
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
