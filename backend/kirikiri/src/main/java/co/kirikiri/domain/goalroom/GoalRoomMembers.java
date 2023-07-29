@@ -21,6 +21,10 @@ public class GoalRoomMembers {
         this.values = values;
     }
 
+    public void add(final GoalRoomMember goalRoomMember) {
+        this.values.add(goalRoomMember);
+    }
+
     public List<GoalRoomMember> getValues() {
         return values;
     }

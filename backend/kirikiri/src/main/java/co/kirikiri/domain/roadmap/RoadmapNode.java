@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -77,5 +79,17 @@ public class RoadmapNode extends BaseEntity {
         if (this.roadmapContent == null) {
             this.roadmapContent = roadmapContent;
         }
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public RoadmapContent getRoadmapContent() {
+        return roadmapContent;
     }
 }

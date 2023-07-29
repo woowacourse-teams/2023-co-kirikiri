@@ -165,13 +165,6 @@ class RoadmapRepositoryTest {
         return roadmapCategoryRepository.save(category);
     }
 
-    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
-        return List.of(
-                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
-                        ImageContentType.PNG)
-        );
-    }
-
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
@@ -185,7 +178,13 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getValues());
+
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
+                creator, category);
+        roadmap.addContent(roadmapContent);
+        return roadmap;
     }
 
     private RoadmapNodes 로드맵_노드들을_생성한다() {

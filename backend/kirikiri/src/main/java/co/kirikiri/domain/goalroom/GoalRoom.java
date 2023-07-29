@@ -57,10 +57,8 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     @Embedded
     private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
 
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true, mappedBy = "goalRoom")
-    private final List<GoalRoomMember> goalRoomMembers = new ArrayList<>();
+    @Embedded
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent, final Member member) {
@@ -73,10 +71,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
         this.roadmapContent = roadmapContent;
-        setLeader(member);
+        updateLeader(member);
     }
 
-    private void setLeader(final Member member) {
+    private void updateLeader(final Member member) {
         final GoalRoomPendingMember leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, member);
         leader.updateGoalRoom(this);
         goalRoomPendingMembers.add(leader);
@@ -113,12 +111,12 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         }
     }
 
-    public void updateStatus(final GoalRoomStatus status) {
-        this.status = status;
+    public void start() {
+        this.status = GoalRoomStatus.RUNNING;
     }
 
-    public void addGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+    public void complete() {
+        this.status = GoalRoomStatus.COMPLETED;
     }
 
     public int calculateTotalPeriod() {

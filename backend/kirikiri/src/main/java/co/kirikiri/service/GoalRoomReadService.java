@@ -26,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class GoalRoomReadService {
 
     private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     public GoalRoomResponse findGoalRoom(final Long goalRoomId) {
         final GoalRoom goalRoom = findById(goalRoomId);

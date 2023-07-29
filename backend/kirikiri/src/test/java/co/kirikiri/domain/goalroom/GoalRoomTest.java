@@ -37,7 +37,6 @@ class GoalRoomTest {
     private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
 
     private static Member member;
-    private static MemberProfile memberProfile;
 
     @BeforeAll
     static void setUp() {
@@ -46,8 +45,8 @@ class GoalRoomTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
-        member = new Member(identifier, encryptedPassword, nickname, memberProfile);
+        MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        member = new Member(1L, identifier, encryptedPassword, nickname, memberProfile);
     }
 
     @Test
@@ -73,10 +72,10 @@ class GoalRoomTest {
         // given
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
                 new RoadmapContent("content"), member);
-        final Member member1 = new Member(new Identifier("identifier2"),
+        final Member member1 = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
                 new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
-        final Member member2 = new Member(new Identifier("identifier3"),
+        final Member member2 = new Member(3L, new Identifier("identifier3"),
                 new EncryptedPassword(new Password("password1")), new Nickname("닉네임3"),
                 new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
 
@@ -109,7 +108,7 @@ class GoalRoomTest {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), new RoadmapContent("로드맵 내용"),
                 사용자를_생성한다("identifier1", "시진이"));
-        goalRoom.updateStatus(GoalRoomStatus.RUNNING);
+        goalRoom.start();
 
         //when, then
         assertThatThrownBy(() -> goalRoom.join(member))

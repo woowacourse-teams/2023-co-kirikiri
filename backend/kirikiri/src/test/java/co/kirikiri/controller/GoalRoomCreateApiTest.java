@@ -45,7 +45,6 @@ import org.springframework.test.web.servlet.ResultMatcher;
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomCreateApiTest extends ControllerTestHelper {
 
-    private static final String IDENTIFIER = "identifier1";
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
 

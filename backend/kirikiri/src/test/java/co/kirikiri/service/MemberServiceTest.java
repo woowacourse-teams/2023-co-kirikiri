@@ -1,7 +1,7 @@
 package co.kirikiri.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -18,6 +18,7 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import java.time.LocalDate;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +30,7 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
     @InjectMocks
     private MemberService memberService;
 
@@ -45,7 +47,8 @@ class MemberServiceTest {
 
         //when
         //then
-        assertDoesNotThrow(() -> memberService.join(request));
+        assertThat(memberService.join(request))
+                .isEqualTo(1L);
     }
 
     @Test

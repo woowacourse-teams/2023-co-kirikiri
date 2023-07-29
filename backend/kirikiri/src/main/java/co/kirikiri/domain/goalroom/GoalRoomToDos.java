@@ -18,7 +18,7 @@ public class GoalRoomToDos {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "goal_room_id", updatable = false, nullable = false)
-    private List<GoalRoomToDo> values = new ArrayList<>();
+    private final List<GoalRoomToDo> values = new ArrayList<>();
 
     public GoalRoomToDos(final List<GoalRoomToDo> values) {
         this.values.addAll(new ArrayList<>(values));

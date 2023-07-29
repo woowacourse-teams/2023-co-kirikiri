@@ -12,9 +12,11 @@ import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
@@ -113,5 +115,10 @@ public final class RoadmapMapper {
                 .toList();
 
         return new RoadmapNodeResponse(node.getId(), node.getTitle(), node.getContent(), images);
+    }
+
+    public static RoadmapReviewDto convertRoadmapReviewDto(final RoadmapReviewSaveRequest request,
+                                                           final Member member) {
+        return new RoadmapReviewDto(request.content(), request.rate(), member);
     }
 }

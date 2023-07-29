@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface GoalRoomMemberRepository extends JpaRepository<GoalRoomMember, Long> {
+public interface GoalRoomMemberRepository extends JpaRepository<GoalRoomMember, Long>, GoalRoomMemberQueryRepository {
 
     @Query("select gm from GoalRoomMember gm "
             + "inner join gm.goalRoom g "

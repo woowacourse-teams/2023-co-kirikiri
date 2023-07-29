@@ -1,10 +1,10 @@
 package co.kirikiri.domain.auth.vo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.domain.auth.EncryptedToken;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class EncryptedTokenTest {
 

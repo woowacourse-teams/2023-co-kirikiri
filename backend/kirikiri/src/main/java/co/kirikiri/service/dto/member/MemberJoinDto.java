@@ -4,7 +4,6 @@ import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-
 import java.time.LocalDate;
 
 public record MemberJoinDto(

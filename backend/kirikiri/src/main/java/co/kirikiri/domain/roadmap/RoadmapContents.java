@@ -26,18 +26,6 @@ public class RoadmapContents {
         this.values.add(content);
     }
 
-    public boolean isEmpty() {
-        return values.isEmpty();
-    }
-
-    public boolean hasContent(final RoadmapContent content) {
-        return values.contains(content);
-    }
-
-    public void removeContent(final RoadmapContent content) {
-        values.remove(content);
-    }
-
     public List<RoadmapContent> getValues() {
         return values;
     }

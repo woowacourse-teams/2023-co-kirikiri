@@ -38,4 +38,8 @@ public class GoalRoomMember extends BaseEntity {
         this.goalRoom = goalRoom;
         this.member = member;
     }
+
+    public Member getMember() {
+        return member;
+    }
 }

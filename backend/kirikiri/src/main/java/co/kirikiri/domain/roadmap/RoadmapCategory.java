@@ -23,4 +23,8 @@ public class RoadmapCategory extends BaseEntity {
         super.id = id;
         this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
 }

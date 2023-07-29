@@ -73,10 +73,6 @@ public class GoalRoomPendingMember extends BaseEntity {
         return role == GoalRoomRole.LEADER;
     }
 
-    public Member getMember() {
-        return member;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -86,12 +82,15 @@ public class GoalRoomPendingMember extends BaseEntity {
             return false;
         }
         final GoalRoomPendingMember that = (GoalRoomPendingMember) o;
-        return Objects.equals(goalRoom, that.goalRoom) && Objects.equals(member,
-                that.member);
+        return Objects.equals(goalRoom, that.goalRoom) && Objects.equals(member, that.member);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(goalRoom, member);
+    }
+
+    public Member getMember() {
+        return member;
     }
 }

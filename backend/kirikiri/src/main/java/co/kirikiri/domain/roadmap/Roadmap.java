@@ -11,10 +11,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -55,6 +55,9 @@ public class Roadmap extends BaseEntity {
 
     @Embedded
     private RoadmapContents contents = new RoadmapContents();
+
+    @Embedded
+    private RoadmapReviews reviews = new RoadmapReviews();
 
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
@@ -125,34 +128,23 @@ public class Roadmap extends BaseEntity {
         }
     }
 
+    public boolean isCreator(final Member member) {
+        return Objects.equals(creator.getId(), member.getId());
+    }
+
+    public void addReview(final RoadmapReview review) {
+        reviews.add(review);
+        if (review.isNotSameRoadmap(this)) {
+            review.updateRoadmap(this);
+        }
+    }
+
     public void delete() {
         this.status = RoadmapStatus.DELETED;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Roadmap roadmap = (Roadmap) o;
-        return Objects.equals(id, roadmap.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
     public Member getCreator() {
         return creator;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
     }
 
     public String getTitle() {

@@ -9,7 +9,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -52,7 +51,6 @@ class GoalRoomCreateServiceTest {
     private static final RoadmapNodes ROADMAP_CONTENTS = new RoadmapNodes(new ArrayList<>(List.of(ROADMAP_NODE)));
 
     private static Member member;
-    private static MemberProfile memberProfile;
 
     @Mock
     private GoalRoomRepository goalRoomRepository;
@@ -74,7 +72,7 @@ class GoalRoomCreateServiceTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        memberProfile = new MemberProfile(Gender.MALE, TODAY, phoneNumber);
+        MemberProfile memberProfile = new MemberProfile(Gender.MALE, TODAY, phoneNumber);
         member = new Member(identifier, encryptedPassword, nickname, memberProfile);
     }
 
@@ -244,7 +242,7 @@ class GoalRoomCreateServiceTest {
         final int limitedMemberCount = 20;
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
         final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
-        goalRoom.updateStatus(GoalRoomStatus.RUNNING);
+        goalRoom.start();
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));

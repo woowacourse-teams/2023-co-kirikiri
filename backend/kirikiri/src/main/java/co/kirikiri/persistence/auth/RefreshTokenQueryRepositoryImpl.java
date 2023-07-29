@@ -6,7 +6,6 @@ import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-
 import java.util.Optional;
 
 public class RefreshTokenQueryRepositoryImpl implements RefreshTokenQueryRepository {

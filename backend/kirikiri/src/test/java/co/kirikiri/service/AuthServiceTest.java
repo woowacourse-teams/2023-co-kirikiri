@@ -21,21 +21,20 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
     private static Member member;
-    private static MemberProfile memberProfile;
 
     @Mock
     private TokenProvider tokenProvider;
@@ -56,7 +55,7 @@ class AuthServiceTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
         member = new Member(identifier, encryptedPassword, nickname, memberProfile);
     }
 

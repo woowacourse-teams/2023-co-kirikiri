@@ -385,7 +385,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
                 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 리더_액세스_토큰);
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
-        골룸.updateStatus(GoalRoomStatus.RUNNING);
+        골룸.start();
         goalRoomRepository.save(골룸);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
