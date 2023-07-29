@@ -19,10 +19,14 @@ include::overview.adoc[Overview]
 
 * link:member.html[Member API]
 
+== *인증/인가 API*
+
+* link:auth.html[Auth API]
+
 == *로드맵 API*
 
 * link:roadmap.html[Roadmap API]
 
 == *골룸 API*
 
-* link:goalroom.html[Goalroom API]
+* link:goalroom.html[GoalRoom API]

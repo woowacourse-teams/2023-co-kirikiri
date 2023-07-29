@@ -33,7 +33,9 @@ public class RestDocsHelper {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
     protected MockMvc mockMvc;
+
     protected RestDocumentationResultHandler documentationResultHandler;
 
     @BeforeEach

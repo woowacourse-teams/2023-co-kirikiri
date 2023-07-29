@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
-import java.io.UnsupportedEncodingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 
-@ActiveProfiles("test")
+@ActiveProfiles
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class IntegrationTest {
@@ -47,7 +46,7 @@ public class IntegrationTest {
     }
 
     protected <T> T jsonToClass(final String responseBody, final TypeReference<T> typeReference)
-            throws JsonProcessingException, UnsupportedEncodingException {
+            throws JsonProcessingException {
         return objectMapper.readValue(responseBody, typeReference);
     }
 }

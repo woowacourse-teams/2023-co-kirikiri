@@ -1,16 +1,14 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,16 +16,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class RoadmapContent extends BaseTimeEntity {
+public class RoadmapContent extends BaseUpdatedTimeEntity {
 
-    private static final int CONTENT_MAX_LENGTH = 150;
-    @Embedded
-    private final RoadmapNodes nodes = new RoadmapNodes();
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private static final int CONTENT_MAX_LENGTH = 2000;
+
     @Column(length = 2200)
     private String content;
+
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
@@ -38,6 +36,7 @@ public class RoadmapContent extends BaseTimeEntity {
     }
 
     public RoadmapContent(final Long id, final String content) {
+        validate(content);
         this.id = id;
         this.content = content;
     }
@@ -68,5 +67,25 @@ public class RoadmapContent extends BaseTimeEntity {
         if (this.roadmap == null) {
             this.roadmap = roadmap;
         }
+    }
+
+    public int nodesSize() {
+        return nodes.size();
+    }
+
+    public Optional<RoadmapNode> findRoadmapNodeById(final Long id) {
+        return nodes.findById(id);
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public RoadmapNodes getNodes() {
+        return nodes;
+    }
+
+    public Roadmap getRoadmap() {
+        return roadmap;
     }
 }

@@ -3,6 +3,7 @@ package co.kirikiri.persistence.roadmap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -15,11 +16,11 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.RoadmapStatus;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -55,15 +56,6 @@ class RoadmapRepositoryTest {
     }
 
     @Test
-    void 단일_로드맵을_조회한다() {
-        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
-        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
-
-        assertThat(expectedRoadmap).usingRecursiveComparison()
-                .isEqualTo(savedRoadmap);
-    }
-
-    @Test
     void 카테고리_값이_null이라면_삭제되지_않은_전체_로드맵을_최신순으로_조회한다() {
         // given
         final Member creator = 크리에이터를_생성한다();
@@ -92,19 +84,17 @@ class RoadmapRepositoryTest {
         assertAll(
                 () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(2),
                 () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(firstPageRoadmaps.getContent()).hasSize(2),
+                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
 
                 () -> assertThat(secondPageRoadmaps.getTotalPages()).isEqualTo(2),
                 () -> assertThat(secondPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(secondPageRoadmaps.getContent()).hasSize(1),
+                () -> assertThat(secondPageRoadmaps.getContent().size()).isEqualTo(1),
 
-                () -> assertThat(firstPageRoadmaps.getContent())
-                        .usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(travelRoadmap, gameRoadmap2)),
 
-                () -> assertThat(secondPageRoadmaps.getContent())
-                        .usingRecursiveComparison()
+                () -> assertThat(secondPageRoadmaps.getContent()).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap))
         );
@@ -135,31 +125,57 @@ class RoadmapRepositoryTest {
         assertAll(
                 () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(1),
                 () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent()).hasSize(2),
-                () -> assertThat(firstPageRoadmaps.getContent())
-                        .usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
+                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
         );
     }
 
+    @Test
+    void 단일_로드맵을_조회한다() {
+        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
+        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
+
+        assertThat(expectedRoadmap).usingRecursiveComparison()
+                .isEqualTo(savedRoadmap);
+    }
+
     private Roadmap 로드맵을_생성한다() {
-        final Member creator = 크리에이터를_생성한다();
-        final RoadmapCategory category = 카테고리를_생성한다("운동");
+        final Member creator = 사용자를_생성한다();
+        final RoadmapCategory category = 로드맵_카테고리를_생성한다();
         final RoadmapContent content = new RoadmapContent("로드맵 제목");
 
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
-                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
         roadmap.addContent(content);
 
         return roadmap;
     }
 
+    private Member 사용자를_생성한다() {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
+        final Member member = new Member(new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
+
+        return memberRepository.save(member);
+    }
+
+    private RoadmapCategory 로드맵_카테고리를_생성한다() {
+        final RoadmapCategory category = new RoadmapCategory("운동");
+        return roadmapCategoryRepository.save(category);
+    }
+
+    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
+        return List.of(
+                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
+                        ImageContentType.PNG)
+        );
+    }
+
     private Member 크리에이터를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname("코끼리"), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
         return memberRepository.save(creator);
     }
 
@@ -169,13 +185,7 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getValues());
-
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
-                creator, category);
-        roadmap.addContent(roadmapContent);
-        return roadmap;
+        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
     }
 
     private RoadmapNodes 로드맵_노드들을_생성한다() {
@@ -192,7 +202,8 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 삭제된_로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        return new Roadmap("로드맵 제목2", "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT,
-                RoadmapStatus.DELETED, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목2", "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator, category);
+        roadmap.delete();
+        return roadmap;
     }
 }

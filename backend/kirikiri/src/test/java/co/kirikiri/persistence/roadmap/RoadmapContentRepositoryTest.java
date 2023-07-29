@@ -14,7 +14,6 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import java.time.LocalDate;
@@ -51,8 +50,7 @@ class RoadmapContentRepositoryTest {
 
         assertAll(
                 () -> assertThat(oldRoadmapContent).isNotEqualTo(expectedRoadmapContent),
-                () -> assertThat(expectedRoadmapContent)
-                        .usingRecursiveComparison()
+                () -> assertThat(expectedRoadmapContent).usingRecursiveComparison()
                         .isEqualTo(newRoadmapContent)
         );
     }
@@ -62,18 +60,16 @@ class RoadmapContentRepositoryTest {
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
         final RoadmapContent content = new RoadmapContent("로드맵 제목");
 
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100,
-                RoadmapDifficulty.NORMAL, RoadmapStatus.CREATED, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
         roadmap.addContent(content);
 
         return roadmap;
     }
 
     private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("썬샷"), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
         final Member member = new Member(new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
 
         return memberRepository.save(member);
     }

@@ -1,6 +1,7 @@
 package co.kirikiri.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -12,13 +13,11 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.ConflictException;
-import co.kirikiri.persistence.member.MemberProfileRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import java.time.LocalDate;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,8 +29,6 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
-    @Mock
-    private MemberProfileRepository memberProfileRepository;
     @InjectMocks
     private MemberService memberService;
 
@@ -41,23 +38,14 @@ class MemberServiceTest {
         final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
                 "010-1234-5678", GenderType.MALE, LocalDate.now());
 
-        final Identifier identifier = new Identifier("identifier1");
-        final Password password = new Password("password1!");
-        final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
-        final Member member = new Member(1L, identifier, new EncryptedPassword(password),
-                new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber));
-
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
-        given(memberProfileRepository.findByNickname(any()))
-                .willReturn(Optional.empty());
         given(memberRepository.save(any()))
-                .willReturn(member);
+                .willReturn(new Member(1L, null, null, null, null));
 
         //when
         //then
-        Assertions.assertDoesNotThrow(() -> memberService.join(request));
+        assertDoesNotThrow(() -> memberService.join(request));
     }
 
     @Test
@@ -70,9 +58,8 @@ class MemberServiceTest {
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
 
-        final Member member = new Member(identifier, new EncryptedPassword(password),
-                new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber));
-
+        final Member member = new Member(identifier, new EncryptedPassword(password), nickname,
+                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
 
@@ -87,14 +74,9 @@ class MemberServiceTest {
         //given
         final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
                 "010-1234-5678", GenderType.MALE, LocalDate.now());
-        final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
 
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber);
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.empty());
-        given(memberProfileRepository.findByNickname(any()))
-                .willReturn(Optional.of(memberProfile));
+        given(memberRepository.findByNickname(any()))
+                .willReturn(Optional.of(new Member(null, null, null, null)));
 
         //when
         //then

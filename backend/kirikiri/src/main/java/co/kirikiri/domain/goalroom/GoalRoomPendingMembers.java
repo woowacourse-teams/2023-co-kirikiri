@@ -1,12 +1,13 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,21 +20,32 @@ public class GoalRoomPendingMembers {
             orphanRemoval = true, mappedBy = "goalRoom")
     private final List<GoalRoomPendingMember> values = new ArrayList<>();
 
-    public void add(final GoalRoomPendingMember member) {
-        values.add(member);
+    public GoalRoomPendingMembers(final List<GoalRoomPendingMember> values) {
+        this.values.addAll(new ArrayList<>(values));
     }
 
-    public boolean contains(final GoalRoomPendingMember member) {
+    public void add(final GoalRoomPendingMember goalRoomPendingMember) {
+        values.add(goalRoomPendingMember);
+    }
+
+    public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
         return values.stream()
-                .anyMatch(goalRoomPendingMember -> Objects.equals(member.getMember(),
-                        goalRoomPendingMember.getMember()));
+                .anyMatch(value -> value.equals(goalRoomPendingMember));
     }
 
-    public int getCurrentMemberCount() {
+    public int size() {
         return values.size();
     }
 
+    public Member findGoalRoomLeader() {
+        return values.stream()
+                .filter(GoalRoomPendingMember::isLeader)
+                .findFirst()
+                .map(GoalRoomPendingMember::getMember)
+                .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
+    }
+
     public List<GoalRoomPendingMember> getValues() {
-        return values;
+        return new ArrayList<>(values);
     }
 }
