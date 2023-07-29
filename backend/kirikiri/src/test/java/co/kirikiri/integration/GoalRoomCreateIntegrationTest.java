@@ -46,21 +46,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-@SuppressWarnings("NonAsciiCharacters")
 class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
-    private static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
-    private static final int 정상적인_골룸_제한_인원 = 20;
-    private static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
-    private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname",
-            "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
-    private static final LoginRequest 로그인_요청 = new LoginRequest(회원가입_요청.identifier(), 회원가입_요청.password());
     private static final String BEARER = "Bearer ";
     private static final String 카테고리_이름 = "여가";
     private static final LocalDate 오늘 = LocalDate.now();
     private static final LocalDate 십일_후 = 오늘.plusDays(10L);
+    private static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
+    private static final int 정상적인_골룸_제한_인원 = 20;
+    private static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
     private static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
+    private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname",
+            "010-1234-5678",
+            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+    private static final LoginRequest 로그인_요청 = new LoginRequest(회원가입_요청.identifier(), 회원가입_요청.password());
     private static final MemberJoinRequest 골룸_참여자1_회원가입_요청 = new MemberJoinRequest("identifier2", "password!2", "name2",
             "010-1111-2222", GenderType.FEMALE, LocalDate.now());
     private static final MemberJoinRequest 골룸_참여자2_회원가입_요청 = new MemberJoinRequest("identifier3", "password!3", "name3",
@@ -771,6 +770,23 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         assertThat(골룸_목록.data()).hasSize(0);
     }
 
+    private GoalRoomCreateRequest 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다() {
+        final String 액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
+        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(액세스_토큰, 로드맵_생성_요청);
+        final RoadmapNode 로드맵_노드 = 로드맵_노드();
+
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
+
+        return 골룸_생성_요청;
+    }
+
     private String 회원을_생성하고_로그인을_한다(final MemberJoinRequest memberRequest, final LoginRequest loginRequest) {
         회원가입(memberRequest);
         final ExtractableResponse<Response> 로그인_응답 = 로그인(loginRequest);
@@ -827,23 +843,6 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
         final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
         return roadmapCategoryRepository.save(로드맵_카테고리);
-    }
-
-    private GoalRoomCreateRequest 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다() {
-        final String 액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
-        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(액세스_토큰, 로드맵_생성_요청);
-        final RoadmapNode 로드맵_노드 = 로드맵_노드();
-
-        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
-                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
-                골룸_노드_별_기간_요청);
-
-        return 골룸_생성_요청;
     }
 
     private Long 골룸을_생성하고_아이디를_반환한다(final GoalRoomCreateRequest 골룸_생성_요청, final String 액세스_토큰) {
