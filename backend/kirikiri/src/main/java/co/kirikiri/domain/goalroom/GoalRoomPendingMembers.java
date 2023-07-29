@@ -35,7 +35,7 @@ public class GoalRoomPendingMembers {
 
     public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
         return values.stream()
-                .anyMatch(value -> value.equals(goalRoomPendingMember));
+                .anyMatch(value -> value.isSameMemberWith(goalRoomPendingMember.getMember()));
     }
 
     public Member findGoalRoomLeader() {
