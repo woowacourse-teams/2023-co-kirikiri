@@ -1,13 +1,15 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,12 +28,24 @@ public class GoalRoomPendingMembers {
         values.add(goalRoomPendingMember);
     }
 
+    public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
+        return values.stream()
+                .anyMatch(value -> value.equals(goalRoomPendingMember));
+    }
+
     public int size() {
         return values.size();
     }
 
-    public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
+    public Member findGoalRoomLeader() {
         return values.stream()
-                .anyMatch(value -> value.equals(goalRoomPendingMember));
+                .filter(GoalRoomPendingMember::isLeader)
+                .findFirst()
+                .map(GoalRoomPendingMember::getMember)
+                .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
+    }
+
+    public List<GoalRoomPendingMember> getValues() {
+        return new ArrayList<>(values);
     }
 }

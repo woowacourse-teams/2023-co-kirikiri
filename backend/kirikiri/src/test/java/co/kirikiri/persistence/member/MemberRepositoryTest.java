@@ -10,10 +10,10 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.helper.RepositoryTest;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class MemberRepositoryTest {
@@ -34,8 +34,8 @@ class MemberRepositoryTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber);
-        member = new Member(identifier, encryptedPassword, memberProfile);
+        memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        member = new Member(identifier, encryptedPassword, nickname, memberProfile);
     }
 
     @Test

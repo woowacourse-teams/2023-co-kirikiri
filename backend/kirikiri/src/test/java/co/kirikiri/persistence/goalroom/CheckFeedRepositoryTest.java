@@ -73,9 +73,9 @@ class CheckFeedRepositoryTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent);
-
         final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(),
                 goalRoom, member);
         goalRoom.addAllGoalRoomMembers(List.of(
@@ -108,9 +108,9 @@ class CheckFeedRepositoryTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent);
-
         final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
         goalRoom.addAllGoalRoomMembers(List.of(
@@ -131,10 +131,10 @@ class CheckFeedRepositoryTest {
     }
 
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname(nickname), "010-1234-5678");
-        final Member creator = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
         return memberRepository.save(creator);
     }
 
@@ -171,8 +171,9 @@ class CheckFeedRepositoryTest {
         );
     }
 
-    private GoalRoom 골룸을_저장한다(final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent);
+    private GoalRoom 골룸을_저장한다(final RoadmapContent roadmapContent, final Member member) {
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
+                roadmapContent, member);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);

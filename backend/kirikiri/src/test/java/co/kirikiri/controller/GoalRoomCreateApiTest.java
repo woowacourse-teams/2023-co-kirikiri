@@ -25,7 +25,8 @@ import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.AuthService;
-import co.kirikiri.service.GoalRoomService;
+import co.kirikiri.service.GoalRoomCreateService;
+import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
@@ -53,7 +54,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
 
     @MockBean
-    private GoalRoomService goalRoomService;
+    private GoalRoomCreateService goalRoomCreateService;
+
+    @MockBean
+    private GoalRoomReadService goalRoomReadService;
 
     @MockBean
     private AuthService authService;
@@ -65,7 +69,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
-        given(goalRoomService.create(any(), any()))
+        given(goalRoomCreateService.create(any(), any()))
                 .willReturn(1L);
         given(authService.findIdentifierByToken(anyString()))
                 .willReturn(IDENTIFIER);
@@ -122,7 +126,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new NotFoundException("존재하지 않는 로드맵입니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -144,7 +148,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("모든 노드에 대해 기간이 설정돼야 합니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -166,7 +170,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new NotFoundException("로드맵에 존재하지 않는 노드입니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -188,7 +192,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new NotFoundException("존재하지 않는 회원입니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -210,7 +214,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("시작일은 종료일보다 후일 수 없습니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -232,7 +236,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("시작일은 오늘보다 전일 수 없습니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -254,7 +258,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TEN_DAY_LATER, TODAY))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("시작일은 종료일보다 후일 수 없습니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -276,7 +280,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY.minusDays(10), TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("시작일은 오늘보다 전일 수 없습니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -298,7 +302,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 0, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("골룸 노드의 인증 횟수는 0보다 커야합니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -320,7 +324,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 11, TODAY, TEN_DAY_LATER))));
         final String jsonRequest = objectMapper.writeValueAsString(request);
         doThrow(new BadRequestException("골룸 노드의 인증 횟수가 설정 기간보다 클 수 없습니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .create(any(), any());
 
         //when
@@ -343,7 +347,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final String filePath = "src/test/resources/testImage/" + fileName + "." + contentType;
         final MockMultipartFile imageFile = new MockMultipartFile(fileName, description.getBytes());
 
-        given(goalRoomService.createCheckFeed(anyString(), anyLong(), any()))
+        given(goalRoomCreateService.createCheckFeed(anyString(), anyLong(), any()))
                 .willReturn(filePath);
 
         //expect
@@ -375,7 +379,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final MockMultipartFile imageFile = new MockMultipartFile("이미지", "테스트 이미지".getBytes());
 
         doThrow(new NotFoundException("존재하지 않는 회원입니다."))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .createCheckFeed(anyString(), anyLong(), any());
 
         //when
@@ -407,7 +411,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final MockMultipartFile imageFile = new MockMultipartFile("이미지", "테스트 이미지".getBytes());
 
         doThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"))
-                .when(goalRoomService)
+                .when(goalRoomCreateService)
                 .createCheckFeed(anyString(), anyLong(), any());
 
         //when

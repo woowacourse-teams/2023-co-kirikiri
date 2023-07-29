@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberProfileImage extends BaseEntity {
+public class MemberImage extends BaseEntity {
 
     @Column(length = 100, nullable = false)
     private String originalFileName;

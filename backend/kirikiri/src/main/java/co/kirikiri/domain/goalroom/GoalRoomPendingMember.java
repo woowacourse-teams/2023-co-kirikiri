@@ -10,12 +10,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -38,6 +38,10 @@ public class GoalRoomPendingMember extends BaseEntity {
 
     public GoalRoomPendingMember(final GoalRoomRole role, final Member member) {
         this(null, role, null, null, member);
+    }
+
+    public GoalRoomPendingMember(final GoalRoomRole role, final GoalRoom goalRoom, final Member member) {
+        this(null, role, null, goalRoom, member);
     }
 
     public GoalRoomPendingMember(final GoalRoomRole role, final LocalDateTime joinedAt,
@@ -65,6 +69,10 @@ public class GoalRoomPendingMember extends BaseEntity {
         throw new ServerException("골룸을 변경할 수 없습니다.");
     }
 
+    public boolean isLeader() {
+        return role == GoalRoomRole.LEADER;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -74,11 +82,15 @@ public class GoalRoomPendingMember extends BaseEntity {
             return false;
         }
         final GoalRoomPendingMember that = (GoalRoomPendingMember) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(goalRoom, that.goalRoom) && Objects.equals(member, that.member);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(goalRoom, member);
+    }
+
+    public Member getMember() {
+        return member;
     }
 }
