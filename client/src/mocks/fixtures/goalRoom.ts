@@ -11,7 +11,8 @@ const fixture: GoalRoomFixture = {
     status: 'RECRUITING',
     currentMemberCount: 10,
     initMemberCount: 15,
-    period: 17,
+    startDate: '2023-07-19',
+    endDate: '2023-08-05',
     roadmapContentId: 1,
     goalRoomRoadmap: {
       hasFrontNode: true,
@@ -58,7 +59,7 @@ const fixture: GoalRoomFixture = {
   },
 
   getBrowsedGoalRoom() {
-    return this.data;
+    return JSON.parse(JSON.stringify(this.data));
   },
 };
 
