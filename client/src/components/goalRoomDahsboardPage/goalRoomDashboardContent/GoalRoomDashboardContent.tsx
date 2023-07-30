@@ -5,12 +5,30 @@ import GoalRoomDashboardRoadmap from '@components/goalRoomDahsboardPage/goalRoom
 import GoalRoomDashboardCalender from '@components/goalRoomDahsboardPage/goalRoomDashboardCalender/GoalRoomDashboardCalender';
 import GoalRoomCertificationFeed from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/GoalRoomCertificationFeed';
 
+import { useFetchGoalRoom } from '@hooks/queries/goalRoom';
+import { useParams } from 'react-router-dom';
+
 import * as S from './GoalRoomDashboardContent.styles';
 
+type GoalRoomDashboardContentParams = {
+  goalroomId: string;
+};
+
 const GoalRoomDashboardContent = () => {
+  const { goalroomId } = useParams() as GoalRoomDashboardContentParams;
+
+  const { goalRoom } = useFetchGoalRoom(goalroomId);
+
   return (
     <div>
-      <GoalRoomDashboardHeader />
+      <GoalRoomDashboardHeader
+        name={goalRoom.name}
+        status={goalRoom.status}
+        currentMemberCount={goalRoom.currentMemberCount}
+        initMemberCount={goalRoom.initMemberCount}
+        startDate={goalRoom.startDate}
+        endDate={goalRoom.endDate}
+      />
       <S.GoalRoomGridContainer>
         <GoalRoomDashboardChat />
         <GoalRoomDashboardTodo />
