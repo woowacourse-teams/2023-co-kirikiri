@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
@@ -25,12 +26,14 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(RoadmapController.class)
@@ -220,6 +223,78 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 사용자가_생성한_로드맵을_조회한다() throws Exception {
+        // given
+        final List<RoadmapSummaryResponse> expected = 사용자_로드맵_조회에_대한_응답을_생성한다();
+
+        when(roadmapReadService.findAllSummaryRoadmaps(any(), any()))
+                .thenReturn(expected);
+
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/me")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer <accessToken>")
+                                .param("lastValue", "2")
+                                .param("size", "10")
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                queryParameters(
+                                        parameterWithName("lastValue").description("이전에 응답받은 값 중에서 가장 작은 값 (초기는 null)")
+                                                .optional(),
+                                        parameterWithName("size").description("한 페이지에서 받아올 로드맵의 수")),
+                                responseFields(
+                                        fieldWithPath("[0].roadmapId").description("로드맵 아이디"),
+                                        fieldWithPath("[0].roadmapTitle").description("로드맵 제목"),
+                                        fieldWithPath("[0].difficulty").description("로드맵 난이도"),
+                                        fieldWithPath("[0].category.id").description("로드맵 카테고리 아이디"),
+                                        fieldWithPath("[0].category.name").description("로드맵 카테고리 이름"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<RoadmapSummaryResponse> roadmapSummaryResponses = objectMapper.readValue(response,
+                new TypeReference<>() {
+                });
+        assertThat(roadmapSummaryResponses)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 사용자가_생성한_로드맵을_조회할_때_존재하지_않는_회원이면_예외가_발생한다() throws Exception {
+        // given
+        when(roadmapReadService.findAllSummaryRoadmaps(any(), any()))
+                .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
+
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/me")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer <accessToken>")
+                                .param("lastValue", "2")
+                                .param("size", "10")
+                                .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message").value("존재하지 않는 회원입니다."))
+                .andDo(
+                        documentationResultHandler.document(
+                                queryParameters(
+                                        parameterWithName("lastValue").description("이전에 응답받은 값 중에서 가장 작은 값 (초기는 null)")
+                                                .optional(),
+                                        parameterWithName("size").description("한 페이지에서 받아올 로드맵의 수")),
+                                responseFields(fieldWithPath("message").description("예외 메시지"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse("존재하지 않는 회원입니다.");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
     private RoadmapResponse 단일_로드맵_조회에_대한_응답() {
         final RoadmapCategoryResponse category = new RoadmapCategoryResponse(1, "운동");
         final MemberResponse creator = new MemberResponse(1, "닉네임");
@@ -251,5 +326,14 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final RoadmapCategoryResponse category9 = new RoadmapCategoryResponse(9L, "기타");
         return List.of(category1, category2, category3, category4, category5, category6, category7, category8,
                 category9);
+    }
+
+    private List<RoadmapSummaryResponse> 사용자_로드맵_조회에_대한_응답을_생성한다() {
+        return List.of(new RoadmapSummaryResponse(3L, "세 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                        new RoadmapCategoryResponse(2L, "게임")),
+                new RoadmapSummaryResponse(2L, "두 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                        new RoadmapCategoryResponse(1L, "여행")),
+                new RoadmapSummaryResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                        new RoadmapCategoryResponse(1L, "여행")));
     }
 }

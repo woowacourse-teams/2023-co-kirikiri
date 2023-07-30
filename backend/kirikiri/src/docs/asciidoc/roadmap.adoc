@@ -122,24 +122,40 @@ operation::roadmap-read-api-test/존재하지_않는_로드맵_아이디로_요�
 operation::roadmap-create-api-test/로드맵의_리뷰를_생성한다[snippets='http-request,path-parameters,request-headers,request-fields,http-response']
 
 === *5-2* 실패 - 유효하지 않은 로드맵 아이디인 경우
+
 operation::roadmap-create-api-test/로드맵_리뷰_생성시_존재하지_않은_로드맵이면_예외가_발생한다[snippets='http-request,http-response']
 
 === *5-3* 실패 - 별점이 null인 경우
+
 operation::roadmap-create-api-test/로드맵_리뷰_생성시_별점이_null이라면_예외가_발생한다[snippets='http-request,http-response']
 
 === *5-4* 실패 - 리뷰 내용이 1000자가 넘는 경우
+
 operation::roadmap-create-api-test/로드맵_리뷰_생성시_내용이_1000자가_넘으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *5-5* 실패 - 리뷰 별점이 0~5 사이의 0.5씩 증가하는 값이 아닌 경우
+
 operation::roadmap-create-api-test/로드맵_리뷰_생성시_별점이_잘못된_값이면_예외가_발생한다[snippets='http-request,http-response']
 
 === *5-6* 실패 - 해당 로드맵의 생성자가 리뷰를 달려고 하는 경우
+
 operation::roadmap-create-api-test/로드맵_리뷰_생성시_로드맵_생성자가_리뷰를_달려고_하면_예외가_발생한다[snippets='http-request,http-response']
 
 === *5-7* 실패 - 로드맵을 완료한 골룸이 없는 경우
+
 operation::roadmap-create-api-test/로드맵_리뷰_생성시_완료한_골룸이_없으면_예외가_발생한다[snippets='http-request,http-response']
 
 === *5-8* 실패 - 해당 로드맵에 이미 리뷰를 단 적이 있는 경우
+
 operation::roadmap-create-api-test/로드맵_리뷰_생성시_이미_리뷰를_단적이_있으면_예외가_발생한다[snippets='http-request,http-response']
 
+[[사용자로드맵조회-API]]
+== *6. 사용자 로드맵 조회 API*
 
+=== *6-1* 성공
+
+operation::roadmap-read-api-test/사용자가_생성한_로드맵을_조회한다[snippets='http-request,query-parameters,http-response,response-fields']
+
+=== *6-2* 실패 - 존재하지 않는 회원인 경우
+
+operation::roadmap-read-api-test/사용자가_생성한_로드맵을_조회할_때_존재하지_않는_회원이면_예외가_발생한다[snippets='http-request,http-response,response-fields']
