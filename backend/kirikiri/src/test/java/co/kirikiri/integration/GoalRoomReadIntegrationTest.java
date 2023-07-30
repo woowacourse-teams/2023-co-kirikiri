@@ -3,15 +3,19 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
@@ -24,6 +28,7 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -34,6 +39,7 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
@@ -49,12 +55,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.List;
 
 class GoalRoomReadIntegrationTest extends IntegrationTest {
 
@@ -72,6 +80,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final MemberRepository memberRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
 
     public GoalRoomReadIntegrationTest(final RoadmapRepository roadmapRepository,
                                        final GoalRoomRepository goalRoomRepository,
@@ -79,7 +88,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                                        final RoadmapContentRepository roadmapContentRepository,
                                        final RoadmapNodeRepository roadmapNodeRepository,
                                        final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
-                                       final MemberRepository memberRepository) {
+                                       final MemberRepository memberRepository, final GoalRoomMemberRepository goalRoomMemberRepository) {
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
@@ -87,6 +96,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         this.roadmapNodeRepository = roadmapNodeRepository;
         this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
         this.memberRepository = memberRepository;
+        this.goalRoomMemberRepository = goalRoomMemberRepository;
     }
 
     @Test
@@ -263,6 +273,37 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
 //        assertThat(참가율순_골룸_목록_조회_응답값).isEqualTo(참가율순_골룸_목록_조회_예상_응답값);
 //    }
 
+    @Test
+    void 골룸_참가중인_회원_목록을_찾는다() throws JsonProcessingException {
+        // given
+        final Member 크리에이터 = 크리에이터를_저장한다();
+        final String 로그인_토큰_정보 = 로그인();
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+        final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
+        final List<RoadmapContent> 로드맵_본문_리스트 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답).getValues();
+        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트, 크리에이터);
+        goalRoomMemberRepository.save(new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), 골룸, 크리에이터));
+
+        // when
+        final ExtractableResponse<Response> 골룸_참가자_응답 = given()
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 골룸.getId())
+                .then()
+                .log().all()
+                .extract();
+
+        // then
+        final List<GoalRoomMemberResponse> goalRoomMemberResponses = jsonToClass(골룸_참가자_응답.asString(), new TypeReference<>() {
+        });
+        final GoalRoomMemberResponse 예상되는_골룸_참가자_응답 = new GoalRoomMemberResponse(1L, "코끼리", "https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg", 0.0);
+        assertThat(골룸_참가자_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        assertThat(goalRoomMemberResponses).isEqualTo(List.of(예상되는_골룸_참가자_응답));
+    }
+
     private Member 크리에이터를_저장한다() {
         final String 닉네임 = "코끼리";
         final String 전화번호 = "010-1234-5678";
@@ -282,6 +323,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .replace("/api/members/", "");
         return new Member(Long.valueOf(저장된_크리에이터_아이디), new Identifier(IDENTIFIER),
                 new EncryptedPassword(new Password(PASSWORD)), new Nickname(닉네임),
+                new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPEG),
                 new MemberProfile(Gender.MALE, 생년월일, 전화번호));
     }
 
