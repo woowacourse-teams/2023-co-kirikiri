@@ -1,18 +1,23 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.CustomPageRequest;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +34,7 @@ public class RoadmapReadService {
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapContentRepository roadmapContentRepository;
+    private final MemberRepository memberRepository;
 
     public RoadmapResponse findRoadmap(final Long id) {
         final Roadmap roadmap = findRoadmapById(id);
@@ -70,5 +76,18 @@ public class RoadmapReadService {
     public List<RoadmapCategoryResponse> findAllRoadmapCategories() {
         final List<RoadmapCategory> roadmapCategories = roadmapCategoryRepository.findAll();
         return RoadmapMapper.convertRoadmapCategoryResponses(roadmapCategories);
+    }
+
+    public List<RoadmapSummaryResponse> findAllSummaryRoadmaps(final String identifier,
+                                                               final CustomScrollRequest scrollRequest) {
+        final Member member = findMemberByIdentifier(identifier);
+        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByIdDesc(member,
+                scrollRequest.lastValue(), scrollRequest.size());
+        return RoadmapMapper.convertRoadmapSummaryResponses(roadmaps);
+    }
+
+    private Member findMemberByIdentifier(final String identifier) {
+        return memberRepository.findByIdentifier(new Identifier(identifier))
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 }

@@ -5,12 +5,14 @@ import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
 import co.kirikiri.service.dto.CustomPageRequest;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -72,5 +74,14 @@ public class RoadmapController {
     public ResponseEntity<RoadmapResponse> getRoadmap(@PathVariable final Long roadmapId) {
         final RoadmapResponse response = roadmapReadService.findRoadmap(roadmapId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    @Authenticated
+    public ResponseEntity<List<RoadmapSummaryResponse>> findAllMyRoadmaps(@MemberIdentifier final String identifier,
+                                                                          @ModelAttribute final CustomScrollRequest scrollRequest) {
+        final List<RoadmapSummaryResponse> responses = roadmapReadService.findAllSummaryRoadmaps(identifier,
+                scrollRequest);
+        return ResponseEntity.ok(responses);
     }
 }

@@ -3,6 +3,7 @@ package co.kirikiri.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -18,16 +19,19 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +60,9 @@ class RoadmapReadServiceTest {
     @Mock
     private RoadmapContentRepository roadmapContentRepository;
 
+    @Mock
+    private MemberRepository memberRepository;
+
     @InjectMocks
     private RoadmapReadService roadmapService;
 
@@ -63,9 +70,9 @@ class RoadmapReadServiceTest {
     void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() {
         //given
         final Member member = 사용자를_생성한다();
-        final RoadmapCategory category = 로드맵_카테고리를_생성한다("운동");
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
-        final Roadmap roadmap = 로드맵을_생성한다(member, category);
+        final RoadmapCategory category = 로드맵_카테고리를_생성한다(1L, "운동");
+        final RoadmapContent content = 로드맵_컨텐츠를_생성한다(1L, "콘텐츠 내용");
+        final Roadmap roadmap = 로드맵을_생성한다(1L, member, category);
         roadmap.addContent(content);
         final Long roadmapId = 1L;
 
@@ -84,7 +91,7 @@ class RoadmapReadServiceTest {
                 "로드맵 제목",
                 "로드맵 설명",
                 new MemberResponse(1L, "썬샷"),
-                new RoadmapContentResponse(1L, "콘텐츠 제목", Collections.emptyList()),
+                new RoadmapContentResponse(1L, "콘텐츠 내용", Collections.emptyList()),
                 "NORMAL",
                 100
         );
@@ -231,6 +238,49 @@ class RoadmapReadServiceTest {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 사용자가_생성한_로드맵을_조회한다() {
+        // given
+        final Member member = 사용자를_생성한다();
+        final RoadmapCategory category1 = 로드맵_카테고리를_생성한다(1L, "운동");
+        final RoadmapCategory category2 = 로드맵_카테고리를_생성한다(2L, "여가");
+        final Roadmap roadmap1 = 로드맵을_생성한다(1L, member, category1);
+        final Roadmap roadmap2 = 로드맵을_생성한다(2L, member, category2);
+
+        when(memberRepository.findByIdentifier(any()))
+                .thenReturn(Optional.of(member));
+        when(roadmapRepository.findRoadmapsWithCategoryByMemberOrderByIdDesc(any(), any(), anyInt()))
+                .thenReturn(List.of(roadmap2, roadmap1));
+
+        // when
+        final List<RoadmapSummaryResponse> roadmapSummaryResponses = roadmapService.findAllSummaryRoadmaps(
+                "identifier1",
+                new CustomScrollRequest(null, 10));
+
+        // then
+        final List<RoadmapSummaryResponse> expected = List.of(
+                new RoadmapSummaryResponse(2L, "로드맵 제목", RoadmapDifficulty.NORMAL.name(),
+                        new RoadmapCategoryResponse(2L, "여가")),
+                new RoadmapSummaryResponse(1L, "로드맵 제목", RoadmapDifficulty.NORMAL.name(),
+                        new RoadmapCategoryResponse(1L, "운동")));
+
+        assertThat(roadmapSummaryResponses).isEqualTo(expected);
+    }
+
+    @Test
+    void 사용자가_생성한_로드맵을_조회할때_존재하지_않는_회원이면_예외가_발생한다() {
+        // given
+        when(memberRepository.findByIdentifier(any()))
+                .thenReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(
+                () -> roadmapService.findAllSummaryRoadmaps("identifier1", new CustomScrollRequest(null, 10)))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("존재하지 않는 회원입니다.");
+    }
+
     private Member 사용자를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
 
@@ -238,21 +288,22 @@ class RoadmapReadServiceTest {
                 new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
     }
 
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다();
+    private Roadmap 로드맵을_생성한다(final Long roadmapId, final Member creator, final RoadmapCategory category) {
+        final RoadmapContent content = 로드맵_컨텐츠를_생성한다(1L, "콘텐츠 내용");
 
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap(roadmapId, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator,
+                category);
         roadmap.addContent(content);
 
         return roadmap;
     }
 
-    private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
-        return new RoadmapCategory(1L, title);
+    private RoadmapCategory 로드맵_카테고리를_생성한다(final Long id, final String title) {
+        return new RoadmapCategory(id, title);
     }
 
-    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
-        return new RoadmapContent(1L, "콘텐츠 제목");
+    private RoadmapContent 로드맵_컨텐츠를_생성한다(final Long id, final String content) {
+        return new RoadmapContent(id, content);
     }
 
     private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {
