@@ -3,11 +3,13 @@ package co.kirikiri.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
@@ -18,6 +20,7 @@ import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
@@ -32,6 +35,7 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.dto.CustomPageRequest;
@@ -39,13 +43,10 @@ import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,6 +54,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomReadServiceTest {
@@ -67,6 +73,9 @@ class GoalRoomReadServiceTest {
 
     @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
+
+    @Mock
+    private GoalRoomMemberRepository goalRoomMemberRepository;
 
     @InjectMocks
     private GoalRoomReadService goalRoomService;
@@ -227,9 +236,48 @@ class GoalRoomReadServiceTest {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 정상적으로_골룸에_참여자를_조회한다() {
+        //given
+        final Member creator = 사용자를_생성한다(1L);
+        final Member follower = 사용자를_생성한다(2L);
+
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+
+        final GoalRoomMember goalRoomMemberCreator = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
+        final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, follower);
+
+        given(goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(anyLong()))
+                .willReturn(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
+
+        //when
+        final List<GoalRoomMemberResponse> result = goalRoomService.findGoalRoomMembers(1L);
+
+        //then
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "name1", "serverFilePath", 0.0);
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "name1", "serverFilePath", 0.0);
+        assertThat(result).usingRecursiveComparison()
+                .isEqualTo(List.of(expectedGoalRoomMemberResponse1, expectedGoalRoomMemberResponse2));
+    }
+
+    @Test
+    void 존재하지_않는_골룸일_경우_예외를_던진다() {
+        //given
+        given(goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(anyLong()))
+                .willReturn(Collections.emptyList());
+
+        //when
+        //then
+        assertThatThrownBy(() -> goalRoomService.findGoalRoomMembers(1L))
+                .isInstanceOf(NotFoundException.class);
+    }
+
     private Member 사용자를_생성한다(final Long id) {
         return new Member(id, new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1")), new Nickname("name1"),
+                new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPEG),
                 new MemberProfile(Gender.FEMALE, LocalDate.of(2000, 7, 20),
                         "010-1111-1111"));
     }

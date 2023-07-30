@@ -145,7 +145,7 @@ class GoalRoomMemberRepositoryTest {
     private Member 크리에이터를_저장한다() {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
-        final Member creator = new Member(new Identifier("cokirikiri"),
+        final Member creator = new Member(1L, new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberImage, memberProfile);
         return memberRepository.save(creator);
     }
@@ -206,7 +206,7 @@ class GoalRoomMemberRepositoryTest {
     private Member 골룸_팔로워를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPG);
-        final Member follower = new Member(new Identifier("follower1"),
+        final Member follower = new Member(1L, new Identifier("follower1"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("팔로워1"), memberImage, memberProfile);
         return memberRepository.save(follower);
     }

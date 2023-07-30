@@ -1,6 +1,7 @@
 package co.kirikiri.service.mapper;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
@@ -20,13 +21,14 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -114,5 +116,17 @@ public class GoalRoomMapper {
     private static MemberResponse convertToMemberResponse(final GoalRoom goalRoom) {
         final Member goalRoomLeader = goalRoom.findGoalRoomLeaderInPendingMember();
         return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue());
+    }
+
+    public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(final List<GoalRoomMember> goalRoomMembers) {
+        return goalRoomMembers.stream()
+                .map(GoalRoomMapper::convertToGoalRoomMemberResponse)
+                .toList();
+    }
+
+    private static GoalRoomMemberResponse convertToGoalRoomMemberResponse(final GoalRoomMember goalRoomMember) {
+        final Member member = goalRoomMember.getMember();
+        return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
+                member.getImage().getServerFilePath(), goalRoomMember.getAccomplishmentRate());
     }
 }
