@@ -1,6 +1,7 @@
 package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
+import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
 import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
@@ -10,6 +11,7 @@ import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.member.Member;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomFilterType;
 import com.querydsl.core.types.OrderSpecifier;
@@ -102,5 +104,28 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression startDateEqualsToNow() {
         return goalRoomRoadmapNode.period.startDate.eq(LocalDate.now());
+    }
+
+    @Override
+    public List<GoalRoom> findByMember(final Member member) {
+        return selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
+                .fetchJoin()
+                .where(goalRoomPendingMember.member.eq(member)
+                        .or(goalRoomMember.member.eq(member)))
+                .fetch();
+    }
+
+    @Override
+    public List<GoalRoom> findByMemberAndStatus(final Member member, final GoalRoomStatus goalRoomStatus) {
+        return selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
+                .fetchJoin()
+                .where(goalRoomPendingMember.member.eq(member)
+                        .or(goalRoomMember.member.eq(member)))
+                .where(statusCond(goalRoomStatus))
+                .fetch();
     }
 }

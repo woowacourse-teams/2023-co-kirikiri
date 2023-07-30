@@ -1,5 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.domain.member.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -30,7 +31,16 @@ public class GoalRoomMembers {
         this.values.addAll(new ArrayList<>(goalRoomMembers));
     }
 
+    public int size() {
+        return values.size();
+    }
+
     public List<GoalRoomMember> getValues() {
         return values;
+    }
+
+    public boolean isMember(final Member member) {
+        return values.stream()
+                .anyMatch(value -> value.isSameMember(member));
     }
 }

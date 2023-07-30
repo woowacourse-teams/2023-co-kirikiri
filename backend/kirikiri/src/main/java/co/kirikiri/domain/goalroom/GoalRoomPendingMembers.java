@@ -48,4 +48,9 @@ public class GoalRoomPendingMembers {
     public List<GoalRoomPendingMember> getValues() {
         return new ArrayList<>(values);
     }
+
+    public boolean isMember(final Member member) {
+        return values.stream()
+                .anyMatch(value -> value.isSameMember(member));
+    }
 }

@@ -3,6 +3,7 @@ package co.kirikiri.service.dto.member.response;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
+import java.time.LocalDate;
 import java.util.List;
 
 public record MemberGoalRoomResponse(
@@ -10,7 +11,8 @@ public record MemberGoalRoomResponse(
         String status,
         Integer currentMemberCount,
         Integer limitedMemberCount,
-        Integer period,
+        LocalDate startDate,
+        LocalDate endDate,
         Long roadmapContentId,
         GoalRoomRoadmapNodesResponse goalRoomRoadmapNodes,
         List<GoalRoomTodoResponse> goalRoomTodos,

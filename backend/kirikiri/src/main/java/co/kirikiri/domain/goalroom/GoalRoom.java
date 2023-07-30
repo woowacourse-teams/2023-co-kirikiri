@@ -96,7 +96,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     }
 
     private void validateMemberCount() {
-        if (getCurrentPendingMemberCount() >= limitedMemberCount.getValue()) {
+        if (getCurrentMemberCount() >= limitedMemberCount.getValue()) {
             throw new BadRequestException("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
         }
     }
@@ -158,12 +158,22 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomPendingMembers.findGoalRoomLeader();
     }
 
-    public Integer getCurrentPendingMemberCount() {
-        return goalRoomPendingMembers.size();
+    public Integer getCurrentMemberCount() {
+        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+            return goalRoomPendingMembers.size();
+        }
+        return goalRoomMembers.size();
     }
 
     public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
         this.goalRoomMembers.addAll(new ArrayList<>(members));
+    }
+
+    public boolean isGoalRoomMember(final Member member) {
+        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+            return goalRoomPendingMembers.isMember(member);
+        }
+        return goalRoomMembers.isMember(member);
     }
 
     @Override
@@ -179,12 +189,24 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return limitedMemberCount;
     }
 
+    public GoalRoomStatus getStatus() {
+        return status;
+    }
+
+    public RoadmapContent getRoadmapContent() {
+        return roadmapContent;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public GoalRoomToDos getGoalRoomToDos() {
+        return goalRoomToDos;
     }
 
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {

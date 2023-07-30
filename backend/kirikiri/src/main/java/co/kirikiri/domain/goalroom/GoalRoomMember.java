@@ -39,6 +39,10 @@ public class GoalRoomMember extends BaseEntity {
         this.member = member;
     }
 
+    public boolean isSameMember(final Member member) {
+        return this.member.equals(member);
+    }
+
     public void updateAccomplishmentRate(final Double rate) {
         this.accomplishmentRate = rate;
     }

@@ -1,11 +1,13 @@
 package co.kirikiri.persistence.goalroom;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
@@ -106,11 +108,96 @@ class GoalRoomRepositoryTest {
                 .isEqualTo(goalRoom);
     }
 
+    @Test
+    void 사용자가_참가한_모든_골룸들을_조회한다() {
+        //given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom1 = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom goalRoom2 = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom goalRoom3 = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom goalRoom4 = 골룸을_생성한다(targetRoadmapContent, creator);
+
+        final Member member = 사용자를_저장한다();
+        goalRoom1.join(member);
+        goalRoom2.join(member);
+        goalRoom3.join(member);
+        goalRoom4.join(member);
+        goalRoom2.updateStatus(GoalRoomStatus.RUNNING);
+        goalRoom3.updateStatus(GoalRoomStatus.COMPLETED);
+
+        goalRoomRepository.save(goalRoom1);
+        goalRoomRepository.save(goalRoom2);
+        goalRoomRepository.save(goalRoom3);
+        goalRoomRepository.save(goalRoom4);
+
+        //when
+        final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMember(member);
+
+        //then
+        assertThat(memberGoalRooms).hasSize(4);
+    }
+
+    @Test
+    void 사용자가_참가한_골룸들을_상태에_따라_조회한다() {
+        //given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom1 = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom goalRoom2 = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom goalRoom3 = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom goalRoom4 = 골룸을_생성한다(targetRoadmapContent, creator);
+
+        final Member member = 사용자를_저장한다();
+        goalRoom1.join(member);
+        goalRoom2.join(member);
+        goalRoom3.join(member);
+        goalRoom4.join(member);
+        goalRoom2.updateStatus(GoalRoomStatus.RUNNING);
+        goalRoom3.updateStatus(GoalRoomStatus.COMPLETED);
+
+        goalRoomRepository.save(goalRoom1);
+        goalRoomRepository.save(goalRoom2);
+        goalRoomRepository.save(goalRoom3);
+        goalRoomRepository.save(goalRoom4);
+
+        //when
+        final List<GoalRoom> memberRecruitingGoalRooms = goalRoomRepository.findByMemberAndStatus(member,
+                GoalRoomStatus.RECRUITING);
+        final List<GoalRoom> memberRunningGoalRooms = goalRoomRepository.findByMemberAndStatus(member,
+                GoalRoomStatus.RUNNING);
+        final List<GoalRoom> memberCompletedGoalRooms = goalRoomRepository.findByMemberAndStatus(member,
+                GoalRoomStatus.COMPLETED);
+
+        //then
+        assertAll(
+                () -> assertThat(memberRecruitingGoalRooms).hasSize(2),
+                () -> assertThat(memberRunningGoalRooms).hasSize(1),
+                () -> assertThat(memberCompletedGoalRooms).hasSize(1)
+        );
+    }
+
     private Member 크리에이터를_저장한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+        return memberRepository.save(creator);
+    }
+
+    private Member 사용자를_저장한다() {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final Member creator = new Member(new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("참여자"), memberProfile);
         return memberRepository.save(creator);
     }
 

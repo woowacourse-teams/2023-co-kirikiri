@@ -70,7 +70,8 @@ class MemberReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("status").description("골룸 상태"),
                                         fieldWithPath("currentMemberCount").description("현재 골룸 참여자 수"),
                                         fieldWithPath("limitedMemberCount").description("골룸 참여 제한 인원 수"),
-                                        fieldWithPath("period").description("골룸 진행 기간"),
+                                        fieldWithPath("startDate").description("골룸 시작 날짜"),
+                                        fieldWithPath("endDate").description("골룸 종료 날짜"),
                                         fieldWithPath("roadmapContentId").description("로드맵 컨텐츠 아이디"),
                                         fieldWithPath("goalRoomRoadmapNodes.hasFrontNode").description(
                                                 "대시 보드에 표시된 골룸 노드 앞의 노드 존재 여부"),
@@ -184,13 +185,16 @@ class MemberReadApiTest extends ControllerTestHelper {
     }
 
     private MemberGoalRoomResponse 사용자_골룸_조회_응답을_생성한다() {
-        return new MemberGoalRoomResponse("골룸 이름", "RUNNING", 15, 20, 100, 1L,
+        return new MemberGoalRoomResponse("골룸 이름", "RUNNING", 15, 20,
+                LocalDate.of(2023, 1, 1),
+                LocalDate.of(2023, 12, 31), 1L,
                 new GoalRoomRoadmapNodesResponse(false, true, List.of(
                         new GoalRoomRoadmapNodeResponse("첫번째 골룸 노드 제목", LocalDate.of(2023, 1, 1),
                                 LocalDate.of(2023, 1, 31), 15),
                         new GoalRoomRoadmapNodeResponse("두번째 골룸 노드 제목", LocalDate.of(2023, 2, 1),
                                 LocalDate.of(2023, 2, 28), 14))),
-                List.of(new GoalRoomTodoResponse(1L, "첫 번째 할일", LocalDate.of(2023, 1, 15), LocalDate.of(2023, 1, 31))),
+                List.of(new GoalRoomTodoResponse(1L, "첫 번째 할일",
+                        LocalDate.of(2023, 1, 15), LocalDate.of(2023, 1, 31))),
                 List.of(new CheckFeedResponse(1L, "imageUrl1", "인증 피드 설명 1"),
                         new CheckFeedResponse(2L, "imageUrl2", "인증 피드 설명 2"),
                         new CheckFeedResponse(3L, "imageUrl3", "인증 피드 설명 3"),
