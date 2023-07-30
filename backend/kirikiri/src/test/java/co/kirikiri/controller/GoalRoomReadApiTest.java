@@ -29,7 +29,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 @WebMvcTest(GoalRoomController.class)
-public class GoalRoomReadApiTest extends ControllerTestHelper {
+class GoalRoomReadApiTest extends ControllerTestHelper {
 
     @MockBean
     private GoalRoomReadService goalRoomReadService;

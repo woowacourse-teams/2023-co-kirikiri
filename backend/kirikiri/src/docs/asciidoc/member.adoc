@@ -63,3 +63,21 @@ operation::member-create-api-test/회원가입_시_전화번호에_빈값이_들
 === *1-12* 실패 - 회원가입 시 아이디 비밀번호 닉네임 전화번호 필드에 빈값이 들어올 때
 
 operation::member-create-api-test/회원가입_시_아이디_비밀번호_닉네임_전화번호_필드에_빈값이_들어올_때[snippets='http-request,http-response']
+
+[[사용자골룸단일조회-API]]
+== *2. 사용자 골룸 단일 조회*
+
+=== *2-1* 성공
+
+operation::member-read-api-test/사용자_단일_골룸을_조회한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+=== *2-2* 실패 - 조회 요청 시 유효하지 않은 골룸 아이디가 들어올 때
+
+operation::member-read-api-test/사용자_골룸_조회_시_유효하지_않은_골룸_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+[[사용자골룸목록조회-API]]
+== *3. 사용자 골룸 목록 조회*
+
+=== *3-1* 성공
+
+operation::member-read-api-test/사용자_참가_골룸_목록을_조회한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']
