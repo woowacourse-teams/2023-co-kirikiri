@@ -1,7 +1,14 @@
-export default {
+import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
+
+type GoalRoomFixture = {
+  data: GoalRoomBrowseResponse;
+  getBrowsedGoalRoom: () => GoalRoomBrowseResponse;
+};
+
+const fixture: GoalRoomFixture = {
   data: {
     name: '골룸',
-    status: '모집중',
+    status: 'RECRUITING',
     currentMemberCount: 10,
     initMemberCount: 15,
     period: 17,
@@ -12,14 +19,14 @@ export default {
       nodes: [
         {
           title: '로드맵 1주차',
-          startDate: [2023, 7, 19],
-          endDate: [2023, 7, 30],
+          startDate: '2023-07-19',
+          endDate: '2023-07-30',
           checkCount: 10,
         },
         {
           title: '로드맵 2주차',
-          startDate: [2023, 8, 1],
-          endDate: [2023, 8, 5],
+          startDate: '2023-08-01',
+          endDate: '2023-08-05',
           checkCount: 2,
         },
       ],
@@ -28,17 +35,17 @@ export default {
       {
         id: 1,
         content: '투두 내용',
-        startDate: [2023, 7, 19],
-        endDate: [2023, 7, 20],
+        startDate: '2023-07-19',
+        endDate: '2023-07-20',
       },
       {
         id: 2,
         content: '투두 내용 2',
-        startDate: [2023, 7, 21],
-        endDate: [2023, 7, 24],
+        startDate: '2023-07-21',
+        endDate: '2023-07-24',
       },
     ],
-    cheekFeeds: [
+    checkFeeds: [
       {
         id: 1,
         imageUrl: '이미지-경로',
@@ -50,7 +57,9 @@ export default {
     ],
   },
 
-  getGoalRoomBrowseResponse() {
+  getBrowsedGoalRoom() {
     return this.data;
   },
 };
+
+export default fixture;
