@@ -11,6 +11,8 @@ public interface GoalRoomQueryRepository {
 
     Optional<GoalRoom> findByIdWithRoadmapContent(final Long goalRoomId);
 
+    Optional<GoalRoom> findByIdWithContentAndNodesAndTodos(final Long goalRoomId);
+
     Page<GoalRoom> findGoalRoomsWithPendingMembersPageByCond(final GoalRoomFilterType filterType,
                                                              final Pageable pageable);
 

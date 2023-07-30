@@ -3,6 +3,7 @@ package co.kirikiri.persistence.goalroom;
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
+import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
@@ -34,6 +35,18 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .where(goalRoomIdCond(goalRoomId))
                 .fetchJoin()
                 .fetchFirst());
+    }
+
+    @Override
+    public Optional<GoalRoom> findByIdWithContentAndNodesAndTodos(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .fetchJoin()
+                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .innerJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
     }
 
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {

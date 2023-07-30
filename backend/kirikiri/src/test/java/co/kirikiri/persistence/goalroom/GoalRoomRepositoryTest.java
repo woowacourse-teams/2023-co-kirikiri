@@ -6,7 +6,9 @@ import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -72,6 +74,32 @@ class GoalRoomRepositoryTest {
         final GoalRoom findGoalRoom = goalRoomRepository.findByIdWithRoadmapContent(savedGoalRoom.getId()).get();
 
         // then
+        assertThat(findGoalRoom)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(goalRoom);
+    }
+
+    @Test
+    void 골룸_아이디로_골룸과_로드맵컨텐츠_골룸노드_투두_정보를_조회한다() {
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoomToDo goalRoomToDo = new GoalRoomToDo(new GoalRoomTodoContent("할 일 목록"),
+                new Period(TODAY, TEN_DAY_LATER));
+        goalRoom.addGoalRoomTodo(goalRoomToDo);
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+
+        // when
+        final GoalRoom findGoalRoom = goalRoomRepository.findByIdWithContentAndNodesAndTodos(savedGoalRoom.getId())
+                .get();
+
+        //then
         assertThat(findGoalRoom)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
