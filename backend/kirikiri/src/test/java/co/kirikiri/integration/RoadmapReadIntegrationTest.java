@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
@@ -21,6 +22,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -29,6 +31,7 @@ import java.time.Month;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -290,6 +293,76 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
 
         assertThat(로드맵_카테고리_응답_리스트)
                 .isEqualTo(예상되는_로드맵_카테고리_응답_리스트);
+    }
+
+    @Test
+    void 사용자가_생성한_로드맵_조회한다() {
+        // given
+        크리에이터를_저장한다();
+        final String 로그인_토큰_정보 = 로그인();
+
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final RoadmapCategory 게임_카테고리 = 로드맵_카테고리를_저장한다("게임");
+
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "두 번째 로드맵");
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
+
+        // when
+        final List<RoadmapSummaryResponse> 사용자_로드맵_응답_리스트 = given()
+                .log().all()
+                .when()
+                .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
+                .get("/api/roadmaps/me?size=10")
+                .then().log().all()
+                .extract()
+                .response()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        final List<RoadmapSummaryResponse> 예상되는_사용자_로드맵_응답_리스트 = List.of(
+                new RoadmapSummaryResponse(3L, "세 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                        new RoadmapCategoryResponse(2L, "게임")),
+                new RoadmapSummaryResponse(2L, "두 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                        new RoadmapCategoryResponse(1L, "여행")),
+                new RoadmapSummaryResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                        new RoadmapCategoryResponse(1L, "여행")));
+
+        assertThat(사용자_로드맵_응답_리스트).isEqualTo(예상되는_사용자_로드맵_응답_리스트);
+    }
+
+    @Test
+    void 사용자가_생성한_로드맵을_이전에_받아온_리스트_이후로_조회한다() {
+        // given
+        크리에이터를_저장한다();
+        final String 로그인_토큰_정보 = 로그인();
+
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final RoadmapCategory 게임_카테고리 = 로드맵_카테고리를_저장한다("게임");
+
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "두 번째 로드맵");
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
+
+        // when
+        final List<RoadmapSummaryResponse> 사용자_로드맵_응답_리스트 = given()
+                .log().all()
+                .when()
+                .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
+                .get("/api/roadmaps/me?lastValue=2&size=10")
+                .then().log().all()
+                .extract()
+                .response()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        final List<RoadmapSummaryResponse> 예상되는_사용자_로드맵_응답_리스트 = List.of(
+                new RoadmapSummaryResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                        new RoadmapCategoryResponse(1L, "여행")));
+
+        assertThat(사용자_로드맵_응답_리스트).isEqualTo(예상되는_사용자_로드맵_응답_리스트);
     }
 
     private Long 크리에이터를_저장한다() {
