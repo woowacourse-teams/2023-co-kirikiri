@@ -112,3 +112,14 @@ operation::goal-room-create-api-test/이미_참여한_골룸에_대한_참가_�
 === *5-4* 실패 - 골룸의 제한 인원이 가득 참
 
 operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+[[골룸참가자조회-API]]
+== *6. 골룸 참가자 조회 API*
+
+=== *6-1* 성공
+
+operation::goal-room-read-api-test/정상적으로_골룸_멤버를_조회한다[snippets='http-request,http-response,path-parameters']
+
+=== *6-2* 실패 - 골룸 멤버 조회 시 존재하지 않는 골룸일 경우
+
+operation::goal-room-read-api-test/골룸_멤버_조회_시_존재하지_않는_골룸일_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
