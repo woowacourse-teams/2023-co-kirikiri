@@ -43,12 +43,18 @@ public class Member extends BaseUpdatedTimeEntity {
         this(null, identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
+    public Member(final Identifier identifier, final EncryptedPassword encryptedPassword, final Nickname nickname, final MemberImage image, final MemberProfile memberProfile) {
+        this(null, identifier, encryptedPassword, nickname, image, memberProfile);
+    }
+
     public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
                   final Nickname nickname, final MemberProfile memberProfile) {
         this(id, identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
-    public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword, final Nickname nickname, final MemberImage image, final MemberProfile memberProfile) {
+
+    public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
+                  final Nickname nickname, final MemberImage image, final MemberProfile memberProfile) {
         this.id = id;
         this.identifier = identifier;
         this.encryptedPassword = encryptedPassword;
