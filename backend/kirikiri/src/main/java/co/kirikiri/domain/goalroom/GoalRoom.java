@@ -6,7 +6,6 @@ import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.exception.BadRequestException;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -15,13 +14,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -146,6 +143,17 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public Member findGoalRoomLeaderInPendingMember() {
         return goalRoomPendingMembers.findGoalRoomLeader();
+    }
+
+    public boolean isNotLeader(final Member member) {
+        if (status == GoalRoomStatus.RECRUITING) {
+            return goalRoomPendingMembers.isNotLeader(member);
+        }
+        return goalRoomMembers.isNotLeader(member);
+    }
+
+    public boolean isCompleted() {
+        return this.status == GoalRoomStatus.COMPLETED;
     }
 
     public Integer getCurrentPendingMemberCount() {

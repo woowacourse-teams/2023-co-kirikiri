@@ -6,10 +6,10 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,6 +43,11 @@ public class GoalRoomPendingMembers {
                 .findFirst()
                 .map(GoalRoomPendingMember::getMember)
                 .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
+    }
+
+    public boolean isNotLeader(final Member member) {
+        final Member goalRoomLeader = findGoalRoomLeader();
+        return !goalRoomLeader.equals(member);
     }
 
     public List<GoalRoomPendingMember> getValues() {

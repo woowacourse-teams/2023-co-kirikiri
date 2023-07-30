@@ -8,9 +8,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,6 +37,10 @@ public class GoalRoomMember extends BaseEntity {
         this.joinedAt = joinedAt;
         this.goalRoom = goalRoom;
         this.member = member;
+    }
+
+    public boolean isLeader() {
+        return role == GoalRoomRole.LEADER;
     }
 
     public Member getMember() {

@@ -599,7 +599,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
                 .when()
                 .body(골룸_추가_요청)
                 .header(new Header(HttpHeaders.AUTHORIZATION, 액세스_토큰))
-                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todo", 골룸_id)
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 골룸_id)
                 .then()
                 .log().all()
                 .extract();

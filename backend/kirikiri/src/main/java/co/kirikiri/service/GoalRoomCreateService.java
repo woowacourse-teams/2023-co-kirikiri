@@ -3,6 +3,7 @@ package co.kirikiri.service;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -16,11 +17,12 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -83,12 +85,34 @@ public class GoalRoomCreateService {
 
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
-        final GoalRoom goalRoom = findById(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         goalRoom.join(member);
     }
 
-    private GoalRoom findById(final Long goalRoomId) {
+    private GoalRoom findGoalRoomById(final Long goalRoomId) {
         return goalRoomRepository.findById(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
+    }
+
+    public Long addGoalRoomTodo(final Long goalRoomId, final String Identifier, final GoalRoomTodoRequest goalRoomTodoRequest) {
+        final Member member = findMemberByIdentifier(Identifier);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        checkGoalRoomCompleted(goalRoom);
+        final GoalRoomToDo goalRoomToDo = GoalRoomMapper.convertToGoalRoomTodo(goalRoomTodoRequest);
+        checkGoalRoomLeader(member, goalRoom);
+        goalRoom.addGoalRoomTodo(goalRoomToDo);
+        return goalRoomToDo.getId();
+    }
+
+    private void checkGoalRoomCompleted(final GoalRoom goalRoom) {
+        if (goalRoom.isCompleted()) {
+            throw new BadRequestException("이미 종료된 골룸입니다.");
+        }
+    }
+
+    private void checkGoalRoomLeader(final Member member, final GoalRoom goalRoom) {
+        if (goalRoom.isNotLeader(member)) {
+            throw new BadRequestException("리더만 투드리스트를 추가할 수 있습니다.");
+        }
     }
 }
