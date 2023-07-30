@@ -6,7 +6,7 @@ export const useValidateInput = (pattern: PatternType) => {
   const [value, setValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setValue(e.target.value);
   };
 
