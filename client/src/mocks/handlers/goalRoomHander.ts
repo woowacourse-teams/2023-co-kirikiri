@@ -3,7 +3,7 @@ import { BASE_URL } from '@apis/axios/client';
 import goalRoom from '@mocks/fixtures/goalRoom';
 
 const goalRoomHandler = [
-  rest.get(`${BASE_URL}/goal-rooms/:goalRoomId`, (_, res, ctx) => {
+  rest.get(`${BASE_URL}/api/members/goal-rooms/:goalRoomId`, (_, res, ctx) => {
     try {
       const goalRoomBrowseResponseData = goalRoom.getBrowsedGoalRoom();
 
