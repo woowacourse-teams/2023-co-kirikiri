@@ -30,9 +30,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,6 +38,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomCreateApiTest extends ControllerTestHelper {
@@ -435,6 +435,132 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                         responseFields(
                                 fieldWithPath("message").description("예외 메세지")
                         )));
+    }
+
+    @Test
+    void 정상적으로_골룸에_투두리스트를_추가한다() throws Exception {
+        //given
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER);
+        final String jsonRequest = objectMapper.writeValueAsString(goalRoomTodoRequest);
+        given(goalRoomCreateService.addGoalRoomTodo(anyLong(), anyString(), any()))
+                .willReturn(1L);
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isCreated())
+                .andDo(print())
+                .andReturn();
+
+        //then
+        assertThat(mvcResult.getResponse().getHeader(HttpHeaders.LOCATION)).isEqualTo(API_PREFIX + "/goal-rooms/1/todos/1");
+    }
+
+    @Test
+    void 골룸_투두_추가시_존재하지_않는_회원일_경우() throws Exception {
+        //given
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER);
+        final String jsonRequest = objectMapper.writeValueAsString(goalRoomTodoRequest);
+        doThrow(new NotFoundException("존재하지 않는 회원입니다."))
+                .when(goalRoomCreateService)
+                .addGoalRoomTodo(anyLong(), anyString(), any());
+
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("존재하지 않는 회원입니다."));
+    }
+
+    @Test
+    void 골룸_투두_추가시_존재하지_않는_골룸일_경우() throws Exception {
+        //given
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER);
+        final String jsonRequest = objectMapper.writeValueAsString(goalRoomTodoRequest);
+        doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
+                .when(goalRoomCreateService)
+                .addGoalRoomTodo(anyLong(), anyString(), any());
+
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1"));
+    }
+
+    @Test
+    void 골룸_투두_추가시_이미_종료된_골룸일_경우() throws Exception {
+        //given
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER);
+        final String jsonRequest = objectMapper.writeValueAsString(goalRoomTodoRequest);
+        doThrow(new BadRequestException("이미 종료된 골룸입니다."))
+                .when(goalRoomCreateService)
+                .addGoalRoomTodo(anyLong(), anyString(), any());
+
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("이미 종료된 골룸입니다."));
+    }
+
+    @Test
+    void 골룸_투두_추가시_리더가_아닌_경우() throws Exception {
+        //given
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER);
+        final String jsonRequest = objectMapper.writeValueAsString(goalRoomTodoRequest);
+        doThrow(new BadRequestException("골룸의 리더만 투드리스트를 추가할 수 있습니다."))
+                .when(goalRoomCreateService)
+                .addGoalRoomTodo(anyLong(), anyString(), any());
+
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("골룸의 리더만 투드리스트를 추가할 수 있습니다."));
     }
 
     private ResultActions 골룸_생성(final String jsonRequest, final ResultMatcher result) throws Exception {

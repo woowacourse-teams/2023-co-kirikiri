@@ -112,7 +112,7 @@ public class GoalRoomCreateService {
 
     private void checkGoalRoomLeader(final Member member, final GoalRoom goalRoom) {
         if (goalRoom.isNotLeader(member)) {
-            throw new BadRequestException("리더만 투드리스트를 추가할 수 있습니다.");
+            throw new BadRequestException("골룸의 리더만 투드리스트를 추가할 수 있습니다.");
         }
     }
 }
