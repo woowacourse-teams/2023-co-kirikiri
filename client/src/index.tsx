@@ -5,17 +5,17 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import App from './App';
 
 const startApp = async () => {
-  if (process.env.NODE_ENV === 'development') {
-    const { worker } = await import('./mocks/browser');
-    await worker.start({
-      serviceWorker: {
-        url: '/mockServiceWorker.js',
-        options: {
-          scope: '/api',
-        },
-      },
-    });
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   const { worker } = await import('./mocks/browser');
+  //   await worker.start({
+  //     serviceWorker: {
+  //       url: '/mockServiceWorker.js',
+  //       options: {
+  //         scope: '/api',
+  //       },
+  //     },
+  //   });
+  // }
 
   const queryClient = new QueryClient({
     defaultOptions: {
