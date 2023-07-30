@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.integration.helper.IntegrationTest;
@@ -28,14 +27,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
@@ -69,9 +68,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         //given
         final String 액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(액세스_토큰, 로드맵_생성_요청);
+        final Long 로드맵_id = 로드맵_생성(액세스_토큰, 카테고리);
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -85,7 +82,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         //then
         assertThat(골룸_생성_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(골룸_생성_응답.response().header("Location")).isNotNull();
+        assertThat(골룸_생성_응답.response().header("Location")).contains("/api/goal-rooms/");
     }
 
     @Test
@@ -180,9 +177,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         //given
         final String 액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(액세스_토큰, 로드맵_생성_요청);
+        final Long 로드맵_id = 로드맵_생성(액세스_토큰, 카테고리);
 
         final String 적절하지_않은_길이의_골룸_이름 = "a".repeat(41);
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
@@ -236,9 +231,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         //given
         final String 액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(액세스_토큰, 로드맵_생성_요청);
+        final Long 로드맵_id = 로드맵_생성(액세스_토큰, 카테고리);
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -257,7 +250,8 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         assertThat(errorResponse.message()).isEqualTo("제한 인원 수가 적절하지 않습니다.");
     }
 
-//    @Test
+
+    //    @Test
 //    void 골룸에_참가_요청을_보낸다() {
 //        //given
 //        final Member 크리에이터 = 크리에이터를_저장한다();
@@ -285,15 +279,12 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 //        //then
 //        assertThat(참가_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
 //    }
-
     @Test
     void 골룸에_참가_요청을_보낸다() {
         //given
         final String 리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(리더_액세스_토큰, 로드맵_생성_요청);
+        final Long 로드맵_id = 로드맵_생성(리더_액세스_토큰, 카테고리);
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -339,9 +330,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         //given
         final String 리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(리더_액세스_토큰, 로드맵_생성_요청);
+        final Long 로드맵_id = 로드맵_생성(리더_액세스_토큰, 카테고리);
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -373,9 +362,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         //given
         final String 리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(리더_액세스_토큰, 로드맵_생성_요청);
+        final Long 로드맵_id = 로드맵_생성(리더_액세스_토큰, 카테고리);
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -410,9 +397,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         //given
         final String 리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
-        final Long 로드맵_id = 로드맵을_생성하고_id를_알아낸다(리더_액세스_토큰, 로드맵_생성_요청);
+        final Long 로드맵_id = 로드맵_생성(리더_액세스_토큰, 카테고리);
         final RoadmapNode 로드맵_노드 = 로드맵_노드();
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -434,15 +419,75 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         );
     }
 
-    private ExtractableResponse<Response> 로그인(final LoginRequest 로그인_요청) {
-        return given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(로그인_요청)
-                .post(API_PREFIX + "/auth/login")
-                .then()
-                .log().all()
-                .extract();
+    @Test
+    void 정상적으로_골룸에_투두리스트를_추가한다() {
+        // given
+        final String 액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
+        final Long 로드맵_id = 로드맵_생성(액세스_토큰, 카테고리);
+        final RoadmapNode 로드맵_노드 = 로드맵_노드();
+        final Long 골룸_id = 정상적인_골룸_생성(액세스_토큰, 로드맵_id, 로드맵_노드);
+
+        final GoalRoomTodoRequest 골룸_추가_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+
+        // when
+        final ExtractableResponse<Response> 골룸_추가_응답 = 골룸_추가(액세스_토큰, 골룸_id, 골룸_추가_요청);
+
+        // then
+        assertThat(골룸_추가_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        assertThat(골룸_추가_응답.response().header("Location")).contains("/api/goal-rooms/todos/");
+    }
+
+    @Test
+    void 골룸에_팔로워가_투두_리스트를_추가할때_예외를_던진다() throws JsonProcessingException {
+        // given
+        final String 골룸_리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
+        final MemberJoinRequest 팔로워_회원가입_요청 = new MemberJoinRequest("identifier1", "password12!@#$%", "follower",
+                "010-2345-6789", GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+        final String 골룸_팔로워_액세스_토큰 = 회원을_생성하고_로그인을_한다(팔로워_회원가입_요청, new LoginRequest(팔로워_회원가입_요청.identifier(), 팔로워_회원가입_요청.password()));
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
+        final Long 로드맵_id = 로드맵_생성(골룸_리더_액세스_토큰, 카테고리);
+        final RoadmapNode 로드맵_노드 = 로드맵_노드();
+        final Long 골룸_id = 정상적인_골룸_생성(골룸_리더_액세스_토큰, 로드맵_id, 로드맵_노드);
+
+        final GoalRoomTodoRequest 골룸_추가_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+
+        // when
+        final ExtractableResponse<Response> 골룸_추가_응답 = 골룸_추가(골룸_팔로워_액세스_토큰, 골룸_id, 골룸_추가_요청);
+
+        // then
+        final List<ErrorResponse> 골룸_추가_응답_바디 = jsonToClass(골룸_추가_응답.asString(), new TypeReference<>() {
+        });
+        assertThat(골룸_추가_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(골룸_추가_응답_바디).usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(List.of(new ErrorResponse("골룸 이름을 빈 값일 수 없습니다.")));
+    }
+
+    @Test
+    void 종료된_골룸에_투두_리스트를_추가할때_예외를_던진다() throws JsonProcessingException {
+        //given
+        final String 골룸_리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
+        final Long 로드맵_id = 로드맵_생성(골룸_리더_액세스_토큰, 카테고리);
+        final RoadmapNode 로드맵_노드 = 로드맵_노드();
+        final Long 골룸_id = 정상적인_골룸_생성(골룸_리더_액세스_토큰, 로드맵_id, 로드맵_노드);
+        final GoalRoom 골룸 = goalRoomRepository.findById(골룸_id).get();
+        골룸.complete();
+        goalRoomRepository.save(골룸);
+
+        final GoalRoomTodoRequest 골룸_추가_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+
+        //when
+        final ExtractableResponse<Response> 골룸_추가_응답 = 골룸_추가(골룸_리더_액세스_토큰, 골룸_id, 골룸_추가_요청);
+
+        //then
+        final List<ErrorResponse> 골룸_추가_응답_바디 = jsonToClass(골룸_추가_응답.asString(), new TypeReference<>() {
+        });
+        assertThat(골룸_추가_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(골룸_추가_응답_바디).usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(List.of(new ErrorResponse("이미 종료된 골룸입니다.")));
     }
 
     private ExtractableResponse<Response> 로드맵_생성(final RoadmapSaveRequest 로드맵_생성_요청, final String 액세스_토큰) {
@@ -486,6 +531,17 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         return 액세스_토큰;
     }
 
+    private ExtractableResponse<Response> 로그인(final LoginRequest 로그인_요청) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(로그인_요청)
+                .post(API_PREFIX + "/auth/login")
+                .then()
+                .log().all()
+                .extract();
+    }
+
     private ExtractableResponse<Response> 회원가입(final MemberJoinRequest 회원가입_요청) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -518,5 +574,35 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
         final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
         return roadmapCategoryRepository.save(로드맵_카테고리);
+    }
+
+    private Long 로드맵_생성(final String 액세스_토큰, final RoadmapCategory 카테고리) {
+        final RoadmapSaveRequest 로드맵_생성_요청 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+        return 로드맵을_생성하고_id를_알아낸다(액세스_토큰, 로드맵_생성_요청);
+    }
+
+    private Long 정상적인_골룸_생성(final String 액세스_토큰, final Long 로드맵_id, final RoadmapNode 로드맵_노드) {
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
+        final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_생성_요청, 액세스_토큰);
+        final String Location_헤더 = 골룸_생성_응답.response().header("Location");
+        return Long.parseLong(Location_헤더.substring(16));
+    }
+
+    private ExtractableResponse<Response> 골룸_추가(final String 액세스_토큰, final Long 골룸_id, final GoalRoomTodoRequest 골룸_추가_요청) {
+        final ExtractableResponse<Response> 골룸_추가_응답 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(골룸_추가_요청)
+                .header(new Header(HttpHeaders.AUTHORIZATION, 액세스_토큰))
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todo", 골룸_id)
+                .then()
+                .log().all()
+                .extract();
+        return 골룸_추가_응답;
     }
 }
