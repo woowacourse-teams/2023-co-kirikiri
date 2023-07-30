@@ -6,21 +6,24 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
+import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
 import co.kirikiri.service.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Long join(final MemberJoinRequest memberJoinRequest) {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
         checkIdentifierDuplicate(memberJoinDto.identifier());
@@ -44,5 +47,16 @@ public class MemberService {
         if (memberRepository.findByIdentifier(identifier).isPresent()) {
             throw new ConflictException("이미 존재하는 아이디입니다.");
         }
+    }
+
+    public MemberMyInfoResponse findMyInfo(final String identifier) {
+        final Member member = findMemberByIdentifier(identifier);
+        final Member memberWithInfo = memberRepository.findWithMemberProfileAndImageById(member.getId());
+        return MemberMapper.convertToMemberMyInfoResponse(memberWithInfo);
+    }
+
+    private Member findMemberByIdentifier(final String identifier) {
+        return memberRepository.findByIdentifier(new Identifier(identifier))
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 }

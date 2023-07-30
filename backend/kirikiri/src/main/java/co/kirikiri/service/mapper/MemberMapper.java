@@ -1,11 +1,15 @@
 package co.kirikiri.service.mapper;
 
 import co.kirikiri.domain.member.Gender;
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
+import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -18,5 +22,13 @@ public final class MemberMapper {
         final Nickname nickname = new Nickname(request.nickname());
         final Gender gender = Gender.valueOf(request.genderType().name());
         return new MemberJoinDto(identifier, password, nickname, request.phoneNumber(), gender, request.birthday());
+    }
+
+    public static MemberMyInfoResponse convertToMemberMyInfoResponse(final Member member) {
+        final MemberImage memberImage = member.getImage();
+        final MemberProfile memberProfile = member.getMemberProfile();
+        return new MemberMyInfoResponse(member.getNickname().getValue(), memberImage.getServerFilePath(),
+                memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getPhoneNumber(),
+                memberProfile.getBirthday());
     }
 }
