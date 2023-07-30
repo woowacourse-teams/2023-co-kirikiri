@@ -3,8 +3,10 @@ package co.kirikiri.service;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
@@ -74,17 +76,14 @@ public class GoalRoomReadService {
     }
 
     public MemberGoalRoomResponse findMemberGoalRoom(final String identifier, final Long goalRoomId) {
-        final Member member = findMemberByIdentifier(new Identifier(identifier));
         final GoalRoom goalRoom = findMemberGoalRoomById(goalRoomId);
+        final Member member = findMemberByIdentifier(new Identifier(identifier));
+        validateMemberInGoalRoom(goalRoom, member);
+
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now());
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(goalRoomRoadmapNode);
 
-        return null;
-    }
-
-    private Member findMemberByIdentifier(final Identifier identifier) {
-        return memberRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds);
     }
 
     private GoalRoom findMemberGoalRoomById(final Long goalRoomId) {
@@ -92,9 +91,28 @@ public class GoalRoomReadService {
                 .orElseThrow();
     }
 
+    private Member findMemberByIdentifier(final Identifier identifier) {
+        return memberRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    private void validateMemberInGoalRoom(final GoalRoom goalRoom, final Member member) {
+        if (!goalRoom.isGoalRoomMember(member)) {
+            throw new BadRequestException("해당 골룸에 참여하지 않은 사용자입니다.");
+        }
+    }
+
+    public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
+        final Member member = findMemberByIdentifier(new Identifier(identifier));
+        final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMember(member);
+        return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRooms);
+    }
+
     public List<MemberGoalRoomForListResponse> findMemberGoalRoomsByStatusType(final String identifier,
                                                                                final GoalRoomStatusTypeRequest goalRoomStatusTypeRequest) {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
-        return null;
+        final GoalRoomStatus goalRoomStatus = GoalRoomMapper.convertToGoalRoomStatus(goalRoomStatusTypeRequest);
+        final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMemberAndStatus(member, goalRoomStatus);
+        return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRooms);
     }
 }

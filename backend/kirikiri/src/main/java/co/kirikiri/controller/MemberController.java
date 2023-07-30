@@ -49,6 +49,11 @@ public class MemberController {
     public ResponseEntity<List<MemberGoalRoomForListResponse>> findMemberGoalRoomsByStatus(
             @MemberIdentifier final String identifier,
             @RequestParam(value = "statusCond", required = false) final GoalRoomStatusTypeRequest goalRoomStatusTypeRequest) {
+        if (goalRoomStatusTypeRequest == null) {
+            final List<MemberGoalRoomForListResponse> memberGoalRoomForListResponses =
+                    goalRoomReadService.findMemberGoalRooms(identifier);
+            return ResponseEntity.ok(memberGoalRoomForListResponses);
+        }
         final List<MemberGoalRoomForListResponse> memberGoalRoomForListResponses =
                 goalRoomReadService.findMemberGoalRoomsByStatusType(identifier, goalRoomStatusTypeRequest);
         return ResponseEntity.ok(memberGoalRoomForListResponses);

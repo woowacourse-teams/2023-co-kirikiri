@@ -154,8 +154,11 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomRoadmapNodes.getNodeByDate(date);
     }
 
-    public Member findGoalRoomLeaderInPendingMember() {
-        return goalRoomPendingMembers.findGoalRoomLeader();
+    public Member findGoalRoomLeader() {
+        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+            return goalRoomPendingMembers.findGoalRoomLeader();
+        }
+        return goalRoomMembers.findGoalRoomLeader();
     }
 
     public Integer getCurrentMemberCount() {

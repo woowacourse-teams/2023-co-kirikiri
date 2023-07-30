@@ -82,13 +82,23 @@ public class GoalRoomRoadmapNodes {
                 .orElseThrow(() -> new BadRequestException("잘못된 인증 피드 요청입니다."));
     }
 
-    public List<GoalRoomRoadmapNode> getValues() {
-        return new ArrayList<>(values);
+    public boolean hasFrontNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != 0;
+    }
+
+    public boolean hasBackNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != (size() - 1);
     }
 
     public int calculateAllCheckCount() {
         return values.stream()
                 .mapToInt(GoalRoomRoadmapNode::getCheckCount)
                 .sum();
+    }
+
+    public List<GoalRoomRoadmapNode> getValues() {
+        return new ArrayList<>(values);
     }
 }

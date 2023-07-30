@@ -39,6 +39,10 @@ public class GoalRoomMember extends BaseEntity {
         this.member = member;
     }
 
+    public boolean isLeader() {
+        return role == GoalRoomRole.LEADER;
+    }
+
     public boolean isSameMember(final Member member) {
         return this.member.equals(member);
     }
@@ -49,5 +53,9 @@ public class GoalRoomMember extends BaseEntity {
 
     public Double getAccomplishmentRate() {
         return accomplishmentRate;
+    }
+
+    public Member getMember() {
+        return member;
     }
 }
