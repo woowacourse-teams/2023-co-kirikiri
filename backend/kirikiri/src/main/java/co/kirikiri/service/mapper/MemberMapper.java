@@ -10,6 +10,7 @@ import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +31,12 @@ public final class MemberMapper {
         return new MemberMyInfoResponse(member.getNickname().getValue(), memberImage.getServerFilePath(),
                 memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getPhoneNumber(),
                 memberProfile.getBirthday());
+    }
+
+    public static MemberPublicInfoResponse convertToMemberPublicInfoResponse(final Member member) {
+        final MemberImage memberImage = member.getImage();
+        final MemberProfile memberProfile = member.getMemberProfile();
+        return new MemberPublicInfoResponse(member.getNickname().getValue(), memberImage.getServerFilePath(),
+                memberProfile.getGender().name());
     }
 }

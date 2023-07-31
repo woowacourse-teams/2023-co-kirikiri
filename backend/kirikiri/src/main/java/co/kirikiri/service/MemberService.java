@@ -11,6 +11,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
 import co.kirikiri.service.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,12 +52,23 @@ public class MemberService {
 
     public MemberMyInfoResponse findMyInfo(final String identifier) {
         final Member member = findMemberByIdentifier(identifier);
-        final Member memberWithInfo = memberRepository.findWithMemberProfileAndImageById(member.getId());
+        final Member memberWithInfo = memberRepository.findWithMemberProfileAndImageById(member.getId()).get();
         return MemberMapper.convertToMemberMyInfoResponse(memberWithInfo);
     }
 
     private Member findMemberByIdentifier(final String identifier) {
         return memberRepository.findByIdentifier(new Identifier(identifier))
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    public MemberPublicInfoResponse findMemberPublicInfo(final String identifier, final Long memberId) {
+        findMemberByIdentifier(identifier);
+        final Member memberWithPublicInfo = findMemberWithPublicInfo(memberId);
+        return MemberMapper.convertToMemberPublicInfoResponse(memberWithPublicInfo);
+    }
+
+    private Member findMemberWithPublicInfo(final Long memberId) {
+        return memberRepository.findWithMemberProfileAndImageById(memberId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다. memberId = " + memberId));
     }
 }

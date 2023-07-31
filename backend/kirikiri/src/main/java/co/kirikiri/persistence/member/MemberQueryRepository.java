@@ -1,8 +1,9 @@
 package co.kirikiri.persistence.member;
 
 import co.kirikiri.domain.member.Member;
+import java.util.Optional;
 
 public interface MemberQueryRepository {
 
-    Member findWithMemberProfileAndImageById(final Long memberId);
+    Optional<Member> findWithMemberProfileAndImageById(final Long memberId);
 }

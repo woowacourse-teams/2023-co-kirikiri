@@ -20,6 +20,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -104,7 +105,7 @@ class MemberServiceTest {
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(memberRepository.findWithMemberProfileAndImageById(any()))
-                .willReturn(member);
+                .willReturn(Optional.of(member));
 
         // when
         final MemberMyInfoResponse response = memberService.findMyInfo(identifier.getValue());
@@ -129,5 +130,69 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.findMyInfo(identifier.getValue()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
+    }
+
+    @Test
+    void 특정_사용자의_정보를_조회한다() {
+        // given
+        final Identifier identifier = new Identifier("identifier1");
+        final Password password = new Password("password1!");
+        final Nickname nickname = new Nickname("nickname");
+        final String phoneNumber = "010-1234-5678";
+        final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
+        final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
+                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(memberRepository.findWithMemberProfileAndImageById(any()))
+                .willReturn(Optional.of(member));
+
+        // when
+        final MemberPublicInfoResponse response = memberService.findMemberPublicInfo(identifier.getValue(), 1L);
+
+        // then
+        final MemberPublicInfoResponse expected = new MemberPublicInfoResponse("nickname", "serverFilePath",
+                Gender.MALE.name());
+
+        assertThat(response).isEqualTo(expected);
+    }
+
+    @Test
+    void 특정_사용자의_정보를_조회할때_로그인한_사용자가_존재하지_않는_회원이면_예외가_발생한다() {
+        // given
+        final Identifier identifier = new Identifier("identifier1");
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> memberService.findMemberPublicInfo(identifier.getValue(), 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("존재하지 않는 회원입니다.");
+    }
+
+    @Test
+    void 특정_사용자의_정보를_조회할때_조회하려는_사용자가_존재하지_않는_회원이면_예외가_발생한다() {
+        // given
+        final Identifier identifier = new Identifier("identifier1");
+        final Password password = new Password("password1!");
+        final Nickname nickname = new Nickname("nickname");
+        final String phoneNumber = "010-1234-5678";
+        final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
+        final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
+                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
+        
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(memberRepository.findWithMemberProfileAndImageById(any()))
+                .willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> memberService.findMemberPublicInfo(identifier.getValue(), 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("존재하지 않는 회원입니다. memberId = 1");
     }
 }

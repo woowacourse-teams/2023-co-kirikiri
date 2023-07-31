@@ -59,7 +59,7 @@ class MemberRepositoryTest {
         final Member savedMember = memberRepository.save(member);
 
         // when
-        final Member findMember = memberRepository.findWithMemberProfileAndImageById(savedMember.getId());
+        final Member findMember = memberRepository.findWithMemberProfileAndImageById(savedMember.getId()).get();
 
         // then
         final MemberProfile memberProfile = findMember.getMemberProfile();
