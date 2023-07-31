@@ -8,9 +8,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,7 +21,7 @@ public class GoalRoomMember extends BaseEntity {
 
     private LocalDateTime joinedAt;
 
-    private final Double accomplishmentRate = 0.0;
+    private Double accomplishmentRate = 0.0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_room_id", nullable = false)
@@ -39,7 +39,15 @@ public class GoalRoomMember extends BaseEntity {
         this.member = member;
     }
 
+    public void setAccomplishmentRate(final Double accomplishmentRate) {
+        this.accomplishmentRate = accomplishmentRate;
+    }
+
     public Member getMember() {
         return member;
+    }
+
+    public Double getAccomplishmentRate() {
+        return accomplishmentRate;
     }
 }

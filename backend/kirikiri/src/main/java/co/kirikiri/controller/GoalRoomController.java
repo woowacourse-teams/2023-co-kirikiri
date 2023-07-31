@@ -10,9 +10,9 @@ import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import jakarta.validation.Valid;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/goal-rooms")
@@ -71,5 +73,12 @@ public class GoalRoomController {
                                              @PathVariable final Long goalRoomId) {
         goalRoomCreateService.join(identifier, goalRoomId);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/members")
+    public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(@PathVariable final Long goalRoomId) {
+        final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId);
+        return ResponseEntity.ok(goalRoomMembers);
     }
 }
