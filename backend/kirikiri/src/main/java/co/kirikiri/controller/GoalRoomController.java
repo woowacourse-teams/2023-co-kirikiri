@@ -75,6 +75,7 @@ public class GoalRoomController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Authenticated
     @GetMapping("/{goalRoomId}/members")
     public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(@PathVariable final Long goalRoomId) {
         final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId);

@@ -131,8 +131,10 @@ class GoalRoomMemberRepositoryTest {
 
         final GoalRoomMember goalRoomMemberCreator = new GoalRoomMember(GoalRoomRole.LEADER,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, creator);
-        final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.LEADER,
+        goalRoomMemberCreator.setAccomplishmentRate(50D);
+        final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.FOLLOWER,
                 LocalDateTime.of(2023, 7, 19, 12, 5, 0), savedGoalRoom, follower);
+        goalRoomMemberCreator.setAccomplishmentRate(40D);
         final List<GoalRoomMember> expected = goalRoomMemberRepository.saveAll(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
 
         //when

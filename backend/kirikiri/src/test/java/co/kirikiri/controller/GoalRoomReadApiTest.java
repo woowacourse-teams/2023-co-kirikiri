@@ -242,10 +242,14 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
 
         //when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
                 .andDo(
                         documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("Bearer 액세스 토큰")
+                                ),
                                 pathParameters(
                                         parameterWithName("goalRoomId").description("골룸 아이디")
                                 ),
@@ -273,6 +277,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
 
         //when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
                 .andDo(

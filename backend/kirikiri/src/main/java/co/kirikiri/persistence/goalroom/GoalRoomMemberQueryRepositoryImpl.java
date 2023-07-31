@@ -43,7 +43,7 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
         return selectFrom(goalRoomMember)
                 .innerJoin(goalRoomMember.member, member)
                 .fetchJoin()
-                .leftJoin(member.image, memberImage)
+                .innerJoin(member.image, memberImage)
                 .fetchJoin()
                 .where(goalRoomMember.goalRoom.id.eq(goalRoomId))
                 .orderBy(goalRoomMember.accomplishmentRate.desc())
