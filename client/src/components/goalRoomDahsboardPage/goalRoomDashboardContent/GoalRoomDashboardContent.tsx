@@ -6,16 +6,16 @@ import GoalRoomDashboardCalender from '@components/goalRoomDahsboardPage/goalRoo
 import GoalRoomCertificationFeed from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/GoalRoomCertificationFeed';
 
 import { useFetchGoalRoom } from '@hooks/queries/goalRoom';
-import { useParams } from 'react-router-dom';
 
 import * as S from './GoalRoomDashboardContent.styles';
+import useValidParams from '@hooks/_common/useValidParams';
 
 type GoalRoomDashboardContentParams = {
   goalroomId: string;
 };
 
 const GoalRoomDashboardContent = () => {
-  const { goalroomId } = useParams() as GoalRoomDashboardContentParams;
+  const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
 
   const { goalRoom } = useFetchGoalRoom(goalroomId);
 
