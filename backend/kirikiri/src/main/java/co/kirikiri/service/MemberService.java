@@ -63,11 +63,11 @@ public class MemberService {
 
     public MemberPublicInfoResponse findMemberPublicInfo(final String identifier, final Long memberId) {
         findMemberByIdentifier(identifier);
-        final Member memberWithPublicInfo = findMemberWithPublicInfo(memberId);
+        final Member memberWithPublicInfo = findMemberInfoByMemberId(memberId);
         return MemberMapper.convertToMemberPublicInfoResponse(memberWithPublicInfo);
     }
 
-    private Member findMemberWithPublicInfo(final Long memberId) {
+    private Member findMemberInfoByMemberId(final Long memberId) {
         return memberRepository.findWithMemberProfileAndImageById(memberId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다. memberId = " + memberId));
     }
