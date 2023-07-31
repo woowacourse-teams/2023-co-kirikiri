@@ -21,14 +21,7 @@ const GoalRoomDashboardContent = () => {
 
   return (
     <div>
-      <GoalRoomDashboardHeader
-        name={goalRoom.name}
-        status={goalRoom.status}
-        currentMemberCount={goalRoom.currentMemberCount}
-        initMemberCount={goalRoom.initMemberCount}
-        startDate={goalRoom.startDate}
-        endDate={goalRoom.endDate}
-      />
+      <GoalRoomDashboardHeader goalRoomData={goalRoom} />
       <S.GoalRoomGridContainer>
         <GoalRoomDashboardChat />
         <GoalRoomDashboardTodo />

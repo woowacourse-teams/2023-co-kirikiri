@@ -1,26 +1,17 @@
 import SVGIcon from '@components/icons/SVGIcon';
 
 import * as S from './GoalRoomDashboardHeader.styles';
-import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 import recruitmentStatus from '@constants/goalRoom/recruitmentStatus';
+import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 
 type GoalRoomDashboardHeaderProps = {
-  name: string;
-  status: GoalRoomRecruitmentStatus;
-  currentMemberCount: number;
-  initMemberCount: number;
-  startDate: string;
-  endDate: string;
+  goalRoomData: GoalRoomBrowseResponse;
 };
 
-const GoalRoomDashboardHeader = ({
-  name,
-  status,
-  currentMemberCount,
-  initMemberCount,
-  startDate,
-  endDate,
-}: GoalRoomDashboardHeaderProps) => {
+const GoalRoomDashboardHeader = ({ goalRoomData }: GoalRoomDashboardHeaderProps) => {
+  const { name, status, currentMemberCount, initMemberCount, startDate, endDate } =
+    goalRoomData;
+
   return (
     <header>
       <S.GoalRoomDashboardTitle>{name}</S.GoalRoomDashboardTitle>
