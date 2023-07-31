@@ -298,10 +298,12 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         // then
         final List<GoalRoomMemberResponse> goalRoomMemberResponses = jsonToClass(골룸_참가자_응답.asString(), new TypeReference<>() {
         });
-        final GoalRoomMemberResponse 예상되는_골룸_참가자_응답 = new GoalRoomMemberResponse(1L, "코끼리", "https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg", 0.0);
+        final GoalRoomMemberResponse 예상되는_골룸_참가자_응답 = new GoalRoomMemberResponse(1L, "코끼리", "/api/default-member-image1.png", 0.0);
         assertThat(골룸_참가자_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-        assertThat(goalRoomMemberResponses).isEqualTo(List.of(예상되는_골룸_참가자_응답));
+        assertThat(goalRoomMemberResponses).usingRecursiveComparison()
+                .ignoringFields("imagePath")
+                .isEqualTo(List.of(예상되는_골룸_참가자_응답));
     }
 
     private Member 크리에이터를_저장한다() {

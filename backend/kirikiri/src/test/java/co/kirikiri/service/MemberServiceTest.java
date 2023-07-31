@@ -38,6 +38,9 @@ class MemberServiceTest {
     @Mock
     private Environment environment;
 
+    @Mock
+    private NumberGenerator numberGenerator;
+
     @InjectMocks
     private MemberService memberService;
 
@@ -57,6 +60,8 @@ class MemberServiceTest {
                 .willReturn("https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg");
         given(environment.getProperty(IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY))
                 .willReturn("JPG");
+        given(numberGenerator.generate())
+                .willReturn(7);
 
         //when
         //then

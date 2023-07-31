@@ -31,5 +31,6 @@ jwt:
 image:
   default:
     originalFileName: default-member-image
-    serverFilePath: https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg
-    imageContentType: JPG
+    serverFilePath: /api/default-member-image
+    imageContentType: PNG
+    extension: .png

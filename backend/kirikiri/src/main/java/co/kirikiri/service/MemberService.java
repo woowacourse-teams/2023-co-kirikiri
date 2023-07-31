@@ -22,12 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private static final String IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY = "image.default.originalFileName";
-    private static final String IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY = "image.default.serverFilePath";
-    private static final String IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY = "image.default.imageContentType";
+    private static final String DEFAULT_ORIGINAL_FILE_NAME_PROPERTY = "image.default.originalFileName";
+    private static final String DEFAULT_SERVER_FILE_PATH_PROPERTY = "image.default.serverFilePath";
+    private static final String DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY = "image.default.imageContentType";
+    private static final String DEFAULT_EXTENSION = "image.default.extension";
 
     private final MemberRepository memberRepository;
     private final Environment environment;
+    private final NumberGenerator numberGenerator;
 
     public Long join(final MemberJoinRequest memberJoinRequest) {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
@@ -37,8 +39,8 @@ public class MemberService {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(),
                 memberJoinDto.birthday(), memberJoinDto.phoneNumber());
-        final Member member = new Member(memberJoinDto.identifier(), encryptedPassword, memberJoinDto.nickname(),
-                findDefaultMemberImage(), memberProfile);
+        final Member member = new Member(memberJoinDto.identifier(), encryptedPassword,
+                memberJoinDto.nickname(), findDefaultMemberImage(), memberProfile);
         return memberRepository.save(member).getId();
     }
 
@@ -55,9 +57,13 @@ public class MemberService {
     }
 
     private MemberImage findDefaultMemberImage() {
-        final String defaultOriginalFileName = environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY);
-        final String defaultServerFilePath = environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY);
-        final String defaultImageContentType = environment.getProperty(IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY);
-        return new MemberImage(defaultOriginalFileName, defaultServerFilePath, ImageContentType.valueOf(defaultImageContentType));
+        final String defaultOriginalFileName = environment.getProperty(DEFAULT_ORIGINAL_FILE_NAME_PROPERTY);
+        final String defaultServerFilePath = environment.getProperty(DEFAULT_SERVER_FILE_PATH_PROPERTY);
+        final String defaultImageContentType = environment.getProperty(DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY);
+        final String defaultExtension = environment.getProperty(DEFAULT_EXTENSION);
+        final int randomImageNumber = numberGenerator.generate();
+        return new MemberImage(defaultOriginalFileName + randomImageNumber,
+                defaultServerFilePath + randomImageNumber + defaultExtension,
+                ImageContentType.valueOf(defaultImageContentType));
     }
 }
