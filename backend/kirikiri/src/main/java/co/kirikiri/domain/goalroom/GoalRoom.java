@@ -182,6 +182,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return endDate;
     }
 
+    public GoalRoomStatus getStatus() {
+        return status;
+    }
+
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
         return goalRoomRoadmapNodes;
     }

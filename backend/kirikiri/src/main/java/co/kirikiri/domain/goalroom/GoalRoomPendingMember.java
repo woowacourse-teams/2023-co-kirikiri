@@ -90,6 +90,18 @@ public class GoalRoomPendingMember extends BaseEntity {
         return Objects.hash(goalRoom, member);
     }
 
+    public GoalRoomRole getRole() {
+        return role;
+    }
+
+    public LocalDateTime getJoinedAt() {
+        return joinedAt;
+    }
+
+    public GoalRoom getGoalRoom() {
+        return goalRoom;
+    }
+
     public Member getMember() {
         return member;
     }
