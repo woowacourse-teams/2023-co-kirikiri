@@ -30,6 +30,7 @@ import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -46,7 +47,6 @@ public class GoalRoomCreateService {
     private final GoalRoomRepository goalRoomRepository;
     private final RoadmapContentRepository roadmapContentRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final CheckFeedRepository checkFeedRepository;
 
@@ -67,7 +67,7 @@ public class GoalRoomCreateService {
 
     private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
         return roadmapContentRepository.findById(roadmapContentId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다."));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵 노드입니다."));
     }
 
     private void checkNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {
@@ -114,44 +114,24 @@ public class GoalRoomCreateService {
     @Transactional
     public String createCheckFeed(final String identifier, final Long goalRoomId,
                                   final CheckFeedRequest checkFeedRequest) {
-        validateEmptyImage(checkFeedRequest.image());
+        final MultipartFile checkFeedImage = checkFeedRequest.image();
+        validateEmptyImage(checkFeedImage);
+        final ImageContentType imageType = getImageContentType(checkFeedImage);
+
         final GoalRoom goalRoom = findById(goalRoomId);
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
         final GoalRoomRoadmapNode currentNode = goalRoom.getNodeByDate(LocalDate.now());
-        validateCheckCount(goalRoomMember, currentNode);
+        final int currentMemberCheckCount = validateCheckCountAndReturn(goalRoomMember, currentNode);
+        updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
         try {
-            final String serverFilePath = uploadFileAndReturnAddress(checkFeedRequest, goalRoomMember, currentNode);
-            updateAccomplishmentRate(goalRoom, goalRoomMember);
-            return serverFilePath;
+            final String imageUrl = uploadFileAndReturnAddress(checkFeedRequest);
+            checkFeedRepository.save(new CheckFeed(imageUrl, imageType, checkFeedImage.getOriginalFilename(),
+                    checkFeedRequest.description(), currentNode, goalRoomMember));
+            return imageUrl;
         } catch (final IOException e) {
-            e.printStackTrace();
             throw new ServerException("이미지 업로드에 실패했습니다.");
         }
-    }
-
-    private String uploadFileAndReturnAddress(final CheckFeedRequest checkFeedRequest,
-                                              final GoalRoomMember goalRoomMember,
-                                              final GoalRoomRoadmapNode currentNode) throws IOException {
-        // TODO : 이미지가 저장될 경로는 반드시 추후에 다시 확인
-        final String uploadFilePath = "C:/";
-        final MultipartFile checkFeedImage = checkFeedRequest.image();
-        final String fileName = System.currentTimeMillis() + "_" + checkFeedImage.getOriginalFilename();
-        final String serverFilePath = uploadFilePath + fileName;
-        final ImageContentType imageType = getImageContentType(checkFeedImage);
-        final File dest = new File(serverFilePath);
-        checkFeedImage.transferTo(dest);
-
-        checkFeedRepository.save(new CheckFeed(serverFilePath, imageType, checkFeedImage.getOriginalFilename(),
-                checkFeedRequest.description(), currentNode, goalRoomMember));
-        return serverFilePath;
-    }
-
-    private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember) {
-        final int wholeCheckCount = goalRoom.getAllCheckCount();
-        final int memberCheckCount = checkFeedRepository.findCountByGoalRoomMember(goalRoomMember);
-        final Double accomplishmentRate = 100 * memberCheckCount / (double) wholeCheckCount;
-        goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
     }
 
     private void validateEmptyImage(final MultipartFile image) {
@@ -160,28 +140,60 @@ public class GoalRoomCreateService {
         }
     }
 
+    private ImageContentType getImageContentType(final MultipartFile checkFeedImage) {
+        return ImageContentType.of(checkFeedImage.getContentType());
+    }
+
     private GoalRoomMember findGoalRoomMemberByGoalRoomAndIdentifier(final GoalRoom goalRoom, final String identifier) {
         return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
                 .orElseThrow(() -> new NotFoundException("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + identifier));
     }
 
-    private void validateCheckCount(final GoalRoomMember member, final GoalRoomRoadmapNode goalRoomRoadmapNode) {
-        if (checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(member, goalRoomRoadmapNode)
-                >= goalRoomRoadmapNode.getCheckCount()) {
+    private int validateCheckCountAndReturn(final GoalRoomMember member,
+                                            final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+        final int memberCheckCount = validateNodeCheckCountAndReturn(member, goalRoomRoadmapNode);
+        validateTodayCheckCount(member);
+        return memberCheckCount;
+    }
+
+    private int validateNodeCheckCountAndReturn(GoalRoomMember member,
+                                                GoalRoomRoadmapNode goalRoomRoadmapNode) {
+        int memberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(member,
+                goalRoomRoadmapNode);
+        if (memberCheckCount >= goalRoomRoadmapNode.getCheckCount()) {
             throw new BadRequestException(
                     "이번 노드에는 최대 " + goalRoomRoadmapNode.getCheckCount() + "번만 인증 피드를 등록할 수 있습니다.");
         }
 
-        if (checkFeedRepository.isMemberUploadCheckFeedToday(member, goalRoomRoadmapNode,
-                LocalDate.now().atStartOfDay(), LocalDate.now().plusDays(1).atStartOfDay())) {
+        return memberCheckCount;
+    }
+
+    private void validateTodayCheckCount(GoalRoomMember member) {
+        final LocalDate today = LocalDate.now();
+        final LocalDateTime todayStart = today.atStartOfDay();
+        final LocalDateTime todayEnd = today.plusDays(1).atStartOfDay();
+        if (checkFeedRepository.findByGoalRoomMemberAndDateTime(member, todayStart, todayEnd).isPresent()) {
             throw new BadRequestException("이미 오늘 인증 피드를 등록하였습니다.");
         }
     }
 
-    private ImageContentType getImageContentType(final MultipartFile checkFeedImage) {
-        return ImageContentType.of(checkFeedImage.getContentType())
-                .orElseThrow(() -> new BadRequestException(checkFeedImage.getContentType()
-                        + "는 요청할 수 없는 파일 확장자 형식입니다."));
+    private String uploadFileAndReturnAddress(final CheckFeedRequest checkFeedRequest) throws IOException {
+        // TODO : 이미지가 저장될 경로는 반드시 추후에 다시 확인
+        final String uploadFilePath = "C:/";
+        final MultipartFile checkFeedImage = checkFeedRequest.image();
+        final String fileName = System.currentTimeMillis() + "_" + checkFeedImage.getOriginalFilename();
+        final String serverFilePath = uploadFilePath + fileName;
+        final File dest = new File(serverFilePath);
+        checkFeedImage.transferTo(dest);
+        return serverFilePath;
+    }
+
+    private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember,
+                                          final int pastCheckCount) {
+        final int wholeCheckCount = goalRoom.getAllCheckCount();
+        final int memberCheckCount = pastCheckCount + 1;
+        final Double accomplishmentRate = 100 * memberCheckCount / (double) wholeCheckCount;
+        goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
     }
 
     @Scheduled(cron = "0 0 0 * * *")

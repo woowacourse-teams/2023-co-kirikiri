@@ -305,14 +305,12 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.of(goalRoom));
         when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .thenReturn(Optional.of(goalRoomLeader));
-        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
-                .thenReturn(false);
-        when(checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
-                .thenReturn(goalRoomRoadmapNode.getCheckCount() - 1);
+        when(checkFeedRepository.findByGoalRoomMemberAndDateTime(any(), any(), any()))
+                .thenReturn(Optional.empty());
+        when(checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
+                .thenReturn(0);
         when(checkFeedRepository.save(any()))
                 .thenReturn(checkFeed);
-        when(checkFeedRepository.findCountByGoalRoomMember(any()))
-                .thenReturn(1);
 
         // when
         final String response = goalRoomCreateService.createCheckFeed("identifier", 1L, request);
@@ -337,13 +335,15 @@ class GoalRoomCreateServiceTest {
         final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
                 creator);
         goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final CheckFeed checkFeed = 인증_피드를_생성한다(goalRoomRoadmapNode, goalRoomLeader);
 
         when(goalRoomRepository.findById(any()))
                 .thenReturn(Optional.of(goalRoom));
         when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .thenReturn(Optional.of(goalRoomLeader));
-        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
-                .thenReturn(true);
+        when(checkFeedRepository.findByGoalRoomMemberAndDateTime(any(), any(), any()))
+                .thenReturn(Optional.of(checkFeed));
 
         //expect
         assertThatThrownBy(
@@ -372,8 +372,8 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.of(goalRoom));
         when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .thenReturn(Optional.of(goalRoomLeader));
-        when(checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
-                .thenReturn(goalRoomRoadmapNode.getCheckCount() + 1);
+        when(checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
+                .thenReturn(goalRoomRoadmapNode.getCheckCount());
 
         //expect
         assertThatThrownBy(
@@ -397,15 +397,6 @@ class GoalRoomCreateServiceTest {
                 creator);
         goalRoom.addAllGoalRoomMembers(List.of(goalRoomLeader));
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
-
-        when(goalRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(goalRoom));
-        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
-                .thenReturn(Optional.of(goalRoomLeader));
-        when(checkFeedRepository.isMemberUploadCheckFeedToday(any(), any(), any(), any()))
-                .thenReturn(false);
-        when(checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
-                .thenReturn(goalRoomRoadmapNode.getCheckCount() - 1);
 
         // when
         assertThatThrownBy(

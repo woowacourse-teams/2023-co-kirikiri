@@ -45,6 +45,9 @@ class CheckFeedRepositoryTest {
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
     private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
     private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
+    private static final LocalDateTime TODAY_START = TODAY.atStartOfDay();
+    private static final LocalDateTime TOMORROW_START = TODAY_START.plusDays(1);
+    private static final LocalDateTime DAY_AFTER_TOMORROW_START = TODAY_START.plusDays(2);
 
     private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -85,12 +88,11 @@ class CheckFeedRepositoryTest {
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
 
         //when
-        final boolean isUpdateToday = checkFeedRepository.isMemberUploadCheckFeedToday(joinedMember,
-                goalRoomRoadmapNode, LocalDate.now().atStartOfDay(), LocalDate.now().atStartOfDay().plusDays(1));
+        final boolean isUpdateToday = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember,
+                TODAY_START, TOMORROW_START).isPresent();
 
-        final boolean isUpdateTomorrow = checkFeedRepository.isMemberUploadCheckFeedToday(joinedMember,
-                goalRoomRoadmapNode, LocalDate.now().atStartOfDay().plusDays(1),
-                LocalDate.now().atStartOfDay().plusDays(1));
+        final boolean isUpdateTomorrow = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember,
+                TOMORROW_START, DAY_AFTER_TOMORROW_START).isPresent();
 
         //then
         assertAll(
@@ -123,7 +125,7 @@ class CheckFeedRepositoryTest {
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
 
         //when
-        final int checkCount = checkFeedRepository.findCountByGoalRoomMemberAndGoalRoomRoadmapNode(joinedMember,
+        final int checkCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(joinedMember,
                 goalRoomRoadmapNode);
 
         //then
@@ -158,7 +160,7 @@ class CheckFeedRepositoryTest {
         인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
 
         //when
-        final int checkCount = checkFeedRepository.findCountByGoalRoomMember(joinedMember);
+        final int checkCount = checkFeedRepository.countByGoalRoomMember(joinedMember);
 
         //then
         assertThat(checkCount).isEqualTo(6);

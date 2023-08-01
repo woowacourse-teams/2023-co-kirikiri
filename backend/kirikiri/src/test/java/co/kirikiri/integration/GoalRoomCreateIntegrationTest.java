@@ -46,6 +46,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
     private static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
     private static final int 정상적인_골룸_제한_인원 = 20;
+    private static final int 인증_횟수_제한_1 = 1;
     private static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
     private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname",
             "010-1234-5678",
@@ -438,9 +439,11 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomMember joinedMember = goalRoomMemberRepository.findById(1L).get();
 
         assertAll(
-                () -> assertThat(인증_피드_등록_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(인증_피드_등록_응답.statusCode())
+                        .isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(예외_메세지.message()).isEqualTo("이미 오늘 인증 피드를 등록하였습니다."),
-                () -> assertThat(joinedMember.getAccomplishmentRate()).isEqualTo(100 * 1 / (double) 10)
+                () -> assertThat(joinedMember.getAccomplishmentRate())
+                        .isEqualTo(100 * 1 / (double) 정상적인_골룸_노드_인증_횟수)
         );
     }
 
@@ -455,7 +458,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
-                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 1, 오늘, 십일_후));
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 인증_횟수_제한_1, 오늘, 십일_후));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_id, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
         final Long 골룸_id = 골룸을_생성하고_id를_알아낸다(골룸_생성_요청, 액세스_토큰);
@@ -593,8 +596,8 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
                 .log().all()
                 .extract();
 
-        final String imageUrl = 인증_피드_등록_응답.response().header("Location");
-        테스트용으로_생성된_파일을_제거한다(imageUrl);
+        final String 이미지_저장경로 = 인증_피드_등록_응답.response().header("Location");
+        테스트용으로_생성된_파일을_제거한다(이미지_저장경로);
 
         return 인증_피드_등록_응답;
     }

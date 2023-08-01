@@ -69,8 +69,10 @@ public class GoalRoomRoadmapNodes {
         return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
     }
 
-    public int size() {
-        return values.size();
+    public int calculateAllCheckCount() {
+        return values.stream()
+                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
+                .sum();
     }
 
     public GoalRoomRoadmapNode getNodeByDate(final LocalDate date) {
@@ -79,16 +81,14 @@ public class GoalRoomRoadmapNodes {
         return values.stream()
                 .filter(node -> node.isDayOfNode(date))
                 .findFirst()
-                .orElseThrow(() -> new BadRequestException("잘못된 인증 피드 요청입니다."));
+                .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
+    }
+
+    public int size() {
+        return values.size();
     }
 
     public List<GoalRoomRoadmapNode> getValues() {
         return new ArrayList<>(values);
-    }
-
-    public int calculateAllCheckCount() {
-        return values.stream()
-                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
-                .sum();
     }
 }
