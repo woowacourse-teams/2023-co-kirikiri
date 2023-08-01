@@ -38,6 +38,7 @@ const theme: DefaultTheme = {
     navBar: 1,
     header: 2,
     navBarOverlay: 3,
+    toast: 4,
   },
 
   shadows: {
