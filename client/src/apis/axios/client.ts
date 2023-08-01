@@ -2,9 +2,7 @@ import axios from 'axios';
 import { getCookie } from '@utils/_common/cookies';
 
 export const BASE_URL = `${
-  process.env.NODE_ENV === 'production'
-    ? process.env.PROD_SERVER
-    : process.env.API_TEST_SERVER
+  process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER : process.env.DEV_SERVER
 }`;
 
 const client = axios.create({
@@ -25,7 +23,7 @@ client.interceptors.request.use((config) => {
 });
 
 client.interceptors.response.use(
-  (response) => response,
+  (response) => response.data,
   async (error) => {
     const originalRequest = error.config;
 

@@ -6,7 +6,7 @@ import type {
 } from '@myTypes/user/remote';
 
 export const signUp = (body: MemberJoinRequest) => {
-  return client.post('/member/join', body);
+  return client.post('/members/join', body);
 };
 
 export const login = (body: UserLoginRequest) => {
