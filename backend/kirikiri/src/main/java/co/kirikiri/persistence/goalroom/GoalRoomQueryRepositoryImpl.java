@@ -31,12 +31,10 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findAllByStartDateWithGoalRoomRoadmapNode() {
+    public List<GoalRoom> findAllByStartDateNow() {
         return selectFrom(goalRoom)
                 .join(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
-                .fetchJoin()
                 .where(startDateEqualsToNow())
-                .orderBy(goalRoomRoadmapNode.startDate.asc())
                 .fetch();
     }
 

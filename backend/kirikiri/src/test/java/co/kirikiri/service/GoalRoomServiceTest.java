@@ -188,7 +188,7 @@ class GoalRoomServiceTest {
         goalRoom1.joinGoalRoom(goalRoomPendingMember2);
         goalRoom2.joinGoalRoom(goalRoomPendingMember3);
 
-        when(goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode())
+        when(goalRoomRepository.findAllByStartDateNow())
                 .thenReturn(List.of(goalRoom1));
         when(goalRoomPendingMemberRepository.findAllByGoalRoom(any()))
                 .thenReturn(List.of(goalRoomPendingMember1, goalRoomPendingMember2));
@@ -229,7 +229,7 @@ class GoalRoomServiceTest {
         goalRoom1.joinGoalRoom(goalRoomPendingMember2);
         goalRoom2.joinGoalRoom(goalRoomPendingMember3);
 
-        when(goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode())
+        when(goalRoomRepository.findAllByStartDateNow())
                 .thenReturn(List.of());
 
         // when

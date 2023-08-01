@@ -57,7 +57,7 @@ class GoalRoomMemberRepositoryTest {
     }
 
     @Test
-    void 골룸과_사용자_아이디로_골룸_사용자_대기_목록을_조회한다() {
+    void 골룸과_사용자_아이디로_골룸_사용자_목록을_조회한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
         final RoadmapCategory category = 카테고리를_저장한다("게임");
@@ -74,18 +74,18 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoomMember expected = goalRoomMemberRepository.save(goalRoomMember);
 
         // when
-        final Optional<GoalRoomMember> findGoalRoomPendingMember = goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(
+        final Optional<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(
                 savedGoalRoom, new Identifier("cokirikiri"));
 
         // then
-        assertThat(findGoalRoomPendingMember.get())
+        assertThat(findGoalRoomMember.get())
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expected);
     }
 
     @Test
-    void 골룸과_사용자_아이디로_골룸_사용자_대기_목록_조회시_없으면_빈값을_반환한다() {
+    void 골룸과_사용자_아이디로_골룸_사용자_목록_조회시_없으면_빈값을_반환한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
         final RoadmapCategory category = 카테고리를_저장한다("게임");
@@ -98,16 +98,16 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
         // when
-        final Optional<GoalRoomMember> findGoalRoomPendingMember = goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(
+        final Optional<GoalRoomMember> findGoalRoomMember = goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(
                 savedGoalRoom, new Identifier("cokirikiri2"));
 
         // then
-        assertThat(findGoalRoomPendingMember)
+        assertThat(findGoalRoomMember)
                 .isEmpty();
     }
 
     @Test
-    void 골룸으로_사용자_대기_목록과_멤버를_함께_조회한다() {
+    void 골룸으로_사용자_목록과_멤버를_함께_조회한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
         final RoadmapCategory category = 카테고리를_저장한다("게임");
@@ -133,11 +133,11 @@ class GoalRoomMemberRepositoryTest {
                 List.of(goalRoomMember1, goalRoomMember2, goalRoomMember3));
 
         // when
-        final List<GoalRoomMember> findGoalRoomPendingMembers = goalRoomMemberRepository.findAllByGoalRoom(
+        final List<GoalRoomMember> findGoalRoomMembers = goalRoomMemberRepository.findAllByGoalRoom(
                 goalRoom);
 
         // then
-        assertThat(findGoalRoomPendingMembers)
+        assertThat(findGoalRoomMembers)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expected);

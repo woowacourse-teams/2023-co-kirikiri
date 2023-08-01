@@ -60,7 +60,7 @@ class GoalRoomRepositoryTest {
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
 
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, TODAY);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
         // when
@@ -74,7 +74,7 @@ class GoalRoomRepositoryTest {
     }
 
     @Test
-    void 골룸의_노드의_시작날짜가_오늘인_골룸을_골룸의_노드와_함께_시작날짜_오름차순으로_조회한다() {
+    void 골룸의_노드의_시작날짜가_오늘인_골룸을_조회한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
         final RoadmapCategory category = 카테고리를_저장한다("게임");
@@ -91,7 +91,7 @@ class GoalRoomRepositoryTest {
         final GoalRoom savedGoalRoom3 = goalRoomRepository.save(goalRoom3);
 
         // when
-        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode();
+        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDateNow();
 
         // then
         assertThat(findGoalRooms)
@@ -139,24 +139,6 @@ class GoalRoomRepositoryTest {
                 new RoadmapNodeImage("node-image1.png", "node-image1-save-path", ImageContentType.PNG),
                 new RoadmapNodeImage("node-image2.png", "node-image2-save-path", ImageContentType.PNG)
         );
-    }
-
-    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom("골룸", 10, GoalRoomStatus.RECRUITING, roadmapContent);
-        final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
-
-        final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
-        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                TODAY, TODAY.plusDays(10), 10, firstRoadmapNode);
-
-        final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
-        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                TODAY.plusDays(11), TODAY.plusDays(20), 10, secondRoadmapNode);
-
-        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
-                List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
-        goalRoom.addGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-        return goalRoom;
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final LocalDate startDate) {

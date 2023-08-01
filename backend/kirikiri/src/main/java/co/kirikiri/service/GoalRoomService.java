@@ -53,7 +53,7 @@ public class GoalRoomService {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void startGoalRooms() {
-        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode();
+        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDateNow();
         for (final GoalRoom goalRoom : goalRoomsToStart) {
             final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
                     goalRoom);
