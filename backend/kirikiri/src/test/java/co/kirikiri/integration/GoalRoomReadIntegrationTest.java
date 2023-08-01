@@ -282,7 +282,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
 //        final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
 //        final List<RoadmapNodeResponse> 로드맵_노드들 = 로드맵_응답.content().nodes();
 //        final Long 골룸_id = 골룸_생성(로드맵_응답.content().id(), 로드맵_노드들, 로그인_토큰_정보);
-//        // TODo : 골룸 시작하기 api
+//        // TODO : 골룸 시작하기 api
 //
 //        // when
 //        final ExtractableResponse<Response> 골룸_참가자_응답 = given()

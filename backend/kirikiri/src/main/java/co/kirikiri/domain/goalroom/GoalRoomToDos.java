@@ -5,10 +5,10 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,5 +26,9 @@ public class GoalRoomToDos {
 
     public void add(final GoalRoomToDo goalRoomToDo) {
         values.add(goalRoomToDo);
+    }
+
+    public GoalRoomToDo findLast() {
+        return values.get(values.size() - 1);
     }
 }

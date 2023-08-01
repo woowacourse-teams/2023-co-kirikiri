@@ -20,7 +20,9 @@ import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
+import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -49,17 +51,17 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
@@ -89,7 +91,7 @@ class GoalRoomCreateServiceTest {
     private MemberRepository memberRepository;
 
     @InjectMocks
-    private GoalRoomCreateService goalRoomService;
+    private GoalRoomCreateService goalRoomCreateService;
 
     @BeforeAll
     static void setUp() {
@@ -118,7 +120,7 @@ class GoalRoomCreateServiceTest {
                 .willReturn(new GoalRoom(1L, null, null, null, null));
 
         //when
-        assertDoesNotThrow(() -> goalRoomService.create(request, member.getIdentifier().getValue()));
+        assertDoesNotThrow(() -> goalRoomCreateService.create(request, member.getIdentifier().getValue()));
     }
 
     @Test
@@ -133,7 +135,7 @@ class GoalRoomCreateServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> goalRoomService.create(request, member.getIdentifier().getValue()))
+        assertThatThrownBy(() -> goalRoomCreateService.create(request, member.getIdentifier().getValue()))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -152,7 +154,7 @@ class GoalRoomCreateServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> goalRoomService.create(request, member.getIdentifier().getValue()))
+        assertThatThrownBy(() -> goalRoomCreateService.create(request, member.getIdentifier().getValue()))
                 .isInstanceOf(BadRequestException.class);
     }
 
@@ -169,7 +171,7 @@ class GoalRoomCreateServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> goalRoomService.create(request, member.getIdentifier().getValue()))
+        assertThatThrownBy(() -> goalRoomCreateService.create(request, member.getIdentifier().getValue()))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -187,19 +189,18 @@ class GoalRoomCreateServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> goalRoomService.create(request, member.getIdentifier().getValue()))
+        assertThatThrownBy(() -> goalRoomCreateService.create(request, member.getIdentifier().getValue()))
                 .isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void 골룸에_참가한다() {
         //given
-        final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Member creator = 사용자를_생성한다(1L, "identifier1", "password1!", "시진이", "010-1111-1111");
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final int limitedMemberCount = 20;
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, limitedMemberCount, roadmapContent, TODAY);
-        final Member follower = 사용자를_생성한다(2L, "identifier2", "password2", "팔로워", "010-1111-2222");
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
@@ -207,7 +208,7 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.of(goalRoom));
 
         //when
-        goalRoomService.join("identifier2", 1L);
+        goalRoomCreateService.join("identifier2", 1L);
 
         //then
         assertThat(goalRoom.getCurrentPendingMemberCount())
@@ -221,7 +222,7 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.empty());
 
         //when, then
-        assertThatThrownBy(() -> goalRoomService.join("identifier2", 1L))
+        assertThatThrownBy(() -> goalRoomCreateService.join("identifier2", 1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage("존재하지 않는 회원입니다.");
     }
@@ -229,7 +230,7 @@ class GoalRoomCreateServiceTest {
     @Test
     void 골룸_참가_요청시_유효한_골룸_아이디가_아니면_예외가_발생한다() {
         //given
-        final Member follower = 사용자를_생성한다(1L, "identifier1", "password!1", "팔로워", "010-1111-1111");
+        final Member follower = 사용자를_생성한다(1L, "identifier1", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
@@ -237,7 +238,7 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.empty());
 
         //when, then
-        assertThatThrownBy(() -> goalRoomService.join("identifier1", 1L))
+        assertThatThrownBy(() -> goalRoomCreateService.join("identifier1", 1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage("존재하지 않는 골룸입니다. goalRoomId = 1");
     }
@@ -245,12 +246,11 @@ class GoalRoomCreateServiceTest {
     @Test
     void 골룸_참가_요청시_제한_인원이_가득_찼을_경우_예외가_발생한다() {
         //given
-        final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Member creator = 사용자를_생성한다(1L, "identifier1", "password!1", "팔로워", "010-1111-1111");
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final int limitedMemberCount = 1;
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, limitedMemberCount, roadmapContent, TODAY);
-        final Member follower = 사용자를_생성한다(2L, "identifier2", "password!2", "팔로워", "010-2222-2222");
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, limitedMemberCount);
+        final Member follower = 사용자를_생성한다(2L, "identifier2", "팔로워");
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
@@ -258,7 +258,7 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.of(goalRoom));
 
         //when, then
-        assertThatThrownBy(() -> goalRoomService.join("identifier2", 1L))
+        assertThatThrownBy(() -> goalRoomCreateService.join("identifier2", 1L))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
     }
@@ -280,9 +280,138 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.of(goalRoom));
 
         //when, then
-        assertThatThrownBy(() -> goalRoomService.join("identifier2", 1L))
+        assertThatThrownBy(() -> goalRoomCreateService.join("identifier2", 1L))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
+    }
+
+    @Test
+    void 정상적으로_골룸에_투두리스트를_추가한다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
+
+        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(creator));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+
+        //when
+        //then
+        assertDoesNotThrow(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier1", goalRoomTodoRequest));
+    }
+
+    @Test
+    void 골룸에_투두리스트_추가시_회원을_찾지_못할_경우_예외를_던진다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.empty());
+
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+
+        //when
+        //then
+        assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier1", goalRoomTodoRequest))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸에_투두리스트_추가시_골룸을_찾지_못할_경우_예외를_던진다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
+
+        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(creator));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+
+        //when
+        //then
+        assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier1", goalRoomTodoRequest))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸에_투두리스트_추가시_종료된_골룸일_경우_예외를_던진다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
+
+        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+        goalRoom.complete();
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(creator));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+
+        //when
+        //then
+        assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier1", goalRoomTodoRequest))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void 골룸에_투두리스트_추가시_리더가_아닐_경우_예외를_던진다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final Member member = 사용자를_생성한다(2L, "identifier2", "멤버");
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
+
+        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+
+        //when
+        //then
+        assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier2", goalRoomTodoRequest))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void 골룸에_투두리스트_추가시_골룸_컨텐츠가_250글자가_넘을때_예외를_던진다() {
+        //given
+        final RoadmapContent roadmapContent = new RoadmapContent("컨텐츠 본문");
+        final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
+
+        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(creator));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        final String goalRoomTodoContent = "a".repeat(251);
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest(goalRoomTodoContent, TODAY, TEN_DAY_LATER);
+
+        //when
+        //then
+        assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier1", goalRoomTodoRequest))
+                .isInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -314,7 +443,7 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(List.of(goalRoomPendingMember, goalRoomPendingMember1, goalRoomPendingMember2));
 
         // when
-        goalRoomService.startGoalRooms();
+        goalRoomCreateService.startGoalRooms();
 
         // then
         verify(goalRoomMemberRepository, times(1)).saveAll(anyList());
@@ -349,7 +478,7 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(List.of());
 
         // when
-        goalRoomService.startGoalRooms();
+        goalRoomCreateService.startGoalRooms();
 
         // then
         verify(goalRoomPendingMemberRepository, times(0)).findAllByGoalRoom(any());
@@ -431,5 +560,19 @@ class GoalRoomCreateServiceTest {
     private GoalRoomPendingMember 골룸_대기자를_생성한다(final GoalRoom goalRoom, final Member follower,
                                                final GoalRoomRole role) {
         return new GoalRoomPendingMember(role, LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, follower);
+    }
+
+    private Member 사용자를_생성한다(final Long memberId, final String identifier, final String nickname) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1995, 9, 30), "010-1234-5678");
+
+        return new Member(memberId, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
+    }
+
+    private GoalRoom 골룸을_생성한다(final Member creator, final RoadmapContent roadmapContent,
+                              final Integer limitedMemberCount) {
+        return new GoalRoom(new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount), roadmapContent,
+                creator);
     }
 }
