@@ -3,6 +3,7 @@ package co.kirikiri.persistence.goalroom;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.member.vo.Identifier;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,13 @@ public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomP
             + "and m.identifier =:identifier")
     Optional<GoalRoomPendingMember> findByGoalRoomAndMemberIdentifier(
             @Param("goalRoom") final GoalRoom goalRoom, @Param("identifier") final Identifier identifier);
+
+    List<GoalRoomPendingMember> findByGoalRoom(final GoalRoom goalRoom);
+
+    @Query("select gp from GoalRoomPendingMember gp "
+            + "join fetch gp.goalRoom g "
+            + "join fetch gp.member m "
+            + "where g=:goalRoom "
+            + "and gp.member = m")
+    List<GoalRoomPendingMember> findAllByGoalRoom(@Param("goalRoom") final GoalRoom goalRoom);
 }

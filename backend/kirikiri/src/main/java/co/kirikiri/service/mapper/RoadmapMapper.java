@@ -8,13 +8,15 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTags;
-import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
@@ -79,7 +81,7 @@ public final class RoadmapMapper {
     }
 
     private static RoadmapNodeResponse convertNode(final RoadmapNode node) {
-        final List<String> images = node.getImages().getValues()
+        final List<String> images = node.getRoadmapNodeImages().getValues()
                 .stream()
                 .map(RoadmapNodeImage::getServerFilePath)
                 .toList();
@@ -132,5 +134,10 @@ public final class RoadmapMapper {
         return roadmapCategories.stream()
                 .map(category -> new RoadmapCategoryResponse(category.getId(), category.getName()))
                 .toList();
+    }
+
+    public static RoadmapReviewDto convertRoadmapReviewDto(final RoadmapReviewSaveRequest request,
+                                                           final Member member) {
+        return new RoadmapReviewDto(request.content(), request.rate(), member);
     }
 }

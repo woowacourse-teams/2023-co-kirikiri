@@ -37,7 +37,6 @@ public class RoadmapReadIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
-
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
     public RoadmapReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository) {

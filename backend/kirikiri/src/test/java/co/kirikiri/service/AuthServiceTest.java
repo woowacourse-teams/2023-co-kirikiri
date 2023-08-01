@@ -35,7 +35,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class AuthServiceTest {
 
     private static Member member;
-    private static MemberProfile memberProfile;
 
     @Mock
     private TokenProvider tokenProvider;
@@ -56,8 +55,8 @@ class AuthServiceTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), nickname, phoneNumber);
-        member = new Member(identifier, encryptedPassword, memberProfile);
+        MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        member = new Member(identifier, encryptedPassword, nickname, memberProfile);
     }
 
     @Test
@@ -79,8 +78,7 @@ class AuthServiceTest {
         final AuthenticationResponse authenticationResponse = authService.login(loginRequest);
 
         //then
-        assertThat(authenticationResponse.accessToken()).isEqualTo(accessToken);
-        assertThat(authenticationResponse.refreshToken()).isEqualTo(refreshToken);
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken));
     }
 
     @Test
@@ -132,8 +130,7 @@ class AuthServiceTest {
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
 
         //then
-        assertThat(authenticationResponse.refreshToken()).isEqualTo(rawRefreshToken);
-        assertThat(authenticationResponse.accessToken()).isEqualTo(rawAccessToken);
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(rawRefreshToken, rawAccessToken));
     }
 
     @Test

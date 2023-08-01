@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -25,17 +24,12 @@ import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
@@ -53,11 +47,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class RoadmapServiceTest {
+class RoadmapReadServiceTest {
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")),
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), new Nickname("닉네임"), "010-1234-5678"));
+            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
     @Mock
     private RoadmapRepository roadmapRepository;
@@ -66,49 +60,10 @@ class RoadmapServiceTest {
     private RoadmapCategoryRepository roadmapCategoryRepository;
 
     @Mock
-    private MemberRepository memberRepository;
-
-    @Mock
     private RoadmapContentRepository roadmapContentRepository;
 
     @InjectMocks
-    private RoadmapService roadmapService;
-
-    @Test
-    void 로드맵을_저장한다() {
-        // given
-        final RoadmapCategory category = 로드맵_카테고리를_생성한다("여가");
-        final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다();
-        final Roadmap roadmap = 로드맵을_생성한다("로드맵 제목", category);
-
-        given(roadmapCategoryRepository.findById(any()))
-                .willReturn(Optional.of(category));
-        given(roadmapRepository.save(any()))
-                .willReturn(roadmap);
-        when(memberRepository.findByIdentifier(member.getIdentifier()))
-                .thenReturn(Optional.of(member));
-
-        // expect
-        assertThat(roadmapService.create(request, "identifier1"))
-                .isEqualTo(1L);
-    }
-
-    @Test
-    void 존재하지_않는_카테고리를_입력하면_예외가_발생한다() {
-        // given
-        final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")), Collections.emptyList());
-
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
-        given(roadmapCategoryRepository.findById(any()))
-                .willReturn(Optional.empty());
-
-        // expect
-        assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
-                .isInstanceOf(NotFoundException.class);
-    }
+    private RoadmapReadService roadmapService;
 
     @Test
     void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() {
@@ -306,20 +261,11 @@ class RoadmapServiceTest {
                 .isEqualTo(expected);
     }
 
-    private RoadmapSaveRequest 로드맵_생성_요청을_생성한다() {
-        final String roadmapTitle = "로드맵 제목";
-        final String roadmapIntroduction = "로드맵 소개글";
-        final String requestContent = "로드맵 본문";
-        final RoadmapDifficultyType difficulty = RoadmapDifficultyType.DIFFICULT;
-        final int requiredPeriod = 30;
+    private Member 사용자를_생성한다() {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
 
-        final List<RoadmapNodeSaveRequest> requestNodes = List.of(
-                new RoadmapNodeSaveRequest("로드맵 노드1 제목", "로드맵 노드1 설명"));
-        final List<RoadmapTagSaveRequest> requestTags = List.of(
-                new RoadmapTagSaveRequest("태그1"), new RoadmapTagSaveRequest("태그2"));
-        final RoadmapSaveRequest request = new RoadmapSaveRequest(1L, roadmapTitle, roadmapIntroduction, requestContent,
-                difficulty, requiredPeriod, requestNodes, requestTags);
-        return request;
+        return new Member(1L, new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final String roadmapTitle, final RoadmapCategory category) {
@@ -342,6 +288,10 @@ class RoadmapServiceTest {
 
     private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
         return new RoadmapCategory(1L, title);
+    }
+
+    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
+        return new RoadmapContent(1L, "콘텐츠 제목");
     }
 
     private List<RoadmapCategory> 로드맵_카테고리_리스트를_반환한다() {

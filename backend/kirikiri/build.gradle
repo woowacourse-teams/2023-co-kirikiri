@@ -111,6 +111,7 @@ tasks.named('asciidoctor') {
 }
 
 bootJar {
+    dependsOn copyDocument
     dependsOn asciidoctor
     from("${asciidoctor.outputDir}/html5") {
         into 'static/docs'

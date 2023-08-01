@@ -9,10 +9,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class RoadmapNode extends BaseEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
@@ -34,12 +36,11 @@ public class RoadmapNode extends BaseEntity {
     private final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
 
     public RoadmapNode(final String title, final String content) {
-        validate(title, content);
-        this.title = title;
-        this.content = content;
+        this(null, title, content);
     }
 
     public RoadmapNode(final Long id, final String title, final String content) {
+        validate(title, content);
         this.id = id;
         this.title = title;
         this.content = content;
@@ -48,20 +49,6 @@ public class RoadmapNode extends BaseEntity {
     private void validate(final String title, final String content) {
         validateTitleLength(title);
         validateContentLength(content);
-    }
-
-    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
-        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
-    }
-
-    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
-        if (this.roadmapContent == null) {
-            this.roadmapContent = roadmapContent;
-        }
-    }
-
-    public void addImages(final RoadmapNodeImages roadmapNodeImages) {
-        this.roadmapNodeImages.addAll(roadmapNodeImages);
     }
 
     private void validateTitleLength(final String title) {
@@ -78,8 +65,18 @@ public class RoadmapNode extends BaseEntity {
         }
     }
 
-    public Long getId() {
-        return id;
+    public void addImages(final RoadmapNodeImages roadmapNodeImages) {
+        this.roadmapNodeImages.addAll(roadmapNodeImages);
+    }
+
+    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
+        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
+    }
+
+    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
+        if (this.roadmapContent == null) {
+            this.roadmapContent = roadmapContent;
+        }
     }
 
     public String getTitle() {
@@ -92,9 +89,5 @@ public class RoadmapNode extends BaseEntity {
 
     public RoadmapContent getRoadmapContent() {
         return roadmapContent;
-    }
-
-    public RoadmapNodeImages getImages() {
-        return roadmapNodeImages;
     }
 }

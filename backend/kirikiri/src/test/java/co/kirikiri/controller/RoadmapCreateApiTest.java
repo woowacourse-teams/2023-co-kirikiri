@@ -1,24 +1,34 @@
 package co.kirikiri.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.RoadmapService;
+import co.kirikiri.service.RoadmapCreateService;
+import co.kirikiri.service.RoadmapReadService;
+import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,13 +38,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Attributes;
+import org.springframework.restdocs.snippet.Attributes.Attribute;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @WebMvcTest(RoadmapController.class)
 public class RoadmapCreateApiTest extends ControllerTestHelper {
 
     @MockBean
-    private RoadmapService roadmapService;
+    private RoadmapCreateService roadmapCreateService;
+
+    @MockBean
+    private RoadmapReadService roadmapReadService;
 
     @Test
     void 정상적으로_로드맵을_생성한다() throws Exception {
@@ -45,7 +59,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willReturn(1L);
 
         // expect
@@ -61,7 +75,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new AuthenticationException("존재하지 않는 회원입니다."));
 
         // expect
@@ -78,7 +92,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 10"));
 
         // expect
@@ -109,7 +123,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
@@ -140,7 +154,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 소개글의 길이는 최소 1글자, 최대 150글자입니다."));
 
         // expect
@@ -171,7 +185,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 2000글자입니다."));
 
         // expect
@@ -202,7 +216,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 추천 소요 기간은 최소 0일, 최대 1000일입니다."));
 
         // expect
@@ -233,7 +247,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 노드의 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
@@ -264,7 +278,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 노드의 설명의 길이는 최소 1글자, 최대 2000글자입니다."));
 
         // expect
@@ -296,7 +310,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest(tagName)));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("태그 이름은 최소 1자부터 최대 10자까지 가능합니다."));
 
         // expect
@@ -314,7 +328,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                         new RoadmapTagSaveRequest("태그5"), new RoadmapTagSaveRequest("태그6")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("태그의 개수는 최대 5개까지 가능합니다."));
 
         // expect
@@ -330,11 +344,303 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 List.of(new RoadmapTagSaveRequest("태그1"), new RoadmapTagSaveRequest("태그1")));
         final String jsonRequest = objectMapper.writeValueAsString(request);
 
-        given(roadmapService.create(any(), any()))
+        given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("태그 이름은 중복될 수 없습니다."));
 
         // expect
         로드맵_생성_요청(jsonRequest, status().isBadRequest());
+    }
+
+    @Test
+    void 로드맵의_리뷰를_생성한다() throws Exception {
+        // given
+        doNothing().when(roadmapCreateService)
+                .createReview(any(), any(), any());
+
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isCreated())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용")
+                                        .attributes(new Attribute(RESTRICT, "- 길이 : 0 ~ 1000")),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")
+                                        .attributes(new Attribute(RESTRICT, "- 0.0부터 5.0까지, 0.5 단위의 값"))
+                                        .optional()),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))));
+    }
+
+    @Test
+    void 로드맵_리뷰_생성시_별점이_null이라면_예외가_발생한다() throws Exception {
+        // given
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest(" ", null);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        final String response = mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$[0].message").value("별점을 입력해 주세요."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용"),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<ErrorResponse> errorResponses = objectMapper.readValue(response, new TypeReference<>() {
+        });
+        final List<ErrorResponse> expected = List.of(new ErrorResponse("별점을 입력해 주세요."));
+        assertThat(errorResponses)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_생성시_별점이_잘못된_값이면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new BadRequestException("별점은 0부터 5까지 0.5 단위로 설정할 수 있습니다."))
+                .when(roadmapCreateService)
+                .createReview(any(), any(), any());
+
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest("리뷰 내용", 5.5);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        final String response = mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message").value("별점은 0부터 5까지 0.5 단위로 설정할 수 있습니다."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용"),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse("별점은 0부터 5까지 0.5 단위로 설정할 수 있습니다.");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_생성시_내용이_1000자가_넘으면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new BadRequestException("리뷰는 최대 1000글자까지 입력할 수 있습니다."))
+                .when(roadmapCreateService)
+                .createReview(any(), any(), any());
+
+        final String content = "a".repeat(1001);
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest(content, 5.0);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        final String response = mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message").value("리뷰는 최대 1000글자까지 입력할 수 있습니다."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용"),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse("리뷰는 최대 1000글자까지 입력할 수 있습니다.");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_생성시_존재하지_않은_로드맵이면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1L"))
+                .when(roadmapCreateService)
+                .createReview(any(), any(), any());
+
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        final String response = mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message").value("존재하지 않는 로드맵입니다. roadmapId = 1L"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용"),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse("존재하지 않는 로드맵입니다. roadmapId = 1L");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_생성시_완료한_골룸이_없으면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new BadRequestException("로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri"))
+                .when(roadmapCreateService)
+                .createReview(any(), any(), any());
+
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        final String response = mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message")
+                                .value("로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용"),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse(
+                "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = 1L memberIdentifier = cokirikiri");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_생성시_로드맵_생성자가_리뷰를_달려고_하면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new BadRequestException("로드맵 생성자는 리뷰를 달 수 없습니다. roadmapId = 1L memberId = 1L"))
+                .when(roadmapCreateService)
+                .createReview(any(), any(), any());
+
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        final String response = mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message")
+                                .value("로드맵 생성자는 리뷰를 달 수 없습니다. roadmapId = 1L memberId = 1L"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용"),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse(
+                "로드맵 생성자는 리뷰를 달 수 없습니다. roadmapId = 1L memberId = 1L");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_생성시_이미_리뷰를_단적이_있으면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new BadRequestException("이미 작성한 리뷰가 존재합니다. roadmapId = 1L memberId = 1L"))
+                .when(roadmapCreateService)
+                .createReview(any(), any(), any());
+
+        final RoadmapReviewSaveRequest request = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        final String response = mockMvc.perform(post(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message")
+                                .value("이미 작성한 리뷰가 존재합니다. roadmapId = 1L memberId = 1L"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("content").description("로드맵 리뷰 내용"),
+                                fieldWithPath("rate").description("로드맵 리뷰 별점")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse(
+                "이미 작성한 리뷰가 존재합니다. roadmapId = 1L memberId = 1L");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
     }
 
     private RoadmapSaveRequest 로드맵_생성_요청을_생성한다(final Long categoryId, final String roadmapTitle,
@@ -383,5 +689,4 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                                 headerWithName("Location").description("로드맵 아이디").optional()
                         )));
     }
-
 }

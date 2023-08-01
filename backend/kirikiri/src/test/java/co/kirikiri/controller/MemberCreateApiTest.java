@@ -3,16 +3,17 @@ package co.kirikiri.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
-import co.kirikiri.service.AuthService;
 import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
@@ -23,19 +24,17 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @WebMvcTest(MemberController.class)
-class MemberControllerTest extends ControllerTestHelper {
+class MemberCreateApiTest extends ControllerTestHelper {
 
     @MockBean
     private MemberService memberService;
-    @MockBean
-    private AuthService authService;
 
     @Test
     void 정상적으로_회원가입에_성공한다() throws Exception {
@@ -46,45 +45,12 @@ class MemberControllerTest extends ControllerTestHelper {
 
         //when
         //then
-        회원가입(jsonRequest, status().isCreated())
-                .andDo(
-                        documentationResultHandler.document(
-                                requestFields(
-                                        fieldWithPath("identifier").description("사용자 아이디")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 4 ~ 20  +" + "\n" +
-                                                                "- 영어 소문자, 숫자 가능")),
-                                        fieldWithPath("password").description("사용자 비밀번호")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 8 ~ 15  +" + "\n" +
-                                                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
-                                                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능")),
-                                        fieldWithPath("nickname").description("회원 닉네임")
-                                                .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 2 ~ 8")),
-                                        fieldWithPath("phoneNumber").description("회원 휴대폰 번호")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 13  +" + "\n" +
-                                                                "- 번호 형식 : 010-xxxx-xxxx")),
-                                        fieldWithPath("genderType").description("회원 성별")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 4 , 6  +" + "\n" +
-                                                                "- MALE, FEMALE")),
-                                        fieldWithPath("birthday").description("회원 생년월일")
-                                                .attributes(new Attributes.Attribute(RESTRICT,
-                                                        "- 길이 : 6  +" + "\n" +
-                                                                "- yyMMdd"))
-                                )
-                        )
-                );
-    }
+        final List<FieldDescription> requestFieldDescription = makeSuccessRequestFieldDescription();
 
-    private ResultActions 회원가입(final String jsonRequest, final ResultMatcher result) throws Exception {
-        return mockMvc.perform(post(API_PREFIX + "/members/join")
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(result)
-                .andDo(print());
+        회원가입(jsonRequest, status().isCreated())
+                .andDo(documentationResultHandler.document(
+                        requestFields(makeFieldDescriptor(requestFieldDescription)),
+                        responseHeaders(headerWithName(HttpHeaders.LOCATION).description("회원 단일 조회 api 경로"))));
     }
 
     @Test
@@ -319,5 +285,36 @@ class MemberControllerTest extends ControllerTestHelper {
 
         //then
         회원가입(jsonRequest, status().isConflict());
+    }
+
+    private ResultActions 회원가입(final String jsonRequest, final ResultMatcher result) throws Exception {
+        return mockMvc.perform(post(API_PREFIX + "/members/join")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(result)
+                .andDo(print());
+    }
+
+    private List<FieldDescription> makeSuccessRequestFieldDescription() {
+        return List.of(
+                new FieldDescription("identifier", "사용자 아이디",
+                        "- 길이 : 4 ~ 20  +" + "\n" +
+                                "- 영어 소문자, 숫자 가능"),
+                new FieldDescription("password", "사용자 비밀번호",
+                        "- 길이 : 8 ~ 15  +" + "\n" +
+                                "- 영어 소문자, 숫자, 특수문자  +" + "\n" +
+                                "- 특수문자[!,@,#,$,%,^,&,*,(,),~] 사용 가능"),
+                new FieldDescription("nickname", "회원 닉네임", "- 길이 : 2 ~ 8"),
+                new FieldDescription("phoneNumber", "회원 휴대폰 번호",
+                        "- 길이 : 13  +" + "\n" +
+                                "- 번호 형식 : 010-xxxx-xxxx"),
+                new FieldDescription("genderType", "회원 성별",
+                        "- 길이 : 4 , 6  +" + "\n" +
+                                "- MALE, FEMALE"),
+                new FieldDescription("birthday", "회원 생년월일",
+                        "- 길이 : 6  +" + "\n" +
+                                "- yyyyMMdd")
+        );
     }
 }
