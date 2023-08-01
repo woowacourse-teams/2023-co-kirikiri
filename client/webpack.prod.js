@@ -24,4 +24,13 @@ module.exports = merge(common, {
   },
 
   plugins: [new CleanWebpackPlugin(), new CompressionPlugin()],
+
+  devServer: {
+    static: path.resolve(__dirname, 'public'),
+    compress: true,
+    port: 3000,
+    historyApiFallback: true,
+    host: 'localhost',
+    open: true,
+  },
 });
