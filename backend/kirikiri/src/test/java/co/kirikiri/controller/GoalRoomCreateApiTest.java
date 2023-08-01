@@ -100,14 +100,21 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final ErrorResponse limitedMemberCountErrorResponse = new ErrorResponse("골룸 제한 인원은 빈 값일 수 없습니다.");
         final ErrorResponse goalRoomNameErrorResponse = new ErrorResponse("골룸 이름을 빈 값일 수 없습니다.");
         final ErrorResponse roadmapContentIdErrorResponse = new ErrorResponse("로드맵 컨텐츠 아이디는 빈 값일 수 없습니다.");
+        final ErrorResponse goalRoomNodeStartDateErrorResponse = new ErrorResponse("로드맵 노드 시작 날짜는 빈 값일 수 없습니다.");
+        final ErrorResponse goalRoomNodeEndDateErrorResponse = new ErrorResponse("로드맵 노드 종료 날짜는 빈 값일 수 없습니다.");
+        final ErrorResponse goalRoomTodoStartDateErrorResponse = new ErrorResponse("골룸 투두 시작 날짜는 빈 값일 수 없습니다.");
+        final ErrorResponse goalRoomTodoEndDateErrorResponse = new ErrorResponse("골룸 투두 종료 날짜는 빈 값일 수 없습니다.");
         final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
         assertThat(responses).usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(List.of(roadmapCheckCountIdErrorResponse, roadmapNodeIdErrorResponse,
-                        goalRoomTodoContentErrorResponse,
-                        limitedMemberCountErrorResponse, goalRoomNameErrorResponse, roadmapContentIdErrorResponse));
+                        goalRoomTodoContentErrorResponse, limitedMemberCountErrorResponse,
+                        goalRoomNameErrorResponse, roadmapContentIdErrorResponse,
+                        goalRoomNodeStartDateErrorResponse, goalRoomNodeEndDateErrorResponse,
+                        goalRoomTodoStartDateErrorResponse, goalRoomTodoEndDateErrorResponse
+                ));
     }
 
     @Test
