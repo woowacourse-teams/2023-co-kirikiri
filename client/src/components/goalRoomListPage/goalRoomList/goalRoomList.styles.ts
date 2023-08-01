@@ -1,0 +1,98 @@
+import styled from 'styled-components';
+
+export const ListContainer = styled.section`
+  margin-top: 6rem;
+`;
+
+export const ItemContainer = styled.article`
+  width: 40.7rem;
+  height: 28rem;
+  padding: 1.7rem 3rem 3rem;
+
+  background-color: ${({ theme }) => theme.colors.white};
+  border-radius: 34px;
+  box-shadow: -1.5653846263885498px 7.826924800872803px 46.961544036865234px 0px
+    rgba(0, 0, 0, 0.13);
+`;
+
+export const FilterBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-right: 9rem;
+  margin-bottom: 4rem;
+
+  & > p {
+    ${({ theme }) => theme.fonts.description4};
+    color: ${({ theme }) => theme.colors.gray200};
+  }
+`;
+
+export const ListWrapper = styled.div`
+  display: grid;
+  grid-row-gap: 6rem;
+  grid-template-columns: repeat(2, 1fr);
+`;
+
+export const Recruiting = styled.div`
+  ${({ theme }) => theme.fonts.description4}
+  color: ${({ theme }) => theme.colors.gray200};
+  float: right;
+`;
+
+export const Name = styled.h1`
+  ${({ theme }) => theme.fonts.description5}
+  color: ${({ theme }) => theme.colors.black};
+  margin-top: 0.8rem;
+`;
+
+export const RoadmapCreator = styled.div`
+  ${({ theme }) => theme.fonts.description1}
+  color: ${({ theme }) => theme.colors.gray200};
+  margin-top: 0.5rem;
+`;
+
+export const RoadmapIntroduce = styled.div`
+  ${({ theme }) => theme.fonts.description2}
+  color: ${({ theme }) => theme.colors.black};
+  margin-top: 2rem;
+`;
+
+export const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const Period = styled.div`
+  ${({ theme }) => theme.fonts.description2};
+  display: flex;
+  align-items: center;
+  margin-top: 1.6rem;
+
+  & > p {
+    ${({ theme }) => theme.fonts.description3}
+    margin-left: 4.3rem;
+  }
+`;
+
+export const Particpant = styled.div`
+  ${({ theme }) => theme.fonts.description2};
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+
+  & > p {
+    ${({ theme }) => theme.fonts.description3}
+    margin-left: 4.3rem;
+  }
+`;
+
+export const DetailButton = styled.button`
+  width: 100%;
+  height: 4.5rem;
+  margin-top: 3rem;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_dark};
+  border-radius: 85px;
+`;
