@@ -15,14 +15,17 @@ const SignUpForm = () => {
       nickname: '',
       phoneNumber: '',
       genderType: '',
-      birthDate: '',
+      birthday: '',
     });
 
   const { signUp } = useSignUp();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    signUp(signUpFormData);
+    signUp({
+      ...signUpFormData,
+      genderType: signUpFormData.genderType.toUpperCase(),
+    });
   };
 
   return (
@@ -73,7 +76,7 @@ const SignUpForm = () => {
           <S.FormItem>
             <SVGIcon name='CalendarIcon' />
             <input
-              name='birthDate'
+              name='birthday'
               onChange={handleInputChange}
               placeholder='생년월일 6자리 ex) 950101'
               type='number'
