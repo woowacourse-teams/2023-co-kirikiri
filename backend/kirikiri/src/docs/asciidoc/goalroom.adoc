@@ -20,7 +20,7 @@ endif::[]
 
 === *1-1* 성공
 
-operation::goal-room-create-api-test/정상적으로_골룸을_생성한다[snippets='http-request,http-response,request-fields']
+operation::goal-room-create-api-test/정상적으로_골룸을_생성한다[snippets='http-request,http-response,request-fields,response-headers']
 
 === *1-2* 실패 - 골룸 생성 시 요청에 빈값이 있을 경우
 
@@ -118,7 +118,7 @@ operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대�
 
 === *6-1* 성공
 
-operation::goal-room-create-api-test/정상적으로_골룸에_투두리스트를_추가한다[snippets='http-request,http-response,request-headers,path-parameters']
+operation::goal-room-create-api-test/정상적으로_골룸에_투두리스트를_추가한다[snippets='http-request,http-response,request-fields,request-headers,path-parameters,response-headers']
 
 === *6-2* 실패 - 골룸 투두 추가시 존재하지 않는 회원일 경우
 

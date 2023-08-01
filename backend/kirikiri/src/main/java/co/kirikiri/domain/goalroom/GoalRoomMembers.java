@@ -32,7 +32,7 @@ public class GoalRoomMembers {
         return !goalRoomLeader.equals(member);
     }
 
-    private Member findGoalRoomLeader() {
+    public Member findGoalRoomLeader() {
         return values.stream()
                 .filter(GoalRoomMember::isLeader)
                 .findFirst()

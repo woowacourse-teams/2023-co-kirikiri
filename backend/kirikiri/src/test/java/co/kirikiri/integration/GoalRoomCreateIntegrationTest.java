@@ -435,7 +435,9 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         // then
         assertThat(골룸_추가_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(골룸_추가_응답.response().header("Location")).contains("/api/goal-rooms/todos/");
+        final String header = 골룸_추가_응답.response()
+                .header(HttpHeaders.LOCATION);
+        assertThat(header).contains("/api/goal-rooms/1/todos/" + header.substring(24));
     }
 
     @Test
@@ -456,12 +458,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_추가_응답 = 골룸_추가(골룸_팔로워_액세스_토큰, 골룸_id, 골룸_추가_요청);
 
         // then
-        final List<ErrorResponse> 골룸_추가_응답_바디 = jsonToClass(골룸_추가_응답.asString(), new TypeReference<>() {
+        final ErrorResponse 골룸_추가_응답_바디 = jsonToClass(골룸_추가_응답.asString(), new TypeReference<>() {
         });
         assertThat(골룸_추가_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(골룸_추가_응답_바디).usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(List.of(new ErrorResponse("골룸 이름을 빈 값일 수 없습니다.")));
+        assertThat(골룸_추가_응답_바디).isEqualTo(new ErrorResponse("골룸의 리더만 투드리스트를 추가할 수 있습니다."));
     }
 
     @Test
@@ -482,12 +482,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_추가_응답 = 골룸_추가(골룸_리더_액세스_토큰, 골룸_id, 골룸_추가_요청);
 
         //then
-        final List<ErrorResponse> 골룸_추가_응답_바디 = jsonToClass(골룸_추가_응답.asString(), new TypeReference<>() {
+        final ErrorResponse 골룸_추가_응답_바디 = jsonToClass(골룸_추가_응답.asString(), new TypeReference<>() {
         });
         assertThat(골룸_추가_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(골룸_추가_응답_바디).usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(List.of(new ErrorResponse("이미 종료된 골룸입니다.")));
+        assertThat(골룸_추가_응답_바디).isEqualTo(new ErrorResponse("이미 종료된 골룸입니다."));
     }
 
     private ExtractableResponse<Response> 로드맵_생성(final RoadmapSaveRequest 로드맵_생성_요청, final String 액세스_토큰) {

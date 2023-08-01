@@ -11,10 +11,10 @@ public record GoalRoomRoadmapNodeRequest(
         @NotNull(message = "인증 횟수는 빈 값일 수 없습니다.")
         Integer checkCount,
 
-        @JsonFormat(pattern = "yyMMdd")
+        @JsonFormat(pattern = "yyyyMMdd")
         LocalDate startDate,
 
-        @JsonFormat(pattern = "yyMMdd")
+        @JsonFormat(pattern = "yyyyMMdd")
         LocalDate endDate
 ) {
 

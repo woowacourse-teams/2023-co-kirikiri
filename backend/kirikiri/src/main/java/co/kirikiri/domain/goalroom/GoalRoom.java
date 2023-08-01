@@ -18,7 +18,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,16 +45,16 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     private LocalDate endDate;
 
     @Embedded
-    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
 
     @Embedded
-    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos(new ArrayList<>());
+    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos();
 
     @Embedded
-    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     @Embedded
-    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent, final Member member) {
@@ -142,7 +141,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     }
 
     public Member findGoalRoomLeaderInPendingMember() {
-        return goalRoomPendingMembers.findGoalRoomLeader();
+        if (status == GoalRoomStatus.RECRUITING) {
+            return goalRoomPendingMembers.findGoalRoomLeader();
+        }
+        return goalRoomMembers.findGoalRoomLeader();
     }
 
     public boolean isNotLeader(final Member member) {
@@ -154,6 +156,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public boolean isCompleted() {
         return this.status == GoalRoomStatus.COMPLETED;
+    }
+
+    public GoalRoomToDo findLastGoalRoomTodo() {
+        return goalRoomToDos.findLast();
     }
 
     public Integer getCurrentPendingMemberCount() {

@@ -94,14 +94,16 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
-    public Long addGoalRoomTodo(final Long goalRoomId, final String Identifier, final GoalRoomTodoRequest goalRoomTodoRequest) {
-        final Member member = findMemberByIdentifier(Identifier);
+    @Transactional
+    public Long addGoalRoomTodo(final Long goalRoomId, final String identifier, final GoalRoomTodoRequest goalRoomTodoRequest) {
+        final Member member = findMemberByIdentifier(identifier);
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         checkGoalRoomCompleted(goalRoom);
-        final GoalRoomToDo goalRoomToDo = GoalRoomMapper.convertToGoalRoomTodo(goalRoomTodoRequest);
         checkGoalRoomLeader(member, goalRoom);
+        final GoalRoomToDo goalRoomToDo = GoalRoomMapper.convertToGoalRoomTodo(goalRoomTodoRequest);
         goalRoom.addGoalRoomTodo(goalRoomToDo);
-        return goalRoomToDo.getId();
+        goalRoomRepository.save(goalRoom);
+        return goalRoom.findLastGoalRoomTodo().getId();
     }
 
     private void checkGoalRoomCompleted(final GoalRoom goalRoom) {

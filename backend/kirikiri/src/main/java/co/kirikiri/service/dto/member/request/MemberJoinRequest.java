@@ -21,8 +21,7 @@ public record MemberJoinRequest(
 
         GenderType genderType,
 
-        @JsonFormat(pattern = "yyMMdd")
+        @JsonFormat(pattern = "yyyyMMdd")
         LocalDate birthday
 ) {
-
 }

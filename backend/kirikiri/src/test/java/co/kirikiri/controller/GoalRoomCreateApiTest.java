@@ -9,6 +9,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -71,7 +72,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isCreated())
                 .andDo(documentationResultHandler.document(
                         requestFields(makeFieldDescriptor(requestFieldDescription)),
-                        requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token"))
+                        requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token")),
+                        responseHeaders(headerWithName(HttpHeaders.LOCATION).description("골룸 단일 조회 api 경로"))
                 ))
                 .andReturn();
 
@@ -342,12 +344,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                         .header(AUTHORIZATION, "Bearer <AccessToken>")
                         .contextPath(API_PREFIX))
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        )))
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디"))))
                 .andExpect(status().isOk());
     }
 
@@ -369,15 +367,9 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("존재하지 않는 골룸입니다. roadmapId = 1"))
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )));
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))));
     }
 
     @Test
@@ -398,15 +390,9 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("이미 참가되어 있는 골룸입니다."))
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )));
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))));
     }
 
     @Test
@@ -426,15 +412,9 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("제한 인원이 가득 찬 골룸에는 참가할 수 없습니다."))
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )));
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))));
     }
 
     @Test
@@ -446,7 +426,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .willReturn(1L);
 
         //when
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -454,16 +434,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(documentationResultHandler.document(
-                        requestFields(
-                                makeFieldDescriptor(
-                                        makeAddTodoSuccessRequestFieldDescription())
-                        ),
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        )))
+                        requestFields(makeFieldDescriptor(makeAddTodoSuccessRequestFieldDescription())),
+                        requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("액세스 토큰")),
+                        responseHeaders(headerWithName(HttpHeaders.LOCATION).description("골룸 투두 단일 조회 api 경로")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디"))))
                 .andReturn();
 
         //then
@@ -481,7 +455,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
 
         //when
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1)
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -489,15 +463,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isNotFound())
                 .andDo(print())
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )))
+                        requestFields(makeFieldDescriptor(makeAddTodoSuccessRequestFieldDescription())),
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
                 .andReturn();
 
         //then
@@ -517,7 +486,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
 
         //when
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1)
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -525,15 +494,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isNotFound())
                 .andDo(print())
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )))
+                        requestFields(makeFieldDescriptor(makeAddTodoSuccessRequestFieldDescription())),
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
                 .andReturn();
 
         //then
@@ -553,7 +517,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
 
         //when
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -561,15 +525,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isBadRequest())
                 .andDo(print())
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )))
+                        requestFields(makeFieldDescriptor(makeAddTodoSuccessRequestFieldDescription())),
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
                 .andReturn();
 
         //then
@@ -589,7 +548,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
 
         //when
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -597,15 +556,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isBadRequest())
                 .andDo(print())
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )))
+                        requestFields(makeFieldDescriptor(makeAddTodoSuccessRequestFieldDescription())),
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
                 .andReturn();
 
         //then
@@ -626,7 +580,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
 
         //when
-        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/1/todos")
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -634,15 +588,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andExpect(status().isBadRequest())
                 .andDo(print())
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        pathParameters(
-                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("예외 메세지")
-                        )))
+                        requestFields(makeFieldDescriptor(makeAddTodoSuccessRequestFieldDescription())),
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(parameterWithName("goalRoomId").description("골룸 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
                 .andReturn();
 
         //then
@@ -668,21 +617,21 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new FieldDescription("limitedMemberCount", "최대 제한 인원", "- 길이 : 1 ~ 20"),
                 new FieldDescription("goalRoomTodo", "최초 골룸 투두"),
                 new FieldDescription("goalRoomTodo.content", "골룸 투두 컨텐츠", "- 길이 : 1 ~ 250"),
-                new FieldDescription("goalRoomTodo.startDate", "골룸 투두 시작일", "- yyMMdd 형식"),
-                new FieldDescription("goalRoomTodo.endDate", "골룸 투두 종료일", "- yyMMdd 형식"),
+                new FieldDescription("goalRoomTodo.startDate", "골룸 투두 시작일", "- yyyyMMdd 형식"),
+                new FieldDescription("goalRoomTodo.endDate", "골룸 투두 종료일", "- yyyyMMdd 형식"),
                 new FieldDescription("goalRoomRoadmapNodeRequests", "골룸 노드 정보"),
                 new FieldDescription("goalRoomRoadmapNodeRequests[].roadmapNodeId", "설정할 로드맵 노드의 id"),
                 new FieldDescription("goalRoomRoadmapNodeRequests[].checkCount", "골룸 노드의 인증 횟수"),
-                new FieldDescription("goalRoomRoadmapNodeRequests[].startDate", "골룸 노드의 시작일", "- yyMMdd 형식"),
-                new FieldDescription("goalRoomRoadmapNodeRequests[].endDate", "골룸 노드의 종료일", "- yyMMdd 형식")
+                new FieldDescription("goalRoomRoadmapNodeRequests[].startDate", "골룸 노드의 시작일", "- yyyyMMdd 형식"),
+                new FieldDescription("goalRoomRoadmapNodeRequests[].endDate", "골룸 노드의 종료일", "- yyyyMMdd 형식")
         );
     }
 
     private List<FieldDescription> makeAddTodoSuccessRequestFieldDescription() {
         return List.of(
                 new FieldDescription("content", "골룸 투두 컨텐츠", "- 길이 : 1 ~ 250"),
-                new FieldDescription("startDate", "골룸 투두 시작일", "- yyMMdd 형식"),
-                new FieldDescription("endDate", "골룸 투두 종료일", "- yyMMdd 형식")
+                new FieldDescription("startDate", "골룸 투두 시작일", "- yyyyMMdd 형식"),
+                new FieldDescription("endDate", "골룸 투두 종료일", "- yyyyMMdd 형식")
         );
     }
 }

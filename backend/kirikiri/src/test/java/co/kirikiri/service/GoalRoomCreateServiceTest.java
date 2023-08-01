@@ -360,7 +360,7 @@ class GoalRoomCreateServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier1", goalRoomTodoRequest))
+        assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier2", goalRoomTodoRequest))
                 .isInstanceOf(BadRequestException.class);
     }
 
