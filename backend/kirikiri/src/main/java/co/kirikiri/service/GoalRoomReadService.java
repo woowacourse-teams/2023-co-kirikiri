@@ -16,12 +16,12 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -65,7 +65,8 @@ public class GoalRoomReadService {
     }
 
     public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId) {
-        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(goalRoomId);
+        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(
+                goalRoomId);
         checkGoalRoomEmpty(goalRoomId, goalRoomMembers);
         return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMembers);
     }

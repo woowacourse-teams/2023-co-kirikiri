@@ -6,4 +6,5 @@ public record GoalRoomMemberResponse(
         String imagePath,
         Double accomplishmentRate
 ) {
+
 }

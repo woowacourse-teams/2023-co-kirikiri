@@ -114,6 +114,48 @@ class GoalRoomPendingMemberRepositoryTest {
     }
 
     @Test
+    void 골룸으로_사용자_대기_목록과_멤버를_함께_조회한다() {
+        // given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.now(), savedGoalRoom, creator);
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.now(), savedGoalRoom, member1);
+        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.now(), savedGoalRoom, member2);
+        final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.now(), savedGoalRoom, member3);
+        goalRoomPendingMemberRepository.saveAll(
+                List.of(goalRoomPendingMember1, goalRoomPendingMember2, goalRoomPendingMember3));
+
+        final List<GoalRoomPendingMember> expected = List.of(goalRoomPendingMember, goalRoomPendingMember1,
+                goalRoomPendingMember2, goalRoomPendingMember3);
+
+        // when
+        final List<GoalRoomPendingMember> findGoalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
+                goalRoom);
+
+        // then
+        assertThat(findGoalRoomPendingMembers)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "joinedAt")
+                .isEqualTo(expected);
+    }
+
+    @Test
     void 골룸에_참가한다() {
         //given
         final Member creator = 크리에이터를_저장한다();
@@ -124,7 +166,7 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member follower = 사용자를_저장한다("identifier2", "팔로워");
+        final Member follower = 사용자를_생성한다("identifier2", "password!2", "name", "010-1111-1111");
 
         //when
         savedGoalRoom.join(follower);
@@ -150,10 +192,11 @@ class GoalRoomPendingMemberRepositoryTest {
         return memberRepository.save(creator);
     }
 
-    private Member 사용자를_저장한다(final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
-        final Member member = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password("password1!")), new Nickname(nickname), memberProfile);
+    private Member 사용자를_생성한다(final String identifier, final String password, final String nickname,
+                             final String phoneNumber) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), phoneNumber);
+        final Member member = new Member(new Identifier(identifier), new EncryptedPassword(new Password(password)),
+                new Nickname(nickname), memberProfile);
         return memberRepository.save(member);
     }
 

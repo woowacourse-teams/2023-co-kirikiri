@@ -57,7 +57,6 @@ class GoalRoomRepositoryTest {
 
     @Test
     void 골룸_아이디로_골룸_정보를_조회한다() {
-        // given
         //given
         final Member creator = 사용자를_생성한다("name1", "01011111111", "identifier1", "password!1");
         final RoadmapCategory category = 카테고리를_저장한다("여가");
@@ -160,6 +159,43 @@ class GoalRoomRepositoryTest {
                 () -> assertThat(goalRoomsPage.getContent()).hasSize(2),
                 () -> assertThat(goalRoomsPage.getContent()).isEqualTo(List.of(goalRoom1, goalRoom2))
         );
+    }
+
+    @Test
+    void 골룸의_노드의_시작날짜가_오늘인_골룸을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1));
+        로드맵을_생성한다(creator, category, new RoadmapNodes(List.of(roadmapNode1)), roadmapContent);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
+                roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
+                roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(10), TODAY.plusDays(20),
+                roadmapNode1);
+
+        final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1)), creator);
+        final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode2)), creator);
+        final GoalRoom goalRoom3 = 골룸을_생성한다("goalroom3", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3)), creator);
+
+        final GoalRoom savedGoalRoom1 = goalRoomRepository.save(goalRoom1);
+        final GoalRoom savedGoalRoom2 = goalRoomRepository.save(goalRoom2);
+        final GoalRoom savedGoalRoom3 = goalRoomRepository.save(goalRoom3);
+
+        // when
+        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDateNow();
+
+        // then
+        assertThat(findGoalRooms)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(List.of(savedGoalRoom1, savedGoalRoom2));
     }
 
     private Member 크리에이터를_저장한다() {

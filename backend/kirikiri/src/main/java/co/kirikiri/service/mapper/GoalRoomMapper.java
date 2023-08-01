@@ -25,10 +25,10 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -118,7 +118,8 @@ public class GoalRoomMapper {
         return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue());
     }
 
-    public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(final List<GoalRoomMember> goalRoomMembers) {
+    public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(
+            final List<GoalRoomMember> goalRoomMembers) {
         return goalRoomMembers.stream()
                 .map(GoalRoomMapper::convertToGoalRoomMemberResponse)
                 .toList();
