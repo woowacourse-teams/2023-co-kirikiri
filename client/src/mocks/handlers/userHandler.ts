@@ -8,7 +8,7 @@ export const userHandler = [
     (req, res, ctx) => {
       const { identifier, password } = req.body;
 
-      if (identifier === 'msw' && password === 'password') {
+      if (identifier === 'msw' && password === '1234') {
         const response: UserLoginResponse = {
           accessToken: 'accessTT',
           refreshToken: 'refreshTT',
