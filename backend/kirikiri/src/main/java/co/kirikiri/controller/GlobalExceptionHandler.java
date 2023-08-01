@@ -48,13 +48,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
-        log.error(exception.getMessage(), exception);
-        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrorResponse>> handleMethodArgumentNotValidException(
             final MethodArgumentNotValidException exception) {
@@ -65,6 +58,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServerException.class)
     public ResponseEntity<ErrorResponse> handleServerException(final ServerException exception) {
+        log.error(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
         log.error(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);

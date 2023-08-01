@@ -18,9 +18,9 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -153,10 +153,9 @@ class RoadmapRepositoryTest {
     }
 
     private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30),
-                new Nickname("썬샷"), "01083004367");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
         final Member member = new Member(new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
 
         return memberRepository.save(member);
     }
@@ -166,18 +165,10 @@ class RoadmapRepositoryTest {
         return roadmapCategoryRepository.save(category);
     }
 
-    private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
-        return List.of(
-                new RoadmapNodeImage("node-image1.png", "node-image1-save-path",
-                        ImageContentType.PNG)
-        );
-    }
-
     private Member 크리에이터를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname("코끼리"), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
         return memberRepository.save(creator);
     }
 
@@ -187,7 +178,13 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getValues());
+
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
+                creator, category);
+        roadmap.addContent(roadmapContent);
+        return roadmap;
     }
 
     private RoadmapNodes 로드맵_노드들을_생성한다() {
