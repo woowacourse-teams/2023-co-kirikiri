@@ -1,5 +1,6 @@
 package co.kirikiri.persistence.roadmap;
 
+import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
 
@@ -10,8 +11,8 @@ import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
+import java.util.Optional;
 
 public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter implements RoadmapQueryRepository {
 
@@ -20,21 +21,37 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
-                                                final Pageable pageable) {
+    public Optional<Roadmap> findRoadmapById(final Long roadmapId) {
+        return Optional.ofNullable(selectFrom(roadmap)
+                .join(roadmap.creator, member)
+                .fetchJoin()
+                .join(roadmap.category, roadmapCategory)
+                .fetchJoin()
+                .where(roadmap.id.eq(roadmapId))
+                .fetchOne());
+    }
 
-        return applyPagination(pageable,
-                (contentQuery) -> contentQuery.selectFrom(roadmap)
-                        .innerJoin(roadmap.category, roadmapCategory)
-                        .where(statusCond(RoadmapStatus.CREATED), categoryCond(category))
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .orderBy(sortCond(orderType))
-                        .fetchJoin(),
-                (countQuery) -> countQuery.select(roadmap.count())
-                        .from(roadmap)
-                        .innerJoin(roadmap.category, roadmapCategory)
-                        .where(statusCond(RoadmapStatus.CREATED), categoryCond(category)));
+    @Override
+    public List<Roadmap> findRoadmapsByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
+                                            final Long lastRoadmapId, final int pageSize) {
+
+        return selectFrom(roadmap)
+                .innerJoin(roadmap.category, roadmapCategory)
+                .where(
+                        lessThanRoadmapId(lastRoadmapId),
+                        statusCond(RoadmapStatus.CREATED),
+                        categoryCond(category))
+                .limit(pageSize)
+                .orderBy(sortCond(orderType))
+                .fetchJoin()
+                .fetch();
+    }
+
+    private BooleanExpression lessThanRoadmapId(final Long lastRoadmapId) {
+        if (lastRoadmapId == null) {
+            return null;
+        }
+        return roadmap.id.lt(lastRoadmapId);
     }
 
     private BooleanExpression statusCond(final RoadmapStatus status) {

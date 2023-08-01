@@ -3,7 +3,6 @@ package co.kirikiri.persistence.roadmap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -16,7 +15,6 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -24,8 +22,6 @@ import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 @RepositoryTest
 class RoadmapRepositoryTest {
@@ -56,6 +52,19 @@ class RoadmapRepositoryTest {
     }
 
     @Test
+    void 단일_로드맵을_조회한다() {
+        // given
+        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
+
+        // when
+        final Roadmap expectedRoadmap = roadmapRepository.findRoadmapById(savedRoadmap.getId()).get();
+
+        assertThat(expectedRoadmap)
+                .usingRecursiveComparison()
+                .isEqualTo(savedRoadmap);
+    }
+
+    @Test
     void 카테고리_값이_null이라면_삭제되지_않은_전체_로드맵을_최신순으로_조회한다() {
         // given
         final Member creator = 크리에이터를_생성한다();
@@ -71,30 +80,23 @@ class RoadmapRepositoryTest {
 
         final RoadmapCategory category = null;
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final PageRequest firstPage = PageRequest.of(0, 2);
-        final PageRequest secondPage = PageRequest.of(1, 2);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
-                firstPage);
-        final Page<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
-                secondPage);
+        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapsByCond(category, orderType,
+                null, 2);
+        final List<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapsByCond(category, orderType,
+                gameRoadmap2.getId(), 2);
 
         // then
         assertAll(
-                () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
+                () -> assertThat(firstPageRoadmaps.size()).isEqualTo(2),
+                () -> assertThat(secondPageRoadmaps.size()).isEqualTo(1),
 
-                () -> assertThat(secondPageRoadmaps.getTotalPages()).isEqualTo(2),
-                () -> assertThat(secondPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(secondPageRoadmaps.getContent().size()).isEqualTo(1),
-
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(travelRoadmap, gameRoadmap2)),
 
-                () -> assertThat(secondPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(secondPageRoadmaps).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap))
         );
@@ -115,30 +117,18 @@ class RoadmapRepositoryTest {
         roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, deletedGameRoadmap));
 
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final PageRequest firstPage = PageRequest.of(0, 10);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(gameCategory, orderType,
-                firstPage);
+        final List<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapsByCond(gameCategory, orderType,
+                null, 10);
 
         // then
         assertAll(
-                () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(1),
-                () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstPageRoadmaps.size()).isEqualTo(2),
+                () -> assertThat(firstPageRoadmaps).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
         );
-    }
-
-    @Test
-    void 단일_로드맵을_조회한다() {
-        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
-        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
-
-        assertThat(expectedRoadmap).usingRecursiveComparison()
-                .isEqualTo(savedRoadmap);
     }
 
     private Roadmap 로드맵을_생성한다() {

@@ -51,17 +51,17 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
@@ -292,14 +292,16 @@ class GoalRoomCreateServiceTest {
         final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
 
-        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+        goalRoom.addGoalRoomTodo(
+                new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
 
-        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY,
+                TEN_DAY_LATER);
 
         //when
         //then
@@ -315,7 +317,8 @@ class GoalRoomCreateServiceTest {
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
 
-        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY,
+                TEN_DAY_LATER);
 
         //when
         //then
@@ -330,14 +333,16 @@ class GoalRoomCreateServiceTest {
         final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
 
-        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+        goalRoom.addGoalRoomTodo(
+                new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
-        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY,
+                TEN_DAY_LATER);
 
         //when
         //then
@@ -352,7 +357,8 @@ class GoalRoomCreateServiceTest {
         final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
 
-        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+        goalRoom.addGoalRoomTodo(
+                new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
         goalRoom.complete();
 
         given(memberRepository.findByIdentifier(any()))
@@ -360,7 +366,8 @@ class GoalRoomCreateServiceTest {
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
 
-        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY,
+                TEN_DAY_LATER);
 
         //when
         //then
@@ -376,14 +383,16 @@ class GoalRoomCreateServiceTest {
         final Member member = 사용자를_생성한다(2L, "identifier2", "멤버");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
 
-        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+        goalRoom.addGoalRoomTodo(
+                new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
 
-        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY, TEN_DAY_LATER);
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY,
+                TEN_DAY_LATER);
 
         //when
         //then
@@ -398,7 +407,8 @@ class GoalRoomCreateServiceTest {
         final Member creator = 사용자를_생성한다(1L, "identifier1", "시진이");
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent, 20);
 
-        goalRoom.addGoalRoomTodo(new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
+        goalRoom.addGoalRoomTodo(
+                new GoalRoomToDo(new GoalRoomTodoContent("goalRoomTodoContent"), new Period(TODAY, TEN_DAY_LATER)));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
@@ -406,7 +416,8 @@ class GoalRoomCreateServiceTest {
                 .willReturn(Optional.of(goalRoom));
 
         final String goalRoomTodoContent = "a".repeat(251);
-        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest(goalRoomTodoContent, TODAY, TEN_DAY_LATER);
+        final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest(goalRoomTodoContent, TODAY,
+                TEN_DAY_LATER);
 
         //when
         //then

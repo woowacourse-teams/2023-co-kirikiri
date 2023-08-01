@@ -27,4 +27,5 @@ public record MemberJoinRequest(
         @JsonFormat(pattern = "yyyyMMdd")
         LocalDate birthday
 ) {
+
 }

@@ -31,6 +31,9 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -39,9 +42,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomCreateApiTest extends ControllerTestHelper {
@@ -448,7 +448,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .andReturn();
 
         //then
-        assertThat(mvcResult.getResponse().getHeader(HttpHeaders.LOCATION)).isEqualTo(API_PREFIX + "/goal-rooms/1/todos/1");
+        assertThat(mvcResult.getResponse().getHeader(HttpHeaders.LOCATION)).isEqualTo(
+                API_PREFIX + "/goal-rooms/1/todos/1");
     }
 
     @Test
@@ -459,7 +460,6 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         doThrow(new NotFoundException("존재하지 않는 회원입니다."))
                 .when(goalRoomCreateService)
                 .addGoalRoomTodo(anyLong(), anyString(), any());
-
 
         //when
         final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1)
@@ -491,7 +491,6 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .when(goalRoomCreateService)
                 .addGoalRoomTodo(anyLong(), anyString(), any());
 
-
         //when
         final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1)
                         .content(jsonRequest)
@@ -521,7 +520,6 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         doThrow(new BadRequestException("이미 종료된 골룸입니다."))
                 .when(goalRoomCreateService)
                 .addGoalRoomTodo(anyLong(), anyString(), any());
-
 
         //when
         final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
@@ -553,7 +551,6 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .when(goalRoomCreateService)
                 .addGoalRoomTodo(anyLong(), anyString(), any());
 
-
         //when
         final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
                         .content(jsonRequest)
@@ -584,7 +581,6 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         doThrow(new BadRequestException("투두 컨텐츠의 길이가 적절하지 않습니다."))
                 .when(goalRoomCreateService)
                 .addGoalRoomTodo(anyLong(), anyString(), any());
-
 
         //when
         final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)

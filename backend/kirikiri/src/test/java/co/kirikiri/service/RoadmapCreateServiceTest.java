@@ -38,6 +38,7 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -85,8 +86,9 @@ class RoadmapCreateServiceTest {
 
         final List<RoadmapNodeSaveRequest> roadmapNodes = List.of(
                 new RoadmapNodeSaveRequest("로드맵 노드1 제목", "로드맵 노드1 설명"));
+        final List<RoadmapTagSaveRequest> roadmapTags = List.of(new RoadmapTagSaveRequest("태그 1"));
         final RoadmapSaveRequest request = new RoadmapSaveRequest(1L, roadmapTitle, roadmapIntroduction, roadmapContent,
-                difficulty, requiredPeriod, roadmapNodes);
+                difficulty, requiredPeriod, roadmapNodes, roadmapTags);
 
         given(roadmapCategoryRepository.findById(any()))
                 .willReturn(Optional.of(category));
@@ -106,7 +108,8 @@ class RoadmapCreateServiceTest {
         // given
         final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")),
+                List.of(new RoadmapTagSaveRequest("태그 1")));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
@@ -121,7 +124,8 @@ class RoadmapCreateServiceTest {
         // given
         final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")));
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")),
+                List.of(new RoadmapTagSaveRequest("태그 1")));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -132,7 +136,6 @@ class RoadmapCreateServiceTest {
         assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
                 .isInstanceOf(NotFoundException.class);
     }
-
 
     @Test
     void 로드맵에_대한_리뷰를_추가한다() {
@@ -151,7 +154,8 @@ class RoadmapCreateServiceTest {
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(Optional.of(new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom, follower)));
+                .thenReturn(Optional.of(
+                        new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom, follower)));
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.empty());
 
@@ -212,7 +216,8 @@ class RoadmapCreateServiceTest {
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(Optional.of(new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom, follower)));
+                .thenReturn(Optional.of(
+                        new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom, follower)));
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.of(new RoadmapReview("로드맵 짱!", 5.0, member)));
 

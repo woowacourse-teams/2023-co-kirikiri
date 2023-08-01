@@ -23,11 +23,11 @@ import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Service
 @Transactional
@@ -102,7 +102,8 @@ public class GoalRoomCreateService {
     }
 
     @Transactional
-    public Long addGoalRoomTodo(final Long goalRoomId, final String identifier, final GoalRoomTodoRequest goalRoomTodoRequest) {
+    public Long addGoalRoomTodo(final Long goalRoomId, final String identifier,
+                                final GoalRoomTodoRequest goalRoomTodoRequest) {
         final Member member = findMemberByIdentifier(identifier);
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         checkGoalRoomCompleted(goalRoom);

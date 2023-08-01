@@ -31,13 +31,13 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomReadApiTest extends ControllerTestHelper {
@@ -235,8 +235,10 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     @Test
     void 정상적으로_골룸_멤버를_조회한다() throws Exception {
         //given
-        final GoalRoomMemberResponse goalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "nickname1", "imagePath1", 50D);
-        final GoalRoomMemberResponse goalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "nickname2", "imagePath2", 40D);
+        final GoalRoomMemberResponse goalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "nickname1", "imagePath1",
+                50D);
+        final GoalRoomMemberResponse goalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "nickname2", "imagePath2",
+                40D);
         given(goalRoomReadService.findGoalRoomMembers(anyLong()))
                 .willReturn(List.of(goalRoomMemberResponse1, goalRoomMemberResponse2));
 

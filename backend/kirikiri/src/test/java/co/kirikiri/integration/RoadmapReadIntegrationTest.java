@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.integration.helper.IntegrationTest;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
-import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
@@ -17,10 +15,13 @@ import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -32,17 +33,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-@SuppressWarnings("NonAsciiCharacters")
-class RoadmapReadIntegrationTest extends IntegrationTest {
+public class RoadmapReadIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
-    private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
-    public RoadmapReadIntegrationTest(final MemberRepository memberRepository,
-                                      final RoadmapCategoryRepository roadmapCategoryRepository) {
-        this.memberRepository = memberRepository;
+    public RoadmapReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository) {
         this.roadmapCategoryRepository = roadmapCategoryRepository;
     }
 
@@ -51,8 +48,8 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         //given
         final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다();
         final String 로그인_토큰_정보 = 로그인();
-        final RoadmapCategory 게임_카테고리 = 로드맵_카테고리를_저장한다("게임");
-        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "게임 로드맵");
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("운동");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 카테고리, "로드맵 제목");
 
         //when
         final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = given()
@@ -70,8 +67,8 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
 
         final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(
                 로드맵_아이디,
-                new RoadmapCategoryResponse(게임_카테고리.getId(), "게임"),
-                "게임 로드맵",
+                new RoadmapCategoryResponse(카테고리.getId(), "운동"),
+                "로드맵 제목",
                 "로드맵 소개글",
                 new MemberResponse(저장된_크리에이터_아이디, "코끼리"),
                 new RoadmapContentResponse(
@@ -80,7 +77,10 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                                 new RoadmapNodeResponse(1L, "로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())
                         )),
                 RoadmapDifficultyType.DIFFICULT.name(),
-                30
+                30,
+                List.of(
+                        new RoadmapTagResponse(1L, "태그")
+                )
         );
 
         assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -125,7 +125,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
 
         // when
-        final PageResponse<RoadmapResponse> 로드맵_페이지_응답 = given()
+        final List<RoadmapForListResponse> 로드맵_페이지_응답 = given()
                 .log().all()
                 .when()
                 .get("/api/roadmaps?page=1&size=10&filterType=LATEST&categoryId=" + 여행_카테고리.getId())
@@ -136,17 +136,20 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final RoadmapResponse 첫번째_로드맵_응답 = new RoadmapResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
+        final RoadmapForListResponse 첫번째_로드맵_응답 = new RoadmapForListResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final RoadmapResponse 두번째_로드맵_응답 = new RoadmapResponse(두번째_로드맵_아이디, "두 번째 로드맵",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(1L, "태그")));
+
+        final RoadmapForListResponse 두번째_로드맵_응답 = new RoadmapForListResponse(두번째_로드맵_아이디, "두 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final PageResponse<RoadmapResponse> 예상되는_로드맵_페이지_응답 = new PageResponse<>(1, 1,
-                List.of(두번째_로드맵_응답, 첫번째_로드맵_응답));
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(2L, "태그")));
+
+        final List<RoadmapForListResponse> 예상되는_로드맵_리스트_응답 = List.of(두번째_로드맵_응답, 첫번째_로드맵_응답);
 
         assertThat(로드맵_페이지_응답)
-                .isEqualTo(예상되는_로드맵_페이지_응답);
+                .isEqualTo(예상되는_로드맵_리스트_응답);
     }
 
     @Test
@@ -163,7 +166,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
 
         // when
-        final PageResponse<RoadmapResponse> 로드맵_페이지_응답 = given()
+        final List<RoadmapForListResponse> 로드맵_페이지_응답 = given()
                 .log().all()
                 .when()
                 .get("/api/roadmaps?page=1&size=10&categoryId=" + 여행_카테고리.getId())
@@ -174,17 +177,20 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final RoadmapResponse 첫번째_로드맵_응답 = new RoadmapResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
+        final RoadmapForListResponse 첫번째_로드맵_응답 = new RoadmapForListResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final RoadmapResponse 두번째_로드맵_응답 = new RoadmapResponse(두번째_로드맵_아이디, "두 번째 로드맵",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(1L, "태그")));
+
+        final RoadmapForListResponse 두번째_로드맵_응답 = new RoadmapForListResponse(두번째_로드맵_아이디, "두 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final PageResponse<RoadmapResponse> 예상되는_로드맵_페이지_응답 = new PageResponse<>(1, 1,
-                List.of(두번째_로드맵_응답, 첫번째_로드맵_응답));
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(2L, "태그")));
+
+        final List<RoadmapForListResponse> 예상되는_로드맵_리스트_응답 = List.of(두번째_로드맵_응답, 첫번째_로드맵_응답);
 
         assertThat(로드맵_페이지_응답)
-                .isEqualTo(예상되는_로드맵_페이지_응답);
+                .isEqualTo(예상되는_로드맵_리스트_응답);
     }
 
     @Test
@@ -201,7 +207,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final Long 세번째_로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
 
         // when
-        final PageResponse<RoadmapResponse> 로드맵_페이지_응답 = given()
+        final List<RoadmapForListResponse> 로드맵_페이지_응답 = given()
                 .log().all()
                 .when()
                 .get("/api/roadmaps?page=1&size=10&filterType=LATEST")
@@ -212,20 +218,25 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final RoadmapResponse 첫번째_로드맵_응답 = new RoadmapResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
+        final RoadmapForListResponse 첫번째_로드맵_응답 = new RoadmapForListResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final RoadmapResponse 두번째_로드맵_응답 = new RoadmapResponse(두번째_로드맵_아이디, "두 번째 로드맵",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(1L, "태그")));
+
+        final RoadmapForListResponse 두번째_로드맵_응답 = new RoadmapForListResponse(두번째_로드맵_아이디, "두 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final RoadmapResponse 세번째_로드맵_응답 = new RoadmapResponse(세번째_로드맵_아이디, "세 번째 로드맵",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(2L, "태그")));
+
+        final RoadmapForListResponse 세번째_로드맵_응답 = new RoadmapForListResponse(세번째_로드맵_아이디, "세 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(게임_카테고리.getId(), "게임"));
-        final PageResponse<RoadmapResponse> 예상되는_로드맵_페이지_응답 = new PageResponse<>(1, 1,
-                List.of(세번째_로드맵_응답, 두번째_로드맵_응답, 첫번째_로드맵_응답));
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(게임_카테고리.getId(), "게임"),
+                List.of(new RoadmapTagResponse(3L, "태그")));
+
+        final List<RoadmapForListResponse> 예상되는_로드맵_리스트_응답 = List.of(세번째_로드맵_응답, 두번째_로드맵_응답, 첫번째_로드맵_응답);
 
         assertThat(로드맵_페이지_응답)
-                .isEqualTo(예상되는_로드맵_페이지_응답);
+                .isEqualTo(예상되는_로드맵_리스트_응답);
     }
 
     @Test
@@ -242,7 +253,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final Long 세번째_로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
 
         // when
-        final PageResponse<RoadmapResponse> 로드맵_페이지_응답 = given()
+        final List<RoadmapForListResponse> 로드맵_페이지_응답 = given()
                 .log().all()
                 .when()
                 .get("/api/roadmaps?page=1&size=10")
@@ -253,20 +264,24 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final RoadmapResponse 첫번째_로드맵_응답 = new RoadmapResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
+        final RoadmapForListResponse 첫번째_로드맵_응답 = new RoadmapForListResponse(첫번째_로드맵_아이디, "첫 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final RoadmapResponse 두번째_로드맵_응답 = new RoadmapResponse(두번째_로드맵_아이디, "두 번째 로드맵",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(1L, "태그")));
+
+        final RoadmapForListResponse 두번째_로드맵_응답 = new RoadmapForListResponse(두번째_로드맵_아이디, "두 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"));
-        final RoadmapResponse 세번째_로드맵_응답 = new RoadmapResponse(세번째_로드맵_아이디, "세 번째 로드맵",
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(2L, "태그")));
+
+        final RoadmapForListResponse 세번째_로드맵_응답 = new RoadmapForListResponse(세번째_로드맵_아이디, "세 번째 로드맵",
                 "로드맵 소개글", "DIFFICULT", 30,
-                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(게임_카테고리.getId(), "게임"));
-        final PageResponse<RoadmapResponse> 예상되는_로드맵_페이지_응답 = new PageResponse<>(1, 1,
-                List.of(세번째_로드맵_응답, 두번째_로드맵_응답, 첫번째_로드맵_응답));
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리"), new RoadmapCategoryResponse(게임_카테고리.getId(), "게임"),
+                List.of(new RoadmapTagResponse(3L, "태그")));
+        final List<RoadmapForListResponse> 예상되는_로드맵_리스트_응답 = List.of(세번째_로드맵_응답, 두번째_로드맵_응답, 첫번째_로드맵_응답);
 
         assertThat(로드맵_페이지_응답)
-                .isEqualTo(예상되는_로드맵_페이지_응답);
+                .isEqualTo(예상되는_로드맵_리스트_응답);
     }
 
     @Test
@@ -330,7 +345,8 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
 
     private Long 제목별로_로드맵을_생성한다(final String 로그인_토큰_정보, final RoadmapCategory 로드맵_카테고리, final String 로드맵_제목) {
         final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
+                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                List.of(new RoadmapTagSaveRequest("태그")));
 
         final String 생성된_로드맵_아이디 = given()
                 .header(AUTHORIZATION, 로그인_토큰_정보)

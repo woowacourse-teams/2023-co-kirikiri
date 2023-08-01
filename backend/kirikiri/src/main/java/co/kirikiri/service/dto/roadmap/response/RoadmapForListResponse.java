@@ -3,15 +3,14 @@ package co.kirikiri.service.dto.roadmap.response;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import java.util.List;
 
-public record RoadmapResponse(
-        Long roadmapId,
-        RoadmapCategoryResponse category,
+public record RoadmapForListResponse(
+        long roadmapId,
         String roadmapTitle,
         String introduction,
-        MemberResponse creator,
-        RoadmapContentResponse content,
         String difficulty,
         int recommendedRoadmapPeriod,
+        MemberResponse creator,
+        RoadmapCategoryResponse category,
         List<RoadmapTagResponse> tags
 ) {
 

@@ -47,6 +47,7 @@ import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
@@ -55,13 +56,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 class GoalRoomReadIntegrationTest extends IntegrationTest {
 
@@ -87,7 +88,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                                        final RoadmapContentRepository roadmapContentRepository,
                                        final RoadmapNodeRepository roadmapNodeRepository,
                                        final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
-                                       final MemberRepository memberRepository, final GoalRoomMemberRepository goalRoomMemberRepository) {
+                                       final MemberRepository memberRepository,
+                                       final GoalRoomMemberRepository goalRoomMemberRepository) {
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
@@ -374,11 +376,12 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     private Long 제목별로_로드맵을_생성한다(final String 로그인_토큰_정보, final RoadmapCategory 로드맵_카테고리, final String 로드맵_제목) {
-        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
+        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(
+                로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30, List.of(
                 new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용"),
-                new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")
-        ));
+                new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")),
+                List.of(new RoadmapTagSaveRequest("태그")));
 
         final String 생성된_로드맵_아이디 = given()
                 .header(AUTHORIZATION, 로그인_토큰_정보)
@@ -518,9 +521,11 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private Long 로드맵을_생성한다(final String 토큰, final Long 카테고리_아이디, final String 로드맵_제목, final String 로드맵_소개글,
                            final String 로드맵_본문,
                            final RoadmapDifficultyType 난이도, final int 추천_소요_기간,
-                           final List<RoadmapNodeSaveRequest> 로드맵_노드들) {
-        final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리_아이디, 로드맵_제목, 로드맵_소개글, 로드맵_본문,
-                난이도, 추천_소요_기간, 로드맵_노드들);
+                           final List<RoadmapNodeSaveRequest> 로드맵_노드들,
+                           final List<RoadmapTagSaveRequest> 로드맵_태그들) {
+        final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(
+                카테고리_아이디, 로드맵_제목, 로드맵_소개글, 로드맵_본문,
+                난이도, 추천_소요_기간, 로드맵_노드들, 로드맵_태그들);
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 토큰);
         return 아이디를_반환한다(로드맵_생성_응답값);
     }

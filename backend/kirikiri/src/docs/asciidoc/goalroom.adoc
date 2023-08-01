@@ -121,7 +121,6 @@ operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대�
 operation::goal-room-read-api-test/정상적으로_골룸_멤버를_조회한다[snippets='http-request,http-response,path-parameters']
 
 === *6-2* 실패 - 골룸 멤버 조회 시 존재하지 않는 골룸일 경우
-
 operation::goal-room-read-api-test/골룸_멤버_조회_시_존재하지_않는_골룸일_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
 
 [[골룸투두추가-API]]

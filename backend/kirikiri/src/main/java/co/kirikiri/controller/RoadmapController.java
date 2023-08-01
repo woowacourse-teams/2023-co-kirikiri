@@ -4,12 +4,12 @@ import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
-import co.kirikiri.service.dto.CustomPageRequest;
-import co.kirikiri.service.dto.PageResponse;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -52,13 +52,13 @@ public class RoadmapController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<RoadmapResponse>> findRoadmapsByFilterType(
+    public ResponseEntity<List<RoadmapForListResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
             @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest request,
-            @ModelAttribute final CustomPageRequest pageRequest
+            @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
-        final PageResponse<RoadmapResponse> roadmapPageResponse = roadmapReadService.findRoadmapsByFilterType(
-                categoryId, request, pageRequest);
+        final List<RoadmapForListResponse> roadmapPageResponse = roadmapReadService.findRoadmapsByFilterType(
+                categoryId, request, scrollRequest);
         return ResponseEntity.ok(roadmapPageResponse);
     }
 

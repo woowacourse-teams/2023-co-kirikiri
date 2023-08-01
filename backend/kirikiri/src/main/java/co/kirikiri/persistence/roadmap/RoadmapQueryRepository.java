@@ -3,11 +3,13 @@ package co.kirikiri.persistence.roadmap;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
+import java.util.Optional;
 
 public interface RoadmapQueryRepository {
 
-    Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
-                                         final Pageable pageable);
+    Optional<Roadmap> findRoadmapById(final Long roadmapId);
+
+    List<Roadmap> findRoadmapsByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
+                                     final Long lastRoadmapId, final int pageSize);
 }

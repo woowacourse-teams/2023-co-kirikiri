@@ -57,6 +57,9 @@ public class Roadmap extends BaseEntity {
     private RoadmapContents contents = new RoadmapContents();
 
     @Embedded
+    private RoadmapTags tags = new RoadmapTags();
+
+    @Embedded
     private RoadmapReviews reviews = new RoadmapReviews();
 
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
@@ -128,6 +131,10 @@ public class Roadmap extends BaseEntity {
         }
     }
 
+    public void addTags(final RoadmapTags tags) {
+        this.tags.addAll(tags);
+    }
+
     public boolean isCreator(final Member member) {
         return Objects.equals(creator.getId(), member.getId());
     }
@@ -169,5 +176,9 @@ public class Roadmap extends BaseEntity {
 
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
+    }
+
+    public RoadmapTags getTags() {
+        return tags;
     }
 }

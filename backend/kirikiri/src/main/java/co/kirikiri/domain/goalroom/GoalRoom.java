@@ -14,10 +14,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -50,7 +50,7 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
 
     private void validateContentLength(final String content) {
         if (content.length() > CONTENT_MAX_LENGTH) {
-            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자 입니다.", CONTENT_MAX_LENGTH));
+            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자입니다.", CONTENT_MAX_LENGTH));
         }
     }
 

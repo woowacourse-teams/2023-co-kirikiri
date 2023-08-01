@@ -19,6 +19,8 @@ import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,8 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-import java.time.LocalDate;
-import java.util.List;
 
 @WebMvcTest(MemberController.class)
 class MemberCreateApiTest extends ControllerTestHelper {
