@@ -78,7 +78,7 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env.PROD_SERVER': JSON.stringify(process.env.PROD_SERVER),
-      'process.env.API_TEST_SERVER': JSON.stringify(process.env.API_TEST_SERVER),
+      'process.env.DEV_SERVER': JSON.stringify(process.env.DEV_SERVER),
     }),
   ],
 };
