@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { MemberJoinRequest, UserLoginRequest } from '@myTypes/user/remote';
 import { login, signUp } from '@apis/user';
 import { setCookie } from '@utils/_common/cookies';
+import useToast from '@hooks/_common/useToast';
 
 export const useSignUp = () => {
   const { mutate } = useMutation(
@@ -22,6 +23,7 @@ export const useSignUp = () => {
 };
 
 export const useLogin = () => {
+  const { triggerToast } = useToast();
   const { mutate } = useMutation(
     (loginPayload: UserLoginRequest) => login(loginPayload),
     {
@@ -29,10 +31,8 @@ export const useLogin = () => {
         const { accessToken, refreshToken } = response.data;
         setCookie('access_token', accessToken);
         setCookie('refresh_token', refreshToken);
-        alert(`로그인 성공!  ${accessToken}`);
-      },
-      onError() {
-        // TODO: 로그인 실패 시 로직
+
+        triggerToast({ message: '로그인 성공!' });
       },
     }
   );
