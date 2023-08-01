@@ -1,18 +1,35 @@
 import SVGIcon from '@components/icons/SVGIcon';
 
 import * as S from './GoalRoomDashboardHeader.styles';
+import recruitmentStatus from '@constants/goalRoom/recruitmentStatus';
+import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 
-const GoalRoomDashboardHeader = () => {
+type GoalRoomDashboardHeaderProps = {
+  goalRoomData: GoalRoomBrowseResponse;
+};
+
+const GoalRoomDashboardHeader = ({ goalRoomData }: GoalRoomDashboardHeaderProps) => {
+  const { name, status, currentMemberCount, initMemberCount, startDate, endDate } =
+    goalRoomData;
+
   return (
     <header>
-      <S.GoalRoomDashboardTitle>hello</S.GoalRoomDashboardTitle>
+      <S.GoalRoomDashboardTitle>{name}</S.GoalRoomDashboardTitle>
+      <S.GoalRoomLabel>
+        <SVGIcon name='ITIcon' />
+        <span>{recruitmentStatus[status]}</span>
+      </S.GoalRoomLabel>
       <S.GoalRoomLabel>
         <SVGIcon name='PersonIcon' />
-        <span>25 / 30 명 참여 중</span>
+        <span>
+          {currentMemberCount} / {initMemberCount} 명 참여 중
+        </span>
       </S.GoalRoomLabel>
       <S.GoalRoomLabel>
         <SVGIcon name='CalendarIcon' />
-        <span>2023.03.12 ~ 2023.04.21</span>
+        <span>
+          {startDate} ~ {endDate}
+        </span>
       </S.GoalRoomLabel>
     </header>
   );

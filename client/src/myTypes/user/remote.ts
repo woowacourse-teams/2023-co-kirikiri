@@ -4,7 +4,7 @@ export type MemberJoinRequest = {
   nickname: string;
   phoneNumber: string;
   genderType: string;
-  birthDate: string;
+  birthday: string;
 };
 
 export type UserLoginRequest = {
