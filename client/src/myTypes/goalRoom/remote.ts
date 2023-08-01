@@ -1,15 +1,17 @@
-type FilterCondType = 'LATEST';
-
-export type RoadmapListRequest = {
-  lastValue: number | null;
-  size: number;
-  filterCond: FilterCondType;
 import {
   CheckFeed,
   GoalRoomRecruitmentStatus,
   GoalRoomRoadmap,
   GoalRoomTodo,
 } from '@myTypes/goalRoom/internal';
+
+type FilterCondType = 'LATEST';
+
+export type RoadmapListRequest = {
+  lastValue: number | null;
+  size: number;
+  filterCond: FilterCondType;
+};
 
 export type GoalRoomBrowseResponse = {
   name: string;
