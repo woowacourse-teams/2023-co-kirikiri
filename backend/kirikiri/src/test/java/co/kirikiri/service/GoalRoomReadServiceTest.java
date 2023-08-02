@@ -38,15 +38,10 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.service.dto.CustomPageRequest;
-import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -57,8 +52,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomReadServiceTest {
@@ -175,65 +168,6 @@ class GoalRoomReadServiceTest {
         // expected
         assertThatThrownBy(() -> goalRoomService.findGoalRoom("cokirikiri", 1L))
                 .isInstanceOf(NotFoundException.class);
-    }
-
-    @Test
-    void 골룸_목록을_조회한다() {
-        // given
-        final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
-        final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(roadmapNode1, roadmapNode2));
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(roadmapNodes);
-
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(new Period(TODAY, TODAY.plusDays(10)),
-                1,
-                roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = new GoalRoomRoadmapNode(
-                new Period(TODAY.plusDays(11), TODAY.plusDays(20)), 1,
-                roadmapNode2);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = new GoalRoomRoadmapNode(new Period(TODAY, TODAY.plusDays(10)),
-                1,
-                roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = new GoalRoomRoadmapNode(
-                new Period(TODAY.plusDays(11), TODAY.plusDays(20)), 1,
-                roadmapNode2);
-
-        final Member member1 = 사용자를_생성한다(1L);
-        final GoalRoom goalRoom1 = new GoalRoom(1L, new GoalRoomName("goalroom1"), new LimitedMemberCount(10),
-                roadmapContent, member1);
-        goalRoom1.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
-
-        final Member member2 = 사용자를_생성한다(2L);
-        final GoalRoom goalRoom2 = new GoalRoom(2L, new GoalRoomName("goalroom2"), new LimitedMemberCount(10),
-                roadmapContent, member2);
-        goalRoom2.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)));
-
-        final PageImpl<GoalRoom> goalRoomsPage = new PageImpl<>(List.of(goalRoom2, goalRoom1), PageRequest.of(1, 10),
-                2);
-        given(goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(any(), any()))
-                .willReturn(goalRoomsPage);
-
-        // when
-        final PageResponse<GoalRoomForListResponse> result = goalRoomService.findGoalRoomsByFilterType(
-                GoalRoomFilterTypeDto.LATEST, new CustomPageRequest(1, 10));
-
-        final PageResponse<GoalRoomForListResponse> expected = new PageResponse<>(1, 2,
-                List.of(
-                        new GoalRoomForListResponse(2L, "goalroom2", 1, 10, LocalDateTime.now(),
-                                TODAY, TODAY.plusDays(20),
-                                new MemberResponse(member2.getId(), member2.getNickname().getValue())),
-                        new GoalRoomForListResponse(1L, "goalroom1", 1, 10, LocalDateTime.now(),
-                                TODAY, TODAY.plusDays(20),
-                                new MemberResponse(member1.getId(), member1.getNickname().getValue()))
-                )
-        );
-
-        assertThat(result).usingRecursiveComparison()
-                .ignoringFields("data.createdAt")
-                .isEqualTo(expected);
     }
 
     @Test

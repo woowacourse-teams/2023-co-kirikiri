@@ -1,5 +1,5 @@
 package co.kirikiri.persistence.goalroom.dto;
 
-public enum GoalRoomFilterType {
+public enum RoadmapGoalRoomsFilterType {
     LATEST, PARTICIPATION_RATE
 }

@@ -5,6 +5,7 @@ import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
 import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
 
+import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
@@ -79,18 +80,17 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     // TODO 최신순에서만 no-offset 적용이 되는 코드, 정렬 조건에 따라서 조건 추가 필요
-    private BooleanExpression lessThanLastValue(final RoadmapLastValueDto lastValue, final RoadmapFilterType orderType) {
-        if (lastValue == null) {
-            return null;
-        }
-        if (orderType == RoadmapFilterType.LATEST) {
-            return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
-        }
-        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
-    }
-
-    private BooleanExpression statusCond(final RoadmapStatus status) {
-        return roadmap.status.eq(status);
+    @Override
+    public List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
+                                                                       final RoadmapLastValueDto lastValue,
+                                                                       final int pageSize) {
+        return selectFrom(roadmap)
+                .innerJoin(roadmap.category, roadmapCategory)
+                .fetchJoin()
+                .where(memberCond(member), lessThanLastValue(lastValue))
+                .limit(pageSize)
+                .orderBy(orderByIdDesc())
+                .fetch();
     }
 
     private BooleanExpression categoryCond(final RoadmapCategory category) {
@@ -98,6 +98,10 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
             return null;
         }
         return roadmap.category.eq(category);
+    }
+
+    private BooleanExpression statusCond(final RoadmapStatus status) {
+        return roadmap.status.eq(status);
     }
 
     private BooleanExpression titleCond(final RoadmapSearchTitle title) {
@@ -132,5 +136,31 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     // TODO 정렬 조건 추가 필요
     private OrderSpecifier<?> sortCond(final RoadmapFilterType orderType) {
         return roadmap.createdAt.desc();
+    }
+
+    private BooleanExpression lessThanLastValue(final RoadmapLastValueDto lastValue,
+                                                final RoadmapFilterType orderType) {
+        if (lastValue == null) {
+            return null;
+        }
+        if (orderType == RoadmapFilterType.LATEST) {
+            return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+        }
+        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+    }
+
+    private BooleanExpression lessThanLastValue(final RoadmapLastValueDto lastValue) {
+        if (lastValue == null) {
+            return null;
+        }
+        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+    }
+
+    private BooleanExpression memberCond(final Member member) {
+        return roadmap.creator.eq(member);
+    }
+
+    private OrderSpecifier<Long> orderByIdDesc() {
+        return roadmap.id.desc();
     }
 }

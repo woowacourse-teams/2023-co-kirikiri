@@ -8,7 +8,6 @@ public record RoadmapSearchTitle(
 
     private static final int MIN_LENGTH = 1;
 
-
     public RoadmapSearchTitle(final String value) {
         final String removedBlankTitle = removeBlank(value);
         validateLength(removedBlankTitle);

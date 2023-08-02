@@ -50,7 +50,6 @@ public class GoalRoomRoadmapNodes {
         this.values.addAll(new ArrayList<>(goalRoomRoadmapNodes.values));
     }
 
-
     public LocalDate getGoalRoomStartDate() {
         return values.stream()
                 .min(Comparator.comparing(GoalRoomRoadmapNode::getStartDate))

@@ -3,7 +3,7 @@ package co.kirikiri.service.dto;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-public record CustomScrollRequest (
+public record CustomScrollRequest(
         LocalDateTime lastCreatedAt,
         Long lastGoalRoomCount,
         Long lastParticipatedCount,

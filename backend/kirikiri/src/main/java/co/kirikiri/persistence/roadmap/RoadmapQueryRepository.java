@@ -1,5 +1,6 @@
 package co.kirikiri.persistence.roadmap;
 
+import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
@@ -21,4 +22,8 @@ public interface RoadmapQueryRepository {
                                      final RoadmapFilterType orderType,
                                      final RoadmapLastValueDto lastValue,
                                      final int pageSize);
+
+    List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
+                                                                final RoadmapLastValueDto lastValue,
+                                                                final int pageSize);
 }

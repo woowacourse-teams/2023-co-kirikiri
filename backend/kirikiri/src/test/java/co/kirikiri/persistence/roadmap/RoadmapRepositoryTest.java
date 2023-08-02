@@ -293,6 +293,37 @@ class RoadmapRepositoryTest {
         );
     }
 
+    @Test
+    void 사용자가_생성한_로드맵을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
+        final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
+        final RoadmapCategory itCategory = 카테고리를_생성한다("IT");
+
+        final Roadmap gameRoadmap = 로드맵을_저장한다("로드맵1", creator, gameCategory);
+        final Roadmap traveRoadmap = 로드맵을_저장한다("로드맵2", creator, travelCategory);
+        final Roadmap deletedGameRoadmap = 삭제된_로드맵을_저장한다("로드맵3", creator, itCategory);
+
+        roadmapRepository.saveAll(List.of(gameRoadmap, traveRoadmap, deletedGameRoadmap));
+
+        // when
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 1));
+        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(creator,
+                firstRoadmapLastValueDto, 2);
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmapsFirstPage.get(1).getCreatedAt(), null, null, null, 1));
+        final List<Roadmap> roadmapsSecondPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(
+                creator, secondRoadmapLastValueDto, 2);
+
+        // then
+        assertAll(
+                () -> assertThat(roadmapsFirstPage).isEqualTo(List.of(deletedGameRoadmap, traveRoadmap)),
+                () -> assertThat(roadmapsSecondPage).isEqualTo(List.of(gameRoadmap))
+        );
+    }
+
     private Member 크리에이터를_생성한다(final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
