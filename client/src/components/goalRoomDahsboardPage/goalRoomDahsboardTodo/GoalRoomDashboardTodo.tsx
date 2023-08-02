@@ -8,18 +8,8 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@components/_common/dialog/dialog';
-import styled from 'styled-components';
 import TodoModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/todoModal/TodoModal';
 
-const BackDrop = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
-  background-color: rgba(220, 220, 220, 0.44);
-`;
 
 const GoalRoomDashboardTodo = ({
   goalRoomData,
