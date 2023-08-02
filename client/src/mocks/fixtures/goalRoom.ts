@@ -35,7 +35,7 @@ const fixture: GoalRoomFixture = {
     goalRoomTodos: [
       {
         id: 1,
-        content: '투두 내용',
+        content: '투두 내용 asdasdasdsadasdaasdasdsaaasdasdasdasdsasdasdasdasdadaㅋㅋㅋ',
         startDate: '2023-07-19',
         endDate: '2023-07-20',
       },
@@ -44,6 +44,12 @@ const fixture: GoalRoomFixture = {
         content: '투두 내용 2',
         startDate: '2023-07-21',
         endDate: '2023-07-24',
+      },
+      {
+        id: 3,
+        content: '투두 내용 3',
+        startDate: '2023-08-21',
+        endDate: '2023-08-24',
       },
     ],
     checkFeeds: [
