@@ -19,8 +19,8 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
-import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -108,10 +108,10 @@ class MemberServiceTest {
                 .willReturn(Optional.of(member));
 
         // when
-        final MemberMyInfoResponse response = memberService.findMyInfo(identifier.getValue());
+        final MemberInformationResponse response = memberService.findMemberInformation(identifier.getValue());
 
         // then
-        final MemberMyInfoResponse expected = new MemberMyInfoResponse(1L, "nickname", "serverFilePath",
+        final MemberInformationResponse expected = new MemberInformationResponse(1L, "nickname", "serverFilePath",
                 Gender.MALE.name(),
                 "identifier1", "010-1234-5678", LocalDate.now());
 
@@ -128,7 +128,7 @@ class MemberServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> memberService.findMyInfo(identifier.getValue()))
+        assertThatThrownBy(() -> memberService.findMemberInformation(identifier.getValue()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }
@@ -150,10 +150,12 @@ class MemberServiceTest {
                 .willReturn(Optional.of(member));
 
         // when
-        final MemberPublicInfoResponse response = memberService.findMemberPublicInfo(identifier.getValue(), 1L);
+        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(identifier.getValue(),
+                1L);
 
         // then
-        final MemberPublicInfoResponse expected = new MemberPublicInfoResponse("nickname", "serverFilePath",
+        final MemberInformationForPublicResponse expected = new MemberInformationForPublicResponse("nickname",
+                "serverFilePath",
                 Gender.MALE.name());
 
         assertThat(response).isEqualTo(expected);
@@ -169,7 +171,7 @@ class MemberServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> memberService.findMemberPublicInfo(identifier.getValue(), 1L))
+        assertThatThrownBy(() -> memberService.findMemberInformationForPublic(identifier.getValue(), 1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }
@@ -192,7 +194,7 @@ class MemberServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> memberService.findMemberPublicInfo(identifier.getValue(), 1L))
+        assertThatThrownBy(() -> memberService.findMemberInformationForPublic(identifier.getValue(), 1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다. memberId = 1");
     }

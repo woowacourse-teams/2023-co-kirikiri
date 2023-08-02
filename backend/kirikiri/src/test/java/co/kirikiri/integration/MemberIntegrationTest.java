@@ -19,8 +19,8 @@ import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
-import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
@@ -204,10 +204,10 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 사용자_자신의_정보_조회_응답 = 사용자_자신의_정보_조회_요청(액세스_토큰);
 
         // then
-        final MemberMyInfoResponse 사용자_자신의_정보_조회_응답_바디 = jsonToClass(사용자_자신의_정보_조회_응답.asString(),
+        final MemberInformationResponse 사용자_자신의_정보_조회_응답_바디 = jsonToClass(사용자_자신의_정보_조회_응답.asString(),
                 new TypeReference<>() {
                 });
-        final MemberMyInfoResponse 예상하는_응답값 = new MemberMyInfoResponse(1L, "nickname", "serverFilePath",
+        final MemberInformationResponse 예상하는_응답값 = new MemberInformationResponse(1L, "nickname", "serverFilePath",
                 GenderType.MALE.name(), "identifier1", "010-1234-5678", LocalDate.now());
 
         assertThat(사용자_자신의_정보_조회_응답_바디).isEqualTo(예상하는_응답값);
@@ -240,10 +240,11 @@ class MemberIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 특정_사용자의_정보_조회_응답 = 특정_사용자의_정보_조회_요청(액세스_토큰, 찾은_멤버2.getId());
 
         // then
-        final MemberPublicInfoResponse 특정_사용자의_정보_조회_응답_바디 = jsonToClass(특정_사용자의_정보_조회_응답.asString(),
+        final MemberInformationForPublicResponse 특정_사용자의_정보_조회_응답_바디 = jsonToClass(특정_사용자의_정보_조회_응답.asString(),
                 new TypeReference<>() {
                 });
-        final MemberPublicInfoResponse 예상하는_응답값 = new MemberPublicInfoResponse("name2", "serverFilePath",
+        final MemberInformationForPublicResponse 예상하는_응답값 = new MemberInformationForPublicResponse("name2",
+                "serverFilePath",
                 Gender.MALE.name());
 
         assertThat(특정_사용자의_정보_조회_응답_바디).isEqualTo(예상하는_응답값);
@@ -255,21 +256,13 @@ class MemberIntegrationTest extends IntegrationTest {
         // TODO: 회원가입 시 이미지 저장하는 로직 추가된 후 회원가입 API 사용하도록 수정
         final String 아이디1 = "identifier1";
         final String 비밀번호1 = "password1!";
-//        final String 아이디2 = "identifier2";
-//        final String 비밀번호2 = "password2!";
 
         final MemberImage memberImage1 = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
-//        final MemberImage memberImage2 = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         final Member 멤버1 = new Member(new Identifier(아이디1), new EncryptedPassword(new Password(비밀번호1)),
                 new Nickname("name1"), memberImage1,
                 new MemberProfile(Gender.MALE, LocalDate.now(), "010-1234-5678"));
-//        final Member 멤버2 = new Member(new Identifier(아이디2), new EncryptedPassword(new Password(비밀번호2)),
-//                new Nickname("name2"), memberImage2,
-//                new MemberProfile(Gender.MALE, LocalDate.now(), "010-1234-1111"));
 
         memberRepository.save(멤버1);
-//        final Member 찾은_멤버2 = memberRepository.save(멤버2);
-
         final String 액세스_토큰 = 로그인을_하고_액세스_토큰을_받는다(아이디1, 비밀번호1);
 
         // when

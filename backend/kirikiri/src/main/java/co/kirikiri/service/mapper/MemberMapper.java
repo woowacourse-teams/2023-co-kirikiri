@@ -9,8 +9,8 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
-import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -25,19 +25,19 @@ public final class MemberMapper {
         return new MemberJoinDto(identifier, password, nickname, request.phoneNumber(), gender, request.birthday());
     }
 
-    public static MemberMyInfoResponse convertToMemberMyInfoResponse(final Member member) {
+    public static MemberInformationResponse convertToMemberInformationResponse(final Member member) {
         final MemberImage memberImage = member.getImage();
         final MemberProfile memberProfile = member.getMemberProfile();
-        return new MemberMyInfoResponse(member.getId(), member.getNickname().getValue(),
+        return new MemberInformationResponse(member.getId(), member.getNickname().getValue(),
                 memberImage.getServerFilePath(),
                 memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getPhoneNumber(),
                 memberProfile.getBirthday());
     }
 
-    public static MemberPublicInfoResponse convertToMemberPublicInfoResponse(final Member member) {
+    public static MemberInformationForPublicResponse convertToMemberInformationForPublicResponse(final Member member) {
         final MemberImage memberImage = member.getImage();
         final MemberProfile memberProfile = member.getMemberProfile();
-        return new MemberPublicInfoResponse(member.getNickname().getValue(), memberImage.getServerFilePath(),
+        return new MemberInformationForPublicResponse(member.getNickname().getValue(), memberImage.getServerFilePath(),
                 memberProfile.getGender().name());
     }
 }

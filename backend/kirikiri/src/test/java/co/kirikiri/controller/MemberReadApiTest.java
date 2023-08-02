@@ -17,8 +17,8 @@ import co.kirikiri.domain.member.Gender;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
-import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -35,11 +35,11 @@ public class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 로그인한_사용자_자신의_정보를_조회한다() throws Exception {
         // given
-        final MemberMyInfoResponse expected = new MemberMyInfoResponse(1L, "nickname", "serverFilePath",
+        final MemberInformationResponse expected = new MemberInformationResponse(1L, "nickname", "serverFilePath",
                 Gender.MALE.name(),
                 "identifier1", "010-1234-5678", LocalDate.now());
 
-        given(memberService.findMyInfo(any()))
+        given(memberService.findMemberInformation(any()))
                 .willReturn(expected);
 
         // when
@@ -63,7 +63,7 @@ public class MemberReadApiTest extends ControllerTestHelper {
                 .andReturn();
 
         // then
-        final MemberMyInfoResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        final MemberInformationResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
         assertThat(response).isEqualTo(expected);
@@ -72,7 +72,7 @@ public class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 로그인한_사용자_자신의_정보를_조회할때_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
         // given
-        when(memberService.findMyInfo(any()))
+        when(memberService.findMemberInformation(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
 
         // when
@@ -101,10 +101,11 @@ public class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 특정_사용자의_정보를_조회한다() throws Exception {
         // given
-        final MemberPublicInfoResponse expected = new MemberPublicInfoResponse("nickname", "serverFilePath",
+        final MemberInformationForPublicResponse expected = new MemberInformationForPublicResponse("nickname",
+                "serverFilePath",
                 Gender.MALE.name());
 
-        given(memberService.findMemberPublicInfo(any(), any()))
+        given(memberService.findMemberInformationForPublic(any(), any()))
                 .willReturn(expected);
 
         // when
@@ -124,7 +125,7 @@ public class MemberReadApiTest extends ControllerTestHelper {
                 .andReturn();
 
         // then
-        final MemberPublicInfoResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        final MemberInformationForPublicResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
         assertThat(response).isEqualTo(expected);
@@ -133,7 +134,7 @@ public class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 특정_사용자의_정보를_조회할때_로그인한_사용자가_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
         // given
-        when(memberService.findMemberPublicInfo(any(), any()))
+        when(memberService.findMemberInformationForPublic(any(), any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
 
         // when
@@ -162,7 +163,7 @@ public class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 특정_사용자의_정보를_조회할때_조회할_사용자가_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
         // given
-        when(memberService.findMemberPublicInfo(any(), any()))
+        when(memberService.findMemberInformationForPublic(any(), any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다. memberId = 2"));
 
         // when

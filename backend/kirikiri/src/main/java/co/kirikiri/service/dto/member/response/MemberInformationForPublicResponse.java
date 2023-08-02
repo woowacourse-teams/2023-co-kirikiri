@@ -1,6 +1,6 @@
 package co.kirikiri.service.dto.member.response;
 
-public record MemberPublicInfoResponse(
+public record MemberInformationForPublicResponse(
         String nickname,
         String profileImageUrl,
         String gender

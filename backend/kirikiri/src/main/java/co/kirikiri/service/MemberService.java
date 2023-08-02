@@ -10,8 +10,8 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
-import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,10 +50,10 @@ public class MemberService {
         }
     }
 
-    public MemberMyInfoResponse findMyInfo(final String identifier) {
+    public MemberInformationResponse findMemberInformation(final String identifier) {
         final Member member = findMemberByIdentifier(identifier);
         final Member memberWithInfo = memberRepository.findWithMemberProfileAndImageById(member.getId()).get();
-        return MemberMapper.convertToMemberMyInfoResponse(memberWithInfo);
+        return MemberMapper.convertToMemberInformationResponse(memberWithInfo);
     }
 
     private Member findMemberByIdentifier(final String identifier) {
@@ -61,13 +61,14 @@ public class MemberService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
-    public MemberPublicInfoResponse findMemberPublicInfo(final String identifier, final Long memberId) {
+    public MemberInformationForPublicResponse findMemberInformationForPublic(final String identifier,
+                                                                             final Long memberId) {
         findMemberByIdentifier(identifier);
-        final Member memberWithPublicInfo = findMemberInfoByMemberId(memberId);
-        return MemberMapper.convertToMemberPublicInfoResponse(memberWithPublicInfo);
+        final Member memberWithPublicInfo = findMemberInformationByMemberId(memberId);
+        return MemberMapper.convertToMemberInformationForPublicResponse(memberWithPublicInfo);
     }
 
-    private Member findMemberInfoByMemberId(final Long memberId) {
+    private Member findMemberInformationByMemberId(final Long memberId) {
         return memberRepository.findWithMemberProfileAndImageById(memberId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다. memberId = " + memberId));
     }

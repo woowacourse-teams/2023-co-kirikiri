@@ -4,8 +4,8 @@ import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.MemberService;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberMyInfoResponse;
-import co.kirikiri.service.dto.member.response.MemberPublicInfoResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -32,16 +32,17 @@ public class MemberController {
 
     @GetMapping("/me")
     @Authenticated
-    public ResponseEntity<MemberMyInfoResponse> findMyInfo(@MemberIdentifier final String identifier) {
-        final MemberMyInfoResponse response = memberService.findMyInfo(identifier);
+    public ResponseEntity<MemberInformationResponse> findMemberInformation(@MemberIdentifier final String identifier) {
+        final MemberInformationResponse response = memberService.findMemberInformation(identifier);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{memberId}")
     @Authenticated
-    public ResponseEntity<MemberPublicInfoResponse> findMemberInfo(@MemberIdentifier final String identifier,
-                                                                   @PathVariable final Long memberId) {
-        final MemberPublicInfoResponse response = memberService.findMemberPublicInfo(identifier, memberId);
+    public ResponseEntity<MemberInformationForPublicResponse> findMemberInfo(@MemberIdentifier final String identifier,
+                                                                             @PathVariable final Long memberId) {
+        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(identifier,
+                memberId);
         return ResponseEntity.ok(response);
     }
 }

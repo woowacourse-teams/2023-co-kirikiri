@@ -2,7 +2,7 @@ package co.kirikiri.service.dto.member.response;
 
 import java.time.LocalDate;
 
-public record MemberMyInfoResponse(
+public record MemberInformationResponse(
         Long id,
         String nickname,
         String profileImageUrl,
