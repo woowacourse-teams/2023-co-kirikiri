@@ -1,11 +1,11 @@
 import { FormEvent } from 'react';
 import { useCreateGoalRoom } from '@hooks/queries/goalRoom';
-import useValidParams from '@hooks/_common/useValidParams';
 import useFormInput from '@hooks/_common/useFormInput';
 import { CreateGoalRoomRequest } from '@myTypes/goalRoom/remote';
 import InputField from '../inputField/InputField';
 import PageSection from '../pageSection/PageSection';
 import * as S from './CreateGoalRoomForm.styles';
+import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
 
 // 로드맵 노드 데이터
 const NODES = [
@@ -31,8 +31,11 @@ const NODES = [
   },
 ];
 
-const CreateGoalRoomForm = () => {
-  const { id: roadmapContentId } = useValidParams();
+type CreateGoalRoomFormProps = {
+  roadmapContentId: number;
+};
+
+const CreateGoalRoomForm = ({ roadmapContentId }: CreateGoalRoomFormProps) => {
   const { createGoalRoom } = useCreateGoalRoom();
   const { formState, handleInputChange } = useFormInput<CreateGoalRoomRequest>({
     roadmapContentId: Number(roadmapContentId),
@@ -54,7 +57,12 @@ const CreateGoalRoomForm = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createGoalRoom(formState);
+    const transformedFormState = convertFieldsToNumber(formState, [
+      'limitedMemberCount',
+      'checkCount',
+    ]);
+
+    createGoalRoom(transformedFormState as CreateGoalRoomRequest);
   };
 
   return (
