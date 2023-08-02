@@ -78,16 +78,10 @@ class RoadmapReadServiceTest {
         final RoadmapResponse roadmapResponse = roadmapReadService.findRoadmap(roadmapId);
 
         //then
-        final RoadmapResponse expectedResponse = new RoadmapResponse(
-                roadmapId,
-                new RoadmapCategoryResponse(1L, "운동"),
-                "로드맵 제목",
-                "로드맵 설명",
-                new MemberResponse(1L, "썬샷"),
+        final RoadmapResponse expectedResponse = new RoadmapResponse(roadmapId, new RoadmapCategoryResponse(1L, "운동"),
+                "로드맵 제목", "로드맵 설명", new MemberResponse(1L, "썬샷"),
                 new RoadmapContentResponse(1L, "콘텐츠 제목", Collections.emptyList()),
-                "NORMAL",
-                100
-        );
+                "NORMAL", 100, null);
 
         assertThat(roadmapResponse)
                 .usingRecursiveComparison()

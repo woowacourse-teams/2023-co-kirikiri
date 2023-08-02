@@ -228,7 +228,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 new RoadmapNodeResponse(2L, "2번 노드", "2번 노드 설명", Collections.emptyList())
         );
         return new RoadmapResponse(1L, category, "제목", "소개글", creator,
-                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100);
+                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100, null);
     }
 
     private PageResponse<RoadmapResponse> 로드맵_페이지_응답을_생성한다() {

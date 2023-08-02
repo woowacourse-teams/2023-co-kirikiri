@@ -95,7 +95,8 @@ public final class RoadmapMapper {
                 new MemberResponse(creator.getId(), creator.getNickname().getValue()),
                 roadmapContentResponse,
                 roadmap.getDifficulty().name(),
-                roadmap.getRequiredPeriod()
+                roadmap.getRequiredPeriod(),
+                roadmap.getCreatedAt()
         );
     }
 
