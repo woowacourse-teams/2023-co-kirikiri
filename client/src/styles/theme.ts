@@ -28,7 +28,7 @@ const theme: DefaultTheme = {
     description1: font({ size: 1, weight: 400 }),
     description2: font({ size: 1.2, weight: 300 }),
     description3: font({ size: 1.1, weight: 700 }),
-    description4: font({ size: 1.4, weight: 400 }),
+    description4: font({ size: 1.2, weight: 400 }),
     description5: font({ size: 1.8, weight: 400 }),
     caption1: font({ size: 1.05, weight: 400 }),
     body1: font({ size: 1.8, weight: 300 }),
