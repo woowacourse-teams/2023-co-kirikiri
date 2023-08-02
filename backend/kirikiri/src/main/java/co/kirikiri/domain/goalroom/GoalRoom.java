@@ -152,16 +152,19 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public void leave(final Member member) {
         if (status == GoalRoomStatus.RECRUITING) {
-            final GoalRoomPendingMember goalRoomPendingMember = goalRoomPendingMembers.findByMember(member)
-                    .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+            final GoalRoomPendingMember goalRoomPendingMember = findGoalRoomPendingMemberByMember(member);
             changeRoleIfLeaderLeave(goalRoomPendingMembers, goalRoomPendingMember);
             goalRoomPendingMembers.remove(goalRoomPendingMember);
             return;
         }
-        final GoalRoomMember goalRoomMember = goalRoomMembers.findByMember(member)
-                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+        final GoalRoomMember goalRoomMember = findGoalRoomMemberByMember(member);
         changeRoleIfLeaderLeave(goalRoomMembers, goalRoomMember);
         goalRoomMembers.remove(goalRoomMember);
+    }
+
+    private GoalRoomPendingMember findGoalRoomPendingMemberByMember(final Member member) {
+        return goalRoomPendingMembers.findByMember(member)
+                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
     }
 
     private void changeRoleIfLeaderLeave(final GoalRoomPendingMembers goalRoomPendingMembers,
@@ -171,6 +174,11 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
                     .ifPresent(GoalRoomPendingMember::becomeLeader);
 
         }
+    }
+
+    private GoalRoomMember findGoalRoomMemberByMember(final Member member) {
+        return goalRoomMembers.findByMember(member)
+                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
     }
 
     private void changeRoleIfLeaderLeave(final GoalRoomMembers goalRoomMembers,
