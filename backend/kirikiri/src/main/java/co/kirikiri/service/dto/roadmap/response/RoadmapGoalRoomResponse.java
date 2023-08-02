@@ -1,10 +1,10 @@
-package co.kirikiri.service.dto.goalroom.response;
+package co.kirikiri.service.dto.roadmap.response;
 
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record GoalRoomForListResponse(
+public record RoadmapGoalRoomResponse(
         Long goalRoomId,
         String name,
         Integer currentMemberCount,

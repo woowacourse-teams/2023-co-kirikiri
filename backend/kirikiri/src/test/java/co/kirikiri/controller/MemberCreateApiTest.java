@@ -3,6 +3,8 @@ package co.kirikiri.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -22,6 +24,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -46,7 +49,8 @@ class MemberCreateApiTest extends ControllerTestHelper {
 
         회원가입(jsonRequest, status().isCreated())
                 .andDo(documentationResultHandler.document(
-                        requestFields(makeFieldDescriptor(requestFieldDescription))));
+                        requestFields(makeFieldDescriptor(requestFieldDescription)),
+                        responseHeaders(headerWithName(HttpHeaders.LOCATION).description("회원 단일 조회 api 경로"))));
     }
 
     @Test
@@ -310,7 +314,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
                                 "- MALE, FEMALE"),
                 new FieldDescription("birthday", "회원 생년월일",
                         "- 길이 : 6  +" + "\n" +
-                                "- yyMMdd")
+                                "- yyyyMMdd")
         );
     }
 }

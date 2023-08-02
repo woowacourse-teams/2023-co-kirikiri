@@ -28,12 +28,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
+    private static final String IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY = "image.default.originalFileName";
+    private static final String IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY = "image.default.serverFilePath";
+    private static final String IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY = "image.default.imageContentType";
+
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private Environment environment;
+
+    @Mock
+    private NumberGenerator numberGenerator;
 
     @InjectMocks
     private MemberService memberService;
@@ -48,6 +59,14 @@ class MemberServiceTest {
                 .willReturn(Optional.empty());
         given(memberRepository.save(any()))
                 .willReturn(new Member(1L, null, null, null, null));
+        given(environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY))
+                .willReturn("default-member-image");
+        given(environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY))
+                .willReturn("https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg");
+        given(environment.getProperty(IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY))
+                .willReturn("JPG");
+        given(numberGenerator.generate())
+                .willReturn(7);
 
         //when
         //then

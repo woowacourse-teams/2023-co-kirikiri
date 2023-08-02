@@ -10,7 +10,8 @@ public record RoadmapSaveDto(
         String content,
         RoadmapDifficultyType difficulty,
         Integer requiredPeriod,
-        List<RoadmapNodeSaveDto> roadmapNodes
+        List<RoadmapNodeSaveDto> roadmapNodes,
+        List<RoadmapTagSaveDto> tags
 ) {
 
 }

@@ -8,15 +8,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class RoadmapNode extends BaseEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
@@ -91,5 +87,9 @@ public class RoadmapNode extends BaseEntity {
 
     public RoadmapContent getRoadmapContent() {
         return roadmapContent;
+    }
+
+    public RoadmapNodeImages getRoadmapNodeImages() {
+        return roadmapNodeImages;
     }
 }

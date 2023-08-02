@@ -27,4 +27,8 @@ public class GoalRoomToDos {
     public void add(final GoalRoomToDo goalRoomToDo) {
         values.add(goalRoomToDo);
     }
+
+    public GoalRoomToDo findLast() {
+        return values.get(values.size() - 1);
+    }
 }
