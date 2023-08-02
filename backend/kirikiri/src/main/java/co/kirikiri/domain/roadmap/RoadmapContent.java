@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -8,12 +8,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Optional;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoadmapContent extends BaseCreatedTimeEntity {
+@Getter
+public class RoadmapContent extends BaseUpdatedTimeEntity {
 
     private static final int CONTENT_MAX_LENGTH = 2000;
 
@@ -28,11 +31,11 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
     private final RoadmapNodes nodes = new RoadmapNodes();
 
     public RoadmapContent(final String content) {
-        validate(content);
-        this.content = content;
+        this(null, content);
     }
 
     public RoadmapContent(final Long id, final String content) {
+        validate(content);
         this.id = id;
         this.content = content;
     }
@@ -65,8 +68,12 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
         }
     }
 
-    public Long getId() {
-        return id;
+    public int nodesSize() {
+        return nodes.size();
+    }
+
+    public Optional<RoadmapNode> findRoadmapNodeById(final Long id) {
+        return nodes.findById(id);
     }
 
     public String getContent() {
@@ -75,5 +82,9 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
 
     public RoadmapNodes getNodes() {
         return nodes;
+    }
+
+    public Roadmap getRoadmap() {
+        return roadmap;
     }
 }

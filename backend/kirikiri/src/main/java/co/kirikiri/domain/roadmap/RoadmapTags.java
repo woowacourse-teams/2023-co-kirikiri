@@ -7,7 +7,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,11 +24,11 @@ public class RoadmapTags {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "roadmap_id", updatable = false, nullable = false)
-    private final List<RoadmapTag> values = new ArrayList<>();
+    private final Set<RoadmapTag> values = new HashSet<>();
 
     public RoadmapTags(final List<RoadmapTag> roadmapTags) {
         validate(roadmapTags);
-        values.addAll(new ArrayList<>(roadmapTags));
+        values.addAll(new HashSet<>(roadmapTags));
     }
 
     private void validate(final List<RoadmapTag> roadmapTags) {
@@ -52,7 +52,11 @@ public class RoadmapTags {
         }
     }
 
-    public List<RoadmapTag> getValues() {
-        return values;
+    public void addAll(final RoadmapTags tags) {
+        this.values.addAll(new HashSet<>(tags.values));
+    }
+
+    public Set<RoadmapTag> getValues() {
+        return new HashSet<>(values);
     }
 }

@@ -12,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -59,19 +60,29 @@ public class Roadmap extends BaseCreatedTimeEntity {
     @Embedded
     private RoadmapTags tags = new RoadmapTags();
 
+    @Embedded
+    private RoadmapReviews reviews = new RoadmapReviews();
+
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
-        validate(title, introduction, requiredPeriod);
-        this.title = title;
-        this.introduction = introduction;
-        this.requiredPeriod = requiredPeriod;
-        this.difficulty = difficulty;
-        this.creator = creator;
-        this.category = category;
+        this(null, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
+    }
+
+    public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
+                   final RoadmapCategory category) {
+        this(null, title, introduction, requiredPeriod, difficulty, status, creator, category);
     }
 
     public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
                    final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
+        this(id, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
+    }
+
+    public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
+                   final RoadmapCategory category) {
+        validate(title, introduction, requiredPeriod);
         this.id = id;
         this.title = title;
         this.introduction = introduction;
@@ -121,7 +132,18 @@ public class Roadmap extends BaseCreatedTimeEntity {
     }
 
     public void addTags(final RoadmapTags tags) {
-        this.tags = tags;
+        this.tags.addAll(tags);
+    }
+
+    public boolean isCreator(final Member member) {
+        return Objects.equals(creator.getId(), member.getId());
+    }
+
+    public void addReview(final RoadmapReview review) {
+        reviews.add(review);
+        if (review.isNotSameRoadmap(this)) {
+            review.updateRoadmap(this);
+        }
     }
 
     public void delete() {
@@ -130,10 +152,6 @@ public class Roadmap extends BaseCreatedTimeEntity {
 
     public Member getCreator() {
         return creator;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getTitle() {

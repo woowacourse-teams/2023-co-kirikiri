@@ -294,10 +294,9 @@ class RoadmapRepositoryTest {
     }
 
     private Member 크리에이터를_생성한다(final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                new Nickname(nickname), "010-1234-5678");
-        final Member creator = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password("password1!")), memberProfile);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
         return memberRepository.save(creator);
     }
 

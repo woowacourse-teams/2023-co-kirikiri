@@ -26,10 +26,10 @@ public class RefreshToken {
     private EncryptedToken token;
 
     @Column(nullable = false)
-    private final boolean isRevoked = false;
+    private LocalDateTime expiredAt;
 
     @Column(nullable = false)
-    private LocalDateTime expiredAt;
+    private final boolean isRevoked = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
