@@ -105,7 +105,7 @@ class GoalRoomRepositoryTest {
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)), goalRoomPendingMember2);
 
         // when
-        final List<GoalRoom> goalRooms = goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(roadmap,
+        final List<GoalRoom> goalRooms = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsFilterType.LATEST, null, 10);
 
         assertThat(goalRooms).isEqualTo(List.of(goalRoom2, goalRoom1));
@@ -139,7 +139,7 @@ class GoalRoomRepositoryTest {
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)), goalRoomPendingMember2);
 
         // when
-        final List<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(roadmap,
+        final List<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsFilterType.PARTICIPATION_RATE, null, 10);
 
         // then

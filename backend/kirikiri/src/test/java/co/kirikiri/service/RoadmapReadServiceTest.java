@@ -336,7 +336,8 @@ class RoadmapReadServiceTest {
         final List<GoalRoom> goalRooms = List.of(goalRoom2, goalRoom1);
         given(roadmapRepository.findById(anyLong()))
                 .willReturn(Optional.of(roadmap));
-        given(goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(roadmap, RoadmapGoalRoomsFilterType.LATEST,
+        given(goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+                RoadmapGoalRoomsFilterType.LATEST,
                 null, 10))
                 .willReturn(goalRooms);
 

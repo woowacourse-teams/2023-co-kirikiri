@@ -103,7 +103,7 @@ public class RoadmapReadService {
                                                                           final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         final RoadmapGoalRoomsFilterType filterType = GoalRoomMapper.convertToGoalRoomFilterType(filterTypeDto);
-        final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(
+        final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
                 roadmap, filterType, scrollRequest.lastValue(), scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(goalRoomsWithPendingMembers);
     }

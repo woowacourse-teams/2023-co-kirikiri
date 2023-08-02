@@ -37,9 +37,9 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findGoalRoomsWithPendingMembersPageByCond(final Roadmap roadmap,
-                                                                    final RoadmapGoalRoomsFilterType filterType,
-                                                                    final Long lastValue, final int pageSize) {
+    public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
+                                                                          final RoadmapGoalRoomsFilterType filterType,
+                                                                          final Long lastValue, final int pageSize) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
                 .on(roadmapContent.roadmap.eq(roadmap))
