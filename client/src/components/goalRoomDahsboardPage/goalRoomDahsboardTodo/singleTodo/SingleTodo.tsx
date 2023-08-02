@@ -9,7 +9,11 @@ import * as S from './SingleTodo.styles';
      2. 투두리스트 실제 눌렀을 때 체크되는 기능 구현
 */
 
-const SingleTodo = ({ todoContent }: { todoContent: GoalRoomTodo }) => {
+type SingleTodoProps = {
+  todoContent: GoalRoomTodo;
+};
+
+const SingleTodo = ({ todoContent }: SingleTodoProps) => {
   const { content, startDate, endDate } = todoContent;
   const [isTodoButtonHovered, setIsTodoButtonHovered] = useState(false);
 
