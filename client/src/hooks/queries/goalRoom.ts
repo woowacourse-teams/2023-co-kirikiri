@@ -1,7 +1,11 @@
-import { CreateGoalRoomRequest } from '@myTypes/goalRoom/remote';
-import { postCreateGoalRoom, getGoalRoomDashboard } from '@apis/goalRoom';
+import { CreateGoalRoomRequest, newTodoPayload } from '@myTypes/goalRoom/remote';
+import {
+  postCreateGoalRoom,
+  getGoalRoomDashboard,
+  postCreateNewTodo,
+} from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
   const { data } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
@@ -24,5 +28,23 @@ export const useCreateGoalRoom = () => {
 
   return {
     createGoalRoom: mutate,
+  };
+};
+
+export const useCreateTodo = (goalRoomId: string, funcAfterSuccess: () => void) => {
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(
+    (body: newTodoPayload) => postCreateNewTodo(goalRoomId, body),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
+        funcAfterSuccess();
+      },
+    }
+  );
+
+  return {
+    createTodo: mutate,
   };
 };
