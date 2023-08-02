@@ -56,5 +56,5 @@ export const DialogBackdrop = (props: PropsWithChildren<DialogBackdropProps>) =>
 
 export const DialogContent = ({ children }: PropsWithChildren) => {
   const { isOpen } = useContextScope(DialogContext);
-  return isOpen ? <div>{children}</div> : null;
+  return isOpen ? <>{children}</> : null;
 };
