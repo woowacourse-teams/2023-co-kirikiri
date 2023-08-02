@@ -1,6 +1,6 @@
 package co.kirikiri.service.dto.roadmap.response;
 
-public record RoadmapSummaryResponse(
+public record MemberRoadmapResponse(
         Long roadmapId,
         String roadmapTitle,
         String difficulty,

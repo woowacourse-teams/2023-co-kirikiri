@@ -28,10 +28,10 @@ import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -249,22 +249,22 @@ class RoadmapReadServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(member));
-        when(roadmapRepository.findRoadmapsWithCategoryByMemberOrderByIdDesc(any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(any(), any(), anyInt()))
                 .thenReturn(List.of(roadmap2, roadmap1));
 
         // when
-        final List<RoadmapSummaryResponse> roadmapSummaryResponses = roadmapService.findAllSummaryRoadmaps(
+        final List<MemberRoadmapResponse> memberRoadmapRespons = roadmapService.findAllMemberRoadmaps(
                 "identifier1",
                 new CustomScrollRequest(null, 10));
 
         // then
-        final List<RoadmapSummaryResponse> expected = List.of(
-                new RoadmapSummaryResponse(2L, "로드맵 제목", RoadmapDifficulty.NORMAL.name(),
+        final List<MemberRoadmapResponse> expected = List.of(
+                new MemberRoadmapResponse(2L, "로드맵 제목", RoadmapDifficulty.NORMAL.name(),
                         new RoadmapCategoryResponse(2L, "여가")),
-                new RoadmapSummaryResponse(1L, "로드맵 제목", RoadmapDifficulty.NORMAL.name(),
+                new MemberRoadmapResponse(1L, "로드맵 제목", RoadmapDifficulty.NORMAL.name(),
                         new RoadmapCategoryResponse(1L, "운동")));
 
-        assertThat(roadmapSummaryResponses).isEqualTo(expected);
+        assertThat(memberRoadmapRespons).isEqualTo(expected);
     }
 
     @Test
@@ -276,7 +276,7 @@ class RoadmapReadServiceTest {
         // when
         // then
         assertThatThrownBy(
-                () -> roadmapService.findAllSummaryRoadmaps("identifier1", new CustomScrollRequest(null, 10)))
+                () -> roadmapService.findAllMemberRoadmaps("identifier1", new CustomScrollRequest(null, 10)))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }

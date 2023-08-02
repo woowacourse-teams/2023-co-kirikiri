@@ -13,6 +13,6 @@ public interface RoadmapQueryRepository {
     Page<Roadmap> findRoadmapPagesByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
                                          final Pageable pageable);
 
-    List<Roadmap> findRoadmapsWithCategoryByMemberOrderByIdDesc(final Member member, final Long lastValue,
+    List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member, final Long lastValue,
                                                                 final int pageSize);
 }

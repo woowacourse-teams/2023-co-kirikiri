@@ -1,6 +1,5 @@
 package co.kirikiri.persistence.roadmap;
 
-import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -66,7 +65,7 @@ class RoadmapRepositoryTest {
         final Roadmap travelRoadmap = 로드맵을_생성한다(creator, travelCategory);
         final Roadmap deletedTravelRoadmap = 삭제된_로드맵을_생성한다(creator, travelCategory);
 
-        roadmapRepository.saveAll(of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, travelRoadmap));
+        roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, travelRoadmap));
 
         final RoadmapCategory category = null;
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
@@ -91,11 +90,11 @@ class RoadmapRepositoryTest {
 
                 () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(of(travelRoadmap, gameRoadmap2)),
+                        .isEqualTo(List.of(travelRoadmap, gameRoadmap2)),
 
                 () -> assertThat(secondPageRoadmaps.getContent()).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(of(gameRoadmap))
+                        .isEqualTo(List.of(gameRoadmap))
         );
     }
 
@@ -111,7 +110,7 @@ class RoadmapRepositoryTest {
         final Roadmap deletedGameRoadmap = 삭제된_로드맵을_생성한다(creator, gameCategory);
         final Roadmap deletedTravelRoadmap = 삭제된_로드맵을_생성한다(creator, travelCategory);
 
-        roadmapRepository.saveAll(of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, deletedGameRoadmap));
+        roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, deletedGameRoadmap));
 
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
         final PageRequest firstPage = PageRequest.of(0, 10);
@@ -127,7 +126,7 @@ class RoadmapRepositoryTest {
                 () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
                 () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(of(gameRoadmap2, gameRoadmap))
+                        .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
         );
     }
 
@@ -146,23 +145,24 @@ class RoadmapRepositoryTest {
         final Member creator = 크리에이터를_생성한다();
         final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
         final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
+        final RoadmapCategory itCategory = 카테고리를_생성한다("IT");
 
         final Roadmap gameRoadmap = 로드맵을_생성한다(creator, gameCategory);
-        final Roadmap gameRoadmap2 = 로드맵을_생성한다(creator, gameCategory);
-        final Roadmap deletedGameRoadmap = 삭제된_로드맵을_생성한다(creator, gameCategory);
+        final Roadmap gameRoadmap2 = 로드맵을_생성한다(creator, travelCategory);
+        final Roadmap deletedGameRoadmap = 삭제된_로드맵을_생성한다(creator, itCategory);
 
-        roadmapRepository.saveAll(of(gameRoadmap, gameRoadmap2, deletedGameRoadmap));
+        roadmapRepository.saveAll(List.of(gameRoadmap, gameRoadmap2, deletedGameRoadmap));
 
         // when
-        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByIdDesc(creator,
+        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(creator,
                 null, 2);
-        final List<Roadmap> roadmapsSecondPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByIdDesc(
-                creator, 2L, 2);
+        final List<Roadmap> roadmapsSecondPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(
+                creator, roadmapsFirstPage.get(1).getId(), 2);
 
         // then
         assertAll(
-                () -> assertThat(roadmapsFirstPage).isEqualTo(of(deletedGameRoadmap, gameRoadmap2)),
-                () -> assertThat(roadmapsSecondPage).isEqualTo(of(gameRoadmap))
+                () -> assertThat(roadmapsFirstPage).isEqualTo(List.of(deletedGameRoadmap, gameRoadmap2)),
+                () -> assertThat(roadmapsSecondPage).isEqualTo(List.of(gameRoadmap))
         );
     }
 
@@ -213,7 +213,7 @@ class RoadmapRepositoryTest {
     }
 
     private RoadmapNodes 로드맵_노드들을_생성한다() {
-        return new RoadmapNodes(of(
+        return new RoadmapNodes(List.of(
                 new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용"),
                 new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용")));
 

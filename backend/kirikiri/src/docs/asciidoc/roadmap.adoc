@@ -154,7 +154,7 @@ operation::roadmap-create-api-test/로드맵_리뷰_생성시_이미_리뷰를_�
 
 === *6-1* 성공
 
-operation::roadmap-read-api-test/사용자가_생성한_로드맵을_조회한다[snippets='http-request,query-parameters,http-response,response-fields']
+operation::roadmap-read-api-test/사용자가_생성한_로드맵을_조회한다[snippets='http-request,request-headers,query-parameters,http-response,response-fields']
 
 === *6-2* 실패 - 존재하지 않는 회원인 경우
 

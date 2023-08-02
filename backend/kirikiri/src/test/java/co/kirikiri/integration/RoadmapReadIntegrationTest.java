@@ -18,11 +18,11 @@ import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -296,7 +296,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 사용자가_생성한_로드맵_조회한다() {
+    void 사용자가_생성한_로드맵을_조회한다() {
         // given
         크리에이터를_저장한다();
         final String 로그인_토큰_정보 = 로그인();
@@ -309,7 +309,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
 
         // when
-        final List<RoadmapSummaryResponse> 사용자_로드맵_응답_리스트 = given()
+        final List<MemberRoadmapResponse> 사용자_로드맵_응답_리스트 = given()
                 .log().all()
                 .when()
                 .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
@@ -321,12 +321,12 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final List<RoadmapSummaryResponse> 예상되는_사용자_로드맵_응답_리스트 = List.of(
-                new RoadmapSummaryResponse(3L, "세 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+        final List<MemberRoadmapResponse> 예상되는_사용자_로드맵_응답_리스트 = List.of(
+                new MemberRoadmapResponse(3L, "세 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(2L, "게임")),
-                new RoadmapSummaryResponse(2L, "두 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                new MemberRoadmapResponse(2L, "두 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(1L, "여행")),
-                new RoadmapSummaryResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                new MemberRoadmapResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(1L, "여행")));
 
         assertThat(사용자_로드맵_응답_리스트).isEqualTo(예상되는_사용자_로드맵_응답_리스트);
@@ -346,7 +346,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
 
         // when
-        final List<RoadmapSummaryResponse> 사용자_로드맵_응답_리스트 = given()
+        final List<MemberRoadmapResponse> 사용자_로드맵_응답_리스트 = given()
                 .log().all()
                 .when()
                 .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
@@ -358,8 +358,8 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 });
 
         // then
-        final List<RoadmapSummaryResponse> 예상되는_사용자_로드맵_응답_리스트 = List.of(
-                new RoadmapSummaryResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+        final List<MemberRoadmapResponse> 예상되는_사용자_로드맵_응답_리스트 = List.of(
+                new MemberRoadmapResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(1L, "여행")));
 
         assertThat(사용자_로드맵_응답_리스트).isEqualTo(예상되는_사용자_로드맵_응답_리스트);

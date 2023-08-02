@@ -15,9 +15,9 @@ import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -78,12 +78,12 @@ public class RoadmapReadService {
         return RoadmapMapper.convertRoadmapCategoryResponses(roadmapCategories);
     }
 
-    public List<RoadmapSummaryResponse> findAllSummaryRoadmaps(final String identifier,
-                                                               final CustomScrollRequest scrollRequest) {
+    public List<MemberRoadmapResponse> findAllMemberRoadmaps(final String identifier,
+                                                             final CustomScrollRequest scrollRequest) {
         final Member member = findMemberByIdentifier(identifier);
-        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByIdDesc(member,
+        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(member,
                 scrollRequest.lastValue(), scrollRequest.size());
-        return RoadmapMapper.convertRoadmapSummaryResponses(roadmaps);
+        return RoadmapMapper.convertMemberRoadmapResponses(roadmaps);
     }
 
     private Member findMemberByIdentifier(final String identifier) {

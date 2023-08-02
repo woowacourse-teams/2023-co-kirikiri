@@ -42,11 +42,11 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     public Page<GoalRoom> findGoalRoomsWithPendingMembersPageByCond(final GoalRoomFilterType filterType,
                                                                     final Pageable pageable) {
         final List<GoalRoom> goalRooms = selectFrom(goalRoom)
-                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
                 .fetchJoin()
-                .leftJoin(goalRoomPendingMember.member, member)
+                .innerJoin(goalRoomPendingMember.member, member)
                 .fetchJoin()
-                .leftJoin(member.memberProfile, memberProfile)
+                .innerJoin(member.memberProfile, memberProfile)
                 .fetchJoin()
                 .where(statusCond(GoalRoomStatus.RECRUITING))
                 .offset(pageable.getOffset())
@@ -56,9 +56,9 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
         final JPAQuery<Long> countQuery = select(goalRoom.count())
                 .from(goalRoom)
-                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .leftJoin(goalRoomPendingMember.member, member)
-                .leftJoin(member.memberProfile, memberProfile)
+                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .innerJoin(goalRoomPendingMember.member, member)
+                .innerJoin(member.memberProfile, memberProfile)
                 .where(statusCond(GoalRoomStatus.RECRUITING));
 
         return PageableExecutionUtils.getPage(goalRooms, pageable, countQuery::fetchOne);

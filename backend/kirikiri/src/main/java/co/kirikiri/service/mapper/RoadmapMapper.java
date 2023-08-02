@@ -18,11 +18,11 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -123,11 +123,11 @@ public final class RoadmapMapper {
         return new RoadmapReviewDto(request.content(), request.rate(), member);
     }
 
-    public static List<RoadmapSummaryResponse> convertRoadmapSummaryResponses(final List<Roadmap> roadmaps) {
+    public static List<MemberRoadmapResponse> convertMemberRoadmapResponses(final List<Roadmap> roadmaps) {
         return roadmaps.stream()
                 .map(roadmap -> {
                     final RoadmapCategory category = roadmap.getCategory();
-                    return new RoadmapSummaryResponse(roadmap.getId(), roadmap.getTitle(),
+                    return new MemberRoadmapResponse(roadmap.getId(), roadmap.getTitle(),
                             roadmap.getDifficulty().name(),
                             new RoadmapCategoryResponse(category.getId(), category.getName()));
                 })

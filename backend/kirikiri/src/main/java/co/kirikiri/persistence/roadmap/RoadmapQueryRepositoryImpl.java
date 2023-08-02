@@ -39,7 +39,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public List<Roadmap> findRoadmapsWithCategoryByMemberOrderByIdDesc(final Member member, final Long lastValue,
+    public List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member, final Long lastValue,
                                                                        final int pageSize) {
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)

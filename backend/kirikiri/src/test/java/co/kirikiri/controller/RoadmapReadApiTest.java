@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -22,11 +24,11 @@ import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapSummaryResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Collections;
 import java.util.List;
@@ -226,9 +228,9 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 사용자가_생성한_로드맵을_조회한다() throws Exception {
         // given
-        final List<RoadmapSummaryResponse> expected = 사용자_로드맵_조회에_대한_응답을_생성한다();
+        final List<MemberRoadmapResponse> expected = 사용자_로드맵_조회에_대한_응답을_생성한다();
 
-        when(roadmapReadService.findAllSummaryRoadmaps(any(), any()))
+        when(roadmapReadService.findAllMemberRoadmaps(any(), any()))
                 .thenReturn(expected);
 
         // when
@@ -241,6 +243,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 .andExpect(status().isOk())
                 .andDo(
                         documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("액세스 토큰")),
                                 queryParameters(
                                         parameterWithName("lastValue").description("이전에 응답받은 값 중에서 가장 작은 값 (초기는 null)")
                                                 .optional(),
@@ -255,17 +259,17 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 .getContentAsString();
 
         // then
-        final List<RoadmapSummaryResponse> roadmapSummaryResponses = objectMapper.readValue(response,
+        final List<MemberRoadmapResponse> memberRoadmapRespons = objectMapper.readValue(response,
                 new TypeReference<>() {
                 });
-        assertThat(roadmapSummaryResponses)
+        assertThat(memberRoadmapRespons)
                 .isEqualTo(expected);
     }
 
     @Test
     void 사용자가_생성한_로드맵을_조회할_때_존재하지_않는_회원이면_예외가_발생한다() throws Exception {
         // given
-        when(roadmapReadService.findAllSummaryRoadmaps(any(), any()))
+        when(roadmapReadService.findAllMemberRoadmaps(any(), any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
 
         // when
@@ -280,6 +284,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                         jsonPath("$.message").value("존재하지 않는 회원입니다."))
                 .andDo(
                         documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("액세스 토큰")),
                                 queryParameters(
                                         parameterWithName("lastValue").description("이전에 응답받은 값 중에서 가장 작은 값 (초기는 null)")
                                                 .optional(),
@@ -328,12 +334,12 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 category9);
     }
 
-    private List<RoadmapSummaryResponse> 사용자_로드맵_조회에_대한_응답을_생성한다() {
-        return List.of(new RoadmapSummaryResponse(3L, "세 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+    private List<MemberRoadmapResponse> 사용자_로드맵_조회에_대한_응답을_생성한다() {
+        return List.of(new MemberRoadmapResponse(3L, "세 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(2L, "게임")),
-                new RoadmapSummaryResponse(2L, "두 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                new MemberRoadmapResponse(2L, "두 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(1L, "여행")),
-                new RoadmapSummaryResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
+                new MemberRoadmapResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(1L, "여행")));
     }
 }
