@@ -19,3 +19,8 @@ export const ROADMAP_MAX_LENGTH = {
   rule: /^.{1,40}$/,
   message: '로드맵의 제목은 필수로 입력해주세요',
 };
+
+export const TAG_MAX_LENGTH = {
+  rule: /^.{1,10}$/,
+  message: '1글자부터 5글자까지 작성해주세요',
+};
