@@ -6,36 +6,14 @@ import InputField from '../inputField/InputField';
 import PageSection from '../pageSection/PageSection';
 import * as S from './CreateGoalRoomForm.styles';
 import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
-
-// 로드맵 노드 데이터
-const NODES = [
-  {
-    roadmapNodeId: 1,
-    title: '1. JS 기본 타입',
-    content: '로드맵 1주차에는 알고리즘을 배울거에요.',
-  },
-  {
-    roadmapNodeId: 2,
-    title: '2. 기본 연산',
-    content: '로드맵 1주차에는 알고리즘을 배울거에요.',
-  },
-  {
-    roadmapNodeId: 3,
-    title: '2. 기본 연산',
-    content: '로드맵 1주차에는 알고리즘을 배울거에요.',
-  },
-  {
-    roadmapNodeId: 4,
-    title: '2. 기본 연산',
-    content: '로드맵 1주차에는 알고리즘을 배울거에요.',
-  },
-];
+import { NodeType } from '@myTypes/roadmap/internal';
 
 type CreateGoalRoomFormProps = {
   roadmapContentId: number;
+  nodes: NodeType[];
 };
 
-const CreateGoalRoomForm = ({ roadmapContentId }: CreateGoalRoomFormProps) => {
+const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps) => {
   const { createGoalRoom } = useCreateGoalRoom();
   const { formState, handleInputChange } = useFormInput<CreateGoalRoomRequest>({
     roadmapContentId: Number(roadmapContentId),
@@ -46,8 +24,8 @@ const CreateGoalRoomForm = ({ roadmapContentId }: CreateGoalRoomFormProps) => {
       startDate: '',
       endDate: '',
     },
-    goalRoomRoadmapNodeRequests: NODES.map(({ roadmapNodeId }) => ({
-      roadmapNodeId,
+    goalRoomRoadmapNodeRequests: nodes.map(({ id }) => ({
+      roadmapNodeId: id,
       checkCount: 5,
       startDate: '',
       endDate: '',
@@ -76,18 +54,16 @@ const CreateGoalRoomForm = ({ roadmapContentId }: CreateGoalRoomFormProps) => {
         description='단계별 로드맵의 수행 일정과 일증 횟수를 지정해주세요'
       >
         <S.NodeSectionWrapper>
-          <S.NodeList nodeCount={NODES.length}>
-            {NODES.map(({ roadmapNodeId, title }) => (
-              <S.NodeWrapper key={roadmapNodeId}>
+          <S.NodeList nodeCount={nodes.length}>
+            {nodes.map(({ id, title }) => (
+              <S.NodeWrapper key={id}>
                 <S.NodeInfo>{title}</S.NodeInfo>
                 <S.NodeConfigs>
                   <>
                     <InputField label='수행 시작 일자' isRequired type='small'>
                       <S.DateInput
                         id='수행 시작 일자'
-                        name={`goalRoomRoadmapNodeRequests[${
-                          roadmapNodeId - 1
-                        }][startDate]`}
+                        name={`goalRoomRoadmapNodeRequests[${id - 1}][startDate]`}
                         onChange={handleInputChange}
                         placeholder='2023-08-12'
                       />
@@ -95,9 +71,7 @@ const CreateGoalRoomForm = ({ roadmapContentId }: CreateGoalRoomFormProps) => {
                     <InputField label='수행 종료 일자' isRequired type='small'>
                       <S.DateInput
                         id='수행 종료 일자'
-                        name={`goalRoomRoadmapNodeRequests[${
-                          roadmapNodeId - 1
-                        }][endDate]`}
+                        name={`goalRoomRoadmapNodeRequests[${id - 1}][endDate]`}
                         onChange={handleInputChange}
                         placeholder='2023-08-13'
                       />
@@ -105,9 +79,7 @@ const CreateGoalRoomForm = ({ roadmapContentId }: CreateGoalRoomFormProps) => {
                   </>
                   <InputField label='인증 횟수' isRequired type='small'>
                     <S.Input
-                      name={`goalRoomRoadmapNodeRequests[${
-                        roadmapNodeId - 1
-                      }][checkCount]`}
+                      name={`goalRoomRoadmapNodeRequests[${id - 1}][checkCount]`}
                       onChange={handleInputChange}
                     />
                   </InputField>
