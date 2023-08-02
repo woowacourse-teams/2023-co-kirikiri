@@ -99,7 +99,7 @@ class MemberServiceTest {
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
-        final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
+        final Member member = new Member(1L, identifier, new EncryptedPassword(password), nickname, memberImage,
                 new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
 
         given(memberRepository.findByIdentifier(any()))
@@ -111,7 +111,8 @@ class MemberServiceTest {
         final MemberMyInfoResponse response = memberService.findMyInfo(identifier.getValue());
 
         // then
-        final MemberMyInfoResponse expected = new MemberMyInfoResponse("nickname", "serverFilePath", Gender.MALE.name(),
+        final MemberMyInfoResponse expected = new MemberMyInfoResponse(1L, "nickname", "serverFilePath",
+                Gender.MALE.name(),
                 "identifier1", "010-1234-5678", LocalDate.now());
 
         assertThat(response).isEqualTo(expected);
@@ -183,7 +184,7 @@ class MemberServiceTest {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
                 new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
-        
+
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(memberRepository.findWithMemberProfileAndImageById(any()))

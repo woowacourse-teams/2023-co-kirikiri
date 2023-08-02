@@ -207,7 +207,7 @@ class MemberIntegrationTest extends IntegrationTest {
         final MemberMyInfoResponse 사용자_자신의_정보_조회_응답_바디 = jsonToClass(사용자_자신의_정보_조회_응답.asString(),
                 new TypeReference<>() {
                 });
-        final MemberMyInfoResponse 예상하는_응답값 = new MemberMyInfoResponse("nickname", "serverFilePath",
+        final MemberMyInfoResponse 예상하는_응답값 = new MemberMyInfoResponse(1L, "nickname", "serverFilePath",
                 GenderType.MALE.name(), "identifier1", "010-1234-5678", LocalDate.now());
 
         assertThat(사용자_자신의_정보_조회_응답_바디).isEqualTo(예상하는_응답값);

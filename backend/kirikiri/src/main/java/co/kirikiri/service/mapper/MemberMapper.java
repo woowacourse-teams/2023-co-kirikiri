@@ -28,7 +28,8 @@ public final class MemberMapper {
     public static MemberMyInfoResponse convertToMemberMyInfoResponse(final Member member) {
         final MemberImage memberImage = member.getImage();
         final MemberProfile memberProfile = member.getMemberProfile();
-        return new MemberMyInfoResponse(member.getNickname().getValue(), memberImage.getServerFilePath(),
+        return new MemberMyInfoResponse(member.getId(), member.getNickname().getValue(),
+                memberImage.getServerFilePath(),
                 memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getPhoneNumber(),
                 memberProfile.getBirthday());
     }

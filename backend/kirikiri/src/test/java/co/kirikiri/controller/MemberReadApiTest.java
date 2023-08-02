@@ -35,7 +35,8 @@ public class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 로그인한_사용자_자신의_정보를_조회한다() throws Exception {
         // given
-        final MemberMyInfoResponse expected = new MemberMyInfoResponse("nickname", "serverFilePath", Gender.MALE.name(),
+        final MemberMyInfoResponse expected = new MemberMyInfoResponse(1L, "nickname", "serverFilePath",
+                Gender.MALE.name(),
                 "identifier1", "010-1234-5678", LocalDate.now());
 
         given(memberService.findMyInfo(any()))
@@ -51,6 +52,7 @@ public class MemberReadApiTest extends ControllerTestHelper {
                                 headerWithName(AUTHORIZATION).description("액세스 토큰")
                         ),
                         responseFields(
+                                fieldWithPath("id").description("사용자 id (PK)"),
                                 fieldWithPath("nickname").description("사용자 닉네임"),
                                 fieldWithPath("profileImageUrl").description("사용자 이미지 Url"),
                                 fieldWithPath("gender").description("사용자 성별"),
