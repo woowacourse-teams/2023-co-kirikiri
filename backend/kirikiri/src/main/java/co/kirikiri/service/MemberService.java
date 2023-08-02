@@ -8,9 +8,12 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
+import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -18,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 
@@ -31,6 +34,7 @@ public class MemberService {
     private final Environment environment;
     private final NumberGenerator numberGenerator;
 
+    @Transactional
     public Long join(final MemberJoinRequest memberJoinRequest) {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
         checkIdentifierDuplicate(memberJoinDto.identifier());
@@ -65,5 +69,32 @@ public class MemberService {
         return new MemberImage(defaultOriginalFileName + randomImageNumber,
                 defaultServerFilePath + randomImageNumber + defaultExtension,
                 ImageContentType.valueOf(defaultImageContentType));
+    }
+
+    public MemberInformationResponse findMemberInformation(final String identifier) {
+        final Member memberWithInfo = findMemberInformationByIdentifier(identifier);
+        return MemberMapper.convertToMemberInformationResponse(memberWithInfo);
+    }
+
+    private Member findMemberInformationByIdentifier(final String identifier) {
+        return memberRepository.findWithMemberProfileAndImageByIdentifier(identifier)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    public MemberInformationForPublicResponse findMemberInformationForPublic(final String identifier,
+                                                                             final Long memberId) {
+        findMemberByIdentifier(identifier);
+        final Member memberWithPublicInfo = findMemberInformationByMemberId(memberId);
+        return MemberMapper.convertToMemberInformationForPublicResponse(memberWithPublicInfo);
+    }
+
+    private Member findMemberByIdentifier(final String identifier) {
+        return memberRepository.findByIdentifier(new Identifier(identifier))
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    private Member findMemberInformationByMemberId(final Long memberId) {
+        return memberRepository.findWithMemberProfileAndImageById(memberId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다. memberId = " + memberId));
     }
 }
