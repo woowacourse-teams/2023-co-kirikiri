@@ -47,22 +47,22 @@ public class RoadmapController {
     public ResponseEntity<List<RoadmapForListResponse>> findRoadmapsByFilterType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
             @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest filterTypeRequest,
-            @ModelAttribute final CustomScrollRequest scrollRequest
+            @ModelAttribute @Valid final CustomScrollRequest scrollRequest
     ) {
-        final List<RoadmapForListResponse> roadmapPageResponse = roadmapService.findRoadmapsByFilterType(
+        final List<RoadmapForListResponse> roadmapResponses = roadmapService.findRoadmapsByFilterType(
                 categoryId, filterTypeRequest, scrollRequest);
-        return ResponseEntity.ok(roadmapPageResponse);
+        return ResponseEntity.ok(roadmapResponses);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<RoadmapForListResponse>> search(
             @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest filterTypeRequest,
             @ModelAttribute final RoadmapSearchRequest searchRequest,
-            @ModelAttribute final CustomScrollRequest scrollRequest
+            @ModelAttribute @Valid final CustomScrollRequest scrollRequest
     ) {
-        final List<RoadmapForListResponse> roadmapPageResponse = roadmapService.search(
+        final List<RoadmapForListResponse> roadmapResponses = roadmapService.search(
                 filterTypeRequest, searchRequest, scrollRequest);
-        return ResponseEntity.ok(roadmapPageResponse);
+        return ResponseEntity.ok(roadmapResponses);
     }
 
     @GetMapping("/categories")

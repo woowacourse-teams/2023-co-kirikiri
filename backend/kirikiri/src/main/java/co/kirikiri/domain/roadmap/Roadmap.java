@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Roadmap extends BaseEntity {
+public class Roadmap extends BaseCreatedTimeEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
@@ -161,5 +162,9 @@ public class Roadmap extends BaseEntity {
 
     public RoadmapTags getTags() {
         return tags;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

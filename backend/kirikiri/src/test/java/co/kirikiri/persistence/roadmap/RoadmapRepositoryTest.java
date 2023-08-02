@@ -17,9 +17,11 @@ import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -84,23 +86,15 @@ class RoadmapRepositoryTest {
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
 
         // when
-        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(category, orderType,
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
                 null, 2);
-        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(category, orderType,
-                gameRoadmap2.getId(), 2);
 
         // then
         assertAll(
                 () -> assertThat(firstRoadmapRequest.size()).isEqualTo(2),
-                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(1),
-
                 () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(travelRoadmap, gameRoadmap2)),
-
-                () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
-                        .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(gameRoadmap))
+                        .isEqualTo(List.of(travelRoadmap, gameRoadmap2))
         );
     }
 
@@ -119,13 +113,52 @@ class RoadmapRepositoryTest {
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
 
         // when
-        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(gameCategory, orderType,
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(gameCategory, orderType,
                 null, 10);
 
         // then
         assertAll(
                 () -> assertThat(firstRoadmapRequest.size()).isEqualTo(2),
                 () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
+        );
+    }
+
+    @Test
+    void 카테고리_조건_없이_주어진_마지막_날짜_이전의_데이터를_최신순으로_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
+        final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
+
+        final Roadmap gameRoadmap = 로드맵을_저장한다("게임 로드맵", creator, gameCategory);
+        final Roadmap gameRoadmap2 = 로드맵을_저장한다("게임 로드맵2", creator, gameCategory);
+        final Roadmap travelRoadmap = 로드맵을_저장한다("여행 로드맵", creator, travelCategory);
+        삭제된_로드맵을_저장한다("여행 로드맵2", creator, travelCategory);
+
+        final RoadmapCategory category = null;
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 1));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(travelRoadmap.getCreatedAt(), null, null, null, 10));
+
+        // when
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
+                firstRoadmapLastValueDto, 1);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
+                secondRoadmapLastValueDto, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(1),
+                () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(travelRoadmap)),
+
+                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
         );
@@ -145,12 +178,17 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("로드맵", creator, category);
 
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(" 로 드 맵 ", null, null);
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, " 로 드 맵 ", null);
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 2));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmap3.getCreatedAt(), null, null, null, 3));
 
         // when
-        final List<Roadmap> firstRoadmapRequest = roadmapRepository.searchRoadmaps(orderType, searchRequest, null, 2);
-        final List<Roadmap> secondRoadmapRequest = roadmapRepository.searchRoadmaps(orderType, searchRequest,
-                roadmap3.getId(), 3);
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                firstRoadmapLastValueDto, 2);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                secondRoadmapLastValueDto, 3);
 
         // then
         assertAll(
@@ -181,12 +219,17 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("로드맵", creator1, category);
 
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, creator1.getId(), null);
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getId(), null, null);
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 2));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmap2.getCreatedAt(), null, null, null, 3));
 
         // when
-        final List<Roadmap> firstRoadmapRequest = roadmapRepository.searchRoadmaps(orderType, searchRequest, null, 2);
-        final List<Roadmap> secondRoadmapRequest = roadmapRepository.searchRoadmaps(orderType, searchRequest,
-                roadmap2.getId(), 3);
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                firstRoadmapLastValueDto, 2);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                secondRoadmapLastValueDto, 3);
 
         // then
         assertAll(
@@ -224,11 +267,17 @@ class RoadmapRepositoryTest {
 
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
         final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, null, " 자 바 ");
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 1));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmap3.getCreatedAt(), null, null, null, 1));
 
         // when
-        final List<Roadmap> firstRoadmapRequest = roadmapRepository.searchRoadmaps(orderType, searchRequest, null, 1);
-        final List<Roadmap> secondRoadmapRequest = roadmapRepository.searchRoadmaps(orderType, searchRequest,
-                roadmap3.getId(), 1);
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                firstRoadmapLastValueDto,
+                1);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                secondRoadmapLastValueDto, 1);
 
         // then
         assertAll(

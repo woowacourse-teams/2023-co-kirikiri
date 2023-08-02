@@ -67,6 +67,7 @@ public final class RoadmapMapper {
                 roadmapContentResponse,
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
+                roadmap.getCreatedAt(),
                 roadmapTagResponses
         );
     }
@@ -101,7 +102,7 @@ public final class RoadmapMapper {
                 .toList();
     }
 
-    public static List<RoadmapForListResponse> convertRoadmapPageResponse(final List<Roadmap> roadmaps) {
+    public static List<RoadmapForListResponse> convertRoadmapResponses(final List<Roadmap> roadmaps) {
         return roadmaps.stream()
                 .map(RoadmapMapper::convertRoadmapResponse)
                 .toList();
@@ -121,6 +122,7 @@ public final class RoadmapMapper {
                 roadmap.getIntroduction(),
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
+                roadmap.getCreatedAt(),
                 creatorResponse,
                 categoryResponse,
                 roadmapTagResponses

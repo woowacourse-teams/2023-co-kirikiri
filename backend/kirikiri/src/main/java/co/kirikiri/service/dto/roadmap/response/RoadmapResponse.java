@@ -1,6 +1,7 @@
 package co.kirikiri.service.dto.roadmap.response;
 
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record RoadmapResponse(
@@ -12,6 +13,7 @@ public record RoadmapResponse(
         RoadmapContentResponse content,
         String difficulty,
         int recommendedRoadmapPeriod,
+        LocalDateTime createdAt,
         List<RoadmapTagResponse> tags
 ) {
 

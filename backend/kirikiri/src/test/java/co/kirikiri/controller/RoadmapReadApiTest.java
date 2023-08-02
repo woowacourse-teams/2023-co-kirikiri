@@ -26,6 +26,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(RoadmapController.class)
 public class RoadmapReadApiTest extends ControllerTestHelper {
+
+    private final LocalDateTime 오늘 = LocalDateTime.now();
 
     @MockBean
     private RoadmapService roadmapService;
@@ -62,6 +65,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                                 fieldWithPath("category.name").description("로드맵 카테고리 이름"),
                                 fieldWithPath("roadmapTitle").description("로드맵 제목"),
                                 fieldWithPath("introduction").description("로드맵 소개글"),
+                                fieldWithPath("createdAt").description("로드맵 생성 시간"),
                                 fieldWithPath("creator.id").description("로드맵 크리에이터 아이디"),
                                 fieldWithPath("creator.name").description("로드맵 크리에이터 닉네임"),
                                 fieldWithPath("content.id").description("로드맵 컨텐츠 아이디"),
@@ -118,7 +122,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                         get(API_PREFIX + "/roadmaps")
                                 .param("categoryId", "1")
                                 .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
-                                .param("lastValue", "1")
+                                .param("lastCreatedAt", String.valueOf(LocalDateTime.now()))
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
@@ -130,9 +134,21 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                                         parameterWithName("filterCond").description(
                                                         "필터 조건(GOAL_ROOM_COUNT, LATEST, PARTICIPANT_COUNT, REVIEW_RATE)")
                                                 .optional(),
-                                        parameterWithName("lastValue")
-                                                .description("이전에 응답받은 값 중에서 가장 작은 값 (초기는 null) +" + "\n"
-                                                + "- 최신순일 경우: 이전에 응답받은 값 중에서 가장 작은 로드맵 아이디 +" + "\n")
+                                        parameterWithName("lastCreatedAt")
+                                                .description("filterCond의 LATEST와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 createdAt의 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
+                                                .optional(),
+                                        parameterWithName("lastGoalRoomCount")
+                                                .description("filterCond의 GOAL_ROOM_COUNT와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 goalRoomCount 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
+                                                .optional(),
+                                        parameterWithName("lastParticipatedCount")
+                                                .description("filterCond의 PARTICIPANT_COUNT와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 participantCount 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
+                                                .optional(),
+                                        parameterWithName("lastReviewRate")
+                                                .description("filterCond의 REVIEW_RATE와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 reviewRate 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
                                                 .optional(),
                                         parameterWithName("size").description("한 페이지에서 받아올 로드맵의 수")),
                                 responseFields(
@@ -141,6 +157,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].introduction").description("로드맵 소개글"),
                                         fieldWithPath("[0].difficulty").description("로드맵 난이도"),
                                         fieldWithPath("[0].recommendedRoadmapPeriod").description("로드맵 추천 기간"),
+                                        fieldWithPath("[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("[0].creator.name").description("로드맵 크리에이터 이름"),
                                         fieldWithPath("[0].category.id").description("로드맵 카테고리 아이디"),
@@ -199,6 +216,28 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
     }
 
     @Test
+    void 로드맵_목록_조회시_사이즈_값을_전송하지_않으면_예외가_발생한다() throws Exception {
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps")
+                                .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$[0].message").value("사이즈를 입력해 주세요."))
+                .andDo(documentationResultHandler.document(
+                        responseFields(fieldWithPath("[0].message").description("예외 메시지"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<ErrorResponse> errorResponse = objectMapper.readValue(response, new TypeReference<>() {
+        });
+        final ErrorResponse expected = new ErrorResponse("사이즈를 입력해 주세요.");
+        assertThat(errorResponse.get(0))
+                .isEqualTo(expected);
+    }
+
+    @Test
     void 로드맵_카테고리_목록을_조회한다() throws Exception {
         // given
         final List<RoadmapCategoryResponse> expected = 로드맵_카테고리_응답_리스트를_반환한다();
@@ -244,7 +283,6 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                                 .param("creatorId", "1")
                                 .param("tagName", "Java")
                                 .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
-                                .param("lastValue", "1")
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
@@ -262,9 +300,24 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                                         parameterWithName("filterCond").description(
                                                         "필터 조건(GOAL_ROOM_COUNT, LATEST, PARTICIPANT_COUNT, REVIEW_RATE)")
                                                 .optional(),
-                                        parameterWithName("lastValue")
-                                                .description("이전에 응답받은 값 중에서 가장 작은 값 (초기는 null) +" + "\n"
-                                                        + "- 최신순일 경우: 이전에 응답받은 값 중에서 가장 작은 로드맵 아이디 +" + "\n")
+                                        parameterWithName("filterCond").description(
+                                                        "필터 조건(GOAL_ROOM_COUNT, LATEST, PARTICIPANT_COUNT, REVIEW_RATE)")
+                                                .optional(),
+                                        parameterWithName("lastCreatedAt")
+                                                .description("filterCond의 LATEST와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 createdAt의 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
+                                                .optional(),
+                                        parameterWithName("lastGoalRoomCount")
+                                                .description("filterCond의 GOAL_ROOM_COUNT와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 goalRoomCount 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
+                                                .optional(),
+                                        parameterWithName("lastParticipatedCount")
+                                                .description("filterCond의 PARTICIPANT_COUNT와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 participantCount 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
+                                                .optional(),
+                                        parameterWithName("lastReviewRate")
+                                                .description("filterCond의 REVIEW_RATE와 함께 사용하는 옵션 +" + "\n"
+                                                        + "이전에 응답받은 reviewRate 값 중 가장 작은 값, 첫 요청의 경우 보내지 않음 +" + "\n")
                                                 .optional(),
                                         parameterWithName("size").description("한 페이지에서 받아올 로드맵의 수")),
                                 responseFields(
@@ -273,6 +326,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].introduction").description("로드맵 소개글"),
                                         fieldWithPath("[0].difficulty").description("로드맵 난이도"),
                                         fieldWithPath("[0].recommendedRoadmapPeriod").description("로드맵 추천 기간"),
+                                        fieldWithPath("[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("[0].creator.name").description("로드맵 크리에이터 이름"),
                                         fieldWithPath("[0].category.id").description("로드맵 카테고리 아이디"),
@@ -291,6 +345,28 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 로드맵_검색시_사이즈_값을_전송하지_않으면_예외가_발생한다() throws Exception {
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/search")
+                                .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$[0].message").value("사이즈를 입력해 주세요."))
+                .andDo(documentationResultHandler.document(
+                        responseFields(fieldWithPath("[0].message").description("예외 메시지"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<ErrorResponse> errorResponse = objectMapper.readValue(response, new TypeReference<>() {
+        });
+        final ErrorResponse expected = new ErrorResponse("사이즈를 입력해 주세요.");
+        assertThat(errorResponse.get(0))
+                .isEqualTo(expected);
+    }
+
     private RoadmapResponse 단일_로드맵_조회에_대한_응답() {
         final RoadmapCategoryResponse category = new RoadmapCategoryResponse(1, "운동");
         final MemberResponse creator = new MemberResponse(1, "닉네임");
@@ -303,7 +379,7 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
                 new RoadmapTagResponse(2L, "태그2")
         );
         return new RoadmapResponse(1L, category, "제목", "소개글", creator,
-                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100, tags);
+                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100, 오늘, tags);
     }
 
     private List<RoadmapForListResponse> 로드맵_리스트_응답을_생성한다() {
@@ -313,9 +389,9 @@ public class RoadmapReadApiTest extends ControllerTestHelper {
         );
 
         final RoadmapForListResponse roadmapResponse1 = new RoadmapForListResponse(1L, "로드맵 제목1", "로드맵 소개글1", "NORMAL",
-                10, new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1L, "여행"), tags);
+                10, 오늘, new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1L, "여행"), tags);
         final RoadmapForListResponse roadmapResponse2 = new RoadmapForListResponse(2L, "로드맵 제목2", "로드맵 소개글2",
-                "DIFFICULT", 7, new MemberResponse(2L, "끼리코"), new RoadmapCategoryResponse(2L, "IT"), tags);
+                "DIFFICULT", 7, 오늘, new MemberResponse(2L, "끼리코"), new RoadmapCategoryResponse(2L, "IT"), tags);
         return List.of(roadmapResponse1, roadmapResponse2);
     }
 

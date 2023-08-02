@@ -10,6 +10,7 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.dto.RoadmapSearchTagName;
 import co.kirikiri.persistence.dto.RoadmapSearchTitle;
@@ -39,8 +40,8 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public List<Roadmap> findRoadmapsByCond(final RoadmapCategory category, final RoadmapFilterType orderType,
-                                            final Long lastValue, final int pageSize) {
+    public List<Roadmap> findRoadmapsByCategory(final RoadmapCategory category, final RoadmapFilterType orderType,
+                                                final RoadmapLastValueDto lastValue, final int pageSize) {
 
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
@@ -49,7 +50,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
                 .where(
-                        lessThanLastValue(lastValue),
+                        lessThanLastValue(lastValue, orderType),
                         statusCond(RoadmapStatus.CREATED),
                         categoryCond(category))
                 .limit(pageSize)
@@ -58,8 +59,8 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public List<Roadmap> searchRoadmaps(final RoadmapFilterType orderType, final RoadmapSearchDto searchRequest,
-                                        final Long lastValue, final int pageSize) {
+    public List<Roadmap> findRoadmapsByCond(final RoadmapSearchDto searchRequest, final RoadmapFilterType orderType,
+                                            final RoadmapLastValueDto lastValue, final int pageSize) {
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
@@ -67,7 +68,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
                 .where(
-                        lessThanLastValue(lastValue),
+                        lessThanLastValue(lastValue, orderType),
                         statusCond(RoadmapStatus.CREATED),
                         titleCond(searchRequest.getTitle()),
                         creatorCond(searchRequest.getCreatorId()),
@@ -77,12 +78,15 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .fetch();
     }
 
-    // TODO 최신순에서만 no-offset 적용이 되는 코드
-    private BooleanExpression lessThanLastValue(final Long lastValue) {
+    // TODO 최신순에서만 no-offset 적용이 되는 코드, 정렬 조건에 따라서 조건 추가 필요
+    private BooleanExpression lessThanLastValue(final RoadmapLastValueDto lastValue, final RoadmapFilterType orderType) {
         if (lastValue == null) {
             return null;
         }
-        return roadmap.id.lt(lastValue);
+        if (orderType == RoadmapFilterType.LATEST) {
+            return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+        }
+        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
     }
 
     private BooleanExpression statusCond(final RoadmapStatus status) {
@@ -100,7 +104,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (title == null) {
             return null;
         }
-        return removeBlank(roadmap.title).containsIgnoreCase(title.getValue());
+        return removeBlank(roadmap.title).containsIgnoreCase(title.value());
     }
 
     private StringExpression removeBlank(final StringExpression field) {
@@ -119,10 +123,14 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
             return null;
         }
 
-        return roadmap.tags.values.any().name.value.equalsIgnoreCase(tagName.getValue());
+        return roadmap.tags.values
+                .any()
+                .name.value
+                .equalsIgnoreCase(tagName.value());
     }
 
+    // TODO 정렬 조건 추가 필요
     private OrderSpecifier<?> sortCond(final RoadmapFilterType orderType) {
-        return roadmap.id.desc();
+        return roadmap.createdAt.desc();
     }
 }

@@ -18,7 +18,7 @@ class RoadmapSearchTagNameTest {
         final RoadmapSearchTagName searchTagName = assertDoesNotThrow(() -> new RoadmapSearchTagName(name));
 
         // then
-        assertThat(searchTagName.getValue())
+        assertThat(searchTagName.value())
                 .isEqualTo(removedBlankName);
     }
 

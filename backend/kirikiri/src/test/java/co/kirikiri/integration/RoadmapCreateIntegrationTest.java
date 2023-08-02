@@ -63,7 +63,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 정상적으로_생성한다() {
+    void 정상적으로_로드맵을_생성한다() {
         // given
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",

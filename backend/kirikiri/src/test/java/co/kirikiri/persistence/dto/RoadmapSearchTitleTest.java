@@ -18,7 +18,7 @@ class RoadmapSearchTitleTest {
         final RoadmapSearchTitle searchTitle = assertDoesNotThrow(() -> new RoadmapSearchTitle(title));
 
         // then
-        assertThat(searchTitle.getValue())
+        assertThat(searchTitle.value())
                 .isEqualTo(removedBlankTitle);
     }
 

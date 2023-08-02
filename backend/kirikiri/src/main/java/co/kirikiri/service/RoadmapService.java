@@ -14,6 +14,7 @@ import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
@@ -122,10 +123,10 @@ public class RoadmapService {
                                                                  final CustomScrollRequest scrollRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
-
-        final List<Roadmap> roadmapPages = roadmapRepository.findRoadmapsByCond(category, orderType,
-                scrollRequest.lastValue(), scrollRequest.size());
-        return RoadmapMapper.convertRoadmapPageResponse(roadmapPages);
+        final RoadmapLastValueDto roadmapLastValueDto = RoadmapLastValueDto.create(scrollRequest);
+        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCategory(category, orderType,
+                roadmapLastValueDto, scrollRequest.size());
+        return RoadmapMapper.convertRoadmapResponses(roadmaps);
     }
 
     private RoadmapCategory findCategoryById(final Long categoryId) {
@@ -140,11 +141,12 @@ public class RoadmapService {
                                                final RoadmapSearchRequest searchRequest,
                                                final CustomScrollRequest scrollRequest) {
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterTypeRequest);
-        final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(searchRequest.roadmapTitle(),
-                searchRequest.creatorId(), searchRequest.tagName());
-        final List<Roadmap> roadmaps = roadmapRepository.searchRoadmaps(orderType, roadmapSearchDto,
-                scrollRequest.lastValue(), scrollRequest.size());
-        return RoadmapMapper.convertRoadmapPageResponse(roadmaps);
+        final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(
+                searchRequest.creatorId(), searchRequest.roadmapTitle(), searchRequest.tagName());
+        final RoadmapLastValueDto roadmapLastValueDto = RoadmapLastValueDto.create(scrollRequest);
+        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType,
+                roadmapLastValueDto, scrollRequest.size());
+        return RoadmapMapper.convertRoadmapResponses(roadmaps);
     }
 
     public List<RoadmapCategoryResponse> findAllRoadmapCategories() {
