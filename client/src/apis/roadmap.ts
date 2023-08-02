@@ -18,6 +18,6 @@ export const getRoadmapList = (
   });
 };
 
-export const getRoadmapById = (id: string) => {
+export const getRoadmapById = (id: number) => {
   return client.get<RoadmapDetailResponse>(`/roadmaps/${id}`);
 };
