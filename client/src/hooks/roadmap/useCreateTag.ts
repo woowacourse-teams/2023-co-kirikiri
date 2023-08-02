@@ -1,10 +1,11 @@
+import { TAG_LIMIT } from '@/constants/roadmap/tag';
 import { useRef, useState } from 'react';
 
 export const useCreateTag = () => {
   const [tags, setTags] = useState<string[]>([]);
   const ref = useRef<HTMLInputElement | null>(null);
 
-  const getTagText = () => {
+  const getAddedTagText = () => {
     if (ref.current === null) return;
     if (ref.current.value === '') return;
 
@@ -12,9 +13,9 @@ export const useCreateTag = () => {
     ref.current.value = '';
   };
 
-  const checkTagCountUnderFive = () => {
-    return tags.length < 4;
+  const checkIsTagCountMax = () => {
+    return tags.length < TAG_LIMIT;
   };
 
-  return { tags, ref, getTagText, checkTagCountUnderFive };
+  return { tags, ref, getAddedTagText, checkIsTagCountMax };
 };
