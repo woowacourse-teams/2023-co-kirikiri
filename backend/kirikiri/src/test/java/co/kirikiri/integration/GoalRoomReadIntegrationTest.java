@@ -3,6 +3,7 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
@@ -12,6 +13,7 @@ import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
@@ -37,6 +39,7 @@ import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
@@ -146,6 +149,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .replace("/api/members/", "");
         return new Member(Long.valueOf(저장된_크리에이터_아이디), new Identifier(IDENTIFIER),
                 new EncryptedPassword(new Password(PASSWORD)), new Nickname(닉네임),
+                new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPEG),
                 new MemberProfile(Gender.MALE, 생년월일, 전화번호));
     }
 
@@ -167,11 +171,12 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     private Long 제목별로_로드맵을_생성한다(final String 로그인_토큰_정보, final RoadmapCategory 로드맵_카테고리, final String 로드맵_제목) {
-        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
+        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(
+                로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30, List.of(
                 new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용"),
-                new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")
-        ));
+                new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")),
+                List.of(new RoadmapTagSaveRequest("태그")));
 
         final String 생성된_로드맵_아이디 = given()
                 .header(AUTHORIZATION, 로그인_토큰_정보)

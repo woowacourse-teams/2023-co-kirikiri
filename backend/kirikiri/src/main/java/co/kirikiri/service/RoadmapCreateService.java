@@ -11,6 +11,9 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
+import co.kirikiri.domain.roadmap.RoadmapTag;
+import co.kirikiri.domain.roadmap.RoadmapTags;
+import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
@@ -22,6 +25,7 @@ import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.mapper.RoadmapMapper;
@@ -64,8 +68,10 @@ public class RoadmapCreateService {
                                   final RoadmapCategory roadmapCategory) {
         final RoadmapNodes roadmapNodes = makeRoadmapNodes(roadmapSaveDto.roadmapNodes());
         final RoadmapContent roadmapContent = makeRoadmapContent(roadmapSaveDto, roadmapNodes);
+        final RoadmapTags roadmapTags = makeRoadmapTags(roadmapSaveDto.tags());
         final Roadmap roadmap = makeRoadmap(member, roadmapSaveDto, roadmapCategory);
         roadmap.addContent(roadmapContent);
+        roadmap.addTags(roadmapTags);
         return roadmap;
     }
 
@@ -81,6 +87,14 @@ public class RoadmapCreateService {
         final RoadmapContent roadmapContent = new RoadmapContent(roadmapSaveDto.content());
         roadmapContent.addNodes(roadmapNodes);
         return roadmapContent;
+    }
+
+    private RoadmapTags makeRoadmapTags(final List<RoadmapTagSaveDto> roadmapTagSaveDto) {
+        return new RoadmapTags(
+                roadmapTagSaveDto.stream()
+                        .map(tag -> new RoadmapTag(new RoadmapTagName(tag.name())))
+                        .toList()
+        );
     }
 
     private Roadmap makeRoadmap(final Member member, final RoadmapSaveDto roadmapSaveDto,

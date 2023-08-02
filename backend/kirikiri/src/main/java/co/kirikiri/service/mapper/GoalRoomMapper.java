@@ -1,6 +1,7 @@
 package co.kirikiri.service.mapper;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
@@ -16,6 +17,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -30,7 +32,7 @@ public class GoalRoomMapper {
 
     public static GoalRoomCreateDto convertToGoalRoomCreateDto(final GoalRoomCreateRequest goalRoomCreateRequest) {
         final GoalRoomTodoRequest goalRoomTodoRequest = goalRoomCreateRequest.goalRoomTodo();
-        final GoalRoomToDo goalRoomToDo = makeGoalRoomToDo(goalRoomTodoRequest);
+        final GoalRoomToDo goalRoomToDo = convertToGoalRoomTodo(goalRoomTodoRequest);
         final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests = goalRoomCreateRequest.goalRoomRoadmapNodeRequests();
         final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos = makeGoalRoomRoadmapNodeDtos(
                 goalRoomRoadmapNodeRequests);
@@ -40,7 +42,7 @@ public class GoalRoomMapper {
                 goalRoomRoadmapNodeDtos);
     }
 
-    private static GoalRoomToDo makeGoalRoomToDo(final GoalRoomTodoRequest goalRoomTodoRequest) {
+    public static GoalRoomToDo convertToGoalRoomTodo(final GoalRoomTodoRequest goalRoomTodoRequest) {
         return new GoalRoomToDo(new GoalRoomTodoContent(goalRoomTodoRequest.content()),
                 new Period(goalRoomTodoRequest.startDate(), goalRoomTodoRequest.endDate()));
     }
@@ -107,5 +109,18 @@ public class GoalRoomMapper {
     private static MemberResponse convertToMemberResponse(final GoalRoom goalRoom) {
         final Member goalRoomLeader = goalRoom.findGoalRoomLeaderInPendingMember();
         return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue());
+    }
+
+    public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(
+            final List<GoalRoomMember> goalRoomMembers) {
+        return goalRoomMembers.stream()
+                .map(GoalRoomMapper::convertToGoalRoomMemberResponse)
+                .toList();
+    }
+
+    private static GoalRoomMemberResponse convertToGoalRoomMemberResponse(final GoalRoomMember goalRoomMember) {
+        final Member member = goalRoomMember.getMember();
+        return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
+                member.getImage().getServerFilePath(), goalRoomMember.getAccomplishmentRate());
     }
 }

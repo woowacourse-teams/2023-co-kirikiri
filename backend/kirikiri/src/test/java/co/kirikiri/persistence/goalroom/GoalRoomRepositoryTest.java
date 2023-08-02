@@ -146,6 +146,51 @@ class GoalRoomRepositoryTest {
         assertThat(goalRoomsPage).isEqualTo(List.of(goalRoom1, goalRoom2));
     }
 
+    @Test
+    void 골룸의_노드의_시작날짜가_오늘인_골룸을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1));
+        로드맵을_생성한다(creator, category, roadmapContent);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
+                roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
+                roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(10), TODAY.plusDays(20),
+                roadmapNode1);
+
+        final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1)), creator);
+        final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode2)), creator);
+        final GoalRoom goalRoom3 = 골룸을_생성한다("goalroom3", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3)), creator);
+
+        final GoalRoom savedGoalRoom1 = goalRoomRepository.save(goalRoom1);
+        final GoalRoom savedGoalRoom2 = goalRoomRepository.save(goalRoom2);
+        final GoalRoom savedGoalRoom3 = goalRoomRepository.save(goalRoom3);
+
+        // when
+        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDateNow();
+
+        // then
+        assertThat(findGoalRooms)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(List.of(savedGoalRoom1, savedGoalRoom2));
+    }
+
+    private Member 크리에이터를_저장한다() {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
+                "010-1234-5678");
+        final Member creator = new Member(new Identifier("cokirikiri"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+        return memberRepository.save(creator);
+    }
+
     private RoadmapCategory 카테고리를_저장한다(final String name) {
         final RoadmapCategory roadmapCategory = new RoadmapCategory(name);
         return roadmapCategoryRepository.save(roadmapCategory);

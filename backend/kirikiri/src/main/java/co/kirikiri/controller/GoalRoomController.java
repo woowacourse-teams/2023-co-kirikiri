@@ -5,10 +5,13 @@ import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,12 +51,28 @@ public class GoalRoomController {
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(identifier, goalRoomId);
         return ResponseEntity.ok(goalRoomResponse);
     }
-    
+
     @Authenticated
     @PostMapping("/{goalRoomId}/join")
     public ResponseEntity<Void> joinGoalRoom(@MemberIdentifier final String identifier,
                                              @PathVariable final Long goalRoomId) {
         goalRoomCreateService.join(identifier, goalRoomId);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Authenticated
+    @PostMapping("/{goalRoomId}/todos")
+    public ResponseEntity<Void> addTodo(@RequestBody @Valid final GoalRoomTodoRequest goalRoomTodoRequest,
+                                        @PathVariable final Long goalRoomId,
+                                        @MemberIdentifier final String identifier) {
+        final Long id = goalRoomCreateService.addGoalRoomTodo(goalRoomId, identifier, goalRoomTodoRequest);
+        return ResponseEntity.created(URI.create("/api/goal-rooms/" + goalRoomId + "/todos/" + id)).build();
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/members")
+    public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(@PathVariable final Long goalRoomId) {
+        final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId);
+        return ResponseEntity.ok(goalRoomMembers);
     }
 }
