@@ -5,13 +5,18 @@ import {
   TODO_START_DATE,
 } from '@constants/goalRoom/regex';
 import { useEffect, useState } from 'react';
+import { newTodoPayload } from '@myTypes/goalRoom/remote';
 
 const useNewTodoFormValidation = () => {
   const contentInput = useValidateInput(TODO_CONTENT_MAX_LENGTH);
   const startDateInput = useValidateInput(TODO_START_DATE);
   const endDateInput = useValidateInput(TODO_END_DATE);
 
-  const [formState, setFormState] = useState({});
+  const [formState, setFormState] = useState<Omit<newTodoPayload, 'goalRoomId'>>({
+    content: '',
+    startDate: '',
+    endDate: '',
+  });
 
   useEffect(() => {
     setFormState({

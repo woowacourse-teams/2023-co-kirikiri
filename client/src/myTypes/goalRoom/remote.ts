@@ -34,7 +34,6 @@ export type CreateGoalRoomRequest = {
 };
 
 export type newTodoPayload = {
-  goalRoomId: string;
   content: string;
   startDate: string;
   endDate: string;

@@ -10,12 +10,15 @@ import {
 } from '@components/_common/dialog/dialog';
 import TodoModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/todoModal/TodoModal';
 
+type GoalRoomDashboardTodoProps = {
+  goalRoomData: GoalRoomBrowseResponse;
+  goalRoomId: string;
+};
 
 const GoalRoomDashboardTodo = ({
   goalRoomData,
-}: {
-  goalRoomData: GoalRoomBrowseResponse;
-}) => {
+  goalRoomId,
+}: GoalRoomDashboardTodoProps) => {
   const { goalRoomTodos } = goalRoomData;
 
   return (
@@ -45,11 +48,11 @@ const GoalRoomDashboardTodo = ({
       </S.TodoWrapper>
 
       <DialogBackdrop asChild>
-        <BackDrop />
+        <S.BackDrop />
       </DialogBackdrop>
 
       <DialogContent>
-        <TodoModal />
+        <TodoModal goalRoomId={goalRoomId} />
       </DialogContent>
     </DialogBox>
   );

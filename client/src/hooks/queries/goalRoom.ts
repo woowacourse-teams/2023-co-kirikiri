@@ -31,7 +31,7 @@ export const useCreateGoalRoom = () => {
   };
 };
 
-export const useCreateTodo = (goalRoomId: string, funcAfterSuccess: () => void) => {
+export const useCreateTodo = (goalRoomId: string) => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(
@@ -39,7 +39,6 @@ export const useCreateTodo = (goalRoomId: string, funcAfterSuccess: () => void) 
     {
       onSuccess() {
         queryClient.invalidateQueries(['goalRoom', goalRoomId]);
-        funcAfterSuccess();
       },
     }
   );
