@@ -1,5 +1,5 @@
 import { CreateGoalRoomRequest } from '@myTypes/goalRoom/remote';
-import { createGoalRoom, getGoalRoomDashboard } from '@apis/goalRoom';
+import { postCreateGoalRoom, getGoalRoomDashboard } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation } from '@tanstack/react-query';
 
@@ -14,10 +14,13 @@ export const useFetchGoalRoom = (goalRoomId: string) => {
 };
 
 export const useCreateGoalRoom = () => {
-  const { mutate } = useMutation((body: CreateGoalRoomRequest) => createGoalRoom(body), {
-    onSuccess() {},
-    onError() {},
-  });
+  const { mutate } = useMutation(
+    (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
+    {
+      onSuccess() {},
+      onError() {},
+    }
+  );
 
   return {
     createGoalRoom: mutate,

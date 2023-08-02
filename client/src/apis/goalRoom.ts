@@ -9,7 +9,7 @@ export const getGoalRoomDashboard = async (goalRoomId: string) => {
   return data;
 };
 
-export const createGoalRoom = async (body: CreateGoalRoomRequest) => {
+export const postCreateGoalRoom = async (body: CreateGoalRoomRequest) => {
   const { data } = await client.post<CreateGoalRoomRequest>(`/goal-rooms`, body);
 
   return data;
