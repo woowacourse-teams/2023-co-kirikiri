@@ -6,17 +6,10 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.goalroom.dto.GoalRoomFilterType;
-import co.kirikiri.service.dto.CustomPageRequest;
-import co.kirikiri.service.dto.PageResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,14 +43,5 @@ public class GoalRoomReadService {
             return goalRoomPendingMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, identifier).isPresent();
         }
         return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, identifier).isPresent();
-    }
-
-    public PageResponse<GoalRoomForListResponse> findGoalRoomsByFilterType(final GoalRoomFilterTypeDto filterTypeDto,
-                                                                           final CustomPageRequest pageRequest) {
-        final GoalRoomFilterType filterType = GoalRoomMapper.convertToGoalRoomFilterType(filterTypeDto);
-        final PageRequest generatedPageRequest = PageRequest.of(pageRequest.page(), pageRequest.size());
-        final Page<GoalRoom> goalRoomsWithPendingMembersPage = goalRoomRepository.findGoalRoomsWithPendingMembersPageByCond(
-                filterType, generatedPageRequest);
-        return GoalRoomMapper.convertToGoalRoomsPageResponse(goalRoomsWithPendingMembersPage, pageRequest);
     }
 }

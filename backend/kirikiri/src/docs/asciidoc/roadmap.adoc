@@ -159,3 +159,14 @@ operation::roadmap-read-api-test/사용자가_생성한_로드맵을_조회한�
 === *6-2* 실패 - 존재하지 않는 회원인 경우
 
 operation::roadmap-read-api-test/사용자가_생성한_로드맵을_조회할_때_존재하지_않는_회원이면_예외가_발생한다[snippets='http-request,http-response,response-fields']
+
+[[로드맵의골룸목록조회-API]]
+== *7. 로드맵의 골룸 목록 조회 API*
+
+=== *7-1* 성공
+
+operation::roadmap-read-api-test/로드맵의_골룸_목록을_조건에_따라_조회한다[snippets='http-request,query-parameters,http-response,response-fields']
+
+=== *7-2* 실패 - 존재하지 않는 로드맵인 경우
+
+operation::roadmap-read-api-test/로드맵의_골룸_목록을_조건에_따라_조회할_때_로드맵이_존재하지_않으면_예외가_발생한다[snippets='http-request,query-parameters,http-response,response-fields']

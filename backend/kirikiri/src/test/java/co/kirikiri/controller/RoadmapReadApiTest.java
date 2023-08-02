@@ -3,6 +3,7 @@ package co.kirikiri.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -20,6 +21,7 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -27,9 +29,12 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -301,6 +306,94 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 로드맵의_골룸_목록을_조건에_따라_조회한다() throws Exception {
+        // given
+        final List<RoadmapGoalRoomResponse> 골룸_페이지_응답 = 골룸_응답들을_생성한다();
+        given(roadmapReadService.findRoadmapGoalRoomsByFilterType(any(), any(), any(CustomScrollRequest.class)))
+                .willReturn(골룸_페이지_응답);
+
+        // when
+        final String 응답값 = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/{roadmapId}/goal-rooms", 1L)
+                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
+                                .param("lastValue", "2")
+                                .param("size", "10")
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("roadmapId").description("로드맵 아이디")),
+                                queryParameters(
+                                        parameterWithName("filterCond").description(
+                                                "필터 조건(LATEST, PARTICIPATION_RATE)").optional(),
+                                        parameterWithName("lastValue").description(
+                                                "이전에 받아온 목록에서 가장 마지막 id (처음에는 null)"),
+                                        parameterWithName("size").description("받아올 골룸의 수")),
+                                responseFields(
+                                        fieldWithPath("[0].goalRoomId").description("골룸 아이디"),
+                                        fieldWithPath("[0].name").description("골룸 이름"),
+                                        fieldWithPath("[0].currentMemberCount").description("현재 골룸에 참여한 인원 수"),
+                                        fieldWithPath("[0].limitedMemberCount").description("골룸에 참여할 수 있는 제한 인원 수"),
+                                        fieldWithPath("[0].createdAt").description("골룸 생성 날짜와 시간"),
+                                        fieldWithPath("[0].startDate").description("골룸의 시작 날짜"),
+                                        fieldWithPath("[0].endDate").description("골룸의 종료 날짜"),
+                                        fieldWithPath("[0].goalRoomLeader.id").description("골룸 리더의 아이디"),
+                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 리더의 닉네임"))
+                        )
+                )
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<RoadmapGoalRoomResponse> 응답값으로_생성한_골룸_페이지 = objectMapper.readValue(응답값,
+                new TypeReference<>() {
+                });
+
+        final List<RoadmapGoalRoomResponse> 예상되는_골룸_페이지_응답 = 골룸_응답들을_생성한다();
+        assertThat(응답값으로_생성한_골룸_페이지)
+                .usingRecursiveComparison()
+                .isEqualTo(예상되는_골룸_페이지_응답);
+    }
+
+    @Test
+    void 로드맵의_골룸_목록을_조건에_따라_조회할_때_로드맵이_존재하지_않으면_예외가_발생한다() throws Exception {
+        // given
+        given(roadmapReadService.findRoadmapGoalRoomsByFilterType(any(), any(), any(CustomScrollRequest.class)))
+                .willThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
+
+        // when
+        final MvcResult 응답값 = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/{roadmapId}/goal-rooms", 1L)
+                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
+                                .param("lastValue", "2")
+                                .param("size", "10")
+                                .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().is4xxClientError(),
+                        jsonPath("$.message").value("존재하지 않는 로드맵입니다. roadmapId = 1"))
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("roadmapId").description("로드맵 아이디")),
+                                queryParameters(
+                                        parameterWithName("filterCond").description(
+                                                "필터 조건(LATEST, PARTICIPATION_RATE)").optional(),
+                                        parameterWithName("lastValue").description(
+                                                "이전에 받아온 목록에서 가장 마지막 id (처음에는 null)"),
+                                        parameterWithName("size").description("받아올 골룸의 수")),
+                                responseFields(fieldWithPath("message").description("예외 메시지")))
+                )
+                .andReturn();
+        // then
+        final ErrorResponse errorResponse = jsonToClass(응답값, new TypeReference<>() {
+        });
+        final ErrorResponse expected = new ErrorResponse("존재하지 않는 로드맵입니다. roadmapId = 1");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
     private RoadmapResponse 단일_로드맵_조회에_대한_응답() {
         final RoadmapCategoryResponse category = new RoadmapCategoryResponse(1, "운동");
         final MemberResponse creator = new MemberResponse(1, "닉네임");
@@ -341,5 +434,17 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                         new RoadmapCategoryResponse(1L, "여행")),
                 new MemberRoadmapResponse(1L, "첫 번째 로드맵", RoadmapDifficulty.DIFFICULT.name(),
                         new RoadmapCategoryResponse(1L, "여행")));
+    }
+
+    private List<RoadmapGoalRoomResponse> 골룸_응답들을_생성한다() {
+        final RoadmapGoalRoomResponse roadmapGoalRoomResponse1 = new RoadmapGoalRoomResponse(1L, "골룸 이름1", 3, 6,
+                LocalDateTime.of(2023, 7, 20, 13, 0, 0),
+                LocalDate.now(), LocalDate.now().plusDays(100),
+                new MemberResponse(1L, "황시진"));
+        final RoadmapGoalRoomResponse roadmapGoalRoomResponse2 = new RoadmapGoalRoomResponse(2L, "골룸 이름2", 4, 10,
+                LocalDateTime.of(2023, 7, 10, 13, 0, 0),
+                LocalDate.now(), LocalDate.now().plusDays(100),
+                new MemberResponse(2L, "시진이"));
+        return List.of(roadmapGoalRoomResponse1, roadmapGoalRoomResponse2);
     }
 }
