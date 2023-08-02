@@ -155,7 +155,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         }
         return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
     }
-    
+
     private BooleanExpression memberCond(final Member member) {
         return roadmap.creator.eq(member);
     }
