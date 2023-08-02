@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import SVGIcon from '@components/icons/SVGIcon';
 import { GoalRoomTodo } from '@myTypes/goalRoom/internal';
 import * as S from './SingleTodo.styles';
+import useHover from '@hooks/_common/useHover';
 
 /*
     TODO:
@@ -15,10 +15,7 @@ type SingleTodoProps = {
 
 const SingleTodo = ({ todoContent }: SingleTodoProps) => {
   const { content, startDate, endDate } = todoContent;
-  const [isTodoButtonHovered, setIsTodoButtonHovered] = useState(false);
-
-  const handleMouseEnter = () => setIsTodoButtonHovered(true);
-  const handleMouseLeave = () => setIsTodoButtonHovered(false);
+  const { isHovered, handleMouseEnter, handleMouseLeave } = useHover();
 
   return (
     <S.Todo>
@@ -27,7 +24,7 @@ const SingleTodo = ({ todoContent }: SingleTodoProps) => {
         onMouseLeave={handleMouseLeave}
         aria-label='hidden'
       >
-        <SVGIcon name={isTodoButtonHovered ? 'CheckedCircle' : 'EmptyCircle'} />
+        <SVGIcon name={isHovered ? 'CheckedCircle' : 'EmptyCircle'} />
       </S.TodoButton>
       <S.TodoContent>{content}</S.TodoContent>
       <S.TodoDate>
