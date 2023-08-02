@@ -54,7 +54,29 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void 아이디로_사용자의_프로필과_이미지를_함께_조회한다() {
+    void 사용쟈의_아이디로_사용자의_프로필과_이미지를_함께_조회한다() {
+        // given
+        final Member savedMember = memberRepository.save(member);
+
+        // when
+        final Member findMember = memberRepository.findWithMemberProfileAndImageByIdentifier(
+                savedMember.getIdentifier().getValue()).get();
+
+        // then
+        final MemberProfile memberProfile = findMember.getMemberProfile();
+        final MemberImage memberImage = findMember.getImage();
+
+        assertAll(
+                () -> assertThat(member.getIdentifier().getValue()).isEqualTo("identifier1"),
+                () -> assertThat(memberProfile.getGender()).isEqualTo(Gender.MALE),
+                () -> assertThat(memberProfile.getPhoneNumber()).isEqualTo("010-1234-5678"),
+                () -> assertThat(memberProfile.getBirthday()).isEqualTo(LocalDate.now()),
+                () -> assertThat(memberImage.getServerFilePath()).isEqualTo("serverFilePath")
+        );
+    }
+
+    @Test
+    void 식별자_아이디로_사용자의_프로필과_이미지를_함께_조회한다() {
         // given
         final Member savedMember = memberRepository.save(member);
 

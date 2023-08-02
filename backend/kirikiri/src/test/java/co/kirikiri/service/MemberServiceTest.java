@@ -102,9 +102,7 @@ class MemberServiceTest {
         final Member member = new Member(1L, identifier, new EncryptedPassword(password), nickname, memberImage,
                 new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
 
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
-        given(memberRepository.findWithMemberProfileAndImageById(any()))
+        given(memberRepository.findWithMemberProfileAndImageByIdentifier(any()))
                 .willReturn(Optional.of(member));
 
         // when
@@ -123,7 +121,7 @@ class MemberServiceTest {
         // given
         final Identifier identifier = new Identifier("identifier1");
 
-        given(memberRepository.findByIdentifier(any()))
+        given(memberRepository.findWithMemberProfileAndImageByIdentifier(any()))
                 .willReturn(Optional.empty());
 
         // when
@@ -150,7 +148,8 @@ class MemberServiceTest {
                 .willReturn(Optional.of(member));
 
         // when
-        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(identifier.getValue(),
+        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(
+                identifier.getValue(),
                 1L);
 
         // then

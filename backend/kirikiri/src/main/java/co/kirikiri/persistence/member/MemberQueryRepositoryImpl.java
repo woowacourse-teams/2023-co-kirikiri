@@ -15,6 +15,17 @@ public class MemberQueryRepositoryImpl extends QuerydslRepositorySupporter imple
     }
 
     @Override
+    public Optional<Member> findWithMemberProfileAndImageByIdentifier(final String identifier) {
+        return Optional.ofNullable(selectFrom(member)
+                .innerJoin(member.memberProfile, memberProfile)
+                .fetchJoin()
+                .innerJoin(member.image, memberImage)
+                .fetchJoin()
+                .where(member.identifier.value.eq(identifier))
+                .fetchOne());
+    }
+
+    @Override
     public Optional<Member> findWithMemberProfileAndImageById(final Long memberId) {
         return Optional.ofNullable(selectFrom(member)
                 .innerJoin(member.memberProfile, memberProfile)

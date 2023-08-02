@@ -51,13 +51,12 @@ public class MemberService {
     }
 
     public MemberInformationResponse findMemberInformation(final String identifier) {
-        final Member member = findMemberByIdentifier(identifier);
-        final Member memberWithInfo = memberRepository.findWithMemberProfileAndImageById(member.getId()).get();
+        final Member memberWithInfo = findMemberInformationByIdentifier(identifier);
         return MemberMapper.convertToMemberInformationResponse(memberWithInfo);
     }
 
-    private Member findMemberByIdentifier(final String identifier) {
-        return memberRepository.findByIdentifier(new Identifier(identifier))
+    private Member findMemberInformationByIdentifier(final String identifier) {
+        return memberRepository.findWithMemberProfileAndImageByIdentifier(identifier)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
@@ -66,6 +65,11 @@ public class MemberService {
         findMemberByIdentifier(identifier);
         final Member memberWithPublicInfo = findMemberInformationByMemberId(memberId);
         return MemberMapper.convertToMemberInformationForPublicResponse(memberWithPublicInfo);
+    }
+
+    private Member findMemberByIdentifier(final String identifier) {
+        return memberRepository.findByIdentifier(new Identifier(identifier))
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
     private Member findMemberInformationByMemberId(final Long memberId) {
