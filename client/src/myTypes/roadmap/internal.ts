@@ -13,6 +13,26 @@ export type CreatorType = {
   name: string;
 };
 
+export type TagType = {
+  id: number;
+  name: string;
+};
+
+export type NodeType = {
+  id: number;
+  title: string;
+  description: string;
+  imageUrls: string[];
+};
+
+export type ContentType = {
+  id: number;
+  content: string;
+  nodes: NodeType[];
+};
+
+export type TagsType = TagType[];
+
 export type RoadmapItemType = {
   roadmapId: number;
   roadmapTitle: string;

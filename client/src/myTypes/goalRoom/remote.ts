@@ -14,6 +14,21 @@ export type GoalRoomBrowseResponse = {
   endDate: string;
   roadmapContentId: number;
   goalRoomRoadmap: GoalRoomRoadmap;
-  goalRoomTodos: GoalRoomTodo[];
+  goalRoomTodos: GoalRoomTodo;
   checkFeeds: CheckFeed[];
+};
+
+export type GoalRoomRoadmapNodeRequestsType = {
+  roadmapNodeId: number;
+  checkCount: number;
+  startDate: string;
+  endDate: string;
+};
+
+export type CreateGoalRoomRequest = {
+  roadmapContentId: number;
+  name: string;
+  limitedMemberCount: number;
+  goalRoomTodo: GoalRoomTodo;
+  goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };

@@ -1,3 +1,4 @@
+import type { RoadmapDetailResponse } from '@myTypes/roadmap/remote';
 import { CategoriesInfo } from '@constants/roadmap/category';
 import client from './axios/client';
 
@@ -17,6 +18,6 @@ export const getRoadmapList = (
   });
 };
 
-export const getRoadmapById = (id: string) => {
-  return client.get(`/roadmaps/${id}`);
+export const getRoadmapById = (id: number) => {
+  return client.get<RoadmapDetailResponse>(`/roadmaps/${id}`);
 };
