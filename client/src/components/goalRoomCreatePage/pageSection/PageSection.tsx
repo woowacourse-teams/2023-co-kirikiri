@@ -1,13 +1,13 @@
 import { PropsWithChildren } from 'react';
 import * as S from './PageSection.styles';
 
-type CreateGoalRoomPageSectionType = {
+type CreateGoalRoomPageSectionProps = {
   title: string;
   isRequired: boolean;
   description: string;
 } & PropsWithChildren;
 
-const PageSection = (props: Partial<CreateGoalRoomPageSectionType>) => {
+const PageSection = (props: Partial<CreateGoalRoomPageSectionProps>) => {
   const { title, isRequired, description, children } = props;
 
   return (

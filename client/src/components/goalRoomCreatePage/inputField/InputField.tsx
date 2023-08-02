@@ -3,7 +3,7 @@ import * as S from './InputField.styles';
 
 export type InputType = 'normal' | 'small';
 
-type InputFieldType = {
+type InputFieldProps = {
   label: string;
   description?: string;
   isRequired?: boolean;
@@ -11,7 +11,7 @@ type InputFieldType = {
   type?: InputType;
 } & PropsWithChildren;
 
-const InputField = (props: InputFieldType) => {
+const InputField = (props: InputFieldProps) => {
   const {
     label,
     description,
