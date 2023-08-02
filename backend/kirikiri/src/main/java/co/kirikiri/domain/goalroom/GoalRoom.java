@@ -15,6 +15,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -188,5 +189,9 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
         return goalRoomRoadmapNodes;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

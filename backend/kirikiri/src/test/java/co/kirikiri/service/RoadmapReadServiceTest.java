@@ -30,6 +30,7 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
@@ -37,6 +38,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -52,6 +54,7 @@ class RoadmapReadServiceTest {
     private final Member member = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+    private final LocalDateTime now = LocalDateTime.now();
 
     @Mock
     private RoadmapRepository roadmapRepository;
@@ -88,14 +91,15 @@ class RoadmapReadServiceTest {
                         List.of(
                                 new RoadmapNodeResponse(1L, "로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList())
                         )),
-                "DIFFICULT",
-                30,
+                "DIFFICULT", 30, now,
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
                         new RoadmapTagResponse(2L, "태그2"))
         );
 
         assertThat(roadmapResponse)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt")
                 .isEqualTo(expectedResponse);
     }
 
@@ -118,7 +122,7 @@ class RoadmapReadServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // expected
         assertThatThrownBy(() -> roadmapService.findRoadmapsByFilterType(categoryId, filterType, scrollRequest))
@@ -135,12 +139,12 @@ class RoadmapReadServiceTest {
 
         when(roadmapCategoryRepository.findById(any()))
                 .thenReturn(Optional.of(category));
-        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = null;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // when
         final List<RoadmapForListResponse> roadmapResponses = roadmapService.findRoadmapsByFilterType(
@@ -148,7 +152,7 @@ class RoadmapReadServiceTest {
 
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
-                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30,
+                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
                 new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
@@ -157,6 +161,7 @@ class RoadmapReadServiceTest {
 
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(
                 1L, "두 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30,
+                LocalDateTime.now(),
                 new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
@@ -166,6 +171,8 @@ class RoadmapReadServiceTest {
         final List<RoadmapForListResponse> expected = List.of(firstRoadmapResponse, secondRoadmapResponse);
 
         assertThat(roadmapResponses)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt")
                 .isEqualTo(expected);
     }
 
@@ -177,12 +184,12 @@ class RoadmapReadServiceTest {
                 로드맵을_생성한다("첫 번째 로드맵", category),
                 로드맵을_생성한다("두 번째 로드맵", category));
 
-        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
         final Long categoryId = null;
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // when
         final List<RoadmapForListResponse> roadmapResponses = roadmapService.findRoadmapsByFilterType(
@@ -190,7 +197,7 @@ class RoadmapReadServiceTest {
 
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
-                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30,
+                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
                 new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
@@ -198,7 +205,7 @@ class RoadmapReadServiceTest {
                         new RoadmapTagResponse(2L, "태그2")));
 
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
-                "DIFFICULT", 30,
+                "DIFFICULT", 30, LocalDateTime.now(),
                 new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
@@ -208,6 +215,8 @@ class RoadmapReadServiceTest {
         final List<RoadmapForListResponse> expected = List.of(firstRoadmapResponse, secondRoadmapResponse);
 
         assertThat(roadmapResponses)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt")
                 .isEqualTo(expected);
     }
 
@@ -219,12 +228,12 @@ class RoadmapReadServiceTest {
 
         when(roadmapCategoryRepository.findById(any()))
                 .thenReturn(Optional.of(new RoadmapCategory("여행")));
-        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // when
         final List<RoadmapForListResponse> roadmapResponses = roadmapService.findRoadmapsByFilterType(
@@ -232,7 +241,7 @@ class RoadmapReadServiceTest {
 
         // then
         final RoadmapForListResponse roadmapResponse = new RoadmapForListResponse(
-                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30,
+                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
                 new MemberResponse(1L, "닉네임"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
@@ -242,6 +251,8 @@ class RoadmapReadServiceTest {
         final List<RoadmapForListResponse> expected = List.of(roadmapResponse);
 
         assertThat(roadmapResponses)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt")
                 .isEqualTo(expected);
     }
 
@@ -261,11 +272,49 @@ class RoadmapReadServiceTest {
                 .isEqualTo(expected);
     }
 
-    private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
 
-        return new Member(1L, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
+    @Test
+    void 로드맵을_검색한다() {
+        // given
+        final RoadmapCategory category = new RoadmapCategory(1L, "여행");
+        final List<Roadmap> roadmaps = List.of(
+                로드맵을_생성한다("첫 번째 로드맵", category),
+                로드맵을_생성한다("두 번째 로드맵", category));
+
+        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
+                .thenReturn(roadmaps);
+
+        final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", null, null);
+        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
+
+        // when
+        final List<RoadmapForListResponse> roadmapResponses = roadmapService.search(
+                filterType, roadmapSearchRequest, scrollRequest);
+
+        // then
+        final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
+                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
+                new MemberResponse(1L, "닉네임"),
+                new RoadmapCategoryResponse(1, "여행"),
+                List.of(
+                        new RoadmapTagResponse(1L, "태그1"),
+                        new RoadmapTagResponse(2L, "태그2")));
+
+        final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
+                "DIFFICULT", 30, LocalDateTime.now(),
+                new MemberResponse(1L, "닉네임"),
+                new RoadmapCategoryResponse(1, "여행"),
+                List.of(
+                        new RoadmapTagResponse(1L, "태그1"),
+                        new RoadmapTagResponse(2L, "태그2")));
+
+        final List<RoadmapForListResponse> expected = List.of(firstRoadmapResponse, secondRoadmapResponse);
+
+        assertThat(roadmapResponses)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt")
+                .isEqualTo(expected);
     }
 
     private Roadmap 로드맵을_생성한다(final String roadmapTitle, final RoadmapCategory category) {
@@ -288,10 +337,6 @@ class RoadmapReadServiceTest {
 
     private RoadmapCategory 로드맵_카테고리를_생성한다(final String title) {
         return new RoadmapCategory(1L, title);
-    }
-
-    private RoadmapContent 로드맵_컨텐츠를_생성한다() {
-        return new RoadmapContent(1L, "콘텐츠 제목");
     }
 
     private List<RoadmapCategory> 로드맵_카테고리_리스트를_반환한다() {

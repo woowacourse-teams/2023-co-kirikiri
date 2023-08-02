@@ -8,7 +8,7 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTags;
-import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
@@ -69,6 +69,7 @@ public final class RoadmapMapper {
                 roadmapContentResponse,
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
+                roadmap.getCreatedAt(),
                 roadmapTagResponses
         );
     }
@@ -103,7 +104,7 @@ public final class RoadmapMapper {
                 .toList();
     }
 
-    public static List<RoadmapForListResponse> convertRoadmapPageResponse(final List<Roadmap> roadmaps) {
+    public static List<RoadmapForListResponse> convertRoadmapResponses(final List<Roadmap> roadmaps) {
         return roadmaps.stream()
                 .map(RoadmapMapper::convertRoadmapResponse)
                 .toList();
@@ -123,6 +124,7 @@ public final class RoadmapMapper {
                 roadmap.getIntroduction(),
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
+                roadmap.getCreatedAt(),
                 creatorResponse,
                 categoryResponse,
                 roadmapTagResponses

@@ -128,7 +128,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     @Test
     void 로드맵_생성시_잘못된_빈값을_넘기면_실패한다() {
         // given
-        final Long 카테고리_id = null;
+        final Long 카테고리_아이디 = null;
         final String 로드맵_제목 = null;
         final String 로드맵_소개글 = null;
         final RoadmapDifficultyType 로드맵_난이도 = null;
@@ -137,7 +137,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         final String 로드맵_노드_설명 = null;
 
         // when
-        final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리_id, 로드맵_제목, 로드맵_소개글, "로드맵 본문",
+        final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리_아이디, 로드맵_제목, 로드맵_소개글, "로드맵 본문",
                 로드맵_난이도, 추천_소요_기간,
                 List.of(new RoadmapNodeSaveRequest(로드맵_노드_제목, 로드맵_노드_설명)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
@@ -163,10 +163,10 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     @Test
     void 존재하지_않는_카테고리_아이디를_입력한_경우_실패한다() {
         // given
-        final long 카테고리_id = 2L;
+        final long 카테고리_아이디 = 2L;
 
         // when
-        final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리_id, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+        final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리_아이디, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
                 List.of(new RoadmapTagSaveRequest("태그1")));
