@@ -5,11 +5,24 @@ export const Container = styled.section`
 `;
 
 export const TagWrapper = styled.div`
-  ${({ theme }) => theme.fonts.nav_title};
+  ${({ theme }) => theme.fonts.description5};
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: ${({ theme }) => theme.colors.black};
+`;
+
+export const AddedTagItem = styled.article`
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  color: ${({ theme }) => theme.colors.main_dark};
+  justify-content: center;
+
+  height: 4.7rem;
+  margin-right: 2rem;
+  padding: 0 1rem;
+
+  border: 0.2rem solid ${({ theme }) => theme.colors.main_dark};
+  border-radius: 100px;
 `;
 
 export const TagItem = styled.article<{ width: number }>`
@@ -26,12 +39,13 @@ export const TagItem = styled.article<{ width: number }>`
 `;
 
 export const TagInputField = styled.input`
+  ${({ theme }) => theme.fonts.description5};
   width: 80%;
   text-align: center;
 `;
 
 export const AddButton = styled.button`
-  /* ${({ theme }) => theme.fonts.nav_title} */
+  ${({ theme }) => theme.fonts.nav_title}
   width: 5rem;
   height: 5rem;
 `;

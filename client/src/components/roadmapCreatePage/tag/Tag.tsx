@@ -5,7 +5,7 @@ import TagItem from './TagItem';
 import { useCreateTag } from '@/hooks/roadmap/useCreateTag';
 
 const Tag = () => {
-  const { tags, ref, getTagText, checkTagCountUnderFive } = useCreateTag();
+  const { tags, ref, getAddedTagText, checkIsTagCountMax } = useCreateTag();
 
   return (
     <S.Container>
@@ -13,10 +13,10 @@ const Tag = () => {
       <InputDescription text='컨텐츠와 어울리는 태그를 작성해주세요' />
       <S.TagWrapper>
         {tags.map((item) => (
-          <TagItem key={item} value={item} readOnly />
+          <S.AddedTagItem key={item}>{item}</S.AddedTagItem>
         ))}
         <TagItem ref={ref} />
-        {checkTagCountUnderFive() && <S.AddButton onClick={getTagText}>+</S.AddButton>}
+        {checkIsTagCountMax() && <S.AddButton onClick={getAddedTagText}>+</S.AddButton>}
       </S.TagWrapper>
     </S.Container>
   );
