@@ -1,5 +1,6 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.ImageDirType;
 import co.kirikiri.exception.ServerException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,12 +26,11 @@ public class FileService {
         this.filePathGenerator = filePathGenerator;
     }
 
-    public String uploadFileAndReturnPath(final MultipartFile multiPartFile, final Long goalRoomId) throws IOException {
-        // TODO : 이미지가 저장될 경로는 반드시 추후에 다시 확인
+    public String uploadFileAndReturnPath(final MultipartFile multiPartFile, final ImageDirType dirType,
+                                          final Long goalRoomId) throws IOException {
         final String originalName = multiPartFile.getOriginalFilename();
-        final String fileName = System.currentTimeMillis() + "_" +
-                originalName.substring(originalName.lastIndexOf("\\") + 1);
-        final String filePath = filePathGenerator.makeFilePath(goalRoomId);
+        final String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
+        final String filePath = filePathGenerator.makeFilePath(goalRoomId, dirType);
         final String saveFileName = storageLocation + filePath + fileName;
         final Path savePath = Path.of(saveFileName);
         makePathDirectories(savePath);
@@ -40,12 +40,14 @@ public class FileService {
 
     private void makePathDirectories(final Path path) {
         final Path parentDir = path.getParent();
-        if (!Files.exists(parentDir)) {
-            try {
-                Files.createDirectories(parentDir);
-            } catch (final IOException e) {
-                throw new ServerException("파일 저장 중에 문제가 생겼습니다. (파일 경로)");
-            }
+        if (Files.exists(parentDir)) {
+            return;
+        }
+
+        try {
+            Files.createDirectories(parentDir);
+        } catch (final IOException e) {
+            throw new ServerException("파일 저장 중에 문제가 생겼습니다. (파일 경로)");
         }
     }
 }

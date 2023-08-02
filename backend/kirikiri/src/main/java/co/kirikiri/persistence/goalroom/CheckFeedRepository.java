@@ -19,12 +19,12 @@ public interface CheckFeedRepository extends JpaRepository<CheckFeed, Long> {
     Optional<CheckFeed> findByGoalRoomMemberAndDateTime(final GoalRoomMember goalRoomMember, final LocalDateTime start,
                                                         final LocalDateTime end);
 
-    @Query("SELECT Count(cf)"
+    @Query("SELECT COUNT(cf)"
             + " FROM CheckFeed cf"
             + " WHERE cf.goalRoomMember = :goalRoomMember")
     int countByGoalRoomMember(final GoalRoomMember goalRoomMember);
 
-    @Query("SELECT Count(cf)"
+    @Query("SELECT COUNT(cf)"
             + " FROM CheckFeed cf"
             + " WHERE cf.goalRoomMember = :goalRoomMember"
             + " AND cf.goalRoomRoadmapNode = :goalRoomRoadmapNode")

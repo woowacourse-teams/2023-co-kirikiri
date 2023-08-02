@@ -13,7 +13,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.formParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -45,7 +44,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -346,11 +344,11 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 인증_피드_등록_요청을_보낸다() throws Exception {
         //given
         final String imageName = "image";
-        final String originalImageName = "originalImageName";
+        final String originalImageName = "originalImageName.jpeg";
         final String contentType = "image/jpeg";
         final String image = "테스트 이미지";
         final String description = "이미지 설명";
-        final String filePath = "C:/" + imageName + "." + contentType;
+        final String filePath = "path/to/directories/" + contentType;
         final MockMultipartFile imageFile = new MockMultipartFile(imageName, originalImageName,
                 contentType, image.getBytes());
 
@@ -362,9 +360,10 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                         RestDocumentationRequestBuilders
                                 .multipart(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
                                 .file(imageFile)
-                                .param("description", description)
+                                .param("text", description)
                                 .header("Authorization", "Bearer accessToken")
-                                .contextPath(API_PREFIX))
+                                .contextPath(API_PREFIX)
+                                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", filePath))
                 .andDo(
@@ -387,7 +386,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다() throws Exception {
         //given
         final String imageName = "image";
-        final String originalImageName = "originalImageName";
+        final String originalImageName = "originalImageName.jpeg";
         final String contentType = "image/jpeg";
         final String image = "테스트 이미지";
         final String description = "이미지 설명";
@@ -405,7 +404,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                                 .file(imageFile)
                                 .param("description", description)
                                 .header("Authorization", "Bearer accessToken")
-                                .contextPath(API_PREFIX))
+                                .contextPath(API_PREFIX)
+                                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("존재하지 않는 회원입니다."))
                 .andDo(
@@ -428,7 +428,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     void 인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다() throws Exception {
         //given
         final String imageName = "image";
-        final String originalImageName = "originalImageName";
+        final String originalImageName = "originalImageName.jpeg";
         final String contentType = "image/jpeg";
         final String image = "테스트 이미지";
         final String description = "이미지 설명";
@@ -446,7 +446,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                                 .file(imageFile)
                                 .param("description", description)
                                 .header("Authorization", "Bearer accessToken")
-                                .contextPath(API_PREFIX))
+                                .contextPath(API_PREFIX)
+                                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"))
                 .andDo(

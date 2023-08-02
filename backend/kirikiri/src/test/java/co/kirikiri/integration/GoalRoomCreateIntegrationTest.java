@@ -35,6 +35,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -577,14 +578,11 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     }
 
     private void 테스트용으로_생성된_파일을_제거한다(final String filePath) {
-        final String validFilePath = filePath.replace(serverPathPrefix, storageLocation);
-        final File file = new File(validFilePath);
-        if (!file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException("Invalid file path: " + validFilePath);
-        }
-
-        if (!file.delete()) {
-            throw new RuntimeException("Failed to delete the file: " + validFilePath);
+        try {
+            final File rootDir = new File(storageLocation);
+            FileUtils.cleanDirectory(rootDir);
+        } catch (final IOException e) {
+            throw new RuntimeException("Filaed to delte the file: " + storageLocation);
         }
     }
 

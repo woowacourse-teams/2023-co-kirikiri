@@ -315,7 +315,7 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(0);
         when(checkFeedRepository.save(any()))
                 .thenReturn(checkFeed);
-        when(fileService.uploadFileAndReturnPath(any(), anyLong()))
+        when(fileService.uploadFileAndReturnPath(any(), any(), anyLong()))
                 .thenReturn("originalFileName");
 
         // when

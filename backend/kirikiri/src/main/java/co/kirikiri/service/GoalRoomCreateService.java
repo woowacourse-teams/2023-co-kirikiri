@@ -1,6 +1,7 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.ImageDirType;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
@@ -121,11 +122,14 @@ public class GoalRoomCreateService {
         final GoalRoom goalRoom = findById(goalRoomId);
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
         final GoalRoomRoadmapNode currentNode = goalRoom.getNodeByDate(LocalDate.now());
-        final int currentMemberCheckCount = validateCheckCountAndReturn(goalRoomMember, currentNode);
+        final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(
+                goalRoomMember, currentNode);
+        validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
         updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
         try {
-            final String imageUrl = fileService.uploadFileAndReturnPath(checkFeedImage, goalRoomId);
+            final String imageUrl = fileService.uploadFileAndReturnPath(checkFeedImage, ImageDirType.CHECK_FEED,
+                    goalRoomId);
             checkFeedRepository.save(new CheckFeed(imageUrl, imageType, checkFeedImage.getOriginalFilename(),
                     checkFeedRequest.description(), currentNode, goalRoomMember));
             return imageUrl;
@@ -153,23 +157,20 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + identifier));
     }
 
-    private int validateCheckCountAndReturn(final GoalRoomMember member,
-                                            final GoalRoomRoadmapNode goalRoomRoadmapNode) {
-        final int memberCheckCount = validateNodeCheckCountAndReturn(member, goalRoomRoadmapNode);
+    private int validateCheckCount(final int memberCheckCount, final GoalRoomMember member,
+                                   final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+
+        validateNodeCheckCount(memberCheckCount, goalRoomRoadmapNode);
         validateTodayCheckCount(member);
         return memberCheckCount;
     }
 
-    private int validateNodeCheckCountAndReturn(final GoalRoomMember member,
-                                                final GoalRoomRoadmapNode goalRoomRoadmapNode) {
-        final int memberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(member,
-                goalRoomRoadmapNode);
+    private void validateNodeCheckCount(final int memberCheckCount,
+                                        final GoalRoomRoadmapNode goalRoomRoadmapNode) {
         if (memberCheckCount >= goalRoomRoadmapNode.getCheckCount()) {
             throw new BadRequestException(
                     "이번 노드에는 최대 " + goalRoomRoadmapNode.getCheckCount() + "번만 인증 피드를 등록할 수 있습니다.");
         }
-
-        return memberCheckCount;
     }
 
     private void validateTodayCheckCount(final GoalRoomMember member) {
