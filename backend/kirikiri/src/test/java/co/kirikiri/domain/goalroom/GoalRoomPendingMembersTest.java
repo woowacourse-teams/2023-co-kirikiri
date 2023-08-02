@@ -11,9 +11,7 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.exception.ServerException;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -74,27 +72,10 @@ class GoalRoomPendingMembersTest {
                 List.of(goalRoomPendingMember1, goalRoomPendingMember2));
 
         // when
-        final GoalRoomPendingMember findGoalRoomPendingMember = goalRoomPendingMembers.findByMember(MEMBER1);
+        final GoalRoomPendingMember findGoalRoomPendingMember = goalRoomPendingMembers.findByMember(MEMBER1).get();
 
         // then
         assertThat(findGoalRoomPendingMember).isEqualTo(goalRoomPendingMember1);
-    }
-
-    @Test
-    void 입력받은_사용자가_골룸에_존재하지_않으면_예외가_발생한다() {
-        // given
-        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                LocalDateTime.now(), null,
-                MEMBER1);
-
-        final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
-                List.of(goalRoomPendingMember1));
-
-        // when
-        // then
-        assertThatThrownBy(() -> goalRoomPendingMembers.findByMember(MEMBER2))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("골룸에 참여한 사용자가 아닙니다. memberId = 2");
     }
 
     @Test
@@ -111,27 +92,10 @@ class GoalRoomPendingMembersTest {
                 List.of(goalRoomPendingMember1, goalRoomPendingMember2));
 
         // when
-        final GoalRoomPendingMember nextLeader = goalRoomPendingMembers.findNextLeader();
+        final GoalRoomPendingMember nextLeader = goalRoomPendingMembers.findNextLeader().get();
 
         // then
         assertThat(nextLeader).isEqualTo(goalRoomPendingMember2);
-    }
-
-    @Test
-    void 골룸의_참여자가_1명_이하이면_다음_리더가_될_사용자를_찾을때_예외가_발생한다() {
-        // given
-        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                LocalDateTime.now(), null,
-                MEMBER1);
-
-        final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
-                List.of(goalRoomPendingMember1));
-
-        // when
-        // then
-        assertThatThrownBy(() -> goalRoomPendingMembers.findNextLeader())
-                .isInstanceOf(ServerException.class)
-                .hasMessageContaining("골룸 참여자가 1명 이하이므로 다음 리더를 찾을 수 없습니다.");
     }
 
     @Test

@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private static final int DATE_OFFSET = 1;
+    private static final int MIN_MEMBER_SIZE_TO_FIND_NEXT_LEADER = 1;
 
     @Embedded
     private GoalRoomName name;
@@ -147,6 +148,41 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public Member findGoalRoomLeaderInPendingMember() {
         return goalRoomPendingMembers.findGoalRoomLeader();
+    }
+
+    public void leave(final Member member) {
+        if (status == GoalRoomStatus.RECRUITING) {
+            final GoalRoomPendingMember goalRoomPendingMember = goalRoomPendingMembers.findByMember(member)
+                    .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+            changeRoleIfLeaderLeave(goalRoomPendingMembers, goalRoomPendingMember);
+            goalRoomPendingMembers.remove(goalRoomPendingMember);
+            return;
+        }
+        final GoalRoomMember goalRoomMember = goalRoomMembers.findByMember(member)
+                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+        changeRoleIfLeaderLeave(goalRoomMembers, goalRoomMember);
+        goalRoomMembers.remove(goalRoomMember);
+    }
+
+    private void changeRoleIfLeaderLeave(final GoalRoomPendingMembers goalRoomPendingMembers,
+                                         final GoalRoomPendingMember goalRoomPendingMember) {
+        if (goalRoomPendingMember.isLeader()) {
+            goalRoomPendingMembers.findNextLeader()
+                    .ifPresent(GoalRoomPendingMember::becomeLeader);
+
+        }
+    }
+
+    private void changeRoleIfLeaderLeave(final GoalRoomMembers goalRoomMembers,
+                                         final GoalRoomMember goalRoomMember) {
+        if (goalRoomMember.isLeader()) {
+            goalRoomMembers.findNextLeader()
+                    .ifPresent(GoalRoomMember::becomeLeader);
+        }
+    }
+
+    public boolean isEmptyGoalRoom() {
+        return goalRoomPendingMembers.isEmpty() && goalRoomMembers.isEmpty();
     }
 
     public Integer getCurrentPendingMemberCount() {

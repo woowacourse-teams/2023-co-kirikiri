@@ -128,6 +128,10 @@ operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_회
 
 operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
 
-=== *5-4* 실패 - 참여하지 않은 골룸임
+=== *5-4* 실패 - 진행중인 골룸임
+
+operation::goal-room-create-api-test/골룸을_나갈때_진행중인_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *5-5* 실패 - 참여하지 않은 골룸임
 
 operation::goal-room-create-api-test/골룸을_나갈때_참여하지_않은_골룸이면_실패한다[snippets='http-request,http-response,response-fields']

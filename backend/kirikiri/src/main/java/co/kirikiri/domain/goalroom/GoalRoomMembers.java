@@ -1,8 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ServerException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -10,6 +8,7 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +21,7 @@ public class GoalRoomMembers {
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
-    private List<GoalRoomMember> values = new ArrayList<>();
+    private final List<GoalRoomMember> values = new ArrayList<>();
 
     public GoalRoomMembers(final List<GoalRoomMember> values) {
         this.values.addAll(new ArrayList<>(values));
@@ -32,20 +31,18 @@ public class GoalRoomMembers {
         this.values.add(goalRoomMember);
     }
 
-    public GoalRoomMember findByMember(final Member member) {
+    public Optional<GoalRoomMember> findByMember(final Member member) {
         return values.stream()
                 .filter(value -> value.isSameMemberWith(member))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+                .findFirst();
     }
 
-    public GoalRoomMember findNextLeader() {
+    public Optional<GoalRoomMember> findNextLeader() {
         if (size() <= MIN_SIZE_TO_FIND_NEXT_LEADER) {
-            throw new ServerException(
-                    String.format("골룸 참여자가 %d명 이하이므로 다음 리더를 찾을 수 없습니다.", MIN_SIZE_TO_FIND_NEXT_LEADER));
+            return Optional.empty();
         }
         values.sort(Comparator.comparing(GoalRoomMember::getJoinedAt));
-        return values.get(1);
+        return Optional.of(values.get(1));
     }
 
     public int size() {
@@ -54,6 +51,10 @@ public class GoalRoomMembers {
 
     public void remove(final GoalRoomMember goalRoomMember) {
         values.remove(goalRoomMember);
+    }
+
+    public boolean isEmpty() {
+        return values.isEmpty();
     }
 
     public List<GoalRoomMember> getValues() {

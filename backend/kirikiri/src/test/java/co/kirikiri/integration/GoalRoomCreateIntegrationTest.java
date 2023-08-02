@@ -64,10 +64,14 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
             "010-1111-2222", GenderType.FEMALE, LocalDate.now());
     private static final MemberJoinRequest 골룸_참여자2_회원가입_요청 = new MemberJoinRequest("identifier3", "password!3", "name3",
             "010-1111-3333", GenderType.FEMALE, LocalDate.now());
+    private static final MemberJoinRequest 골룸_참여자3_회원가입_요청 = new MemberJoinRequest("identifier4", "password!4", "name4",
+            "010-1111-3333", GenderType.FEMALE, LocalDate.now());
     private static final LoginRequest 골룸_참여자1_로그인_요청 = new LoginRequest(골룸_참여자1_회원가입_요청.identifier(),
             골룸_참여자1_회원가입_요청.password());
     private static final LoginRequest 골룸_참여자2_로그인_요청 = new LoginRequest(골룸_참여자2_회원가입_요청.identifier(),
             골룸_참여자2_회원가입_요청.password());
+    private static final LoginRequest 골룸_참여자3_로그인_요청 = new LoginRequest(골룸_참여자3_회원가입_요청.identifier(),
+            골룸_참여자3_회원가입_요청.password());
 
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
@@ -487,7 +491,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 정상적으로_완료된_골룸을_나간다() {
+    void 정상적으로_완료된_골룸을_나간다() throws JsonProcessingException {
         //given
         final GoalRoomCreateRequest 골룸_생성_요청 = 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다();
 
@@ -500,18 +504,21 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         // when
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
+        // TODO: 골룸 종료 기능 추가 시 수정 / save -> startGoalRooms
         골룸.complete();
         goalRoomRepository.save(골룸);
-        final Member 골룸에_참여한_멤버 = memberRepository.findByIdentifier(new Identifier("identifier2")).get();
-        final GoalRoomMember 골룸_참여자 = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), 골룸, 골룸에_참여한_멤버);
-        goalRoomMemberRepository.save(골룸_참여자);
+        final Member 골룸에_참여한_멤버1 = memberRepository.findByIdentifier(new Identifier("identifier2")).get();
+        final Member 골룸에_참여한_멤버2 = memberRepository.findByIdentifier(new Identifier("identifier3")).get();
+        final GoalRoomMember 골룸_참여자1 = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), 골룸, 골룸에_참여한_멤버1);
+        final GoalRoomMember 골룸_참여자2 = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), 골룸, 골룸에_참여한_멤버2);
+        goalRoomMemberRepository.saveAll(List.of(골룸_참여자1, 골룸_참여자2));
 
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
         // then
         assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-        // TODO: 골룸 단일 조회 API 추가 시 내부 값 비교
+        // TODO: 사용자 골룸 목록 조회 API 추가 시 내부 값 비교
     }
 
     @Test
@@ -540,8 +547,6 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 골룸_리더_액세스_토큰);
 
-        골룸_참가_요청(골룸_아이디, 골룸_리더_액세스_토큰);
-
         // when
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
@@ -562,9 +567,8 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 골룸_리더_액세스_토큰);
 
-        골룸_참가_요청(골룸_아이디, 골룸_리더_액세스_토큰);
-
         // when
+        // TODO: 골룸 종료 기능 추가 시 수정 / save -> startGoalRooms
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
         골룸.complete();
         goalRoomRepository.save(골룸);
@@ -594,6 +598,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         골룸_참가_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
         // when
+        // TODO: save -> startGoalRooms
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
         골룸.start();
         goalRoomRepository.save(골룸);
@@ -616,11 +621,13 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다();
 
         final String 골룸_리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자1_회원가입_요청, 골룸_참여자1_로그인_요청);
-        final String 골룸_팔로워_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자2_회원가입_요청, 골룸_참여자2_로그인_요청);
+        final String 골룸_팔로워1_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자2_회원가입_요청, 골룸_참여자2_로그인_요청);
+        final String 골룸_팔로워2_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자3_회원가입_요청, 골룸_참여자3_로그인_요청);
 
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 골룸_리더_액세스_토큰);
 
-        골룸_참가_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
+        골룸_참가_요청(골룸_아이디, 골룸_팔로워1_액세스_토큰);
+        골룸_참가_요청(골룸_아이디, 골룸_팔로워2_액세스_토큰);
 
         // when
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
@@ -628,11 +635,11 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         // then
         assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-        final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1, 1, GoalRoomFilterTypeDto.LATEST);
+        final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1, 2, GoalRoomFilterTypeDto.LATEST);
         final PageResponse<GoalRoomForListResponse> 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(골룸_목록.data().get(0).currentMemberCount()).isEqualTo(1);
+        assertThat(골룸_목록.data().get(0).currentMemberCount()).isEqualTo(2);
         assertThat(골룸_목록.data().get(0).goalRoomLeader().name()).isEqualTo("name3");
     }
 
@@ -642,13 +649,16 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다();
 
         final String 골룸_리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자1_회원가입_요청, 골룸_참여자1_로그인_요청);
-        final String 골룸_팔로워_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자2_회원가입_요청, 골룸_참여자2_로그인_요청);
+        final String 골룸_팔로워1_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자2_회원가입_요청, 골룸_참여자2_로그인_요청);
+        final String 골룸_팔로워2_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자3_회원가입_요청, 골룸_참여자3_로그인_요청);
 
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 골룸_리더_액세스_토큰);
 
-        골룸_참가_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
+        골룸_참가_요청(골룸_아이디, 골룸_팔로워1_액세스_토큰);
+        골룸_참가_요청(골룸_아이디, 골룸_팔로워2_액세스_토큰);
 
         // when
+        // TODO: 골룸 종료 기능 추가 시 수정 / save -> startGoalRooms
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
         골룸.complete();
         goalRoomRepository.save(골룸);
@@ -663,7 +673,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         // then
         assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-        // TODO: 골룸 단일 조회 API 추가 시 내부 값 비교
+        // TODO: 사용자 골룸 목록 조회 API 추가 시 내부 값 비교
     }
 
     @Test
@@ -705,6 +715,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         골룸_참가_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
         // when
+        // TODO: 골룸 종료 기능 추가 시 수정 / save -> startGoalRooms
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
         골룸.complete();
         goalRoomRepository.save(골룸);
@@ -719,7 +730,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         // then
         assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-        // TODO: 골룸 단일 조회 API 추가 시 내부 값 비교
+        // TODO: 사용자 골룸 목록 조회 API 추가 시 내부 값 비교
     }
 
     @Test
@@ -752,6 +763,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 골룸_리더_액세스_토큰);
 
         // when
+        // TODO: 골룸 종료 기능 추가 시 수정 / save -> startGoalRooms
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
         골룸.complete();
         goalRoomRepository.save(골룸);
@@ -879,6 +891,18 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
                 .header(AUTHORIZATION, 골룸_참여자_액세스_토큰)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .post(API_PREFIX + "/goal-rooms/{goalRoomId}/leave", 골룸_아이디)
+                .then()
+                .log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> 골룸_단일_조회_요청(final String 로그인_토큰_정보, final Long 골룸_아이디) {
+        return given()
+                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 골룸_아이디)
                 .then()
                 .log().all()
                 .extract();

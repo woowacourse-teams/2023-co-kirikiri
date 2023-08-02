@@ -6,15 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -29,8 +25,6 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
@@ -38,7 +32,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,21 +56,11 @@ class GoalRoomCreateServiceTest {
             new EncryptedPassword(new Password("password!2")),
             new Nickname("name2"),
             new MemberProfile(Gender.FEMALE, LocalDate.now(), "010-1111-2222"));
-    private static final Member GOAL_ROOM_MEMBER2 = new Member(new Identifier("identifier3"),
-            new EncryptedPassword(new Password("password!3")),
-            new Nickname("name3"),
-            new MemberProfile(Gender.FEMALE, LocalDate.now(), "010-1111-3333"));
 
     private static Member member;
 
     @Mock
     private GoalRoomRepository goalRoomRepository;
-
-    @Mock
-    private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-
-    @Mock
-    private GoalRoomMemberRepository goalRoomMemberRepository;
 
     @Mock
     private RoadmapContentRepository roadmapContentRepository;
@@ -289,18 +272,11 @@ class GoalRoomCreateServiceTest {
                 .willReturn(Optional.of(GOAL_ROOM_MEMBER1));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
-        given(goalRoomPendingMemberRepository.findByGoalRoom(goalRoom))
-                .willReturn(List.of(
-                        new GoalRoomPendingMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                                GOAL_ROOM_MEMBER1),
-                        new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
-                                GOAL_ROOM_MEMBER2)));
 
         // when
-        goalRoomService.leave("identifier2", 1L);
-
         // then
-        verify(goalRoomPendingMemberRepository, times(1)).delete(any());
+        assertDoesNotThrow(() -> goalRoomService.leave("identifier2", 1L));
+
     }
 
     @Test
@@ -349,112 +325,21 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
-    void 골룸을_나갈때_골룸이_모집중이면_골룸_대기자_명단에서_제외된다() {
+    void 골룸을_나갈때_골룸에_남아있는_사용자가_없으면_골룸이_삭제된다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
                 new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
-
-        final List<GoalRoomPendingMember> goalRoomPendingMembers = List.of(
-                new GoalRoomPendingMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                        GOAL_ROOM_MEMBER1),
-                new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
-                        GOAL_ROOM_MEMBER2));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
-        given(goalRoomPendingMemberRepository.findByGoalRoom(goalRoom))
-                .willReturn(new ArrayList<>(goalRoomPendingMembers));
 
         // when
         goalRoomService.leave("identifier2", 1L);
 
         // then
-        verify(goalRoomMemberRepository, never()).findByGoalRoom(goalRoom);
-        verify(goalRoomPendingMemberRepository, times(1)).delete(any());
-    }
-
-    @Test
-    void 골룸을_나갈때_골룸이_완료되었으면_골룸_사용자_명단에서_제외된다() {
-        // given
-        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
-                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
-        goalRoom.complete();
-
-        final List<GoalRoomMember> goalRoomMembers = List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                        GOAL_ROOM_MEMBER1),
-                new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
-                        GOAL_ROOM_MEMBER2));
-
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
-        given(goalRoomRepository.findById(anyLong()))
-                .willReturn(Optional.of(goalRoom));
-        given(goalRoomMemberRepository.findByGoalRoom(goalRoom))
-                .willReturn(new ArrayList<>(goalRoomMembers));
-
-        // when
-        goalRoomService.leave("identifier2", 1L);
-
-        // then
-        verify(goalRoomPendingMemberRepository, never()).findByGoalRoom(goalRoom);
-        verify(goalRoomMemberRepository, times(1)).delete(any());
-    }
-
-    @Test
-    void 모집중인_골룸을_나갈때_골룸에_남아있는_사용자가_없으면_골룸이_삭제된다() {
-        // given
-        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
-                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
-
-        final List<GoalRoomPendingMember> goalRoomPendingMembers = List.of(
-                new GoalRoomPendingMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                        GOAL_ROOM_MEMBER1));
-
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
-        given(goalRoomRepository.findById(anyLong()))
-                .willReturn(Optional.of(goalRoom));
-        given(goalRoomPendingMemberRepository.findByGoalRoom(goalRoom))
-                .willReturn(new ArrayList<>(goalRoomPendingMembers));
-
-        // when
-        goalRoomService.leave("identifier2", 1L);
-
-        // then
-        verify(goalRoomMemberRepository, never()).findByGoalRoom(goalRoom);
-        verify(goalRoomMemberRepository, never()).delete(any());
         verify(goalRoomRepository, times(1)).delete(goalRoom);
-    }
-
-    @Test
-    void 완료된_골룸을_나갈때_골룸에_남아있는_사용자가_없으면_골룸이_삭제된다() {
-        // given
-        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
-                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
-        goalRoom.complete();
-
-        final List<GoalRoomMember> goalRoomPendingMembers = List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                        GOAL_ROOM_MEMBER1));
-
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
-        given(goalRoomRepository.findById(anyLong()))
-                .willReturn(Optional.of(goalRoom));
-        given(goalRoomMemberRepository.findByGoalRoom(goalRoom))
-                .willReturn(new ArrayList<>(goalRoomPendingMembers));
-
-        // when
-        goalRoomService.leave("identifier2", 1L);
-
-        // then
-        verify(goalRoomPendingMemberRepository, never()).findByGoalRoom(goalRoom);
-        verify(goalRoomPendingMemberRepository, never()).delete(any());
-        verify(goalRoomRepository, times(1)).delete(any());
-        verify(goalRoomMemberRepository, times(1)).delete(any());
     }
 
     private Member 사용자를_생성한다(final Long memberId, final String identifier, final String nickname) {

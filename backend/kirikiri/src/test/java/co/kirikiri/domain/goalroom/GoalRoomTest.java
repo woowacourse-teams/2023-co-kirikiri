@@ -45,7 +45,7 @@ class GoalRoomTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
         member = new Member(1L, identifier, encryptedPassword, nickname, memberProfile);
     }
 
@@ -138,6 +138,35 @@ class GoalRoomTest {
         assertThatThrownBy(() -> goalRoom.join(member))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
+    }
+
+    @Test
+    void 골룸을_나간다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
+
+        // when
+        goalRoom.leave(member);
+
+        // then
+        assertThat(goalRoom.isEmptyGoalRoom()).isTrue();
+    }
+
+    @Test
+    void 골룸에_참여하지_않은_멤버가_나가면_예외가_발생한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
+
+        final Member notJoinMember = new Member(new Identifier("identifier2"),
+                new EncryptedPassword(new Password("password2!")),
+                new Nickname("name2"), null);
+
+        // when
+        // then
+        assertThatThrownBy(() -> goalRoom.leave(notJoinMember))
+                .isInstanceOf(BadRequestException.class);
     }
 
     private Member 크리에이터를_생성한다() {
