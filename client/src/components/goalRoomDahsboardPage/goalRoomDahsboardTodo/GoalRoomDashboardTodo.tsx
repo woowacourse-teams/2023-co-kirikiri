@@ -54,13 +54,13 @@ const GoalRoomDashboardTodo = ({
         </div>
       </S.TodoWrapper>
 
-      <DialogContent>
-        <TodoModal />
-      </DialogContent>
-
       <DialogBackdrop asChild>
         <BackDrop />
       </DialogBackdrop>
+
+      <DialogContent>
+        <TodoModal />
+      </DialogContent>
     </DialogBox>
   );
 };
