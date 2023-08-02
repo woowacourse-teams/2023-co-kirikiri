@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { shake } from '@styles/animations';
 
 export const Todo = styled.li`

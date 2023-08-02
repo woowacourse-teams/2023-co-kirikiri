@@ -18,6 +18,7 @@ export type GoalRoomNode = {
 };
 
 export type GoalRoomTodo = {
+  id: number;
   content: string;
   startDate: string;
   endDate: string;

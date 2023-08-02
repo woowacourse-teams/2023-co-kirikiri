@@ -20,6 +20,7 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
     name: '',
     limitedMemberCount: 10,
     goalRoomTodo: {
+      id: -1,
       content: '',
       startDate: '',
       endDate: '',
