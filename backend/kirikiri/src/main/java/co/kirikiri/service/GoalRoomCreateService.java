@@ -27,7 +27,6 @@ import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class GoalRoomCreateService {
 
+    private final FileService fileService;
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final RoadmapContentRepository roadmapContentRepository;
@@ -125,7 +125,7 @@ public class GoalRoomCreateService {
         updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
         try {
-            final String imageUrl = uploadFileAndReturnAddress(checkFeedRequest);
+            final String imageUrl = fileService.uploadFileAndReturnPath(checkFeedImage, goalRoomId);
             checkFeedRepository.save(new CheckFeed(imageUrl, imageType, checkFeedImage.getOriginalFilename(),
                     checkFeedRequest.description(), currentNode, goalRoomMember));
             return imageUrl;
@@ -137,6 +137,10 @@ public class GoalRoomCreateService {
     private void validateEmptyImage(final MultipartFile image) {
         if (image.isEmpty()) {
             throw new BadRequestException("인증 피드 등록 시 이미지가 반드시 포함되어야 합니다.");
+        }
+
+        if (image.getOriginalFilename() == null) {
+            throw new BadRequestException("파일 이름은 반드시 포함되어야 합니다.");
         }
     }
 
@@ -156,9 +160,9 @@ public class GoalRoomCreateService {
         return memberCheckCount;
     }
 
-    private int validateNodeCheckCountAndReturn(GoalRoomMember member,
-                                                GoalRoomRoadmapNode goalRoomRoadmapNode) {
-        int memberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(member,
+    private int validateNodeCheckCountAndReturn(final GoalRoomMember member,
+                                                final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+        final int memberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(member,
                 goalRoomRoadmapNode);
         if (memberCheckCount >= goalRoomRoadmapNode.getCheckCount()) {
             throw new BadRequestException(
@@ -168,24 +172,13 @@ public class GoalRoomCreateService {
         return memberCheckCount;
     }
 
-    private void validateTodayCheckCount(GoalRoomMember member) {
+    private void validateTodayCheckCount(final GoalRoomMember member) {
         final LocalDate today = LocalDate.now();
         final LocalDateTime todayStart = today.atStartOfDay();
         final LocalDateTime todayEnd = today.plusDays(1).atStartOfDay();
         if (checkFeedRepository.findByGoalRoomMemberAndDateTime(member, todayStart, todayEnd).isPresent()) {
             throw new BadRequestException("이미 오늘 인증 피드를 등록하였습니다.");
         }
-    }
-
-    private String uploadFileAndReturnAddress(final CheckFeedRequest checkFeedRequest) throws IOException {
-        // TODO : 이미지가 저장될 경로는 반드시 추후에 다시 확인
-        final String uploadFilePath = "C:/";
-        final MultipartFile checkFeedImage = checkFeedRequest.image();
-        final String fileName = System.currentTimeMillis() + "_" + checkFeedImage.getOriginalFilename();
-        final String serverFilePath = uploadFilePath + fileName;
-        final File dest = new File(serverFilePath);
-        checkFeedImage.transferTo(dest);
-        return serverFilePath;
     }
 
     private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember,

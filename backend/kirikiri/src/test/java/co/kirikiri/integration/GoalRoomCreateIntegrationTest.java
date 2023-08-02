@@ -36,6 +36,7 @@ import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,15 +59,21 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private static final LocalDate 십일_후 = 오늘.plusDays(10L);
     private static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
 
+    private final String storageLocation;
+    private final String serverPathPrefix;
     private final GoalRoomCreateService goalRoomCreateService;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
 
-    public GoalRoomCreateIntegrationTest(final GoalRoomCreateService goalRoomCreateService,
+    public GoalRoomCreateIntegrationTest(@Value("${file.upload-dir}") final String storageLocation,
+                                         @Value("${file.server-path}") final String serverPathPrefix,
+                                         final GoalRoomCreateService goalRoomCreateService,
                                          final RoadmapCategoryRepository roadmapCategoryRepository,
                                          final RoadmapNodeRepository roadmapNodeRepository,
                                          final GoalRoomMemberRepository goalRoomMemberRepository) {
+        this.storageLocation = storageLocation;
+        this.serverPathPrefix = serverPathPrefix;
         this.goalRoomCreateService = goalRoomCreateService;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapNodeRepository = roadmapNodeRepository;
@@ -307,7 +314,8 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         //then
         assertAll(
                 () -> assertThat(인증_피드_등록_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(인증_피드_등록_응답.response().header("Location")).isNotNull()
+                () -> assertThat(인증_피드_등록_응답.response().header("Location"))
+                        .contains(serverPathPrefix, "originalFileName.jpeg")
         );
     }
 
@@ -569,14 +577,14 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     }
 
     private void 테스트용으로_생성된_파일을_제거한다(final String filePath) {
-        final File file = new File(filePath);
-
+        final String validFilePath = filePath.replace(serverPathPrefix, storageLocation);
+        final File file = new File(validFilePath);
         if (!file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException("Invalid file path: " + filePath);
+            throw new IllegalArgumentException("Invalid file path: " + validFilePath);
         }
 
         if (!file.delete()) {
-            throw new RuntimeException("Failed to delete the file: " + filePath);
+            throw new RuntimeException("Failed to delete the file: " + validFilePath);
         }
     }
 

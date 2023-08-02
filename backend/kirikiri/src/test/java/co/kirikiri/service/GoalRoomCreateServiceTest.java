@@ -2,6 +2,7 @@ package co.kirikiri.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -45,7 +46,7 @@ import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -86,6 +87,9 @@ class GoalRoomCreateServiceTest {
 
     @Mock
     private CheckFeedRepository checkFeedRepository;
+
+    @Mock
+    private FileService fileService;
 
     @InjectMocks
     private GoalRoomCreateService goalRoomCreateService;
@@ -285,7 +289,7 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
-    void 인증_피드_등록을_요청한다() {
+    void 인증_피드_등록을_요청한다() throws IOException {
         // given
         final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
 
@@ -311,14 +315,17 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(0);
         when(checkFeedRepository.save(any()))
                 .thenReturn(checkFeed);
+        when(fileService.uploadFileAndReturnPath(any(), anyLong()))
+                .thenReturn("originalFileName");
 
         // when
         final String response = goalRoomCreateService.createCheckFeed("identifier", 1L, request);
-        테스트용으로_생성된_파일을_제거한다(response);
 
         // then
-        assertThat(goalRoomLeader.getAccomplishmentRate()).isEqualTo(100 * 1 / (double) 10);
-        assertThat(response).contains("originalFileName");
+        assertAll(
+                () -> assertThat(goalRoomLeader.getAccomplishmentRate()).isEqualTo(100 * 1 / (double) 10),
+                () -> assertThat(response).isEqualTo("originalFileName")
+        );
     }
 
     @Test
@@ -526,17 +533,5 @@ class GoalRoomCreateServiceTest {
     private CheckFeed 인증_피드를_생성한다(final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember joinedMember) {
         return new CheckFeed("src/test/resources/testImage/originalFileName.jpeg", ImageContentType.JPEG,
                 "originalFileName.jpeg", "인증 피드 설명", goalRoomRoadmapNode, joinedMember);
-    }
-
-    private void 테스트용으로_생성된_파일을_제거한다(final String filePath) {
-        final File file = new File(filePath);
-
-        if (!file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException("Invalid file path: " + filePath);
-        }
-
-        if (!file.delete()) {
-            throw new RuntimeException("Failed to delete the file: " + filePath);
-        }
     }
 }

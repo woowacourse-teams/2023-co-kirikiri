@@ -14,6 +14,10 @@ spring:
     multipart:
       max-file-size: 10MB
 
+file:
+  upload-dir: src/test/resources/static/images/
+  server-path: http://localhost/images/
+
 logging:
   level:
     org:
