@@ -14,6 +14,7 @@ const theme: DefaultTheme = {
     black: '#000',
     white: '#fff',
     red: '#ff0000',
+    backdrop: 'rgba(220, 220, 220, 0.44)',
   },
 
   fonts: {
@@ -45,6 +46,9 @@ const theme: DefaultTheme = {
     box: '-0.14rem 0.7rem 4.3rem rgba(0, 0, 0, 0.13)',
     text: '0 0.2rem 0.2rem rgba(0, 0, 0, 0.18)',
     main: 'rgba(0, 0, 0, 0.25) 0px 0px 0.315rem',
+    threeD: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+    threeDHovered: '0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)',
+    modal: '0px 5px 15px rgba(0, 0, 0, 0.2)',
   },
 };
 

@@ -1,4 +1,9 @@
 export const CategoriesInfo = {
+  0: {
+    id: 0,
+    name: '전체',
+    iconName: 'AllCategoryIcon',
+  },
   1: {
     id: 1,
     name: '어학',

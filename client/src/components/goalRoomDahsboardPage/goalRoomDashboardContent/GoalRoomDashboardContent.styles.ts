@@ -12,10 +12,26 @@ export const GoalRoomGridContainer = styled.div`
 `;
 
 export const DashBoardSection = styled.section`
-  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  min-height: 25rem;
   padding: 1rem;
-  border: 0.5rem solid ${({ theme }) => theme.colors.gray200};
-  border-radius: 5px;
+
+  background: ${({ theme }) => theme.colors.gray100};
+  border-radius: 10px;
+  box-shadow: ${({ theme }) => theme.shadows.main};
+
+  & > div:nth-child(2) {
+    flex: 1;
+
+    margin-top: 1rem;
+    padding: 1rem;
+
+    background: ${({ theme }) => theme.colors.white};
+    border-radius: 10px;
+  }
 
   & > div:first-child {
     ${({ theme }) => theme.fonts.h1};

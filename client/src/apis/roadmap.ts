@@ -1,22 +1,37 @@
-import { CategoriesInfo } from '@constants/roadmap/category';
+import type {
+  RoadmapDetailResponse,
+  RoadmapListResponse,
+  RoadmapValueRequest,
+  RoadmapValueType,
+} from '@myTypes/roadmap/remote';
 import client from './axios/client';
+import { SelectedCategoryId } from '@/myTypes/roadmap/internal';
 
-export const getRoadmapList = (
-  categoryId?: keyof typeof CategoriesInfo,
+export const getRoadmapList = async (
+  categoryId?: SelectedCategoryId,
   page = 1,
   size = 10,
   filterCond = 'LATEST'
 ) => {
-  return client.get(`/roadmaps`, {
+  const { data } = await client.get<RoadmapListResponse>(`/roadmaps`, {
     params: {
-      categoryId,
+      ...(categoryId && { categoryId }),
       page,
       size,
       filterCond,
     },
   });
+
+  return data;
 };
 
-export const getRoadmapById = (id: string) => {
-  return client.get(`/roadmaps/${id}`);
+export const getRoadmapById = async (id: number) => {
+  const { data } = await client.get<RoadmapDetailResponse>(`/roadmaps/${id}`);
+
+  return data;
+};
+
+export const postCreateRoadmap = (roadmapValue: RoadmapValueType) => {
+  const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue);
+  return resposne;
 };
