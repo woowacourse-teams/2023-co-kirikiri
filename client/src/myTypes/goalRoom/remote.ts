@@ -1,5 +1,7 @@
 import {
   CheckFeed,
+  GoalRoomDetailType,
+  GoalRoomInfoType,
   GoalRoomRecruitmentStatus,
   GoalRoomRoadmap,
   GoalRoomTodo,
@@ -43,21 +45,10 @@ export type CreateGoalRoomRequest = {
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };
 
-type GoalRoomLeaderType = {
-  id: number;
-  name: string;
-};
+export type GoalRoomDetailResponse = GoalRoomDetailType;
 
-export type GoalRoomDetailResponse = {
-  goalRoomId: number;
-  name: string;
-  currentMemberCount: number;
-  limitedMemberCount: number;
-  createdAt: number[];
-  startDate: number[];
-  endDate: number[];
-  goalRoomLeader: GoalRoomLeaderType;
-};
+export type GoalRoomInfoResponse = GoalRoomInfoType;
+
 export type newTodoPayload = {
   content: string;
   startDate: string;
