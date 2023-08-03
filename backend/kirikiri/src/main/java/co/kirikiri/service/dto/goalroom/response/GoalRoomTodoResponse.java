@@ -6,7 +6,9 @@ public record GoalRoomTodoResponse(
         Long id,
         String content,
         LocalDate startDate,
-        LocalDate endDate
+        LocalDate endDate,
+        GoalRoomToDoCheckResponse check
+
 ) {
 
 }

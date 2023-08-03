@@ -3,21 +3,25 @@ package co.kirikiri.service;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
+import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
@@ -34,9 +38,10 @@ public class GoalRoomReadService {
 
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomMemberRepository goalRoomMemberRepository;
-    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final CheckFeedRepository checkFeedRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     public GoalRoomResponse findGoalRoom(final Long goalRoomId) {
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
@@ -74,6 +79,33 @@ public class GoalRoomReadService {
         }
     }
 
+    public List<GoalRoomTodoResponse> getAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
+        validateGoalRoomMember(goalRoomId, identifier);
+        final GoalRoomToDos goalRoomToDos = findGoalRoomTodosByGoalRoomId(goalRoomId);
+        final List<Long> checkedTodoIds = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
+        return GoalRoomMapper.convertGoalRoomTodoResponses(goalRoomToDos, checkedTodoIds);
+    }
+
+    private void validateGoalRoomMember(final Long goalRoomId, final String identifier) {
+        if (goalRoomRepository.findGoalRoomMember(goalRoomId, new Identifier(identifier)).isEmpty()) {
+            throw new ForbiddenException(
+                    "골룸에 참여하지 않은 사용자입니다. goalRoomId = " + goalRoomId + "  memberIdentifier = " + identifier);
+        }
+    }
+
+    private GoalRoomToDos findGoalRoomTodosByGoalRoomId(final Long goalRoomId) {
+        return goalRoomRepository.findByIdWithTodos(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId))
+                .getGoalRoomToDos();
+    }
+
+    private List<Long> findMemberCheckedGoalRoomToDoIds(final Long goalRoomId, final String identifier) {
+        return goalRoomToDoCheckRepository.findByGoalRoomIdAndMemberIdentifier(
+                        goalRoomId, new Identifier(identifier)).stream()
+                .map(goalRoomToDoCheck -> goalRoomToDoCheck.getGoalRoomToDo().getId())
+                .toList();
+    }
+
     public MemberGoalRoomResponse findMemberGoalRoom(final String identifier, final Long goalRoomId) {
         final GoalRoom goalRoom = findMemberGoalRoomById(goalRoomId);
         final Member member = findMemberByIdentifier(new Identifier(identifier));
@@ -81,8 +113,8 @@ public class GoalRoomReadService {
 
         final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now());
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(currentGoalRoomRoadmapNode);
-
-        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds);
+        final List<Long> checkedTodoIds = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
+        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds, checkedTodoIds);
     }
 
     private GoalRoom findMemberGoalRoomById(final Long goalRoomId) {

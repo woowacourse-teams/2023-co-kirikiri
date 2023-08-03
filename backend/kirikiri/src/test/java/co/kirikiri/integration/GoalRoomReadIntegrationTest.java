@@ -4,12 +4,6 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -18,13 +12,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapContents;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -36,21 +24,25 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.File;
@@ -80,50 +72,58 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private static final LocalDate 삼십일_후 = 오늘.plusDays(30);
     private static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
 
-    private final GoalRoomCreateService goalRoomCreateService;
+    private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-    private final RoadmapCategoryRepository roadmapCategoryRepository;
-    private final RoadmapContentRepository roadmapContentRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
-    private final MemberRepository memberRepository;
+    private final GoalRoomCreateService goalRoomCreateService;
+    private final RoadmapContentRepository roadmapContentRepository;
+    private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
-    public GoalRoomReadIntegrationTest(final GoalRoomCreateService goalRoomCreateService,
-                                       final RoadmapRepository roadmapRepository,
+    public GoalRoomReadIntegrationTest(final RoadmapRepository roadmapRepository,
                                        final GoalRoomRepository goalRoomRepository,
-                                       final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
-                                       final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final RoadmapContentRepository roadmapContentRepository,
                                        final RoadmapNodeRepository roadmapNodeRepository,
+                                       final GoalRoomCreateService goalRoomCreateService,
+                                       final RoadmapContentRepository roadmapContentRepository,
+                                       final RoadmapCategoryRepository roadmapCategoryRepository,
+                                       final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
                                        final MemberRepository memberRepository) {
-        this.goalRoomCreateService = goalRoomCreateService;
+        this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
-        this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
-        this.roadmapCategoryRepository = roadmapCategoryRepository;
-        this.roadmapContentRepository = roadmapContentRepository;
+        this.goalRoomCreateService = goalRoomCreateService;
         this.roadmapNodeRepository = roadmapNodeRepository;
-        this.memberRepository = memberRepository;
+        this.roadmapContentRepository = roadmapContentRepository;
+        this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
     }
 
     @Test
     void 골룸_아이디로_골룸_정보를_조회한다() {
         // given
-        final Member 크리에이터 = 크리에이터를_저장한다();
+        크리에이터를_저장한다();
         final String 로그인_토큰_정보 = 로그인();
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
-        final List<RoadmapContent> 로드맵_본문_리스트 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답).getValues();
-        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트, 크리에이터);
+        final Long 로드맵_첫번째_노드_아이디 = 로드맵_응답.content().nodes().get(0).id();
+        final Long 로드맵_두번째_노드_아이디 = 로드맵_응답.content().nodes().get(1).id();
+
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("투두 1", 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, (int) ChronoUnit.DAYS.between(오늘, 십일_후), 오늘, 십일_후),
+                new GoalRoomRoadmapNodeRequest(로드맵_두번째_노드_아이디, (int) ChronoUnit.DAYS.between(이십일_후, 삼십일_후), 이십일_후,
+                        삼십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, "골룸", 10, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final Long 골룸_아이디 = 골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
 
         // when
         final GoalRoomResponse 골룸_응답값 = given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 골룸.getId())
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 골룸_아이디)
                 .then()
                 .log().all()
                 .extract()
@@ -139,13 +139,21 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     @Test
     void 골룸_아이디와_사용자_아이디로_골룸_정보를_조회한다() {
         // given
-        final Member 크리에이터 = 크리에이터를_저장한다();
+        크리에이터를_저장한다();
         final String 로그인_토큰_정보 = 로그인();
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
-        final List<RoadmapContent> 로드맵_본문_리스트 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답).getValues();
-        final GoalRoom 골룸 = 골룸을_저장한다(로드맵_본문_리스트, 크리에이터);
+        final Long 로드맵_첫번째_노드_아이디 = 로드맵_응답.content().nodes().get(0).id();
+        final Long 로드맵_두번째_노드_아이디 = 로드맵_응답.content().nodes().get(1).id();
+
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("투두 1", 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, (int) ChronoUnit.DAYS.between(오늘, 십일_후), 오늘, 십일_후),
+                new GoalRoomRoadmapNodeRequest(로드맵_두번째_노드_아이디, (int) ChronoUnit.DAYS.between(이십일_후, 삼십일_후), 이십일_후,
+                        삼십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, "골룸", 10, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final Long 골룸_아이디 = 골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
 
         // when
         final GoalRoomCertifiedResponse 골룸_응답값 = given()
@@ -153,7 +161,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 골룸.getId())
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 골룸_아이디)
                 .then()
                 .log().all()
                 .extract()
@@ -164,6 +172,55 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCertifiedResponse 예상하는_골룸_응답값 = 로그인후_예상하는_골룸_응답을_생성한다();
         assertThat(골룸_응답값)
                 .isEqualTo(예상하는_골룸_응답값);
+    }
+
+    @Test
+    void 골룸_투두리스트를_조회한다() {
+        // given
+        크리에이터를_저장한다();
+        final String 로그인_토큰_정보 = 로그인();
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+        final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
+        final Long 로드맵_첫번째_노드_아이디 = 로드맵_응답.content().nodes().get(0).id();
+        final Long 로드맵_두번째_노드_아이디 = 로드맵_응답.content().nodes().get(1).id();
+
+        final GoalRoomTodoRequest 골룸_첫번째_투두_요청 = new GoalRoomTodoRequest("투두 1", 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, (int) ChronoUnit.DAYS.between(오늘, 십일_후), 오늘, 십일_후),
+                new GoalRoomRoadmapNodeRequest(로드맵_두번째_노드_아이디, (int) ChronoUnit.DAYS.between(이십일_후, 삼십일_후), 이십일_후,
+                        삼십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, "골룸", 10, 골룸_첫번째_투두_요청,
+                골룸_노드_별_기간_요청);
+        final Long 골룸_아이디 = 골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
+
+        goalRoomCreateService.startGoalRooms();
+
+        final GoalRoomTodoRequest 골룸_두번째_투두_요청 = new GoalRoomTodoRequest("투두 2", 십일_후, 이십일_후);
+        골룸_투두리스트_추가(로그인_토큰_정보, 골룸_아이디, 골룸_두번째_투두_요청);
+
+        // TODO 아이디 값에 대한 변환 필요
+        골룸_투두리스트를_체크한다(로그인_토큰_정보, 골룸_아이디, 1L);
+
+        // when
+        final List<GoalRoomTodoResponse> 골룸_투두리스트_응답값 = given()
+                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 골룸_아이디)
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        final List<GoalRoomTodoResponse> 예상하는_골룸_투두리스트_응답값 = 예상하는_골룸_투두리스트_응답을_생성한다();
+        assertThat(골룸_투두리스트_응답값)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(예상하는_골룸_투두리스트_응답값);
     }
 
     private Member 크리에이터를_저장한다() {
@@ -249,57 +306,17 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 });
     }
 
-    private RoadmapContents 로드맵_응답으로부터_로드맵_본문을_생성한다(final Member 크리에이터, final RoadmapCategory 카테고리,
-                                                    final RoadmapResponse 로드맵_응답) {
-        final Roadmap 로드맵 = new Roadmap(로드맵_응답.roadmapTitle(), 로드맵_응답.introduction(),
-                로드맵_응답.recommendedRoadmapPeriod(), RoadmapDifficulty.valueOf(로드맵_응답.difficulty()), 크리에이터, 카테고리);
-        final RoadmapContentResponse 로드맵_본문_응답 = 로드맵_응답.content();
-        final RoadmapContent 로드맵_본문 = new RoadmapContent(로드맵_본문_응답.content());
-        final List<RoadmapNodeResponse> 로드맵_본문_노드_응답 = 로드맵_본문_응답.nodes();
-        final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문_노드_응답.stream()
-                .map(response -> new RoadmapNode(response.title(), response.description()))
-                .toList();
-
-        로드맵_본문.addNodes(new RoadmapNodes(로드맵_노드_리스트));
-        로드맵.addContent(로드맵_본문);
-
-        // TODO 추후 골룸 생성 API가 들어오면 제거될 로직
-        final Roadmap 저장된_로드맵 = roadmapRepository.save(로드맵);
-        return 저장된_로드맵.getContents();
-    }
-
-    private GoalRoom 골룸을_저장한다(final List<RoadmapContent> 로드맵_본문_리스트, final Member 크리에이터) {
-        final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
-        final GoalRoom 골룸 = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
-                로드맵_본문, 크리에이터);
-        final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
-
-        final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);
-        final GoalRoomRoadmapNode 첫번째_골룸_노드 = new GoalRoomRoadmapNode(
-                new Period(오늘, 십일_후),
-                10, 첫번째_로드맵_노드);
-
-        final RoadmapNode 두번째_로드맵_노드 = 로드맵_노드_리스트.get(1);
-        final GoalRoomRoadmapNode 두번째_골룸_노드 = new GoalRoomRoadmapNode(
-                new Period(이십일_후, 삼십일_후),
-                2, 두번째_로드맵_노드);
-
-        final GoalRoomRoadmapNodes 골룸_노드들 = new GoalRoomRoadmapNodes(List.of(첫번째_골룸_노드, 두번째_골룸_노드));
-        골룸.addAllGoalRoomRoadmapNodes(골룸_노드들);
-        return goalRoomRepository.save(골룸);
-    }
-
     private GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomNodeResponse("로드맵 1주차", 오늘, 십일_후, 10),
-                new GoalRoomNodeResponse("로드맵 2주차", 이십일_후, 삼십일_후, 2));
+                new GoalRoomNodeResponse("로드맵 2주차", 이십일_후, 삼십일_후, 10));
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 31);
     }
 
     private GoalRoomCertifiedResponse 로그인후_예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomNodeResponse("로드맵 1주차", 오늘, 십일_후, 10),
-                new GoalRoomNodeResponse("로드맵 2주차", 이십일_후, 삼십일_후, 2));
+                new GoalRoomNodeResponse("로드맵 2주차", 이십일_후, 삼십일_후, 10));
         return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 31, true);
     }
 
@@ -327,6 +344,60 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final AuthenticationResponse 토큰_응답값 = jsonToClass(로그인_응답.body().asString(), new TypeReference<>() {
         });
         return 토큰_응답값.accessToken();
+    }
+
+    private Long 골룸_생성(final GoalRoomCreateRequest 골룸_생성_요청, final String 액세스_토큰) {
+        final String 생성된_골룸_아이디 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(골룸_생성_요청)
+                .header(new Header(HttpHeaders.AUTHORIZATION, 액세스_토큰))
+                .post(API_PREFIX + "/goal-rooms")
+                .then()
+                .log().all()
+                .extract()
+                .response()
+                .getHeader(LOCATION)
+                .replace("/api/goal-rooms/", "");
+        return Long.valueOf(생성된_골룸_아이디);
+    }
+
+    private Long 골룸_투두리스트_추가(final String 액세스_토큰, final Long 골룸_아이디, final GoalRoomTodoRequest 골룸_추가_요청) {
+        final String 응답_로케이션_헤더 = API_PREFIX + "/goal-rooms/" + 골룸_아이디 + "/todos/";
+        final String 생성된_투두_아이디 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(골룸_추가_요청)
+                .header(new Header(HttpHeaders.AUTHORIZATION, 액세스_토큰))
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 골룸_아이디)
+                .then()
+                .log().all()
+                .extract()
+                .response()
+                .getHeader(LOCATION)
+                .replace(응답_로케이션_헤더, "");
+        return Long.valueOf(생성된_투두_아이디);
+    }
+
+    private GoalRoomToDoCheckResponse 골룸_투두리스트를_체크한다(final String 로그인_토큰_정보, final Long 골룸_아이디, final Long 투두_아이디) {
+        return given()
+                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 골룸_아이디, 투두_아이디)
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+    }
+
+    // TODO 골룸 단일 조회 명세 수정 후 아이디 값도 함께 반환되도록 수정할 예정
+    private List<GoalRoomTodoResponse> 예상하는_골룸_투두리스트_응답을_생성한다() {
+        return List.of(
+                new GoalRoomTodoResponse(null, "투두 1", 오늘, 십일_후, new GoalRoomToDoCheckResponse(true)),
+                new GoalRoomTodoResponse(null, "투두 2", 십일_후, 이십일_후, new GoalRoomToDoCheckResponse(false)));
     }
 
     private ExtractableResponse<Response> 로드맵_생성_요청(final RoadmapSaveRequest 로드맵_생성_요청값, final String accessToken) {

@@ -223,15 +223,15 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomRoadmapNodes;
     }
 
-    public GoalRoomToDos getGoalRoomToDos() {
-        return goalRoomToDos;
-    }
-
     public GoalRoomMembers getGoalRoomMembers() {
         return goalRoomMembers;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public GoalRoomToDos getGoalRoomToDos() {
+        return goalRoomToDos;
     }
 }

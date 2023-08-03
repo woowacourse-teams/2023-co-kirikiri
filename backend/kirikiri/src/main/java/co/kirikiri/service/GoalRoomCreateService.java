@@ -9,6 +9,7 @@ import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
+import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -21,6 +22,7 @@ import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
@@ -28,6 +30,7 @@ import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -48,8 +51,9 @@ public class GoalRoomCreateService {
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final RoadmapContentRepository roadmapContentRepository;
-    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final CheckFeedRepository checkFeedRepository;
 
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
@@ -136,6 +140,35 @@ public class GoalRoomCreateService {
         if (goalRoom.isNotLeader(member)) {
             throw new BadRequestException("골룸의 리더만 투드리스트를 추가할 수 있습니다.");
         }
+    }
+
+    public GoalRoomToDoCheckResponse checkGoalRoomTodo(final Long goalRoomId, final Long todoId, final String identifier) {
+        final Identifier memberIdentifier = new Identifier(identifier);
+        final GoalRoom goalRoom = findGoalRoomWithTodos(goalRoomId);
+        final GoalRoomToDo goalRoomToDo = goalRoom.getGoalRoomToDos().findById(todoId);
+        final GoalRoomMember goalRoomMember = findGoalRoomMember(memberIdentifier, goalRoom);
+
+        final boolean isAlreadyChecked = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoIdAndMemberIdentifier(
+                goalRoomId, todoId, memberIdentifier).isPresent();
+        if (isAlreadyChecked) {
+            goalRoomToDoCheckRepository.deleteById(todoId);
+            return new GoalRoomToDoCheckResponse(false);
+        }
+        final GoalRoomToDoCheck goalRoomToDoCheck = new GoalRoomToDoCheck(goalRoomMember, goalRoomToDo);
+        goalRoomToDoCheckRepository.save(goalRoomToDoCheck);
+        return new GoalRoomToDoCheckResponse(true);
+    }
+
+    private GoalRoom findGoalRoomWithTodos(final Long goalRoomId) {
+        return goalRoomRepository.findByIdWithTodos(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("골룸이 존재하지 않습니다. goalRoomId = " + goalRoomId));
+    }
+
+    private GoalRoomMember findGoalRoomMember(final Identifier memberIdentifier, final GoalRoom goalRoom) {
+        return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom,
+                memberIdentifier).orElseThrow(() -> new NotFoundException(
+                "골룸에 사용자가 존재하지 않습니다. goalRoomId = " + goalRoom.getId() + " memberIdentifier = "
+                        + memberIdentifier.getValue()));
     }
 
     @Transactional

@@ -84,7 +84,7 @@ operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_�
 
 === *3-2* 실패
 
-operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸_조회시_골룸_아이디가_유효하지_않으면_예외_발생[snippets='http-request,request-headers,http-response,response-fields']
+operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸_조회시_골룸_아이디가_유효하지_않으면_예외_발생[snippets='http-request,http-response']
 
 [[골룸참가-API]]
 == *4. 골룸 참가 API*
@@ -95,15 +95,15 @@ operation::goal-room-create-api-test/골룸_참가_요청을_성공한다[snippe
 
 === *4-2* 실패 - 골룸의 아이디가 유효하지 않음
 
-operation::goal-room-create-api-test/존재하지_않는_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/존재하지_않는_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response']
 
 === *4-3* 실패 - 이미 해당 골룸에 참여함
 
-operation::goal-room-create-api-test/이미_참여한_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/이미_참여한_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response']
 
 === *4-4* 실패 - 골룸의 제한 인원이 가득 참
 
-operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대한_참가_요청은_실패한다[snippets='http-request,http-response']
 
 [[골룸참가자조회-API]]
 == *5. 골룸 참가자 조회 API*
@@ -114,7 +114,7 @@ operation::goal-room-read-api-test/정상적으로_골룸_멤버를_조회한다
 
 === *5-2* 실패 - 골룸 멤버 조회 시 존재하지 않는 골룸일 경우
 
-operation::goal-room-read-api-test/골룸_멤버_조회_시_존재하지_않는_골룸일_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-read-api-test/골룸_멤버_조회_시_존재하지_않는_골룸일_경우[snippets='http-request,http-response']
 
 [[골룸투두추가-API]]
 == *6. 골룸 투두 추가 API*
@@ -125,23 +125,23 @@ operation::goal-room-create-api-test/정상적으로_골룸에_투두리스트�
 
 === *6-2* 실패 - 골룸 투두 추가시 존재하지 않는 회원일 경우
 
-operation::goal-room-create-api-test/골룸_투두_추가시_존재하지_않는_회원일_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/골룸_투두_추가시_존재하지_않는_회원일_경우[snippets='http-request,http-response']
 
 === *6-3* 실패 - 골룸 투두 추가시 존재하지 않는 골룸일 경우
 
-operation::goal-room-create-api-test/골룸_투두_추가시_존재하지_않는_골룸일_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/골룸_투두_추가시_존재하지_않는_골룸일_경우[snippets='http-request,http-response']
 
 === *6-4* 실패 - 골룸 투두 추가시 이미 종료된 골룸일 경우
 
-operation::goal-room-create-api-test/골룸_투두_추가시_이미_종료된_골룸일_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/골룸_투두_추가시_이미_종료된_골룸일_경우[snippets='http-request,http-response']
 
 === *6-5* 실패 - 골룸 투두 추가시 리더가 아닌 경우
 
-operation::goal-room-create-api-test/골룸_투두_추가시_리더가_아닌_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/골룸_투두_추가시_리더가_아닌_경우[snippets='http-request,http-response']
 
 === *6-6* 실패 - 골룸 투두 추가시 컨텐츠가 250글자가 넘을 경우
 
-operation::goal-room-create-api-test/골룸_투두_추가시_컨텐츠가_250글자가_넘을_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/골룸_투두_추가시_컨텐츠가_250글자가_넘을_경우[snippets='http-request,http-response']
 
 [[사용자골룸단일조회-API]]
 == *7. 사용자 골룸 단일 조회*
@@ -160,3 +160,38 @@ operation::goal-room-read-api-test/사용자_골룸_조회_시_유효하지_않�
 === *8-1* 성공
 
 operation::goal-room-read-api-test/사용자_참가_골룸_목록을_조회한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']
+
+[[골룸투두체크-API]]
+== *9. 골룸 투두 체크 API*
+
+=== *9-1* 성공 - 체크
+
+operation::goal-room-create-api-test/골룸_투두리스트에_대해_체크한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+=== *9-2* 성공 - 체크 해제 (기존에 체크한 이력이 있는 경우)
+
+operation::goal-room-create-api-test/골룸_투두리스트_체크시_체크_이력이_있으면_제거한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+=== *9-3* 실패 - 골룸이 존재하지 않는 경우
+
+operation::goal-room-create-api-test/골룸_투두리스트_체크시_골룸이_존재하지_않으면_예외가_발생한다[snippets='http-request,http-response']
+
+=== *9-4* 실패 - 골룸에 사용자가 존재하지 않는 경우
+
+operation::goal-room-create-api-test/골룸_투두리스트_체크시_사용자가_없으면_예외가_발생한다[snippets='http-request,http-response']
+
+[[골룸투두리스트-API]]
+== *10. 골룸 투두 리스트 조회 API*
+
+=== *10-1* 성공
+
+operation::goal-room-read-api-test/골룸의_투두리스트를_조회한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+=== *10-2* 실패 - 존재하지 않은 골룸일 경우
+
+operation::goal-room-read-api-test/골룸_투두리스트_조회시_존재하지_않은_골룸일_경우[snippets='http-request,http-response']
+
+=== *10-3* 실패 - 참여하지 않은 사용자인 경우
+
+operation::goal-room-read-api-test/골룸_투두리스트_조회시_참여하지_않은_사용자일_경우[snippets='http-request,http-response']
+
