@@ -60,7 +60,7 @@ const SignUpForm = () => {
             <input
               name='phoneNumber'
               onChange={handleInputChange}
-              placeholder='휴대전화번호 ex) 01012345678'
+              placeholder='휴대전화번호 ex) 010-1234-5678'
             />
           </S.FormItem>
           <S.FormItem>
@@ -78,7 +78,7 @@ const SignUpForm = () => {
             <input
               name='birthday'
               onChange={handleInputChange}
-              placeholder='생년월일 6자리 ex) 950101'
+              placeholder='생년월일 8자리 ex) 19950101'
               type='number'
             />
           </S.FormItem>
