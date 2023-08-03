@@ -12,6 +12,7 @@ import GoalRoomDashboardPage from '@pages/goalRoomDashboardPage/GoalRoomDashboar
 import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
+import ToastProvider from '@components/_common/toastProvider/ToastProvider';
 import GoalRoomListPage from './pages/goalRoomListPage/GoalRoomListPage';
 import GoalRoomCreatePage from './pages/goalRoomCreatePage/GoalRoomCreatePage';
 
@@ -19,9 +20,10 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <BrowserRouter>
-        <ResponsiveContainer>
-          <PageLayout>
+      <ToastProvider>
+        <BrowserRouter>
+          <ResponsiveContainer>
+            <PageLayout>
             <Routes>
               <Route path='/' element={<RoadmapListPage />} />
               <Route path='/login' element={<LoginPage />} />
@@ -46,9 +48,10 @@ const App = () => {
                 element={<GoalRoomDashboardPage />}
               />
             </Routes>
-          </PageLayout>
-        </ResponsiveContainer>
-      </BrowserRouter>
+            </PageLayout>
+          </ResponsiveContainer>
+        </BrowserRouter>
+      </ToastProvider>
     </ThemeProvider>
   );
 };
