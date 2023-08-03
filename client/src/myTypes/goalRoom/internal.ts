@@ -25,6 +25,9 @@ export type GoalRoomTodo = {
   content: string;
   startDate: string;
   endDate: string;
+  check: {
+    isChecked: boolean;
+  };
 };
 
 export type CheckFeed = {

@@ -2,6 +2,7 @@ import {
   CreateGoalRoomRequest,
   newTodoPayload,
   GoalRoomListRequest,
+  GoalRoomTodoChangeStatusRequest,
 } from '@myTypes/goalRoom/remote';
 import {
   postCreateGoalRoom,
@@ -10,9 +11,11 @@ import {
   getGoalRoomTodos,
   postCreateNewCertificationFeed,
   getGoalRoomList,
+  postToChangeTodoCheckStatus,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useToast from '@hooks/_common/useToast';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList'], () => getGoalRoomList(params));
@@ -70,6 +73,31 @@ export const useFetchGoalRoomTodos = (goalRoomId: string) => {
 
   return {
     goalRoomTodos: data,
+  };
+};
+
+export const usePostChangeTodoCheckStatus = ({
+  goalRoomId,
+  todoId,
+}: GoalRoomTodoChangeStatusRequest) => {
+  const queryClient = useQueryClient();
+  const { triggerToast } = useToast();
+
+  const { mutate } = useMutation(
+    () => postToChangeTodoCheckStatus({ goalRoomId, todoId }),
+    {
+      onSuccess() {
+        triggerToast({ message: '투두리스트 상태 변경 완료!' });
+        queryClient.invalidateQueries([
+          ['goalRoom', goalRoomId],
+          ['goalRoomTodos', goalRoomId],
+        ]);
+      },
+    }
+  );
+
+  return {
+    changeTodoCheckStatus: mutate,
   };
 };
 

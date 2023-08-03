@@ -1,11 +1,18 @@
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './NavBar.styles';
+import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
+import useValidationCheck from '@hooks/user/useValidationCheck';
+import isValidUserInfo from '@utils/user/isValidUserInfo';
+import { BASE_URL } from '@apis/axios/client';
 
 type NavBarProps = {
   isSwitchOn: boolean;
 };
 
 const NavBar = ({ isSwitchOn }: NavBarProps) => {
+  useValidationCheck();
+  const { userInfo } = useUserInfoContext();
+
   return (
     <S.NavBar isNavBarOpen={isSwitchOn}>
       <S.Nav>
@@ -28,14 +35,26 @@ const NavBar = ({ isSwitchOn }: NavBarProps) => {
             <S.Text>골룸</S.Text>
           </S.Item>
         </S.Links>
-        <S.Links>
-          <S.Item to='/login'>
-            <S.ItemIcon>
-              <SVGIcon name='LoginIcon' />
-            </S.ItemIcon>
-            <S.Text>로그인</S.Text>
-          </S.Item>
-        </S.Links>
+
+        {isValidUserInfo(userInfo) ? (
+          <S.Links>
+            <S.Item to='/myPage'>
+              <S.ItemIcon>
+                <S.UserProfileImage src={BASE_URL + userInfo.profileImageUrl} alt='' />
+              </S.ItemIcon>
+              <S.Text>{userInfo.nickname}</S.Text>
+            </S.Item>
+          </S.Links>
+        ) : (
+          <S.Links>
+            <S.Item to='/login'>
+              <S.ItemIcon>
+                <SVGIcon name='LoginIcon' />
+              </S.ItemIcon>
+              <S.Text>로그인</S.Text>
+            </S.Item>
+          </S.Links>
+        )}
       </S.Nav>
     </S.NavBar>
   );
