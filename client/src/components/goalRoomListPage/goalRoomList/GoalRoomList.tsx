@@ -8,12 +8,12 @@ const GoalRoomList = () => {
   const { goalRoomList } = useGoalRoomList({ roadmapId: Number(id) });
 
   return (
-    <S.ListContainer>
+    <S.ListContainer role='main' aria-label='골룸 리스트'>
       <S.FilterBar>
-        <p>모집중인 골룸 {goalRoomList.length}개</p>
-        <p>마감 임박순</p>
+        <p aria-live='polite'>모집중인 골룸 {goalRoomList.length}개</p>
+        <p aria-live='polite'>마감 임박순</p>
       </S.FilterBar>
-      <S.ListWrapper>
+      <S.ListWrapper role='list' aria-label='골룸 리스트'>
         {goalRoomList.map((goalRoomInfo) => {
           return <GoalRoomItem {...goalRoomInfo} />;
         })}
