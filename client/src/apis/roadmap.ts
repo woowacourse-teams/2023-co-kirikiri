@@ -1,5 +1,9 @@
-import type { RoadmapDetailResponse } from '@myTypes/roadmap/remote';
-import { RoadmapListResponse } from '@myTypes/roadmap/remote';
+import type {
+  RoadmapDetailResponse,
+  RoadmapListResponse,
+  RoadmapValueRequest,
+  RoadmapValueType,
+} from '@myTypes/roadmap/remote';
 import client from './axios/client';
 import { SelectedCategoryId } from '@/myTypes/roadmap/internal';
 

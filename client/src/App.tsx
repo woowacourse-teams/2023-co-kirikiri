@@ -8,7 +8,6 @@ import SignUpPage from '@pages/signUpPage/SignUpPage';
 import LoginPage from '@pages/loginPage/LoginPage';
 import PageLayout from '@components/_common/pageLayout/PageLayout';
 import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
-import MainPage from '@components/mainPage/MainPage';
 import GoalRoomDashboardPage from '@pages/goalRoomDashboardPage/GoalRoomDashboardPage';
 import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';

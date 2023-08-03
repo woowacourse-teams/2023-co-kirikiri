@@ -3,18 +3,22 @@ import { UserLoginRequest } from '@myTypes/user/remote';
 import { useLogin } from '@hooks/queries/user';
 import useFormInput from '@hooks/_common/useFormInput';
 import * as S from './LoginForm.styles';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const { formState: loginData, handleInputChange } = useFormInput<UserLoginRequest>({
     identifier: '',
     password: '',
   });
+  const navigate = useNavigate();
 
   const { login } = useLogin();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     login(loginData);
+
+    navigate('/');
   };
 
   return (

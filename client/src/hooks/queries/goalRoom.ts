@@ -1,12 +1,15 @@
-
-import { CreateGoalRoomRequest, newTodoPayload, GoalRoomListRequest } from '@myTypes/goalRoom/remote';
+import {
+  CreateGoalRoomRequest,
+  newTodoPayload,
+  GoalRoomListRequest,
+} from '@myTypes/goalRoom/remote';
 import {
   postCreateGoalRoom,
   getGoalRoomDashboard,
   postCreateNewTodo,
   getGoalRoomTodos,
   postCreateNewCertificationFeed,
-  getGoalRoomList
+  getGoalRoomList,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
