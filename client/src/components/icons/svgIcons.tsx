@@ -276,6 +276,21 @@ export const LogoutIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+export const AllCategoryIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 24 24'
+  >
+    <path
+      fill='currentColor'
+      d='M3 21v-5h2v3h3v2H3Zm13 0v-2h3v-3h2v5h-5Zm-4-2q-2.9 0-4.95-2.05T5 12q0-2.9 2.05-4.95T12 5q2.9 0 4.95 2.05T19 12q0 2.9-2.05 4.95T12 19Zm0-2q2.075 0 3.538-1.463T17 12q0-2.075-1.463-3.538T12 7Q9.925 7 8.462 8.463T7 12q0 2.075 1.463 3.538T12 17ZM3 8V3h5v2H5v3H3Zm16 0V5h-3V3h5v5h-2Zm-7 4Z'
+    />
+  </svg>
+);
+
 export const LanguageIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
   <svg
     {...props}

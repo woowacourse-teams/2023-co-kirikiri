@@ -7,7 +7,15 @@ export const useSelectCategory = () => {
   const selectCategory = ({ currentTarget }: MouseEvent<HTMLDivElement>) => {
     if (!currentTarget.id) return;
 
-    setSelectedCategoryId(Number(currentTarget.id));
+    const categoryId = Number(currentTarget.id);
+
+    if (!categoryId) {
+      setSelectedCategoryId(undefined);
+
+      return;
+    }
+
+    setSelectedCategoryId(categoryId);
   };
 
   return [selectedCategoryId, selectCategory] as const;
