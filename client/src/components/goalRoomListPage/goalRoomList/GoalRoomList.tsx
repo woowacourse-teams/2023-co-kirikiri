@@ -1,9 +1,11 @@
-// import { useGaolRoomList } from '@/hooks/queries/goalRoom';
 import * as S from './goalRoomList.styles';
 import GoalRoomItem from './GoalRoomItem';
+import { useGoalRoomList } from '@/hooks/queries/goalRoom';
+import useValidParams from '@/hooks/_common/useValidParams';
 
 const GoalRoomList = () => {
-  //   const { data } = useGaolRoomList({});
+  const { id } = useValidParams<{ id: string }>();
+  const { goalRoomList } = useGoalRoomList({ roadmapId: Number(id) });
 
   return (
     <S.ListContainer>
@@ -12,10 +14,9 @@ const GoalRoomList = () => {
         <p>마감 임박순</p>
       </S.FilterBar>
       <S.ListWrapper>
-        <GoalRoomItem />
-        <GoalRoomItem />
-        <GoalRoomItem />
-        <GoalRoomItem />
+        {goalRoomList.map((goalRoomInfo) => {
+          return <GoalRoomItem {...goalRoomInfo} />;
+        })}
       </S.ListWrapper>
     </S.ListContainer>
   );

@@ -1,4 +1,4 @@
-import { CreateGoalRoomRequest } from '@myTypes/goalRoom/remote';
+import { CreateGoalRoomRequest, GoalRoomListRequest } from '@myTypes/goalRoom/remote';
 import {
   postCreateGoalRoom,
   getGoalRoomDashboard,
@@ -7,10 +7,9 @@ import {
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation } from '@tanstack/react-query';
 
-export const useGaolRoomList = (params: any) => {
+export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList'], () => getGoalRoomList(params));
-  console.log(data);
-  return data;
+  return { goalRoomList: data };
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
