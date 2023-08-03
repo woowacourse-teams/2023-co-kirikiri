@@ -9,6 +9,8 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -70,9 +72,27 @@ public class GoalRoomController {
     }
 
     @Authenticated
+    @PostMapping("/{goalRoomId}/todos/{todoId}")
+    public ResponseEntity<GoalRoomToDoCheckResponse> checkTodo(@PathVariable final Long goalRoomId,
+                                                               @PathVariable final Long todoId,
+                                                               @MemberIdentifier final String identifier) {
+        final GoalRoomToDoCheckResponse checkResponse = goalRoomCreateService.checkGoalRoomTodo(goalRoomId, todoId, identifier);
+        return ResponseEntity.ok(checkResponse);
+    }
+
+    @Authenticated
     @GetMapping("/{goalRoomId}/members")
     public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(@PathVariable final Long goalRoomId) {
         final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId);
         return ResponseEntity.ok(goalRoomMembers);
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/todos")
+    public ResponseEntity<List<GoalRoomTodoResponse>> getAllTodos(
+            @PathVariable final Long goalRoomId,
+            @MemberIdentifier final String identifier) {
+        final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.getAllGoalRoomTodo(goalRoomId, identifier);
+        return ResponseEntity.ok(todoResponses);
     }
 }

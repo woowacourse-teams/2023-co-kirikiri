@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -30,6 +31,7 @@ import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -601,6 +603,129 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(new ErrorResponse("투두 컨텐츠의 길이가 적절하지 않습니다."));
+    }
+
+    @Test
+    void 골룸_투두리스트에_대해_체크한다() throws Exception {
+        // given
+        final GoalRoomToDoCheckResponse expected = new GoalRoomToDoCheckResponse(true);
+        when(goalRoomCreateService.checkGoalRoomTodo(anyLong(), anyLong(), anyString()))
+                .thenReturn(expected);
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 1L, 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디"),
+                                        parameterWithName("todoId").description("골룸 투두 아이디")),
+                                responseFields(
+                                        fieldWithPath("isChecked").description(
+                                                "투두 체크 현황 (true: 체크됨, false: 체크되지 않음)"))))
+                .andReturn();
+
+        // then
+        final GoalRoomToDoCheckResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(response)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸_투두리스트_체크시_체크_이력이_있으면_제거한다() throws Exception {
+        // given
+        final GoalRoomToDoCheckResponse expected = new GoalRoomToDoCheckResponse(false);
+        when(goalRoomCreateService.checkGoalRoomTodo(anyLong(), anyLong(), anyString()))
+                .thenReturn(expected);
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 1L, 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디"),
+                                        parameterWithName("todoId").description("골룸 투두 아이디")),
+                                responseFields(
+                                        fieldWithPath("isChecked").description(
+                                                "투두 체크 현황 (true: 체크됨, false: 체크되지 않음)"))))
+                .andReturn();
+
+        // then
+        final GoalRoomToDoCheckResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(response)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸_투두리스트_체크시_골룸이_존재하지_않으면_예외가_발생한다() throws Exception {
+        //given
+        doThrow(new NotFoundException("골룸이 존재하지 않습니다. goalRoomId = 1"))
+                .when(goalRoomCreateService)
+                .checkGoalRoomTodo(anyLong(), anyLong(), anyString());
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 1L, 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디"),
+                                parameterWithName("todoId").description("골룸 투두 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("골룸이 존재하지 않습니다. goalRoomId = 1"));
+    }
+
+    @Test
+    void 골룸_투두리스트_체크시_사용자가_없으면_예외가_발생한다() throws Exception {
+        //given
+        doThrow(new NotFoundException("골룸에 사용자가 존재하지 않습니다. goalRoomId = 1 memberIdentifier = cokirikiri"))
+                .when(goalRoomCreateService)
+                .checkGoalRoomTodo(anyLong(), anyLong(), anyString());
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 1L, 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디"),
+                                parameterWithName("todoId").description("골룸 투두 아이디")),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지"))))
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response)
+                .isEqualTo(new ErrorResponse("골룸에 사용자가 존재하지 않습니다. goalRoomId = 1 memberIdentifier = cokirikiri"));
     }
 
     private ResultActions 골룸_생성(final String jsonRequest, final ResultMatcher result) throws Exception {

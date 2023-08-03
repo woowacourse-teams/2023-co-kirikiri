@@ -2,14 +2,18 @@ package co.kirikiri.service;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
+import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,7 @@ public class GoalRoomReadService {
 
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     public GoalRoomResponse findGoalRoom(final Long goalRoomId) {
@@ -59,5 +64,32 @@ public class GoalRoomReadService {
         if (goalRoomMembers.isEmpty()) {
             throw new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId);
         }
+    }
+
+    public List<GoalRoomTodoResponse> getAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
+        validateGoalRoomMember(goalRoomId, identifier);
+        final GoalRoomToDos goalRoomToDos = findGoalRoomTodosByGoalRoomId(goalRoomId);
+        final List<Long> checkedTodoIds = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
+        return GoalRoomMapper.convertGoalRoomTodoResponses(goalRoomToDos, checkedTodoIds);
+    }
+
+    private void validateGoalRoomMember(final Long goalRoomId, final String identifier) {
+        if (goalRoomRepository.findGoalRoomMember(goalRoomId, new Identifier(identifier)).isEmpty()) {
+            throw new ForbiddenException(
+                    "골룸에 참여하지 않은 사용자입니다. goalRoomId = " + goalRoomId + "  memberIdentifier = " + identifier);
+        }
+    }
+
+    private GoalRoomToDos findGoalRoomTodosByGoalRoomId(final Long goalRoomId) {
+        return goalRoomRepository.findByIdWithTodos(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId))
+                .getGoalRoomToDos();
+    }
+
+    private List<Long> findMemberCheckedGoalRoomToDoIds(final Long goalRoomId, final String identifier) {
+        return goalRoomToDoCheckRepository.findByGoalRoomIdAndMemberIdentifier(
+                        goalRoomId, new Identifier(identifier)).stream()
+                .map(goalRoomToDoCheck -> goalRoomToDoCheck.getGoalRoomToDo().getId())
+                .toList();
     }
 }

@@ -5,6 +5,7 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
+import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
@@ -20,6 +21,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
@@ -122,5 +125,26 @@ public class GoalRoomMapper {
         final Member member = goalRoomMember.getMember();
         return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
                 member.getImage().getServerFilePath(), goalRoomMember.getAccomplishmentRate());
+    }
+
+    public static List<GoalRoomTodoResponse> convertGoalRoomTodoResponses(final GoalRoomToDos goalRoomToDos,
+                                                                          final List<Long> checkedTodoIds) {
+        return goalRoomToDos.getValues().stream()
+                .map(goalRoomToDo -> convertGoalRoomTodoResponse(checkedTodoIds, goalRoomToDo))
+                .toList();
+    }
+
+    private static GoalRoomTodoResponse convertGoalRoomTodoResponse(final List<Long> checkedTodoIds,
+                                                                final GoalRoomToDo goalRoomToDo) {
+        final GoalRoomToDoCheckResponse checkResponse = new GoalRoomToDoCheckResponse(
+                isCheckedTodo(goalRoomToDo.getId(), checkedTodoIds));
+        return new GoalRoomTodoResponse(goalRoomToDo.getId(),
+                goalRoomToDo.getContent().getValue(),
+                goalRoomToDo.getPeriod().getStartDate(), goalRoomToDo.getPeriod().getEndDate(),
+                checkResponse);
+    }
+
+    private static boolean isCheckedTodo(final Long targetTodoId, final List<Long> checkedTodoIds) {
+        return checkedTodoIds.contains(targetTodoId);
     }
 }
