@@ -26,4 +26,8 @@ public class GoalRoomTodoContent {
             throw new BadRequestException("투두 컨텐츠의 길이가 적절하지 않습니다.");
         }
     }
+
+    public String getValue() {
+        return value;
+    }
 }

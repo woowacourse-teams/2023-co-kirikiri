@@ -27,4 +27,12 @@ public class GoalRoomToDo extends BaseUpdatedTimeEntity {
         this.content = content;
         this.period = period;
     }
+
+    public GoalRoomTodoContent getContent() {
+        return content;
+    }
+
+    public Period getPeriod() {
+        return period;
+    }
 }

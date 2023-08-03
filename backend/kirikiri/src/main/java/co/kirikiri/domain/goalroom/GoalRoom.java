@@ -194,4 +194,8 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public GoalRoomToDos getGoalRoomToDos() {
+        return goalRoomToDos;
+    }
 }
