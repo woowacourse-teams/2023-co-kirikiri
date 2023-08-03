@@ -27,29 +27,25 @@ const useNewTodoFormValidation = () => {
   }, [contentInput.value, startDateInput.value, endDateInput.value]);
 
   const validateForm = () => {
-    let isValid = true;
-
     if (!startDateInput.value) {
       startDateInput.setErrorMessage('시작일을 기입해주세요.');
-      isValid = false;
+      return false;
     }
 
     if (!endDateInput.value) {
       endDateInput.setErrorMessage('종료일을 기입해주세요.');
-      isValid = false;
+      return false;
     }
 
-    if (isValid) {
-      const startDate = new Date(startDateInput.value);
-      const endDate = new Date(endDateInput.value);
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
 
-      if (startDate >= endDate) {
-        endDateInput.setErrorMessage('종료일이 시작일보다 이전입니다.');
-        isValid = false;
-      }
+    if (startDate >= endDate) {
+      endDateInput.setErrorMessage('종료일이 시작일보다 이전입니다.');
+      return false;
     }
 
-    return isValid;
+    return true;
   };
 
   return { formState, validateForm, contentInput, startDateInput, endDateInput };
