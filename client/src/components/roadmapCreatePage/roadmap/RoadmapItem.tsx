@@ -1,35 +1,33 @@
-import { ROADMAP_MAX_LENGTH } from '@/constants/roadmap/regex';
-import { useValidateInput } from '@/hooks/_common/useValidateInput';
-import InputField from '../input/inputField/InputField';
 import * as S from './roadmap.styles';
 
-type RoadmapItemType = {
+type RoadmapItemProps = {
   roadmapNumber: number;
+  itemId: number;
+  getRoadmapItemTitle: (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => void;
 };
 
-const RoadmapItem = ({ roadmapNumber }: RoadmapItemType) => {
-  const { handleInputChange, validateInput, resetErrorMessage } =
-    useValidateInput(ROADMAP_MAX_LENGTH);
-
+const RoadmapItem = ({
+  roadmapNumber,
+  itemId,
+  getRoadmapItemTitle,
+}: RoadmapItemProps) => {
   return (
     <>
       <S.TitleWrapper>
         <S.RoadmapNumber>{roadmapNumber}</S.RoadmapNumber>
         <S.TitleFieldWrapper>
-          <InputField
-            handleInputChange={handleInputChange}
-            validateInput={validateInput}
-            resetErrorMessage={resetErrorMessage}
+          <input
+            onChange={(e) => getRoadmapItemTitle(e, itemId)}
             maxLength={40}
+            name='title'
           />
         </S.TitleFieldWrapper>
       </S.TitleWrapper>
       <S.BodyFieldWrapper>
-        <InputField
-          handleInputChange={handleInputChange}
-          validateInput={validateInput}
-          resetErrorMessage={resetErrorMessage}
+        <input
+          onChange={(e) => getRoadmapItemTitle(e, itemId)}
           maxLength={2000}
+          name='content'
         />
       </S.BodyFieldWrapper>
     </>
