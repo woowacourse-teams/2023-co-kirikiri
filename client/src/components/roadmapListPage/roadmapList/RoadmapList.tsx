@@ -8,9 +8,7 @@ type RoadmapListProps = {
 };
 
 const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
-  const {
-    data: { data: roadmapList },
-  } = useRoadmapList(selectedCategoryId);
+  const roadmapList = useRoadmapList(selectedCategoryId);
 
   return (
     <S.RoadmapList>

@@ -9,17 +9,18 @@ export const useRoadmapList = (
   size = 10,
   filterCond = 'LATEST'
 ) => {
-  return useSuspendedQuery(['roadmapList', categoryId, page, size, filterCond], () =>
-    getRoadmapList(categoryId, page, size, filterCond)
+  const { data } = useSuspendedQuery(
+    ['roadmapList', categoryId, page, size, filterCond],
+    () => getRoadmapList(categoryId, page, size, filterCond)
   );
+
+  return data;
 };
 
 export const useRoadmapDetail = (id: number) => {
-  return useSuspendedQuery(
-    [QUERY_KEYS.roadmap.detail, id],
-    () => (id ? getRoadmapById(id) : null),
-    {
-      enabled: !!id,
-    }
+  const { data } = useSuspendedQuery([QUERY_KEYS.roadmap.detail, id], () =>
+    getRoadmapById(id)
   );
+
+  return data;
 };
