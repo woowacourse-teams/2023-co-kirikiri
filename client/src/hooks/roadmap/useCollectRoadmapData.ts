@@ -34,6 +34,7 @@ export const useCollectRoadmapData = () => {
 
   const addNode = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
     setRoadmapValue((prev) => {
       const tempRoadmapNodes = [...prev.roadmapNodes, {}];
       return { ...prev, roadmapNodes: tempRoadmapNodes };
@@ -47,8 +48,10 @@ export const useCollectRoadmapData = () => {
     setRoadmapValue((prev) => {
       const inputName = e.target.name;
       const tempRoadmapNodes = [...prev.roadmapNodes];
+
       tempRoadmapNodes[itemId] = { ...tempRoadmapNodes[itemId] };
       tempRoadmapNodes[itemId][inputName] = e.target.value;
+
       return { ...prev, roadmapNodes: tempRoadmapNodes };
     });
   };
@@ -58,13 +61,16 @@ export const useCollectRoadmapData = () => {
       const newTags = tags.map((tag) => {
         return { name: tag };
       });
+
       return { ...prev, roadmapTags: [...newTags] };
     });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const target = e.target as HTMLFormElement;
+
     setRoadmapValue((prev) => ({
       ...prev,
       title: target.roadmapTitle.value,
