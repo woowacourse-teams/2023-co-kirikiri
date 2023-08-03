@@ -6,10 +6,8 @@ import { goalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
 const GoalRoomDashboardProvider = ({ children }: PropsWithChildren) => {
   const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
 
-  const value = { goalroomId };
-
   return (
-    <goalRoomDashboardContext.Provider value={value}>
+    <goalRoomDashboardContext.Provider value={{ goalroomId }}>
       {children}
     </goalRoomDashboardContext.Provider>
   );
