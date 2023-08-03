@@ -3,17 +3,22 @@ import Categories from '../categories/Categories';
 
 import * as S from './RoadmapListView.styles';
 import { useRoadmapList } from '@/hooks/queries/roadmap';
+import { useSelectCategory } from '@/hooks/roadmap/useSelectCategory';
 
 const RoadmapListView = () => {
+  const [selectedCategoryId, selectCategory] = useSelectCategory();
   const {
     data: { data: roadmapList },
-  } = useRoadmapList();
-  console.log(roadmapList);
+  } = useRoadmapList(selectedCategoryId);
+
   return (
     <S.RoadmapListView>
-      <Categories />
+      <Categories
+        selectedCategoryId={selectedCategoryId}
+        selectCategory={selectCategory}
+      />
       <S.RoadmapList>
-        {roadmapList.map((item) => (
+        {roadmapList?.map((item) => (
           <RoadmapItem key={item.roadmapId} item={item} />
         ))}
       </S.RoadmapList>
