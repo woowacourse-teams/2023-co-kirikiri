@@ -115,10 +115,10 @@ class GoalRoomRoadmapNodesTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = 골룸_노드를_생성한다();
 
         assertAll(
-                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TODAY))
+                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TODAY).get())
                         .isEqualTo(new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER),
                                 10, new RoadmapNode("로드맵 제목 1", "로드맵 내용 1"))),
-                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TEN_DAY_LATER))
+                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TEN_DAY_LATER).get())
                         .isEqualTo(new GoalRoomRoadmapNode(new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER),
                                 10, new RoadmapNode("로드맵 제목 2", "로드맵 내용 2")))
         );

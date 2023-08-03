@@ -14,7 +14,7 @@ public class FilePathRandomGenerator implements FilePathGenerator {
     public String makeFilePath(final Long id, final ImageDirType dirType) {
         final LocalDate currentDate = LocalDate.now();
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-                String.format("yyyy%s/MMdd", DIRECTORY_SEPARATOR));
+                String.format("yyyy%sMMdd", DIRECTORY_SEPARATOR));
         final String dateString = currentDate.format(formatter);
 
         return dateString + DIRECTORY_SEPARATOR + dirType.getDirName() + DIRECTORY_SEPARATOR + id

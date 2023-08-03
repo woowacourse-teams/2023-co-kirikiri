@@ -79,7 +79,7 @@ public class GoalRoomReadService {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         validateMemberInGoalRoom(goalRoom, member);
 
-        final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now());
+        final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now()).get();
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(currentGoalRoomRoadmapNode);
 
         return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds);

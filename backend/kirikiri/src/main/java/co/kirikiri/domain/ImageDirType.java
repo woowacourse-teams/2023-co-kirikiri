@@ -1,9 +1,9 @@
 package co.kirikiri.domain;
 
 public enum ImageDirType {
-    CHECK_FEED("goalroom/checkfeed/"),
-    ROADMAP_NODE("roadmap/"),
-    USER_PROFILE("member/profile/");
+    CHECK_FEED("goalroom/checkfeed"),
+    ROADMAP_NODE("roadmap"),
+    USER_PROFILE("member/profile");
 
     private final String dirName;
 
