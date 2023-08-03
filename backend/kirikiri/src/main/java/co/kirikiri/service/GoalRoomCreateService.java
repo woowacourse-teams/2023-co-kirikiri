@@ -180,7 +180,7 @@ public class GoalRoomCreateService {
 
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
-        final GoalRoomRoadmapNode currentNode = goalRoom.getNodeByDate(LocalDate.now());
+        final GoalRoomRoadmapNode currentNode = getNodeByDate(goalRoom);
         final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(
                 goalRoomMember, currentNode);
         validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
@@ -214,6 +214,11 @@ public class GoalRoomCreateService {
     private GoalRoomMember findGoalRoomMemberByGoalRoomAndIdentifier(final GoalRoom goalRoom, final String identifier) {
         return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
                 .orElseThrow(() -> new NotFoundException("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + identifier));
+    }
+
+    private GoalRoomRoadmapNode getNodeByDate(final GoalRoom goalRoom) {
+        return goalRoom.getNodeByDate(LocalDate.now())
+                .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
     }
 
     private int validateCheckCount(final int memberCheckCount, final GoalRoomMember member,

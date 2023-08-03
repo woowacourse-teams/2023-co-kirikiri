@@ -176,7 +176,8 @@ public class GoalRoomMapper {
 
     private static GoalRoomRoadmapNodesResponse convertToGoalRoomRoadmapNodesResponse(
             final GoalRoomRoadmapNodes nodes) {
-        final GoalRoomRoadmapNode currentNode = nodes.getNodeByDate(LocalDate.now());
+        final GoalRoomRoadmapNode currentNode = nodes.getNodeByDate(LocalDate.now())
+                .orElse(nodes.getNodeByDate(nodes.getGoalRoomStartDate()).get());
         if (!nodes.hasBackNode(currentNode)) {
             return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(currentNode), nodes.hasBackNode(currentNode),
                     List.of(new GoalRoomRoadmapNodeResponse(currentNode.getId(),
@@ -184,7 +185,7 @@ public class GoalRoomMapper {
                             currentNode.getStartDate(), currentNode.getEndDate(), currentNode.getCheckCount())));
         }
 
-        final GoalRoomRoadmapNode nextNode = nodes.getNodeByDate(currentNode.getEndDate().plusDays(1));
+        final GoalRoomRoadmapNode nextNode = nodes.getNodeByDate(currentNode.getEndDate().plusDays(1)).get();
         return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(currentNode), nodes.hasBackNode(nextNode),
                 List.of(new GoalRoomRoadmapNodeResponse(currentNode.getId(), currentNode.getRoadmapNode().getTitle(),
                                 currentNode.getStartDate(), currentNode.getEndDate(), currentNode.getCheckCount()),

@@ -218,6 +218,16 @@ class CheckFeedRepositoryTest {
         );
     }
 
+    @Test
+    void 골룸_노드값으로_null이_들어오면_빈_리스트를_반환한다() {
+        //given
+        //when
+        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(null);
+
+        //then
+        assertThat(checkFeeds).isEmpty();
+    }
+
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
