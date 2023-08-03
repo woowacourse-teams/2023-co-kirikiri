@@ -49,8 +49,8 @@ export const DialogBackdrop = (props: PropsWithChildren<DialogBackdropProps>) =>
   const { isOpen, closeDialog } = useContextScope(DialogContext);
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-  }, []);
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+  }, [isOpen]);
 
   if (asChild) {
     return isOpen
