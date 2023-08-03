@@ -24,10 +24,10 @@ const GoalRoomDashboardContent = () => {
       <GoalRoomDashboardHeader goalRoomData={goalRoom} />
       <S.GoalRoomGridContainer>
         <GoalRoomDashboardChat />
-        <GoalRoomDashboardTodo />
+        <GoalRoomDashboardTodo goalRoomData={goalRoom} />
         <GoalRoomDashboardRoadmap />
         <GoalRoomDashboardCalender />
-        <GoalRoomCertificationFeed />
+        <GoalRoomCertificationFeed goalRoomData={goalRoom} />
       </S.GoalRoomGridContainer>
     </div>
   );

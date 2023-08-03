@@ -14,6 +14,7 @@ import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
 import GoalRoomListPage from './pages/goalRoomListPage/GoalRoomListPage';
+import GoalRoomCreatePage from './pages/goalRoomCreatePage/GoalRoomCreatePage';
 
 const App = () => {
   return (
@@ -37,6 +38,10 @@ const App = () => {
               />
               <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
               <Route path='/goalroom-list' element={<GoalRoomListPage />} />
+              <Route
+                path='/roadmap/:id/goalroom-create'
+                element={<GoalRoomCreatePage />}
+              />
               <Route
                 path='/goalroom-dashboard/:goalroomId'
                 element={<GoalRoomDashboardPage />}

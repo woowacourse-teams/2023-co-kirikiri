@@ -1,4 +1,8 @@
-import { RoadmapListRequest, GoalRoomBrowseResponse } from '@/myTypes/goalRoom/remote';
+import {
+  RoadmapListRequest,
+  GoalRoomBrowseResponse,
+  CreateGoalRoomRequest,
+} from '@/myTypes/goalRoom/remote';
 import client from '@apis/axios/client';
 
 export const getGoalRoomList = async ({
@@ -16,4 +20,10 @@ export const getGoalRoomDashboard = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomBrowseResponse>(
     `/api/members/goal-rooms/${goalRoomId}`
   );
+};
+
+export const postCreateGoalRoom = async (body: CreateGoalRoomRequest) => {
+  const { data } = await client.post<CreateGoalRoomRequest>(`/goal-rooms`, body);
+
+  return data;
 };

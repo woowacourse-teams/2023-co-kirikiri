@@ -14,7 +14,7 @@ export const useRoadmapList = (
   );
 };
 
-export const useRoadmapDetail = (id: string) => {
+export const useRoadmapDetail = (id: number) => {
   return useSuspendedQuery(
     [QUERY_KEYS.roadmap.detail, id],
     () => (id ? getRoadmapById(id) : null),

@@ -6,6 +6,7 @@ import Difficulty, { DummyDifficultyType } from '../difficulty/Difficulty';
 import MainText from '../mainText/MainText';
 import Period from '../period/Period';
 import Roadmap from '../roadmap/Roadmap';
+import Tag from '../tag/Tag';
 import Title from '../title/Title';
 
 // ref공유를 위한 context - 다음 브랜치에서 파일 옮길 예정
@@ -66,6 +67,7 @@ const RoadmapCreateForm = () => {
         <Title />
         <Description />
         <Difficulty getSelectedDifficulty={getSelectedDifficulty} />
+        <Tag />
         <MainText />
         <Period />
         <Roadmap />
