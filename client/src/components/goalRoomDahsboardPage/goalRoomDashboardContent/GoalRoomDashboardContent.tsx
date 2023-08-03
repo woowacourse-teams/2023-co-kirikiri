@@ -9,6 +9,8 @@ import { useFetchGoalRoom } from '@hooks/queries/goalRoom';
 
 import * as S from './GoalRoomDashboardContent.styles';
 import useValidParams from '@hooks/_common/useValidParams';
+import { Suspense } from 'react';
+import Spinner from '@components/_common/spinner/Spinner';
 
 export type GoalRoomDashboardContentParams = {
   goalroomId: string;
@@ -20,16 +22,18 @@ const GoalRoomDashboardContent = () => {
   const { goalRoom } = useFetchGoalRoom(goalroomId);
 
   return (
-    <div>
-      <GoalRoomDashboardHeader goalRoomData={goalRoom} />
-      <S.GoalRoomGridContainer>
-        <GoalRoomDashboardChat />
-        <GoalRoomDashboardTodo goalRoomData={goalRoom} goalRoomId={goalroomId} />
-        <GoalRoomDashboardRoadmap />
-        <GoalRoomDashboardCalender />
-        <GoalRoomCertificationFeed goalRoomData={goalRoom} />
-      </S.GoalRoomGridContainer>
-    </div>
+    <Suspense fallback={<Spinner />}>
+      <div>
+        <GoalRoomDashboardHeader goalRoomData={goalRoom} />
+        <S.GoalRoomGridContainer>
+          <GoalRoomDashboardChat />
+          <GoalRoomDashboardTodo goalRoomData={goalRoom} goalRoomId={goalroomId} />
+          <GoalRoomDashboardRoadmap />
+          <GoalRoomDashboardCalender />
+          <GoalRoomCertificationFeed goalRoomData={goalRoom} />
+        </S.GoalRoomGridContainer>
+      </div>
+    </Suspense>
   );
 };
 
