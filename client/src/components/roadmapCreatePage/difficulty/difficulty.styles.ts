@@ -29,7 +29,7 @@ const Wrapper = styled.ul`
   margin-top: 1.9rem;
   padding-left: 2rem;
 
-  background-color: ${({ theme }) => theme.colors.gray200};
+  background-color: ${({ theme }) => theme.colors.gray100};
   border-radius: 0.5rem;
 `;
 

@@ -1,27 +1,11 @@
-import { useState } from 'react';
-import * as S from './roadmap.styles';
+import { PropsWithChildren } from 'react';
 import InputLabel from '../input/inputLabel/InputLebel';
-import { START_NUMBER } from '@/constants/roadmap/roadmap';
-import RoadmapItem from './RoadmapItem';
 
-const Roadmap = () => {
-  const [roadmapNumber, setRoadmapNumber] = useState(START_NUMBER);
-  const [roadmapArr, setRoadmapArr] = useState<number[]>([]);
-
-  const addRoadmapTemplate = () => {
-    setRoadmapNumber((prev) => prev + 1);
-    setRoadmapArr([...roadmapArr, roadmapNumber]);
-  };
-
+const Roadmap = ({ children }: PropsWithChildren) => {
   return (
     <>
       <InputLabel text='로드맵' />
-
-      {roadmapArr.map((roadNum) => {
-        return <RoadmapItem key={roadNum} roadmapNumber={roadNum} />;
-      })}
-      <RoadmapItem roadmapNumber={roadmapNumber} />
-      <S.AddButton onClick={addRoadmapTemplate}>로드맵 추가히기</S.AddButton>
+      {children}
     </>
   );
 };
