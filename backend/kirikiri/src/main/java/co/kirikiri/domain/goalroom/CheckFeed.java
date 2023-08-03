@@ -21,6 +21,7 @@ public class CheckFeed extends BaseCreatedTimeEntity {
     private String serverFilePath;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private ImageContentType imageContentType;
 
     @Column(nullable = false)

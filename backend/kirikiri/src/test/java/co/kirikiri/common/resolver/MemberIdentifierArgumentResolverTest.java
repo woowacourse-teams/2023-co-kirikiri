@@ -98,7 +98,8 @@ class MemberIdentifierArgumentResolverTest {
                 .thenReturn(expectedIdentifier);
 
         // when
-        final String actualIdentifier = memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        final String actualIdentifier = memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer,
+                webRequest, binderFactory);
 
         // then
         assertThat(actualIdentifier).isEqualTo(expectedIdentifier);
@@ -114,7 +115,8 @@ class MemberIdentifierArgumentResolverTest {
 
         // when
         // then
-        assertThatThrownBy(() -> memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory))
+        assertThatThrownBy(() -> memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer, webRequest,
+                binderFactory))
                 .isInstanceOf(AuthenticationException.class);
 
     }
@@ -127,7 +129,8 @@ class MemberIdentifierArgumentResolverTest {
 
         // when
         // then
-        assertThatThrownBy(() -> memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory))
+        assertThatThrownBy(() -> memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer, webRequest,
+                binderFactory))
                 .isInstanceOf(AuthenticationException.class);
     }
 
@@ -143,7 +146,8 @@ class MemberIdentifierArgumentResolverTest {
 
         // when
         // then
-        assertThatThrownBy(() -> memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory))
+        assertThatThrownBy(() -> memberIdentifierArgumentResolver.resolveArgument(parameter, mavContainer, webRequest,
+                binderFactory))
                 .isInstanceOf(AuthenticationException.class);
     }
 }

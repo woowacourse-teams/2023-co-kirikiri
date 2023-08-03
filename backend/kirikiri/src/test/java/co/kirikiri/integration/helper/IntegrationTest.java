@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 
-@ActiveProfiles
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class IntegrationTest {

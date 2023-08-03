@@ -2,6 +2,7 @@ package co.kirikiri.service.mapper;
 
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -13,6 +14,7 @@ import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import co.kirikiri.service.dto.CustomPageRequest;
 import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
@@ -25,6 +27,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
@@ -33,6 +36,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AccessLevel;
@@ -47,7 +52,7 @@ public class GoalRoomMapper {
 
     public static GoalRoomCreateDto convertToGoalRoomCreateDto(final GoalRoomCreateRequest goalRoomCreateRequest) {
         final GoalRoomTodoRequest goalRoomTodoRequest = goalRoomCreateRequest.goalRoomTodo();
-        final GoalRoomToDo goalRoomToDo = makeGoalRoomToDo(goalRoomTodoRequest);
+        final GoalRoomToDo goalRoomToDo = convertToGoalRoomTodo(goalRoomTodoRequest);
         final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests = goalRoomCreateRequest.goalRoomRoadmapNodeRequests();
         final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos = makeGoalRoomRoadmapNodeDtos(
                 goalRoomRoadmapNodeRequests);
@@ -57,7 +62,7 @@ public class GoalRoomMapper {
                 goalRoomRoadmapNodeDtos);
     }
 
-    private static GoalRoomToDo makeGoalRoomToDo(final GoalRoomTodoRequest goalRoomTodoRequest) {
+    public static GoalRoomToDo convertToGoalRoomTodo(final GoalRoomTodoRequest goalRoomTodoRequest) {
         return new GoalRoomToDo(new GoalRoomTodoContent(goalRoomTodoRequest.content()),
                 new Period(goalRoomTodoRequest.startDate(), goalRoomTodoRequest.endDate()));
     }
@@ -100,6 +105,45 @@ public class GoalRoomMapper {
                 goalRoom.getLimitedMemberCount().getValue(), roadmapNodeResponses, period, isJoined);
     }
 
+    public static RoadmapGoalRoomsFilterType convertToGoalRoomFilterType(
+            final RoadmapGoalRoomsFilterTypeDto filterType) {
+        if (filterType == null) {
+            return RoadmapGoalRoomsFilterType.LATEST;
+        }
+        return RoadmapGoalRoomsFilterType.valueOf(filterType.name());
+    }
+
+    public static List<RoadmapGoalRoomResponse> convertToRoadmapGoalRoomResponses(final List<GoalRoom> goalRooms) {
+        return goalRooms.stream()
+                .map(GoalRoomMapper::convertToRoadmapGoalRoomResponse)
+                .toList();
+    }
+
+    private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(final GoalRoom goalRoom) {
+        return new RoadmapGoalRoomResponse(goalRoom.getId(), goalRoom.getName().getValue(),
+                goalRoom.getCurrentMemberCount(),
+                goalRoom.getLimitedMemberCount().getValue(), goalRoom.getCreatedAt(), goalRoom.getStartDate(),
+                goalRoom.getEndDate(), convertToMemberResponse(goalRoom));
+    }
+
+    private static MemberResponse convertToMemberResponse(final GoalRoom goalRoom) {
+        final Member goalRoomLeader = goalRoom.findGoalRoomLeader();
+        return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue());
+    }
+
+    public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(
+            final List<GoalRoomMember> goalRoomMembers) {
+        return goalRoomMembers.stream()
+                .map(GoalRoomMapper::convertToGoalRoomMemberResponse)
+                .toList();
+    }
+
+    private static GoalRoomMemberResponse convertToGoalRoomMemberResponse(final GoalRoomMember goalRoomMember) {
+        final Member member = goalRoomMember.getMember();
+        return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
+                member.getImage().getServerFilePath(), goalRoomMember.getAccomplishmentRate());
+    }
+
     public static GoalRoomFilterType convertToGoalRoomFilterType(final GoalRoomFilterTypeDto filterType) {
         if (filterType == null) {
             return GoalRoomFilterType.LATEST;
@@ -123,11 +167,6 @@ public class GoalRoomMapper {
                 goalRoom.getCurrentMemberCount(),
                 goalRoom.getLimitedMemberCount().getValue(), goalRoom.getCreatedAt(), goalRoom.getStartDate(),
                 goalRoom.getEndDate(), convertToMemberResponse(goalRoom));
-    }
-
-    private static MemberResponse convertToMemberResponse(final GoalRoom goalRoom) {
-        final Member goalRoomLeader = goalRoom.findGoalRoomLeader();
-        return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue());
     }
 
     public static MemberGoalRoomResponse convertToMemberGoalRoomResponse(final GoalRoom goalRoom,

@@ -33,6 +33,11 @@ public class GoalRoomPendingMembers {
                 .anyMatch(value -> value.equals(goalRoomPendingMember));
     }
 
+    public boolean isMember(final Member member) {
+        return values.stream()
+                .anyMatch(value -> value.isSameMember(member));
+    }
+
     public int size() {
         return values.size();
     }
@@ -45,12 +50,12 @@ public class GoalRoomPendingMembers {
                 .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
     }
 
-    public List<GoalRoomPendingMember> getValues() {
-        return new ArrayList<>(values);
+    public boolean isNotLeader(final Member member) {
+        final Member goalRoomLeader = findGoalRoomLeader();
+        return !goalRoomLeader.equals(member);
     }
 
-    public boolean isMember(final Member member) {
-        return values.stream()
-                .anyMatch(value -> value.isSameMember(member));
+    public List<GoalRoomPendingMember> getValues() {
+        return new ArrayList<>(values);
     }
 }

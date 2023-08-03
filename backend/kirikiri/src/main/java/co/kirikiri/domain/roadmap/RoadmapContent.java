@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -8,25 +8,27 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.util.Optional;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoadmapContent extends BaseCreatedTimeEntity {
+@Getter
+public class RoadmapContent extends BaseUpdatedTimeEntity {
 
-    private static final int CONTENT_MAX_LENGTH = 150;
+    private static final int CONTENT_MAX_LENGTH = 2000;
 
     @Column(length = 2200)
     private String content;
 
-    @Embedded
-    private final RoadmapNodes nodes = new RoadmapNodes();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
+
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
 
     public RoadmapContent(final String content) {
         this(null, content);
@@ -47,7 +49,7 @@ public class RoadmapContent extends BaseCreatedTimeEntity {
 
     private void validateContentLength(final String content) {
         if (content.length() > CONTENT_MAX_LENGTH) {
-            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자 입니다.", CONTENT_MAX_LENGTH));
+            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자입니다.", CONTENT_MAX_LENGTH));
         }
     }
 

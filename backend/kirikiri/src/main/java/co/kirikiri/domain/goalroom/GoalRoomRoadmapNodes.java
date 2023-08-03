@@ -3,6 +3,7 @@ package co.kirikiri.domain.goalroom;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -15,6 +16,7 @@ import java.util.stream.IntStream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNodes {
 
@@ -69,17 +71,17 @@ public class GoalRoomRoadmapNodes {
         return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
     }
 
-    public int size() {
-        return values.size();
-    }
-
     public GoalRoomRoadmapNode getNodeByDate(final LocalDate date) {
         sortByStartDateAsc(values);
 
         return values.stream()
                 .filter(node -> node.isDayOfNode(date))
                 .findFirst()
-                .orElseThrow(() -> new BadRequestException("잘못된 인증 피드 요청입니다."));
+                .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
+    }
+
+    public int size() {
+        return values.size();
     }
 
     public boolean hasFrontNode(final GoalRoomRoadmapNode node) {

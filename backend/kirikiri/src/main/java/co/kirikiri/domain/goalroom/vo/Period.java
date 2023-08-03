@@ -1,6 +1,7 @@
 package co.kirikiri.domain.goalroom.vo;
 
 import co.kirikiri.exception.BadRequestException;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -11,8 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Period {
 
+    @Column(nullable = false)
     private LocalDate startDate;
 
+    @Column(nullable = false)
     private LocalDate endDate;
 
     public Period(final LocalDate startDate, final LocalDate endDate) {

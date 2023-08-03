@@ -93,7 +93,7 @@ class GoalRoomTest {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10),
                 new RoadmapContent("로드맵 내용"), member);
-        final Member follower = 사용자를_생성한다("identifier12", "시진이");
+        final Member follower = 사용자를_생성한다(2L, "identifier12", "시진이");
 
         //when
         goalRoom.join(follower);
@@ -108,7 +108,7 @@ class GoalRoomTest {
     void 모집중이_아닌_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), new RoadmapContent("로드맵 내용"),
-                사용자를_생성한다("identifier1", "시진이"));
+                사용자를_생성한다(2L, "identifier1", "시진이"));
         goalRoom.start();
 
         //when, then
@@ -121,7 +121,7 @@ class GoalRoomTest {
     void 제한_인원이_가득_찬_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), new RoadmapContent("로드맵 내용"),
-                사용자를_생성한다("identifier1", "시진이"));
+                사용자를_생성한다(2L, "identifier1", "시진이"));
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(member))
@@ -165,7 +165,7 @@ class GoalRoomTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
 
-        final Member 참여자 = 사용자를_생성한다("identifier1", "팔로워");
+        final Member 참여자 = 사용자를_생성한다(2L, "identifier1", "팔로워");
         goalRoom.join(참여자);
 
         //expect
@@ -185,7 +185,7 @@ class GoalRoomTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
 
-        final Member 참여자 = 사용자를_생성한다("identifier1", "팔로워");
+        final Member 참여자 = 사용자를_생성한다(2L, "identifier1", "팔로워");
         goalRoom.join(참여자);
         goalRoom.updateStatus(GoalRoomStatus.RUNNING);
 
@@ -201,6 +201,14 @@ class GoalRoomTest {
                 "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+    }
+
+    private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1995, 9, 30), "010-1234-5678");
+
+        return new Member(id, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {
@@ -225,9 +233,9 @@ class GoalRoomTest {
         return roadmapContent;
     }
 
-    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final Member member) {
+    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final Member creator) {
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"),
-                new LimitedMemberCount(10), roadmapContent, member);
+                new LimitedMemberCount(10), roadmapContent, creator);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -242,13 +250,5 @@ class GoalRoomTest {
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         return goalRoom;
-    }
-
-    private Member 사용자를_생성한다(final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
-                LocalDate.of(1995, 9, 30), "010-1234-5678");
-
-        return new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(nickname), memberProfile);
     }
 }

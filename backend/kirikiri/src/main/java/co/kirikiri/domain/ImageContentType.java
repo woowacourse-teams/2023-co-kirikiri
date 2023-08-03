@@ -1,7 +1,7 @@
 package co.kirikiri.domain;
 
+import co.kirikiri.exception.BadRequestException;
 import java.util.Arrays;
-import java.util.Optional;
 
 public enum ImageContentType {
 
@@ -17,9 +17,10 @@ public enum ImageContentType {
         this.extension = extension;
     }
 
-    public static Optional<ImageContentType> of(final String extension) {
+    public static ImageContentType of(final String extension) {
         return Arrays.stream(values())
                 .filter(type -> type.extension.equals(extension))
-                .findAny();
+                .findAny()
+                .orElseThrow(() -> new BadRequestException(extension + "는 요청할 수 없는 파일 확장자 형식입니다."));
     }
 }

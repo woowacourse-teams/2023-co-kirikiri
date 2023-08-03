@@ -24,4 +24,8 @@ public class MemberImage extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
     private ImageContentType imageContentType;
+
+    public String getServerFilePath() {
+        return serverFilePath;
+    }
 }

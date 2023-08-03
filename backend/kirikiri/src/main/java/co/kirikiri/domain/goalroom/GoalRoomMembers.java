@@ -36,13 +36,14 @@ public class GoalRoomMembers {
         return values.size();
     }
 
-    public List<GoalRoomMember> getValues() {
-        return values;
-    }
-
     public boolean isMember(final Member member) {
         return values.stream()
                 .anyMatch(value -> value.isSameMember(member));
+    }
+
+    public boolean isNotLeader(final Member member) {
+        final Member goalRoomLeader = findGoalRoomLeader();
+        return !goalRoomLeader.equals(member);
     }
 
     public Member findGoalRoomLeader() {
@@ -51,5 +52,13 @@ public class GoalRoomMembers {
                 .findFirst()
                 .map(GoalRoomMember::getMember)
                 .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
+    }
+
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
+    public List<GoalRoomMember> getValues() {
+        return values;
     }
 }
