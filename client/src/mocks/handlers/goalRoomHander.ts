@@ -15,6 +15,19 @@ const goalRoomHandler = [
       return res(ctx.status(500));
     }
   }),
+
+  rest.get(`${BASE_URL}/api/goal-rooms/:goalRoomId/todos`, (_, res, ctx) => {
+    try {
+      const goalRoomBrowseResponseData = goalRoom.getBrowsedGoalRoomTodos();
+
+      return res(ctx.status(200), ctx.json({ data: goalRoomBrowseResponseData }));
+    } catch (err) {
+      if (err instanceof Error) {
+        return res(ctx.status(401), ctx.json({ message: '..????' }));
+      }
+      return res(ctx.status(500));
+    }
+  }),
 ];
 
 export default goalRoomHandler;

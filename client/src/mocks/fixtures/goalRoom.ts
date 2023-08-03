@@ -3,6 +3,7 @@ import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 type GoalRoomFixture = {
   data: GoalRoomBrowseResponse;
   getBrowsedGoalRoom: () => GoalRoomBrowseResponse;
+  getBrowsedGoalRoomTodos: () => GoalRoomBrowseResponse['goalRoomTodos'];
 };
 
 const fixture: GoalRoomFixture = {
@@ -78,6 +79,10 @@ const fixture: GoalRoomFixture = {
 
   getBrowsedGoalRoom() {
     return JSON.parse(JSON.stringify(this.data));
+  },
+
+  getBrowsedGoalRoomTodos() {
+    return this.data.goalRoomTodos;
   },
 };
 
