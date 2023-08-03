@@ -43,7 +43,7 @@ const ToastProvider = (props: PropsWithChildren) => {
 
       timeout.current = setTimeout(() => {
         setMessage((prev) => ({ ...prev, isShow: false }));
-      }, 1500);
+      }, 2000);
 
       return;
     }
