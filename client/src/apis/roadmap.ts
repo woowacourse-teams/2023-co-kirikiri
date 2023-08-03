@@ -1,10 +1,10 @@
 import type { RoadmapDetailResponse } from '@myTypes/roadmap/remote';
 import { RoadmapListResponse } from '@myTypes/roadmap/remote';
-import { CategoriesInfo } from '@constants/roadmap/category';
 import client from './axios/client';
+import { SelectedCategoryId } from '@/myTypes/roadmap/internal';
 
 export const getRoadmapList = (
-  categoryId?: keyof typeof CategoriesInfo,
+  categoryId?: SelectedCategoryId,
   page = 1,
   size = 10,
   filterCond = 'LATEST'

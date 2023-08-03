@@ -29,6 +29,8 @@ export type ContentType = {
   nodes: NodeType[];
 };
 
+export type SelectedCategoryId = number | undefined;
+
 export type RoadmapItemType = {
   roadmapId: number;
   roadmapTitle: string;
