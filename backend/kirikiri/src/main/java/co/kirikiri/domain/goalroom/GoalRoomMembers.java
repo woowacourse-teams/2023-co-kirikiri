@@ -32,6 +32,15 @@ public class GoalRoomMembers {
         this.values.addAll(new ArrayList<>(goalRoomMembers));
     }
 
+    public int size() {
+        return values.size();
+    }
+
+    public boolean isMember(final Member member) {
+        return values.stream()
+                .anyMatch(value -> value.isSameMember(member));
+    }
+
     public boolean isNotLeader(final Member member) {
         final Member goalRoomLeader = findGoalRoomLeader();
         return !goalRoomLeader.equals(member);

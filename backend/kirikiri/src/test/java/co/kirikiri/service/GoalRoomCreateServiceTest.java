@@ -226,7 +226,7 @@ class GoalRoomCreateServiceTest {
         goalRoomCreateService.join("identifier2", 1L);
 
         //then
-        assertThat(goalRoom.getCurrentPendingMemberCount())
+        assertThat(goalRoom.getCurrentMemberCount())
                 .isEqualTo(2);
     }
 

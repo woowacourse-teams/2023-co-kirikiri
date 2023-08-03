@@ -33,6 +33,7 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -52,8 +53,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -61,34 +64,46 @@ import org.springframework.http.MediaType;
 
 class GoalRoomReadIntegrationTest extends IntegrationTest {
 
+    private static final int 정상적인_골룸_제한_인원 = 20;
+    private static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
+    private static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
+    private static final String BEARER = "Bearer ";
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
+    private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname",
+            "010-1234-5678",
+            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+    private static final LoginRequest 로그인_요청 = new LoginRequest(회원가입_요청.identifier(), 회원가입_요청.password());
     private static final LocalDate 오늘 = LocalDate.now();
     private static final LocalDate 십일_후 = 오늘.plusDays(10L);
     private static final LocalDate 이십일_후 = 오늘.plusDays(20);
     private static final LocalDate 삼십일_후 = 오늘.plusDays(30);
+    private static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
 
+    private final GoalRoomCreateService goalRoomCreateService;
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final RoadmapContentRepository roadmapContentRepository;
-    private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
+    private final RoadmapNodeRepository roadmapNodeRepository;
     private final MemberRepository memberRepository;
 
-    public GoalRoomReadIntegrationTest(final RoadmapRepository roadmapRepository,
+    public GoalRoomReadIntegrationTest(final GoalRoomCreateService goalRoomCreateService,
+                                       final RoadmapRepository roadmapRepository,
                                        final GoalRoomRepository goalRoomRepository,
+                                       final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
                                        final RoadmapCategoryRepository roadmapCategoryRepository,
                                        final RoadmapContentRepository roadmapContentRepository,
                                        final RoadmapNodeRepository roadmapNodeRepository,
-                                       final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
                                        final MemberRepository memberRepository) {
+        this.goalRoomCreateService = goalRoomCreateService;
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
+        this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapContentRepository = roadmapContentRepository;
         this.roadmapNodeRepository = roadmapNodeRepository;
-        this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
         this.memberRepository = memberRepository;
     }
 
@@ -168,6 +183,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .response()
                 .getHeader(LOCATION)
                 .replace("/api/members/", "");
+
         return new Member(Long.valueOf(저장된_크리에이터_아이디), new Identifier(IDENTIFIER),
                 new EncryptedPassword(new Password(PASSWORD)), new Nickname(닉네임),
                 new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPEG),
@@ -189,6 +205,11 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 });
 
         return String.format(BEARER_TOKEN_FORMAT, 토큰_응답.accessToken());
+    }
+
+    private RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
+        final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
+        return roadmapCategoryRepository.save(로드맵_카테고리);
     }
 
     private Long 제목별로_로드맵을_생성한다(final String 로그인_토큰_정보, final RoadmapCategory 로드맵_카테고리, final String 로드맵_제목) {
@@ -282,11 +303,6 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 31, true);
     }
 
-    private RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
-        final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
-        return roadmapCategoryRepository.save(로드맵_카테고리);
-    }
-
     private ExtractableResponse<Response> 회원가입_요청(final MemberJoinRequest 회원가입_요청값) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -323,7 +339,15 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .extract();
     }
 
-    private Long 아이디를_반환한다(final ExtractableResponse<Response> 응답) {
-        return Long.parseLong(응답.header(HttpHeaders.LOCATION).split("/")[3]);
+    private void 테스트용으로_생성된_파일을_제거한다(final String filePath) {
+        final File file = new File(filePath);
+
+        if (!file.exists() || !file.isFile()) {
+            throw new IllegalArgumentException("Invalid file path: " + filePath);
+        }
+
+        if (!file.delete()) {
+            throw new RuntimeException("Failed to delete the file: " + filePath);
+        }
     }
 }

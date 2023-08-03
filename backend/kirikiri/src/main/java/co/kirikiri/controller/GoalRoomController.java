@@ -6,10 +6,13 @@ import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -46,6 +50,12 @@ public class GoalRoomController {
     public ResponseEntity<GoalRoomCertifiedResponse> findGoalRoom(@MemberIdentifier final String identifier,
                                                                   @PathVariable("goalRoomId") final Long goalRoomId) {
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(identifier, goalRoomId);
+        return ResponseEntity.ok(goalRoomResponse);
+    }
+
+    @GetMapping("/{goalRoomId}")
+    public ResponseEntity<GoalRoomResponse> findGoalRoom(@PathVariable("goalRoomId") final Long goalRoomId) {
+        final GoalRoomResponse goalRoomResponse = goalRoomReadService.findGoalRoom(goalRoomId);
         return ResponseEntity.ok(goalRoomResponse);
     }
 
@@ -75,16 +85,34 @@ public class GoalRoomController {
         return ResponseEntity.created(URI.create(imageUrl)).build();
     }
 
-    @GetMapping("/{goalRoomId}")
-    public ResponseEntity<GoalRoomResponse> findGoalRoom(@PathVariable("goalRoomId") final Long goalRoomId) {
-        final GoalRoomResponse goalRoomResponse = goalRoomReadService.findGoalRoom(goalRoomId);
-        return ResponseEntity.ok(goalRoomResponse);
-    }
-
     @Authenticated
     @GetMapping("/{goalRoomId}/members")
     public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(@PathVariable final Long goalRoomId) {
         final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId);
         return ResponseEntity.ok(goalRoomMembers);
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/me")
+    public ResponseEntity<MemberGoalRoomResponse> findMemberGoalRoom(
+            @MemberIdentifier final String identifier, @PathVariable final Long goalRoomId) {
+        final MemberGoalRoomResponse memberGoalRoomResponse = goalRoomReadService.findMemberGoalRoom(identifier,
+                goalRoomId);
+        return ResponseEntity.ok(memberGoalRoomResponse);
+    }
+
+    @Authenticated
+    @GetMapping("/me")
+    public ResponseEntity<List<MemberGoalRoomForListResponse>> findMemberGoalRoomsByStatus(
+            @MemberIdentifier final String identifier,
+            @RequestParam(value = "statusCond", required = false) final GoalRoomStatusTypeRequest goalRoomStatusTypeRequest) {
+        if (goalRoomStatusTypeRequest == null) {
+            final List<MemberGoalRoomForListResponse> memberGoalRoomForListResponses =
+                    goalRoomReadService.findMemberGoalRooms(identifier);
+            return ResponseEntity.ok(memberGoalRoomForListResponses);
+        }
+        final List<MemberGoalRoomForListResponse> memberGoalRoomForListResponses =
+                goalRoomReadService.findMemberGoalRoomsByStatusType(identifier, goalRoomStatusTypeRequest);
+        return ResponseEntity.ok(memberGoalRoomForListResponses);
     }
 }

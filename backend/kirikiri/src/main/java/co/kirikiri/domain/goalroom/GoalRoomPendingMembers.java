@@ -33,6 +33,11 @@ public class GoalRoomPendingMembers {
                 .anyMatch(value -> value.equals(goalRoomPendingMember));
     }
 
+    public boolean isMember(final Member member) {
+        return values.stream()
+                .anyMatch(value -> value.isSameMember(member));
+    }
+
     public int size() {
         return values.size();
     }

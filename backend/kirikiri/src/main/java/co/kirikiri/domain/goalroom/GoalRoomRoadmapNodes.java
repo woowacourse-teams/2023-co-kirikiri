@@ -71,12 +71,6 @@ public class GoalRoomRoadmapNodes {
         return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
     }
 
-    public int calculateAllCheckCount() {
-        return values.stream()
-                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
-                .sum();
-    }
-
     public GoalRoomRoadmapNode getNodeByDate(final LocalDate date) {
         sortByStartDateAsc(values);
 
@@ -88,6 +82,22 @@ public class GoalRoomRoadmapNodes {
 
     public int size() {
         return values.size();
+    }
+
+    public boolean hasFrontNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != 0;
+    }
+
+    public boolean hasBackNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != (size() - 1);
+    }
+
+    public int calculateAllCheckCount() {
+        return values.stream()
+                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
+                .sum();
     }
 
     public List<GoalRoomRoadmapNode> getValues() {

@@ -31,4 +31,8 @@ public class GoalRoomToDos {
     public GoalRoomToDo findLast() {
         return values.get(values.size() - 1);
     }
+
+    public List<GoalRoomToDo> getValues() {
+        return new ArrayList<>(values);
+    }
 }
