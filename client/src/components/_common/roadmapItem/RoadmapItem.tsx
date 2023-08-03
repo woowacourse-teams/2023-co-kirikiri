@@ -1,4 +1,4 @@
-import type { RoadmapItemType } from '@myTypes/roadmap/internal';
+import type { RoadmapDetailType } from '@myTypes/roadmap/internal';
 
 import { useNavigate } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';
@@ -8,7 +8,7 @@ import Button from '../button/Button';
 import * as S from './RoadmapItem.styles';
 
 type RoadmapItemProps = {
-  item: RoadmapItemType;
+  item: Omit<RoadmapDetailType, 'content'>;
   hasBorder?: boolean;
   roadmapId: number;
 };
@@ -52,8 +52,9 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
       <S.ItemFooter>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>
         <S.Tags>
-          <span># Programming</span>
-          <span># Study</span>
+          {item.tags.map((tag) => {
+            return <span># {tag.name}</span>;
+          })}
         </S.Tags>
       </S.ItemFooter>
     </S.RoadmapItem>
