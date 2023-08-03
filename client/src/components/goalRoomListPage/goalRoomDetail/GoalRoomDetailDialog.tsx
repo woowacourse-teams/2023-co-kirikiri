@@ -8,18 +8,16 @@ import GoalRoomDetailDialogContent from './GoalRoomDetailDialogContent';
 
 const GoalRoomDetailDialog = () => {
   return (
-    <>
-      <DialogBox defaultOpen>
-        <DialogBackdrop asChild>
-          <S.BackDrop>
-            <DialogContent>
-              <GoalRoomDetailDialogContent />
-            </DialogContent>
-          </S.BackDrop>
-        </DialogBackdrop>
-      </DialogBox>
+    <DialogBox defaultOpen>
+      <DialogBackdrop asChild>
+        <S.BackDrop>
+          <DialogContent>
+            <GoalRoomDetailDialogContent />
+          </DialogContent>
+        </S.BackDrop>
+      </DialogBackdrop>
       <S.EnterGoalRoomButton>17일동안 골룸 참여하기</S.EnterGoalRoomButton>
-    </>
+    </DialogBox>
   );
 };
 

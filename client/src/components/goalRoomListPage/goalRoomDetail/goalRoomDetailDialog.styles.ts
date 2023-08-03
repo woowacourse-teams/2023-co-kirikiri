@@ -29,6 +29,18 @@ export const Container = styled.section`
   border-radius: 30px;
 `;
 
+export const CloseButton = styled.button`
+  ${({ theme }) => theme.fonts.h1}
+  color: ${({ theme }) => theme.colors.main_dark};
+`;
+
+export const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding: 0 1rem;
+`;
+
 export const Title = styled.h1`
   ${({ theme }) => theme.fonts.h1}
 `;

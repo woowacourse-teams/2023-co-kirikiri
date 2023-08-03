@@ -1,9 +1,16 @@
+import { DialogTrigger } from '@/components/_common/dialog/dialog';
 import * as S from './goalRoomDetailDialog.styles';
 
 const GoalRoomDetailDialogContent = () => {
   return (
     <S.Container>
-      <S.Title>골룸입니당</S.Title>
+      <S.TitleWrapper>
+        <div />
+        <S.Title>골룸입니당</S.Title>
+        <DialogTrigger asChild>
+          <S.CloseButton>X</S.CloseButton>
+        </DialogTrigger>
+      </S.TitleWrapper>
       <S.Participant>
         <p>7</p>/10
       </S.Participant>
