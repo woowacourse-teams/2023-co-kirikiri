@@ -2,6 +2,7 @@ import { DummyCategoryType } from '@/components/roadmapCreatePage/category/Categ
 import { DummyDifficultyType } from '@/components/roadmapCreatePage/difficulty/Difficulty';
 import { RoadmapValueType } from '@/myTypes/roadmap/remote';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCreateRoadmap } from '../queries/roadmap';
 
 export const useCollectRoadmapData = () => {
@@ -16,6 +17,7 @@ export const useCollectRoadmapData = () => {
     roadmapNodes: [],
   });
   const [isSumbited, setIsSubmited] = useState(false);
+  const navigate = useNavigate();
   const { createRoadmap } = useCreateRoadmap();
 
   const getSelectedCategoryId = (category: keyof DummyCategoryType | null) => {
@@ -84,6 +86,7 @@ export const useCollectRoadmapData = () => {
   useEffect(() => {
     if (isSumbited) {
       createRoadmap(roadmapValue);
+      navigate('/');
     }
   }, [isSumbited]);
 
