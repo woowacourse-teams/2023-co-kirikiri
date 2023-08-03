@@ -10,6 +10,7 @@ import {
   getGoalRoomTodos,
   postCreateNewCertificationFeed,
   getGoalRoomList,
+  getGoalRoomDetail,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -17,6 +18,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList'], () => getGoalRoomList(params));
   return { goalRoomList: data };
+};
+
+export const useGoalRoomDetail = (goalRoomId: number) => {
+  const { data } = useSuspendedQuery(['goalRoomDetail'], () =>
+    getGoalRoomDetail(goalRoomId)
+  );
+  return { goalRoomInfo: data };
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
