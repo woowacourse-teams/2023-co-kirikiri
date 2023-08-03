@@ -8,3 +8,17 @@ export const RoadmapList = styled.div`
 
   margin-bottom: 8rem;
 `;
+
+export const CreateRoadmapButton = styled.button`
+  ${({ theme }) => theme.fonts.h1}
+  position: fixed;
+  top: 1rem;
+
+  width: 50%;
+  height: 5rem;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_middle};
+  border-radius: 20px;
+`;
