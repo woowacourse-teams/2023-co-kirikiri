@@ -310,16 +310,12 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")));
         final RoadmapNode 로드맵_노드 = roadmapNodeRepository.findAll().get(0);
 
-        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 십일_후, 이십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
-                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
-                골룸_노드_별_기간_요청);
+                new GoalRoomRoadmapNodeRequest(로드맵_노드.getId(), 정상적인_골룸_노드_인증_횟수, 십일_후, 이십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름,
+                정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸_생성(골룸_생성_요청, 액세스_토큰);
-
-        회원가입을_한다("identifier2", "password2@", "팔로워", "010-1234-5555", GenderType.FEMALE, LocalDate.of(2000, 1, 1));
-        final String 팔로워_액세스_토큰 = 로그인을_한다("identifier2", "password2@");
-        골룸_참가_요청(골룸_아이디, 팔로워_액세스_토큰);
 
         //when
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
@@ -332,10 +328,11 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
 
         //then
         final MemberGoalRoomResponse 예상되는_응답 = new MemberGoalRoomResponse(정상적인_골룸_이름, "RECRUITING", 1L,
-                2, 정상적인_골룸_제한_인원, 오늘, 십일_후, 1L,
+                1, 정상적인_골룸_제한_인원, 십일_후, 이십일_후, 1L,
                 new GoalRoomRoadmapNodesResponse(false, false,
-                        List.of(new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", 오늘, 십일_후, 정상적인_골룸_노드_인증_횟수))),
-                List.of(new GoalRoomTodoResponse(1L, 정상적인_골룸_투두_컨텐츠, 오늘, 십일_후, new GoalRoomToDoCheckResponse(false))),
+                        List.of(new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", 십일_후, 이십일_후, 정상적인_골룸_노드_인증_횟수))),
+                List.of(new GoalRoomTodoResponse(1L, 정상적인_골룸_투두_컨텐츠, 십일_후, 이십일_후,
+                        new GoalRoomToDoCheckResponse(false))),
                 Collections.emptyList());
         final MemberGoalRoomResponse 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(), new TypeReference<>() {
         });
