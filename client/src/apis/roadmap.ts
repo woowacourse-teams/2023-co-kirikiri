@@ -1,4 +1,5 @@
 import type { RoadmapDetailResponse } from '@myTypes/roadmap/remote';
+import { RoadmapListResponse } from '@myTypes/roadmap/remote';
 import { CategoriesInfo } from '@constants/roadmap/category';
 import client from './axios/client';
 
@@ -8,7 +9,7 @@ export const getRoadmapList = (
   size = 10,
   filterCond = 'LATEST'
 ) => {
-  return client.get(`/roadmaps`, {
+  return client.get<RoadmapListResponse>(`/roadmaps`, {
     params: {
       categoryId,
       page,

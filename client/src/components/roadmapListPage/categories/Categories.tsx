@@ -8,10 +8,10 @@ const Categories = () => {
   const upCategories = categories.slice(0, 5);
   const downCategories = categories.slice(5);
 
-  const renderCategory = ({ name, id, iconName }: CategoryType) => {
+  const renderCategory = ({ name, id }: CategoryType) => {
     return (
       <S.Category key={id}>
-        <SVGIcon name={iconName} />
+        <SVGIcon name={CategoriesInfo[id].iconName} />
         <S.CategoryName>{name}</S.CategoryName>
       </S.Category>
     );
