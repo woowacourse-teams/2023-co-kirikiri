@@ -3,6 +3,7 @@ import {
   GoalRoomBrowseResponse,
   newTodoPayload,
   CreateGoalRoomRequest,
+  GoalRoomTodoResponse,
 } from '@myTypes/goalRoom/remote';
 
 export const getGoalRoomDashboard = async (goalRoomId: string) => {
@@ -19,6 +20,14 @@ export const postCreateGoalRoom = async (body: CreateGoalRoomRequest) => {
   return data;
 };
 
+export const getGoalRoomTodos = async (goalRoomId: string) => {
+  const { data } = await client.get<GoalRoomTodoResponse>(
+    `/api/goal-rooms/${goalRoomId}/todos`
+  );
+
+  return data;
+};
+
 export const postCreateNewTodo = (goalRoomId: string, body: newTodoPayload) => {
-  return client.post(`/goal-rooms/${goalRoomId}/todos`, body);
+  return client.post(`/api/goal-rooms/${goalRoomId}/todos`, body);
 };
