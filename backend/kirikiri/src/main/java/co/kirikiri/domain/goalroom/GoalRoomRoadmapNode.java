@@ -56,6 +56,10 @@ public class GoalRoomRoadmapNode extends BaseEntity {
         return this.period.isEndDateEqualOrAfterOtherStartDate(other.period);
     }
 
+    public boolean isDayOfNode(final LocalDate date) {
+        return period.contains(date);
+    }
+
     public LocalDate getStartDate() {
         return period.getStartDate();
     }

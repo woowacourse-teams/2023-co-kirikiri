@@ -26,8 +26,12 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
+import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
+import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
@@ -43,11 +47,16 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 class GoalRoomReadIntegrationTest extends IntegrationTest {
@@ -61,14 +70,26 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
 
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
+    private final RoadmapNodeRepository roadmapNodeRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final MemberRepository memberRepository;
 
     public GoalRoomReadIntegrationTest(final RoadmapRepository roadmapRepository,
                                        final GoalRoomRepository goalRoomRepository,
-                                       final RoadmapCategoryRepository roadmapCategoryRepository) {
+                                       final RoadmapCategoryRepository roadmapCategoryRepository,
+                                       final RoadmapContentRepository roadmapContentRepository,
+                                       final RoadmapNodeRepository roadmapNodeRepository,
+                                       final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
+                                       final MemberRepository memberRepository) {
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.roadmapContentRepository = roadmapContentRepository;
+        this.roadmapNodeRepository = roadmapNodeRepository;
+        this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Test
@@ -264,5 +285,45 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
         final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
         return roadmapCategoryRepository.save(로드맵_카테고리);
+    }
+
+    private ExtractableResponse<Response> 회원가입_요청(final MemberJoinRequest 회원가입_요청값) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(회원가입_요청값)
+                .post(API_PREFIX + "/members/join")
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> 로그인_요청(final LoginRequest 로그인_요청값) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(로그인_요청값)
+                .post(API_PREFIX + "/auth/login")
+                .then().log().all()
+                .extract();
+    }
+
+    private String access_token을_받는다(final ExtractableResponse<Response> 로그인_응답) throws JsonProcessingException {
+        final AuthenticationResponse 토큰_응답값 = jsonToClass(로그인_응답.body().asString(), new TypeReference<>() {
+        });
+        return 토큰_응답값.accessToken();
+    }
+
+    private ExtractableResponse<Response> 로드맵_생성_요청(final RoadmapSaveRequest 로드맵_생성_요청값, final String accessToken) {
+        return given().log().all()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(로드맵_생성_요청값).log().all()
+                .post(API_PREFIX + "/roadmaps")
+                .then().log().all()
+                .extract();
+    }
+
+    private Long 아이디를_반환한다(final ExtractableResponse<Response> 응답) {
+        return Long.parseLong(응답.header(HttpHeaders.LOCATION).split("/")[3]);
     }
 }

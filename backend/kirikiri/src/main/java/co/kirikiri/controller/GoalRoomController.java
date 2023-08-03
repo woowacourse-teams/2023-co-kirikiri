@@ -4,6 +4,7 @@ import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
+import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -14,8 +15,10 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,12 +39,6 @@ public class GoalRoomController {
                                        @MemberIdentifier final String identifier) {
         final Long id = goalRoomCreateService.create(request, identifier);
         return ResponseEntity.created(URI.create("/api/goal-rooms/" + id)).build();
-    }
-
-    @GetMapping("/{goalRoomId}")
-    public ResponseEntity<GoalRoomResponse> findGoalRoom(@PathVariable("goalRoomId") final Long goalRoomId) {
-        final GoalRoomResponse goalRoomResponse = goalRoomReadService.findGoalRoom(goalRoomId);
-        return ResponseEntity.ok(goalRoomResponse);
     }
 
     @Authenticated
@@ -67,6 +64,21 @@ public class GoalRoomController {
                                         @MemberIdentifier final String identifier) {
         final Long id = goalRoomCreateService.addGoalRoomTodo(goalRoomId, identifier, goalRoomTodoRequest);
         return ResponseEntity.created(URI.create("/api/goal-rooms/" + goalRoomId + "/todos/" + id)).build();
+    }
+
+    @Authenticated
+    @PostMapping(value = "/{goalRoomId}/checkFeeds", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Void> createCheckFeed(@MemberIdentifier final String identifier,
+                                                @PathVariable("goalRoomId") final Long goalRoomId,
+                                                @ModelAttribute final CheckFeedRequest checkFeedRequest) {
+        final String imageUrl = goalRoomCreateService.createCheckFeed(identifier, goalRoomId, checkFeedRequest);
+        return ResponseEntity.created(URI.create(imageUrl)).build();
+    }
+
+    @GetMapping("/{goalRoomId}")
+    public ResponseEntity<GoalRoomResponse> findGoalRoom(@PathVariable("goalRoomId") final Long goalRoomId) {
+        final GoalRoomResponse goalRoomResponse = goalRoomReadService.findGoalRoom(goalRoomId);
+        return ResponseEntity.ok(goalRoomResponse);
     }
 
     @Authenticated

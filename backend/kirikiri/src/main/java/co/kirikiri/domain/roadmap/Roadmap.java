@@ -88,6 +88,7 @@ public class Roadmap extends BaseCreatedTimeEntity {
         this.introduction = introduction;
         this.requiredPeriod = requiredPeriod;
         this.difficulty = difficulty;
+        this.status = status;
         this.creator = creator;
         this.category = category;
     }

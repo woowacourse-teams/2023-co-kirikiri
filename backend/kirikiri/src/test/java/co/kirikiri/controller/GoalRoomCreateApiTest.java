@@ -15,8 +15,11 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +42,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -601,6 +606,132 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(new ErrorResponse("투두 컨텐츠의 길이가 적절하지 않습니다."));
+    }
+
+    @Test
+    void 인증_피드_등록_요청을_보낸다() throws Exception {
+        //given
+        final String imageName = "image";
+        final String originalImageName = "originalImageName.jpeg";
+        final String contentType = "image/jpeg";
+        final String image = "테스트 이미지";
+        final String description = "이미지 설명";
+        final String filePath = "path/to/directories/" + contentType;
+        final MockMultipartFile imageFile = new MockMultipartFile(imageName, originalImageName,
+                contentType, image.getBytes());
+
+        given(goalRoomCreateService.createCheckFeed(anyString(), anyLong(), any()))
+                .willReturn(filePath);
+
+        //expect
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .multipart(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
+                                .file(imageFile)
+                                .param("text", description)
+                                .header("Authorization", "Bearer accessToken")
+                                .contextPath(API_PREFIX)
+                                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", filePath))
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName("Authorization").description("액세스 토큰")
+                                ),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                requestParts(
+                                        partWithName("image").description("업로드한 이미지")
+                                ),
+                                responseHeaders(
+                                        headerWithName("Location").description("저장된 이미지 경로")
+                                )));
+    }
+
+    @Test
+    void 인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다() throws Exception {
+        //given
+        final String imageName = "image";
+        final String originalImageName = "originalImageName.jpeg";
+        final String contentType = "image/jpeg";
+        final String image = "테스트 이미지";
+        final String description = "이미지 설명";
+        final MockMultipartFile imageFile = new MockMultipartFile(imageName, originalImageName,
+                contentType, image.getBytes());
+
+        doThrow(new NotFoundException("존재하지 않는 회원입니다."))
+                .when(goalRoomCreateService)
+                .createCheckFeed(anyString(), anyLong(), any());
+
+        //when
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .multipart(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
+                                .file(imageFile)
+                                .param("description", description)
+                                .header("Authorization", "Bearer accessToken")
+                                .contextPath(API_PREFIX)
+                                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("존재하지 않는 회원입니다."))
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName("Authorization").description("액세스 토큰")
+                                ),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                requestParts(
+                                        partWithName("image").description("업로드한 이미지")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메세지")
+                                )));
+    }
+
+    @Test
+    void 인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다() throws Exception {
+        //given
+        final String imageName = "image";
+        final String originalImageName = "originalImageName.jpeg";
+        final String contentType = "image/jpeg";
+        final String image = "테스트 이미지";
+        final String description = "이미지 설명";
+        final MockMultipartFile imageFile = new MockMultipartFile(imageName, originalImageName,
+                contentType, image.getBytes());
+
+        doThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"))
+                .when(goalRoomCreateService)
+                .createCheckFeed(anyString(), anyLong(), any());
+
+        //when
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .multipart(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
+                                .file(imageFile)
+                                .param("description", description)
+                                .header("Authorization", "Bearer accessToken")
+                                .contextPath(API_PREFIX)
+                                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"))
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName("Authorization").description("액세스 토큰")
+                                ),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                requestParts(
+                                        partWithName("image").description("업로드한 이미지")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메세지")
+                                )));
     }
 
     private ResultActions 골룸_생성(final String jsonRequest, final ResultMatcher result) throws Exception {

@@ -17,4 +17,6 @@ public interface GoalRoomQueryRepository {
                                                                    final int pageSize);
 
     List<GoalRoom> findAllByStartDateNow();
+
+    List<GoalRoom> findAllByStartDateWithGoalRoomRoadmapNode();
 }

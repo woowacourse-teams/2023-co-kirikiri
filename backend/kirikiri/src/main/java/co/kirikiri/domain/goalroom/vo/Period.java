@@ -46,6 +46,12 @@ public class Period {
                 || this.endDate.isAfter(other.startDate);
     }
 
+    public boolean contains(final LocalDate date) {
+        return (startDate.isBefore(date) && endDate.isAfter(date))
+                || startDate.isEqual(date)
+                || endDate.isEqual(date);
+    }
+
     public long getDayCount() {
         return ChronoUnit.DAYS.between(startDate, endDate) + 1;
     }

@@ -1,5 +1,8 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.ImageDirType;
+import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
@@ -13,6 +16,8 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.exception.ServerException;
+import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -20,25 +25,32 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
+import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class GoalRoomCreateService {
 
+    private final FileService fileService;
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomMemberRepository goalRoomMemberRepository;
-    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final RoadmapContentRepository roadmapContentRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final CheckFeedRepository checkFeedRepository;
 
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
@@ -57,7 +69,7 @@ public class GoalRoomCreateService {
 
     private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
         return roadmapContentRepository.findById(roadmapContentId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다."));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵 노드입니다."));
     }
 
     private void checkNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {
@@ -124,6 +136,84 @@ public class GoalRoomCreateService {
         if (goalRoom.isNotLeader(member)) {
             throw new BadRequestException("골룸의 리더만 투드리스트를 추가할 수 있습니다.");
         }
+    }
+
+    @Transactional
+    public String createCheckFeed(final String identifier, final Long goalRoomId,
+                                  final CheckFeedRequest checkFeedRequest) {
+        final MultipartFile checkFeedImage = checkFeedRequest.image();
+        validateEmptyImage(checkFeedImage);
+        final ImageContentType imageType = getImageContentType(checkFeedImage);
+
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
+        final GoalRoomRoadmapNode currentNode = goalRoom.getNodeByDate(LocalDate.now());
+        final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(
+                goalRoomMember, currentNode);
+        validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
+        updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
+
+        try {
+            final String imageUrl = fileService.uploadFileAndReturnPath(checkFeedImage, ImageDirType.CHECK_FEED,
+                    goalRoomId);
+            checkFeedRepository.save(new CheckFeed(imageUrl, imageType, checkFeedImage.getOriginalFilename(),
+                    checkFeedRequest.description(), currentNode, goalRoomMember));
+            return imageUrl;
+        } catch (final IOException e) {
+            throw new ServerException("이미지 업로드에 실패했습니다.");
+        }
+    }
+
+    private void validateEmptyImage(final MultipartFile image) {
+        if (image.isEmpty()) {
+            throw new BadRequestException("인증 피드 등록 시 이미지가 반드시 포함되어야 합니다.");
+        }
+
+        if (image.getOriginalFilename() == null) {
+            throw new BadRequestException("파일 이름은 반드시 포함되어야 합니다.");
+        }
+    }
+
+    private ImageContentType getImageContentType(final MultipartFile checkFeedImage) {
+        return ImageContentType.of(checkFeedImage.getContentType());
+    }
+
+    private GoalRoomMember findGoalRoomMemberByGoalRoomAndIdentifier(final GoalRoom goalRoom, final String identifier) {
+        return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
+                .orElseThrow(() -> new NotFoundException("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + identifier));
+    }
+
+    private int validateCheckCount(final int memberCheckCount, final GoalRoomMember member,
+                                   final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+
+        validateNodeCheckCount(memberCheckCount, goalRoomRoadmapNode);
+        validateTodayCheckCount(member);
+        return memberCheckCount;
+    }
+
+    private void validateNodeCheckCount(final int memberCheckCount,
+                                        final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+        if (memberCheckCount >= goalRoomRoadmapNode.getCheckCount()) {
+            throw new BadRequestException(
+                    "이번 노드에는 최대 " + goalRoomRoadmapNode.getCheckCount() + "번만 인증 피드를 등록할 수 있습니다.");
+        }
+    }
+
+    private void validateTodayCheckCount(final GoalRoomMember member) {
+        final LocalDate today = LocalDate.now();
+        final LocalDateTime todayStart = today.atStartOfDay();
+        final LocalDateTime todayEnd = today.plusDays(1).atStartOfDay();
+        if (checkFeedRepository.findByGoalRoomMemberAndDateTime(member, todayStart, todayEnd).isPresent()) {
+            throw new BadRequestException("이미 오늘 인증 피드를 등록하였습니다.");
+        }
+    }
+
+    private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember,
+                                          final int pastCheckCount) {
+        final int wholeCheckCount = goalRoom.getAllCheckCount();
+        final int memberCheckCount = pastCheckCount + 1;
+        final Double accomplishmentRate = 100 * memberCheckCount / (double) wholeCheckCount;
+        goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
     }
 
     @Scheduled(cron = "0 0 0 * * *")

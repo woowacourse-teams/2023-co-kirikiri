@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,6 +19,8 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNodes {
+
+    private static final int DATE_OFFSET = 1;
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
@@ -62,6 +65,25 @@ public class GoalRoomRoadmapNodes {
                 .max(Comparator.comparing(GoalRoomRoadmapNode::getEndDate))
                 .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
                 .getEndDate();
+    }
+
+    public int addTotalPeriod() {
+        return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
+    }
+
+    public int calculateAllCheckCount() {
+        return values.stream()
+                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
+                .sum();
+    }
+
+    public GoalRoomRoadmapNode getNodeByDate(final LocalDate date) {
+        sortByStartDateAsc(values);
+
+        return values.stream()
+                .filter(node -> node.isDayOfNode(date))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
     }
 
     public int size() {

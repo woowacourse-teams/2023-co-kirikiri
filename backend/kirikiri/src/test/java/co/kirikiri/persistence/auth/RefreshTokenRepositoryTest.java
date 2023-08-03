@@ -40,7 +40,7 @@ class RefreshTokenRepositoryTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
         member = new Member(identifier, encryptedPassword, nickname, memberProfile);
     }
 

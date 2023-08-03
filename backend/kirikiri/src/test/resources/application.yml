@@ -10,6 +10,14 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+file:
+  upload-dir: src/test/resources/static/images/
+  server-path: http://localhost/images/
+
 logging:
   level:
     org:
@@ -22,6 +30,7 @@ logging:
 server:
   servlet:
     contextPath: /api
+  port: 8080
 
 jwt:
   secret-key: 9zrOjg1kDd2gUp6KBbElGJj5GHP5BnneDs3nXEhdztHAUjKBX7l69JXUErBovPLn7TVWV0UCfejYZyxIjIMC5KPfSvBzo9C1gJ2

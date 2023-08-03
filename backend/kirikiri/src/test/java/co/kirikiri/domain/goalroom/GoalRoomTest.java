@@ -45,7 +45,7 @@ class GoalRoomTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
-        MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
         member = new Member(1L, identifier, encryptedPassword, nickname, memberProfile);
     }
 
@@ -138,6 +138,20 @@ class GoalRoomTest {
         assertThatThrownBy(() -> goalRoom.join(member))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
+    }
+
+    @Test
+    void 골룸의_총_인증_횟수를_구한다() {
+        //given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+
+        //expect
+        assertThat(goalRoom.getAllCheckCount()).isEqualTo(20);
     }
 
     private Member 크리에이터를_생성한다() {

@@ -27,7 +27,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(MemberController.class)
-public class MemberReadApiTest extends ControllerTestHelper {
+class MemberReadApiTest extends ControllerTestHelper {
 
     @MockBean
     private MemberService memberService;

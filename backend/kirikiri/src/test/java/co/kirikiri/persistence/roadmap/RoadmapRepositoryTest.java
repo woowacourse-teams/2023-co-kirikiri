@@ -274,8 +274,7 @@ class RoadmapRepositoryTest {
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
-                firstRoadmapLastValueDto,
-                1);
+                firstRoadmapLastValueDto, 1);
         final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
                 secondRoadmapLastValueDto, 1);
 

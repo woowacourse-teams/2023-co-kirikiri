@@ -63,6 +63,16 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetch();
     }
 
+    @Override
+    public List<GoalRoom> findAllByStartDateWithGoalRoomRoadmapNode() {
+        return selectFrom(goalRoom)
+                .join(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(startDateEqualsToNow())
+                .orderBy(goalRoomRoadmapNode.period.startDate.asc())
+                .fetch();
+    }
+
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
     }

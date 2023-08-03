@@ -6,6 +6,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,10 @@ public class GoalRoomMembers {
 
     public void add(final GoalRoomMember goalRoomMember) {
         this.values.add(goalRoomMember);
+    }
+
+    public void addAll(final List<GoalRoomMember> goalRoomMembers) {
+        this.values.addAll(new ArrayList<>(goalRoomMembers));
     }
 
     public boolean isNotLeader(final Member member) {
