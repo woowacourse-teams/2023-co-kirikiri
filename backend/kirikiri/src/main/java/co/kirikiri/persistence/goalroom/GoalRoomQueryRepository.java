@@ -19,4 +19,6 @@ public interface GoalRoomQueryRepository {
     List<GoalRoom> findAllByStartDateNow();
 
     List<GoalRoom> findAllByStartDateWithGoalRoomRoadmapNode();
+
+    Optional<GoalRoom> findByIdWithNodes(Long goalRoomId);
 }

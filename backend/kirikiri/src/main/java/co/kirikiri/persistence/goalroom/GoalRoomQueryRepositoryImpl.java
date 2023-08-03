@@ -73,6 +73,15 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetch();
     }
 
+    @Override
+    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
+    }
+
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
     }

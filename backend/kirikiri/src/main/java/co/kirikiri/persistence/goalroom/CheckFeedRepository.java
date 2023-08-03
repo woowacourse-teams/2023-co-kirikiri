@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface CheckFeedRepository extends JpaRepository<CheckFeed, Long> {
+public interface CheckFeedRepository extends JpaRepository<CheckFeed, Long>, CheckFeedQueryRepository {
 
     @Query("SELECT cf"
             + " FROM CheckFeed cf"
