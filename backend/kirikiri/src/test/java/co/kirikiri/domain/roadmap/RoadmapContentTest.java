@@ -45,9 +45,8 @@ class RoadmapContentTest {
         final RoadmapContent content = new RoadmapContent("content");
 
         // when
-        content.addNodes(
-                new RoadmapNodes(
-                        List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title1", "content1"))));
+        content.addNodes(new RoadmapNodes(
+                List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title1", "content1"))));
 
         // then
         final RoadmapNodes nodes = content.getNodes();

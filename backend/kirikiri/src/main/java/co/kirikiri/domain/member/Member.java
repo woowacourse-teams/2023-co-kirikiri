@@ -40,7 +40,7 @@ public class Member extends BaseUpdatedTimeEntity {
 
     public Member(final Identifier identifier, final EncryptedPassword encryptedPassword,
                   final Nickname nickname, final MemberProfile memberProfile) {
-        this(null, identifier, encryptedPassword, nickname, null, memberProfile);
+        this(null, identifier, encryptedPassword, nickname, memberProfile);
     }
 
     public Member(final Identifier identifier, final EncryptedPassword encryptedPassword, final Nickname nickname,

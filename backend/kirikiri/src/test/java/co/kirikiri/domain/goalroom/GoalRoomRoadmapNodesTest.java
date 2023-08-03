@@ -2,9 +2,11 @@ package co.kirikiri.domain.goalroom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.goalroom.vo.Period;
+import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -93,5 +95,45 @@ class GoalRoomRoadmapNodesTest {
 
         // then
         assertThat(goalRoomRoadmapNodes.getGoalRoomEndDate()).isEqualTo(THIRTY_DAY_LATER);
+    }
+
+    @Test
+    void 노드의_총_기간을_더한다() {
+        // given
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = 골룸_노드를_생성한다();
+
+        // when
+        final int totalPeriod = goalRoomRoadmapNodes.addTotalPeriod();
+
+        // then
+        assertThat(totalPeriod)
+                .isSameAs(31);
+    }
+
+    @Test
+    void 해당_날짜에_진행하는_골룸_노드를_반환한다() {
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = 골룸_노드를_생성한다();
+
+        assertAll(
+                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TODAY))
+                        .isEqualTo(new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER),
+                                10, new RoadmapNode("로드맵 제목 1", "로드맵 내용 1"))),
+                () -> assertThat(goalRoomRoadmapNodes.getNodeByDate(TEN_DAY_LATER))
+                        .isEqualTo(new GoalRoomRoadmapNode(new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER),
+                                10, new RoadmapNode("로드맵 제목 2", "로드맵 내용 2")))
+        );
+    }
+
+    private GoalRoomRoadmapNodes 골룸_노드를_생성한다() {
+        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(TODAY, TEN_DAY_LATER),
+                10, new RoadmapNode("로드맵 제목 1", "로드맵 내용 1"));
+
+        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER),
+                10, new RoadmapNode("로드맵 제목 2", "로드맵 내용 2"));
+
+        return new GoalRoomRoadmapNodes(
+                List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
     }
 }

@@ -48,15 +48,19 @@ public class GoalRoomMember extends BaseEntity {
         return role == GoalRoomRole.LEADER;
     }
 
-    public void setAccomplishmentRate(final Double accomplishmentRate) {
-        this.accomplishmentRate = accomplishmentRate;
+    public boolean isSameMember(final Member member) {
+        return this.member.equals(member);
     }
 
-    public Member getMember() {
-        return member;
+    public void updateAccomplishmentRate(final Double rate) {
+        this.accomplishmentRate = rate;
     }
 
     public Double getAccomplishmentRate() {
         return accomplishmentRate;
+    }
+
+    public Member getMember() {
+        return member;
     }
 }

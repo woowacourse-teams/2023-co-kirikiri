@@ -37,7 +37,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class GoalRoomServiceIntegrationTest extends IntegrationTest {
+class GoalRoomServiceIntegrationTest extends IntegrationTest {
 
     private static final LocalDate TODAY = LocalDate.now();
 

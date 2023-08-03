@@ -58,7 +58,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class RoadmapCreateIntegrationTest extends IntegrationTest {
+class RoadmapCreateIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";

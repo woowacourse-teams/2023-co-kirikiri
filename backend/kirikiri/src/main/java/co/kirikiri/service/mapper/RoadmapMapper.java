@@ -40,6 +40,7 @@ public final class RoadmapMapper {
         final List<RoadmapTagSaveDto> roadmapTags = request.roadmapTags().stream()
                 .map(RoadmapMapper::convertToRoadmapTagSaveDto)
                 .toList();
+
         return new RoadmapSaveDto(request.categoryId(), request.title(), request.introduction(), request.content(),
                 request.difficulty(), request.requiredPeriod(), roadmapNodes, roadmapTags);
     }

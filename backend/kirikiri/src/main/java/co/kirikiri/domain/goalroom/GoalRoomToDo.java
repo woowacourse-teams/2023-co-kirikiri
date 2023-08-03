@@ -5,6 +5,7 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.Period;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -28,11 +29,15 @@ public class GoalRoomToDo extends BaseUpdatedTimeEntity {
         this.period = period;
     }
 
-    public GoalRoomTodoContent getContent() {
-        return content;
+    public String getContent() {
+        return content.getValue();
     }
 
-    public Period getPeriod() {
-        return period;
+    public LocalDate getStartDate() {
+        return period.getStartDate();
+    }
+
+    public LocalDate getEndDate() {
+        return period.getEndDate();
     }
 }
