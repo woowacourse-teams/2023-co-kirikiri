@@ -4,6 +4,8 @@ import RoadmapItem from '../../_common/roadmapItem/RoadmapItem';
 import OpenNodeListButton from '../openNodeListButton/OpenNodeListButton';
 import Button from '../../_common/button/Button';
 import * as S from './RoadmapDetail.styles';
+import useValidParams from '@/hooks/_common/useValidParams';
+import { useNavigate } from 'react-router-dom';
 
 const DummyData: RoadmapItemType = {
   roadmapId: 1,
@@ -33,14 +35,21 @@ const DummyData: RoadmapItemType = {
 };
 
 const RoadmapDetail = () => {
+  const { id: roadmapId } = useValidParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const moveGoalRoomListPage = () => {
+    navigate(`/roadmap/${roadmapId}/goalroom-list`);
+  };
+
   return (
     <S.RoadmapDetail>
       <S.PageOnTop>
-        <RoadmapItem item={DummyData} hasBorder={false} />
+        <RoadmapItem item={DummyData} hasBorder={false} roadmapId={Number(roadmapId)} />
         <OpenNodeListButton />
       </S.PageOnTop>
       <S.RoadmapBody>데이터가 들어갈 예정</S.RoadmapBody>
-      <Button>진행중인 골룸 보기</Button>
+      <Button onClick={moveGoalRoomListPage}>진행중인 골룸 보기</Button>
     </S.RoadmapDetail>
   );
 };

@@ -13,7 +13,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   return (
     <S.RoadmapList>
       {roadmapList?.map((item) => (
-        <RoadmapItem key={item.roadmapId} item={item} />
+        <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}
     </S.RoadmapList>
   );

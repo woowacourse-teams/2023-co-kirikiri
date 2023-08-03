@@ -1,6 +1,6 @@
 import type { RoadmapItemType } from '@myTypes/roadmap/internal';
 
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
 import { CategoriesInfo } from '@constants/roadmap/category';
@@ -10,13 +10,23 @@ import * as S from './RoadmapItem.styles';
 type RoadmapItemProps = {
   item: RoadmapItemType;
   hasBorder?: boolean;
+  roadmapId: number;
 };
 
-const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
+const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) => {
   const categoryIcon = <SVGIcon name={CategoriesInfo[item.category.id].iconName} />;
   const difficultyIcon = (
     <SVGIcon name={DIFFICULTY_ICON_NAME[item.difficulty]} size={50} />
   );
+  const navigate = useNavigate();
+
+  const moveGoalRoomListPage = () => {
+    if (hasBorder) {
+      navigate(`/roadmap/${roadmapId}`);
+      return;
+    }
+    navigate(`/roadmap/${roadmapId}/goalroom-list`);
+  };
 
   return (
     <S.RoadmapItem hasBorder={hasBorder}>
@@ -36,9 +46,9 @@ const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
           <div>Days</div>
         </S.RecommendedRoadmapPeriod>
       </S.ItemExtraInfos>
-      <Link to={`/roadmap/${item.roadmapId}`}>
-        <Button>{hasBorder ? '자세히 보기' : '진행중인 골룸 보기'}</Button>
-      </Link>
+      <Button onClick={moveGoalRoomListPage}>
+        {hasBorder ? '자세히 보기' : '진행중인 골룸 보기'}
+      </Button>
       <S.ItemFooter>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>
         <S.Tags>
