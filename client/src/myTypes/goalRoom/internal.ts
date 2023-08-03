@@ -11,6 +11,7 @@ export type GoalRoomRoadmap = {
 };
 
 export type GoalRoomNode = {
+  id: number;
   title: string;
   startDate: string;
   endDate: string;

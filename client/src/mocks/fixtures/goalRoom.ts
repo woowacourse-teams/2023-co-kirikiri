@@ -11,6 +11,7 @@ const fixture: GoalRoomFixture = {
     name: '골룸',
     status: 'RECRUITING',
     currentMemberCount: 10,
+    leaderId: 4,
     initMemberCount: 15,
     startDate: '2023-07-19',
     endDate: '2023-08-05',
@@ -20,12 +21,14 @@ const fixture: GoalRoomFixture = {
       hasBackNode: true,
       nodes: [
         {
+          id: 1,
           title: '로드맵 1주차',
           startDate: '2023-07-19',
           endDate: '2023-07-30',
           checkCount: 10,
         },
         {
+          id: 2,
           title: '로드맵 2주차',
           startDate: '2023-08-01',
           endDate: '2023-08-05',
