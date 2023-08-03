@@ -8,28 +8,32 @@ import GoalRoomCertificationFeed from '@components/goalRoomDahsboardPage/goalRoo
 import { useFetchGoalRoom } from '@hooks/queries/goalRoom';
 
 import * as S from './GoalRoomDashboardContent.styles';
-import useValidParams from '@hooks/_common/useValidParams';
+import { Suspense } from 'react';
+import Spinner from '@components/_common/spinner/Spinner';
+import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
 
-type GoalRoomDashboardContentParams = {
+export type GoalRoomDashboardContentParams = {
   goalroomId: string;
 };
 
 const GoalRoomDashboardContent = () => {
-  const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
+  const { goalroomId } = useGoalRoomDashboardContext();
 
   const { goalRoom } = useFetchGoalRoom(goalroomId);
 
   return (
-    <div>
-      <GoalRoomDashboardHeader goalRoomData={goalRoom} />
-      <S.GoalRoomGridContainer>
-        <GoalRoomDashboardChat />
-        <GoalRoomDashboardTodo goalRoomData={goalRoom} />
-        <GoalRoomDashboardRoadmap />
-        <GoalRoomDashboardCalender />
-        <GoalRoomCertificationFeed goalRoomData={goalRoom} />
-      </S.GoalRoomGridContainer>
-    </div>
+    <Suspense fallback={<Spinner />}>
+      <div>
+        <GoalRoomDashboardHeader goalRoomData={goalRoom} />
+        <S.GoalRoomGridContainer>
+          <GoalRoomDashboardChat />
+          <GoalRoomDashboardTodo goalRoomData={goalRoom} />
+          <GoalRoomDashboardRoadmap />
+          <GoalRoomDashboardCalender />
+          <GoalRoomCertificationFeed goalRoomData={goalRoom} />
+        </S.GoalRoomGridContainer>
+      </div>
+    </Suspense>
   );
 };
 

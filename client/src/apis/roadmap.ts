@@ -26,3 +26,8 @@ export const getRoadmapById = async (id: number) => {
 
   return data;
 };
+
+export const postCreateRoadmap = (roadmapValue: RoadmapValueType) => {
+  const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue);
+  return resposne;
+};

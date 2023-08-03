@@ -9,6 +9,7 @@ export type GoalRoomBrowseResponse = {
   name: string;
   status: GoalRoomRecruitmentStatus;
   currentMemberCount: number;
+  leaderId: number;
   initMemberCount: number;
   startDate: string;
   endDate: string;
@@ -29,6 +30,14 @@ export type CreateGoalRoomRequest = {
   roadmapContentId: number;
   name: string;
   limitedMemberCount: number;
-  goalRoomTodo: GoalRoomTodo;
+  goalRoomTodo: Omit<GoalRoomTodo, 'id'>;
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };
+
+export type newTodoPayload = {
+  content: string;
+  startDate: string;
+  endDate: string;
+};
+
+export type GoalRoomTodoResponse = GoalRoomTodo[];

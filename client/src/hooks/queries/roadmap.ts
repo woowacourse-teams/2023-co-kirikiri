@@ -1,7 +1,10 @@
 import { SelectedCategoryId } from '@myTypes/roadmap/internal';
 import { getRoadmapById, getRoadmapList } from '@apis/roadmap';
+import { RoadmapValueType } from '@/myTypes/roadmap/remote';
+import { getRoadmapById, getRoadmapList, postCreateRoadmap } from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
+import { useMutation } from '@tanstack/react-query';
 
 export const useRoadmapList = (
   categoryId?: SelectedCategoryId,
@@ -23,4 +26,18 @@ export const useRoadmapDetail = (id: number) => {
   );
 
   return data;
+};
+
+export const useCreateRoadmap = () => {
+  const { mutate } = useMutation(
+    (roadmapValue: RoadmapValueType) => postCreateRoadmap(roadmapValue),
+    {
+      onSuccess() {},
+      onError() {},
+    }
+  );
+
+  return {
+    createRoadmap: mutate,
+  };
 };
