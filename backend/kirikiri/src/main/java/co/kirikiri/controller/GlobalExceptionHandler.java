@@ -3,6 +3,7 @@ package co.kirikiri.controller;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -26,6 +27,13 @@ public class GlobalExceptionHandler {
         log.warn(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(final ForbiddenException exception) {
+        log.warn(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     @ExceptionHandler(ConflictException.class)

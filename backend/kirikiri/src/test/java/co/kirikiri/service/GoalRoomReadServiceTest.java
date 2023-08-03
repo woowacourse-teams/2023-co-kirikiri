@@ -16,7 +16,10 @@ import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.goalroom.GoalRoomToDo;
+import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -37,11 +40,13 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
@@ -51,6 +56,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -84,6 +91,9 @@ class GoalRoomReadServiceTest {
 
     @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
+
+    @Mock
+    private GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
 
     @Mock
     private CheckFeedRepository checkFeedRepository;
@@ -227,6 +237,72 @@ class GoalRoomReadServiceTest {
         //when
         //then
         assertThatThrownBy(() -> goalRoomReadService.findGoalRoomMembers(1L))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸의_전체_투두리스트를_조회한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+
+        final GoalRoomToDo firstGoalRoomTodo = new GoalRoomToDo(1L, new GoalRoomTodoContent("투두 1"),
+                new Period(TODAY, TEN_DAY_LATER));
+        final GoalRoomToDo secondGoalRoomTodo = new GoalRoomToDo(2L, new GoalRoomTodoContent("투두 2"),
+                new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER));
+        goalRoom.addGoalRoomTodo(firstGoalRoomTodo);
+        goalRoom.addGoalRoomTodo(secondGoalRoomTodo);
+
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+                .thenReturn(Optional.of(goalRoomMember));
+        when(goalRoomRepository.findByIdWithTodos(1L))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomToDoCheckRepository.findByGoalRoomIdAndMemberIdentifier(anyLong(), any()))
+                .thenReturn(List.of(
+                        new GoalRoomToDoCheck(goalRoomMember, firstGoalRoomTodo)
+                ));
+
+        // when
+        final List<GoalRoomTodoResponse> responses = goalRoomReadService.getAllGoalRoomTodo(1L, "identifier");
+        final List<GoalRoomTodoResponse> expected = List.of(
+                new GoalRoomTodoResponse(1L, "투두 1", TODAY, TEN_DAY_LATER, new GoalRoomToDoCheckResponse(true)),
+                new GoalRoomTodoResponse(2L, "투두 2", TWENTY_DAY_LAYER, THIRTY_DAY_LATER,
+                        new GoalRoomToDoCheckResponse(false)));
+
+        // then
+        assertThat(responses)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸의_투두리스트_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
+        // given
+        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+                .thenReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomTodo(1L, "identifier"))
+                .isInstanceOf(ForbiddenException.class);
+    }
+
+    @Test
+    void 골룸의_투두리스트_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+                .thenReturn(Optional.of(goalRoomMember));
+        when(goalRoomRepository.findByIdWithTodos(1L))
+                .thenReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomTodo(1L, "identifier"))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -618,7 +694,6 @@ class GoalRoomReadServiceTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-
         return goalRoom;
     }
 
