@@ -36,8 +36,8 @@ const App = () => {
                   </Suspense>
                 }
               />
+              <Route path='/roadmap/:id/goalroom-list' element={<GoalRoomListPage />} />
               <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
-              <Route path='/goalroom-list' element={<GoalRoomListPage />} />
               <Route
                 path='/roadmap/:id/goalroom-create'
                 element={<GoalRoomCreatePage />}
