@@ -1,13 +1,15 @@
-import { RoadmapValueType } from '@/myTypes/roadmap/remote';
-import { createContext, PropsWithChildren, useRef, useState } from 'react';
-import Category, { DummyCategoryType } from '../category/Category';
+import { useCollectRoadmapData } from '@/hooks/roadmap/useCollectRoadmapData';
+import React, { createContext, PropsWithChildren, useRef } from 'react';
+import Category from '../category/Category';
 import Description from '../description/Description';
-import Difficulty, { DummyDifficultyType } from '../difficulty/Difficulty';
+import Difficulty from '../difficulty/Difficulty';
 import MainText from '../mainText/MainText';
 import Period from '../period/Period';
 import Roadmap from '../roadmap/Roadmap';
+import RoadmapItem from '../roadmap/RoadmapItem';
 import Tag from '../tag/Tag';
 import Title from '../title/Title';
+import * as S from './roadmapCreateForm.styles';
 
 // ref공유를 위한 context - 다음 브랜치에서 파일 옮길 예정
 const FormRefContext = createContext<{ ref: React.MutableRefObject<undefined> | null }>({
@@ -22,43 +24,15 @@ const RefProvider = ({ children }: PropsWithChildren) => {
 //
 
 const RoadmapCreateForm = () => {
-  const [, setRoadmapValue] = useState<RoadmapValueType>({
-    categoryId: null,
-    title: null,
-    introduction: null,
-    content: null,
-    difficulty: null,
-    requiredPeriod: null,
-    roadmapNodes: [],
-  });
-
-  const getSelectedCategoryId = (category: keyof DummyCategoryType | null) => {
-    setRoadmapValue((prev) => ({
-      ...prev,
-      categoryId: category,
-    }));
-  };
-
-  const getSelectedDifficulty = (difficulty: keyof DummyDifficultyType | null) => {
-    setRoadmapValue((prev) => ({
-      ...prev,
-      difficulty,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const target = e.target as HTMLFormElement;
-
-    setRoadmapValue((prev) => ({
-      ...prev,
-      title: target.roadmapTitle.value,
-      introduction: target.introduction.value,
-      content: target.content.value ?? null,
-      requiredPeriod: target.requiredPeriod.value,
-      roadmapNodes: [],
-    }));
-  };
+  const {
+    roadmapValue,
+    getSelectedCategoryId,
+    getSelectedDifficulty,
+    getRoadmapItemTitle,
+    getTags,
+    handleSubmit,
+    addNode,
+  } = useCollectRoadmapData();
 
   return (
     <RefProvider>
@@ -67,10 +41,23 @@ const RoadmapCreateForm = () => {
         <Title />
         <Description />
         <Difficulty getSelectedDifficulty={getSelectedDifficulty} />
-        <Tag />
+        <Tag getTags={getTags} />
         <MainText />
         <Period />
-        <Roadmap />
+        <Roadmap>
+          <>
+            {roadmapValue.roadmapNodes.map((_, index) => {
+              return (
+                <RoadmapItem
+                  roadmapNumber={index + 1}
+                  itemId={index}
+                  getRoadmapItemTitle={getRoadmapItemTitle}
+                />
+              );
+            })}
+            <S.AddButton onClick={addNode}>로드맵 추가하기</S.AddButton>
+          </>
+        </Roadmap>
         <button>done!!</button>
       </form>
     </RefProvider>
