@@ -5,6 +5,7 @@ import {
   GoalRoomDetailResponse,
   GoalRoomTodoResponse,
   newTodoPayload,
+  GoalRoomTodoChangeStatusRequest,
 } from '@/myTypes/goalRoom/remote';
 import client from '@apis/axios/client';
 
@@ -39,6 +40,13 @@ export const getGoalRoomTodos = async (goalRoomId: string) => {
   );
 
   return data;
+};
+
+export const postToChangeTodoCheckStatus = async ({
+  goalRoomId,
+  todoId,
+}: GoalRoomTodoChangeStatusRequest) => {
+  return client.post(`/goal-rooms/${goalRoomId}/todos/${todoId}`);
 };
 
 export const postCreateNewTodo = (goalRoomId: string, body: newTodoPayload) => {
