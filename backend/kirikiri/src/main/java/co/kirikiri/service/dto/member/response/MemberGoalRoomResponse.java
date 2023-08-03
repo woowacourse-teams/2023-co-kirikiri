@@ -9,6 +9,7 @@ import java.util.List;
 public record MemberGoalRoomResponse(
         String name,
         String status,
+        Long leaderId,
         Integer currentMemberCount,
         Integer limitedMemberCount,
         LocalDate startDate,

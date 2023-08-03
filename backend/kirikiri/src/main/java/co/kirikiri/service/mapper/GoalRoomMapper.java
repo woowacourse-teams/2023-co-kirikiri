@@ -42,6 +42,9 @@ import org.springframework.data.domain.Page;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
 
+    private static final int MAX_MEMBER_GOAL_ROOM_TODO_NUMBER = 3;
+    private static final int MAX_MEMBER_GOAL_ROOM_CHECK_FEED_NUMBER = 4;
+
     public static GoalRoomCreateDto convertToGoalRoomCreateDto(final GoalRoomCreateRequest goalRoomCreateRequest) {
         final GoalRoomTodoRequest goalRoomTodoRequest = goalRoomCreateRequest.goalRoomTodo();
         final GoalRoomToDo goalRoomToDo = makeGoalRoomToDo(goalRoomTodoRequest);
@@ -135,26 +138,27 @@ public class GoalRoomMapper {
         final List<CheckFeedResponse> checkFeedResponses = convertToCheckFeedResponses(checkFeeds);
 
         return new MemberGoalRoomResponse(goalRoom.getName().getValue(), goalRoom.getStatus().name(),
-                goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
-                goalRoom.getStartDate(), goalRoom.getEndDate(), goalRoom.getRoadmapContent().getId(),
-                nodeResponses, todoResponses, checkFeedResponses);
+                goalRoom.findGoalRoomLeader().getId(), goalRoom.getCurrentMemberCount(),
+                goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
+                goalRoom.getRoadmapContent().getId(), nodeResponses, todoResponses, checkFeedResponses);
     }
 
     private static GoalRoomRoadmapNodesResponse convertToGoalRoomRoadmapNodesResponse(
             final GoalRoomRoadmapNodes nodes) {
-        final GoalRoomRoadmapNode firstNode = nodes.getNodeByDate(LocalDate.now());
-        if (!nodes.hasBackNode(firstNode)) {
-            return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(firstNode), nodes.hasBackNode(firstNode),
-                    List.of(new GoalRoomRoadmapNodeResponse(firstNode.getRoadmapNode().getTitle(),
-                            firstNode.getStartDate(), firstNode.getEndDate(), firstNode.getCheckCount())));
+        final GoalRoomRoadmapNode currentNode = nodes.getNodeByDate(LocalDate.now());
+        if (!nodes.hasBackNode(currentNode)) {
+            return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(currentNode), nodes.hasBackNode(currentNode),
+                    List.of(new GoalRoomRoadmapNodeResponse(currentNode.getId(),
+                            currentNode.getRoadmapNode().getTitle(),
+                            currentNode.getStartDate(), currentNode.getEndDate(), currentNode.getCheckCount())));
         }
 
-        final GoalRoomRoadmapNode secondNode = nodes.getNodeByDate(firstNode.getEndDate().plusDays(1));
-        return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(firstNode), nodes.hasBackNode(secondNode),
-                List.of(new GoalRoomRoadmapNodeResponse(firstNode.getRoadmapNode().getTitle(),
-                                firstNode.getStartDate(), firstNode.getEndDate(), firstNode.getCheckCount()),
-                        new GoalRoomRoadmapNodeResponse(secondNode.getRoadmapNode().getTitle(),
-                                secondNode.getStartDate(), secondNode.getEndDate(), secondNode.getCheckCount())));
+        final GoalRoomRoadmapNode nextNode = nodes.getNodeByDate(currentNode.getEndDate().plusDays(1));
+        return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(currentNode), nodes.hasBackNode(nextNode),
+                List.of(new GoalRoomRoadmapNodeResponse(currentNode.getId(), currentNode.getRoadmapNode().getTitle(),
+                                currentNode.getStartDate(), currentNode.getEndDate(), currentNode.getCheckCount()),
+                        new GoalRoomRoadmapNodeResponse(nextNode.getId(), nextNode.getRoadmapNode().getTitle(),
+                                nextNode.getStartDate(), nextNode.getEndDate(), nextNode.getCheckCount())));
     }
 
     private static List<GoalRoomTodoResponse> convertGoalRoomTodoResponses(final GoalRoomToDos goalRoomToDos) {
@@ -162,7 +166,7 @@ public class GoalRoomMapper {
                 .stream()
                 .map(todo -> new GoalRoomTodoResponse(todo.getId(), todo.getContent(), todo.getStartDate(),
                         todo.getEndDate()))
-                .limit(3)
+                .limit(MAX_MEMBER_GOAL_ROOM_TODO_NUMBER)
                 .toList();
     }
 
@@ -170,7 +174,7 @@ public class GoalRoomMapper {
         return checkFeeds.stream()
                 .map(checkFeed -> new CheckFeedResponse(checkFeed.getId(), checkFeed.getServerFilePath(),
                         checkFeed.getDescription()))
-                .limit(4)
+                .limit(MAX_MEMBER_GOAL_ROOM_CHECK_FEED_NUMBER)
                 .toList();
     }
 

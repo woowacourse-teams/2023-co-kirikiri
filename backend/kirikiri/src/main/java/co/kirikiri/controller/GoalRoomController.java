@@ -9,11 +9,15 @@ import co.kirikiri.service.dto.PageResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomForListResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -82,5 +86,29 @@ public class GoalRoomController {
                                                 @ModelAttribute final CheckFeedRequest checkFeedRequest) {
         final String imageUrl = goalRoomCreateService.createCheckFeed(identifier, goalRoomId, checkFeedRequest);
         return ResponseEntity.created(URI.create(imageUrl)).build();
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/me")
+    public ResponseEntity<MemberGoalRoomResponse> findMemberGoalRoom(
+            @MemberIdentifier final String identifier, @PathVariable final Long goalRoomId) {
+        final MemberGoalRoomResponse memberGoalRoomResponse = goalRoomReadService.findMemberGoalRoom(identifier,
+                goalRoomId);
+        return ResponseEntity.ok(memberGoalRoomResponse);
+    }
+
+    @Authenticated
+    @GetMapping("/me")
+    public ResponseEntity<List<MemberGoalRoomForListResponse>> findMemberGoalRoomsByStatus(
+            @MemberIdentifier final String identifier,
+            @RequestParam(value = "statusCond", required = false) final GoalRoomStatusTypeRequest goalRoomStatusTypeRequest) {
+        if (goalRoomStatusTypeRequest == null) {
+            final List<MemberGoalRoomForListResponse> memberGoalRoomForListResponses =
+                    goalRoomReadService.findMemberGoalRooms(identifier);
+            return ResponseEntity.ok(memberGoalRoomForListResponses);
+        }
+        final List<MemberGoalRoomForListResponse> memberGoalRoomForListResponses =
+                goalRoomReadService.findMemberGoalRoomsByStatusType(identifier, goalRoomStatusTypeRequest);
+        return ResponseEntity.ok(memberGoalRoomForListResponses);
     }
 }

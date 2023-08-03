@@ -323,16 +323,16 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
                 .header(AUTHORIZATION, "Bearer " + 액세스_토큰)
                 .when()
-                .get(API_PREFIX + "/members/goal-rooms/{goalRoomId}", 골룸_아이디)
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/me", 골룸_아이디)
                 .then()
                 .log().all()
                 .extract();
 
         // then
-        final MemberGoalRoomResponse 예상되는_응답 = new MemberGoalRoomResponse(정상적인_골룸_이름, "RUNNING",
+        final MemberGoalRoomResponse 예상되는_응답 = new MemberGoalRoomResponse(정상적인_골룸_이름, "RUNNING", 1L,
                 2, 정상적인_골룸_제한_인원, 오늘, 십일_후, 1L,
                 new GoalRoomRoadmapNodesResponse(false, false,
-                        List.of(new GoalRoomRoadmapNodeResponse("로드맵 1주차", 오늘, 십일_후, 정상적인_골룸_노드_인증_횟수))),
+                        List.of(new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", 오늘, 십일_후, 정상적인_골룸_노드_인증_횟수))),
                 List.of(new GoalRoomTodoResponse(1L, 정상적인_골룸_투두_컨텐츠, 오늘, 십일_후)),
                 List.of(
                         new CheckFeedResponse(1L, "filePath1", "image description"),
@@ -382,7 +382,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
                 .header(AUTHORIZATION, "Bearer " + 액세스_토큰)
                 .when()
-                .get(API_PREFIX + "/members/goal-rooms")
+                .get(API_PREFIX + "/goal-rooms/me")
                 .then()
                 .log().all()
                 .extract();
@@ -441,7 +441,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .header(AUTHORIZATION, "Bearer " + 액세스_토큰)
                 .queryParam("statusCond", "RECRUITING")
                 .when()
-                .get(API_PREFIX + "/members/goal-rooms")
+                .get(API_PREFIX + "/goal-rooms/me")
                 .then()
                 .log().all()
                 .extract();
@@ -497,7 +497,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .header(AUTHORIZATION, "Bearer " + 액세스_토큰)
                 .queryParam("statusCond", "RUNNING")
                 .when()
-                .get(API_PREFIX + "/members/goal-rooms")
+                .get(API_PREFIX + "/goal-rooms/me")
                 .then()
                 .log().all()
                 .extract();

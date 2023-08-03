@@ -35,6 +35,7 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -85,27 +86,42 @@ class GoalRoomRepositoryTest {
     @Test
     void 골룸_아이디로_골룸과_로드맵컨텐츠_골룸노드_투두_정보를_조회한다() {
         final Member creator = 크리에이터를_저장한다();
+        final Member member = 사용자를_저장한다();
         final RoadmapCategory category = 카테고리를_저장한다("게임");
         final Roadmap roadmap = 로드맵을_저장한다(creator, category);
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
 
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoomToDo goalRoomToDo = new GoalRoomToDo(new GoalRoomTodoContent("할 일 목록"),
+        final GoalRoom goalRoom1 = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoomToDo goalRoomToDo1 = new GoalRoomToDo(new GoalRoomTodoContent("할 일 목록"),
                 new Period(TODAY, TEN_DAY_LATER));
-        goalRoom.addGoalRoomTodo(goalRoomToDo);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        goalRoom1.addGoalRoomTodo(goalRoomToDo1);
+        final GoalRoom savedGoalRoom1 = goalRoomRepository.save(goalRoom1);
+
+        final GoalRoom goalRoom2 = 골룸을_생성한다(targetRoadmapContent, member);
+        final GoalRoomToDo goalRoomToDo2 = new GoalRoomToDo(new GoalRoomTodoContent("우리만의 투두"),
+                new Period(TEN_DAY_LATER, TWENTY_DAY_LAYER));
+        goalRoom2.addGoalRoomTodo(goalRoomToDo2);
+        final GoalRoom savedGoalRoom2 = goalRoomRepository.save(goalRoom2);
 
         // when
-        final GoalRoom findGoalRoom = goalRoomRepository.findByIdWithContentAndNodesAndTodos(savedGoalRoom.getId())
+        final GoalRoom findGoalRoom1 = goalRoomRepository.findByIdWithContentAndNodesAndTodos(savedGoalRoom1.getId())
+                .get();
+        final GoalRoom findGoalRoom2 = goalRoomRepository.findByIdWithContentAndNodesAndTodos(savedGoalRoom2.getId())
                 .get();
 
         //then
-        assertThat(findGoalRoom)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(goalRoom);
+        assertAll(
+                () -> assertThat(findGoalRoom1)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id")
+                        .isEqualTo(goalRoom1),
+                () -> assertThat(findGoalRoom2)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id")
+                        .isEqualTo(goalRoom2)
+        );
     }
 
     @Test
@@ -126,7 +142,6 @@ class GoalRoomRepositoryTest {
         goalRoom1.join(member);
         goalRoom2.join(member);
         goalRoom3.join(member);
-        goalRoom4.join(member);
         goalRoom2.updateStatus(GoalRoomStatus.RUNNING);
         goalRoom3.updateStatus(GoalRoomStatus.COMPLETED);
 
@@ -136,10 +151,18 @@ class GoalRoomRepositoryTest {
         goalRoomRepository.save(goalRoom4);
 
         //when
-        final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMember(member);
+        final List<GoalRoom> creatorMemberGoalRooms = goalRoomRepository.findByMember(creator);
+        final List<GoalRoom> followerMemberGoalRooms = goalRoomRepository.findByMember(member);
 
         //then
-        assertThat(memberGoalRooms).hasSize(4);
+        Assertions.assertAll(
+                () -> assertThat(creatorMemberGoalRooms)
+                        .usingRecursiveComparison()
+                        .isEqualTo(List.of(goalRoom1, goalRoom2, goalRoom3, goalRoom4)),
+                () -> assertThat(followerMemberGoalRooms)
+                        .usingRecursiveComparison()
+                        .isEqualTo(List.of(goalRoom1, goalRoom2, goalRoom3))
+        );
     }
 
     @Test
@@ -179,9 +202,15 @@ class GoalRoomRepositoryTest {
 
         //then
         assertAll(
-                () -> assertThat(memberRecruitingGoalRooms).hasSize(2),
-                () -> assertThat(memberRunningGoalRooms).hasSize(1),
-                () -> assertThat(memberCompletedGoalRooms).hasSize(1)
+                () -> assertThat(memberRecruitingGoalRooms)
+                        .usingRecursiveComparison()
+                        .isEqualTo(List.of(goalRoom1, goalRoom4)),
+                () -> assertThat(memberRunningGoalRooms)
+                        .usingRecursiveComparison()
+                        .isEqualTo(List.of(goalRoom2)),
+                () -> assertThat(memberCompletedGoalRooms)
+                        .usingRecursiveComparison()
+                        .isEqualTo(List.of(goalRoom3))
         );
     }
 

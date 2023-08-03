@@ -126,3 +126,21 @@ operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_�
 === *6-3* 실패 - 인증 피드 요청 시 존재하지 않는 골룸일 경우
 
 operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,request-parts,response-fields']
+
+[[사용자골룸단일조회-API]]
+== *7. 사용자 골룸 단일 조회*
+
+=== *7-1* 성공
+
+operation::goal-room-read-api-test/사용자_단일_골룸을_조회한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+=== *7-2* 실패 - 조회 요청 시 유효하지 않은 골룸 아이디가 들어올 때
+
+operation::goal-room-read-api-test/사용자_골룸_조회_시_유효하지_않은_골룸_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+[[사용자골룸목록조회-API]]
+== *8. 사용자 골룸 목록 조회*
+
+=== *8-1* 성공
+
+operation::goal-room-read-api-test/사용자_참가_골룸_목록을_조회한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']

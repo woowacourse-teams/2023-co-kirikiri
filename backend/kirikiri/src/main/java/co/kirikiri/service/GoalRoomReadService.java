@@ -80,15 +80,15 @@ public class GoalRoomReadService {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         validateMemberInGoalRoom(goalRoom, member);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now());
-        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(goalRoomRoadmapNode);
+        final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now());
+        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(currentGoalRoomRoadmapNode);
 
         return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds);
     }
 
     private GoalRoom findMemberGoalRoomById(final Long goalRoomId) {
         return goalRoomRepository.findByIdWithContentAndNodesAndTodos(goalRoomId)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId));
     }
 
     private Member findMemberByIdentifier(final Identifier identifier) {
