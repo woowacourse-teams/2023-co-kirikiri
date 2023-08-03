@@ -42,18 +42,27 @@ const fixture: GoalRoomFixture = {
         content: '투두 내용 11',
         startDate: '2023-07-19',
         endDate: '2023-07-20',
+        check: {
+          isChecked: true,
+        },
       },
       {
         id: 2,
         content: '투두 내용 22',
         startDate: '2023-07-19',
         endDate: '2023-07-20',
+        check: {
+          isChecked: false,
+        },
       },
       {
         id: 3,
         content: '투두 내용 33',
         startDate: '2023-07-19',
         endDate: '2023-07-20',
+        check: {
+          isChecked: false,
+        },
       },
     ],
     checkFeeds: [
