@@ -7,10 +7,11 @@ import {
 
 type FilterCondType = 'LATEST';
 
-export type RoadmapListRequest = {
-  lastValue: number | null;
-  size: number;
-  filterCond: FilterCondType;
+export type GoalRoomListRequest = {
+  roadmapId: number;
+  lastCreatedAt?: any;
+  size?: number;
+  filterCond?: FilterCondType;
 };
 
 export type GoalRoomBrowseResponse = {
@@ -39,4 +40,20 @@ export type CreateGoalRoomRequest = {
   limitedMemberCount: number;
   goalRoomTodo: GoalRoomTodo;
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
+};
+
+type GoalRoomLeaderType = {
+  id: number;
+  name: string;
+};
+
+export type GoalRoomDetailResponse = {
+  goalRoomId: number;
+  name: string;
+  currentMemberCount: number;
+  limitedMemberCount: number;
+  createdAt: number[];
+  startDate: number[];
+  endDate: number[];
+  goalRoomLeader: GoalRoomLeaderType;
 };
