@@ -1,5 +1,6 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
+import { BackDrop } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
 
 export const CertificationFeedWrapper = styled(DashBoardSection)``;
 
@@ -27,3 +28,5 @@ export const StyledImage = styled.img`
     box-shadow: ${({ theme }) => theme.shadows.threeDHovered};
   }
 `;
+
+export const ModalBackdrop = styled(BackDrop)``;
