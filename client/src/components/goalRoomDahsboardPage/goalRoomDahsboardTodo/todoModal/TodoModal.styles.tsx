@@ -7,7 +7,7 @@ export const ModalWrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
 
-  width: 70%;
+  width: 45%;
   padding: 2rem;
 
   background-color: ${({ theme }) => theme.colors.gray_light};

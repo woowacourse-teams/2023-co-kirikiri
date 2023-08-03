@@ -4,7 +4,8 @@ export const AddingTodoForm = styled.form`
   display: flex;
   align-items: center;
 
-  padding: 1rem;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
 
   border: 1px solid ${({ theme }) => theme.colors.gray200};
   border-radius: 10px;
