@@ -10,7 +10,7 @@ const GoalRoomList = () => {
   return (
     <S.ListContainer>
       <S.FilterBar>
-        <p>모집중인 골룸 12개</p>
+        <p>모집중인 골룸 {goalRoomList.length}개</p>
         <p>마감 임박순</p>
       </S.FilterBar>
       <S.ListWrapper>

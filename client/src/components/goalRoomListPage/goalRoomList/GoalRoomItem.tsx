@@ -4,7 +4,7 @@ import * as S from './goalRoomList.styles';
 const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
   return (
     <S.ItemContainer>
-      <S.Recruiting>{goalRoomInfo.startDate}</S.Recruiting>
+      <S.Recruiting>모집중 (~{goalRoomInfo.startDate})</S.Recruiting>
       <S.Name>{goalRoomInfo.name}</S.Name>
       <S.RoadmapCreator>created by Woody ❤️</S.RoadmapCreator>
       <S.RoadmapIntroduce>please save me</S.RoadmapIntroduce>
