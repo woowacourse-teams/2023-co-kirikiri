@@ -4,6 +4,7 @@ import {
   getGoalRoomDashboard,
   postCreateNewTodo,
   getGoalRoomTodos,
+  postCreateNewCertificationFeed,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -59,5 +60,22 @@ export const useFetchGoalRoomTodos = (goalRoomId: string) => {
 
   return {
     goalRoomTodos: data,
+  };
+};
+
+export const useCreateCertificationFeed = (goalRoomId: string) => {
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(
+    (formData: FormData) => postCreateNewCertificationFeed(goalRoomId, formData),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries([['goalRoom', goalRoomId]]);
+      },
+    }
+  );
+
+  return {
+    createCertificationFeed: mutate,
   };
 };

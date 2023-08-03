@@ -31,3 +31,14 @@ export const getGoalRoomTodos = async (goalRoomId: string) => {
 export const postCreateNewTodo = (goalRoomId: string, body: newTodoPayload) => {
   return client.post(`/goal-rooms/${goalRoomId}/todos`, body);
 };
+
+export const postCreateNewCertificationFeed = (
+  goalRoomId: string,
+  formData: FormData
+) => {
+  return client.post(`/goal-rooms/${goalRoomId}/checkFeeds`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
