@@ -5,10 +5,10 @@ import static org.mockito.Mockito.when;
 
 import co.kirikiri.common.interceptor.AuthInterceptor;
 import co.kirikiri.common.resolver.MemberIdentifierArgumentResolver;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.FieldDescriptor;
-import java.util.List;
 
 public class ControllerTestHelper extends RestDocsHelper {
 
@@ -31,7 +31,8 @@ public class ControllerTestHelper extends RestDocsHelper {
                 .thenReturn(true);
     }
 
-    protected List<FieldDescriptor> makeFieldDescriptor(final List<FieldDescriptionHelper.FieldDescription> descriptions) {
+    protected List<FieldDescriptor> makeFieldDescriptor(
+            final List<FieldDescriptionHelper.FieldDescription> descriptions) {
         return descriptions.stream()
                 .map(FieldDescriptionHelper::getDescriptor)
                 .toList();

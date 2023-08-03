@@ -9,6 +9,7 @@ import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -68,6 +69,32 @@ class GoalRoomRoadmapNodesTest {
         //when
         //then
         assertDoesNotThrow(() -> new GoalRoomRoadmapNodes(Collections.emptyList()));
+    }
+
+    @Test
+    void 골룸_로드맵_노드들_중_첫번째_시작날짜를_구한다() {
+        // given
+        // when
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>(List.of(
+                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 1, null),
+                new GoalRoomRoadmapNode(new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER), 1, null))
+        ));
+
+        // expect
+        assertThat(goalRoomRoadmapNodes.getGoalRoomStartDate()).isEqualTo(TODAY);
+    }
+
+    @Test
+    void 골룸_로드맵_노드들_중_마지막_종료날짜를_구한다() {
+        // given
+        // when
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>(List.of(
+                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 1, null),
+                new GoalRoomRoadmapNode(new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER), 1, null))
+        ));
+
+        // then
+        assertThat(goalRoomRoadmapNodes.getGoalRoomEndDate()).isEqualTo(THIRTY_DAY_LATER);
     }
 
     @Test

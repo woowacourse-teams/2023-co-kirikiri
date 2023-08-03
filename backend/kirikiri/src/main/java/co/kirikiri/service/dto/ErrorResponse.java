@@ -5,6 +5,7 @@ import java.util.Objects;
 public record ErrorResponse(
         String message
 ) {
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

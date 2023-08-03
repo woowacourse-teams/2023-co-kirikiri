@@ -8,4 +8,5 @@ public record GoalRoomRoadmapNodeDto(
         LocalDate startDate,
         LocalDate endDate
 ) {
+
 }

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.Period;
 import jakarta.persistence.Embedded;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalRoomToDo extends BaseCreatedTimeEntity {
+public class GoalRoomToDo extends BaseUpdatedTimeEntity {
 
     @Embedded
     private GoalRoomTodoContent content;

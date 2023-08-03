@@ -20,8 +20,8 @@ class RoadmapNodeTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 201})
-    void 로드맵_노드의_설명의_길이가_1보다_작거나_200보다_크면_예외가_발생한다(final int contentLength) {
+    @ValueSource(ints = {0, 2001})
+    void 로드맵_노드의_설명의_길이가_1보다_작거나_2000보다_크면_예외가_발생한다(final int contentLength) {
         // given
         final String content = "a".repeat(contentLength);
 

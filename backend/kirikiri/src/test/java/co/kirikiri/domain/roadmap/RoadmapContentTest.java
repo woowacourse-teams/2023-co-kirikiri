@@ -21,12 +21,13 @@ import org.junit.jupiter.api.Test;
 class RoadmapContentTest {
 
     @Test
-    void 로드맵_본문의_길이가_150보다_크면_예외가_발생한다() {
+    void 로드맵_본문의_길이가_2000보다_크면_예외가_발생한다() {
         // given
-        final String content = "a".repeat(151);
+        final String content = "a".repeat(2001);
 
         // expect
-        assertThatThrownBy(() -> new RoadmapContent(content)).isInstanceOf(BadRequestException.class);
+        assertThatThrownBy(() -> new RoadmapContent(content))
+                .isInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -49,9 +50,11 @@ class RoadmapContentTest {
 
         // then
         final RoadmapNodes nodes = content.getNodes();
-        assertAll(() -> assertThat(nodes.getValues()).hasSize(2),
+        assertAll(
+                () -> assertThat(nodes.getValues()).hasSize(2),
                 () -> assertThat(nodes.getValues().get(0).getRoadmapContent()).isEqualTo(content),
-                () -> assertThat(nodes.getValues().get(1).getRoadmapContent()).isEqualTo(content));
+                () -> assertThat(nodes.getValues().get(1).getRoadmapContent()).isEqualTo(content)
+        );
     }
 
     @Test
@@ -59,8 +62,8 @@ class RoadmapContentTest {
         // given
         final RoadmapContent content = new RoadmapContent("content");
         final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
-        final Member creator = new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")),
-                new Nickname("nickname"), profile);
+        final Member creator = new Member(new Identifier("creator"),
+                new EncryptedPassword(new Password("password1")), new Nickname("nickname"), profile);
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creator, category);
 

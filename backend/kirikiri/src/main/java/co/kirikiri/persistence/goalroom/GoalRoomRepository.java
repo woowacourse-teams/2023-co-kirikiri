@@ -8,5 +8,4 @@ public interface GoalRoomRepository extends JpaRepository<GoalRoom, Long>, GoalR
 
     @Override
     Optional<GoalRoom> findById(final Long goalRoomId);
-
 }

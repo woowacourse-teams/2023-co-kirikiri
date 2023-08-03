@@ -53,17 +53,20 @@ class CheckFeedRepositoryTest {
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final CheckFeedRepository checkFeedRepository;
 
     public CheckFeedRepositoryTest(final MemberRepository memberRepository,
                                    final RoadmapCategoryRepository roadmapCategoryRepository,
                                    final RoadmapRepository roadmapRepository,
                                    final GoalRoomRepository goalRoomRepository,
+                                   final GoalRoomMemberRepository goalRoomMemberRepository,
                                    final CheckFeedRepository checkFeedRepository) {
         this.memberRepository = memberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
+        this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.checkFeedRepository = checkFeedRepository;
     }
 
@@ -79,10 +82,10 @@ class CheckFeedRepositoryTest {
         final Member member = 사용자를_저장한다("participant", "참여자");
         final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
 
-        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(),
-                goalRoom, member);
-        goalRoom.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator), joinedMember));
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                member);
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
@@ -113,10 +116,10 @@ class CheckFeedRepositoryTest {
         final Member member = 사용자를_저장한다("participant", "참여자");
         final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
 
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoom.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator), joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
@@ -144,10 +147,10 @@ class CheckFeedRepositoryTest {
         final Member member = 사용자를_저장한다("participant", "참여자");
         final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
 
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoom.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator), joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -178,10 +181,10 @@ class CheckFeedRepositoryTest {
         final Member member = 사용자를_저장한다("participant", "참여자");
         final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
 
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoom.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator), joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);

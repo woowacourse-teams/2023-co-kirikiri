@@ -2,9 +2,13 @@ package co.kirikiri.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -18,6 +22,7 @@ import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -26,10 +31,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(GoalRoomController.class)
-public class GoalRoomReadApiTest extends ControllerTestHelper {
+class GoalRoomReadApiTest extends ControllerTestHelper {
 
     @MockBean
     private GoalRoomReadService goalRoomReadService;
@@ -46,8 +51,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(
-                        RestDocumentationRequestBuilders
-                                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
+                        get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
                 .andDo(
@@ -81,8 +85,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                 .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"));
 
         // when
-        final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
+        final String response = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
                         .contextPath(API_PREFIX))
                 .andExpectAll(
                         status().is4xxClientError(),
@@ -110,8 +113,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
 
         // when
         final String response = mockMvc.perform(
-                        RestDocumentationRequestBuilders
-                                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
+                        get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
                                 .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
@@ -150,8 +152,7 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
                 .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1L"));
 
         // when
-        final String response = mockMvc.perform(RestDocumentationRequestBuilders
-                        .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
+        final String response = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .contextPath(API_PREFIX))
                 .andExpectAll(
@@ -172,6 +173,73 @@ public class GoalRoomReadApiTest extends ControllerTestHelper {
         final ErrorResponse expected = new ErrorResponse("골룸 정보가 존재하지 않습니다. goalRoomId = 1L");
         assertThat(errorResponse)
                 .isEqualTo(expected);
+    }
+
+    @Test
+    void 정상적으로_골룸_멤버를_조회한다() throws Exception {
+        //given
+        final GoalRoomMemberResponse goalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "nickname1", "imagePath1",
+                50D);
+        final GoalRoomMemberResponse goalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "nickname2", "imagePath2",
+                40D);
+        given(goalRoomReadService.findGoalRoomMembers(anyLong()))
+                .willReturn(List.of(goalRoomMemberResponse1, goalRoomMemberResponse2));
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("Bearer 액세스 토큰")
+                                ),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[0].memberId").description("회원 id"),
+                                        fieldWithPath("[0].nickname").description("회원 닉네임"),
+                                        fieldWithPath("[0].imagePath").description("회원 이미지 경로"),
+                                        fieldWithPath("[0].accomplishmentRate").description("회원 달성률"))))
+                .andReturn();
+
+        // then
+        final List<GoalRoomMemberResponse> response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(response).usingRecursiveComparison()
+                .isEqualTo(List.of(goalRoomMemberResponse1, goalRoomMemberResponse2));
+    }
+
+    @Test
+    void 골룸_멤버_조회_시_존재하지_않는_골룸일_경우() throws Exception {
+        //given
+        doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
+                .when(goalRoomReadService)
+                .findGoalRoomMembers(1L);
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메세지")
+                                )))
+                .andReturn();
+
+        // then
+        final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).isEqualTo(new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1"));
     }
 
     private GoalRoomResponse 골룸_조회_응답을_생성한다() {

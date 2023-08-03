@@ -2,8 +2,8 @@ package co.kirikiri.service.dto.member.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
 import java.time.LocalDate;
 
 public record MemberJoinRequest(
@@ -20,9 +20,11 @@ public record MemberJoinRequest(
         @Pattern(regexp = "^010-\\d{4}-\\d{4}$", message = "전화번호 형식이 맞지 않습니다.")
         String phoneNumber,
 
+        @NotNull(message = "성별은 빈 값일 수 없습니다.")
         GenderType genderType,
 
-        @JsonFormat(pattern = "yyMMdd")
+        @NotNull(message = "생일은 빈 값일 수 없습니다.")
+        @JsonFormat(pattern = "yyyyMMdd")
         LocalDate birthday
 ) {
 

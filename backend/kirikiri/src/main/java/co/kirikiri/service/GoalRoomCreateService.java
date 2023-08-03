@@ -8,7 +8,7 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -27,6 +27,7 @@ import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -103,13 +104,38 @@ public class GoalRoomCreateService {
 
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
-        final GoalRoom goalRoom = findById(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         goalRoom.join(member);
     }
 
-    private GoalRoom findById(final Long goalRoomId) {
+    private GoalRoom findGoalRoomById(final Long goalRoomId) {
         return goalRoomRepository.findById(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
+    }
+
+    @Transactional
+    public Long addGoalRoomTodo(final Long goalRoomId, final String identifier,
+                                final GoalRoomTodoRequest goalRoomTodoRequest) {
+        final Member member = findMemberByIdentifier(identifier);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        checkGoalRoomCompleted(goalRoom);
+        checkGoalRoomLeader(member, goalRoom);
+        final GoalRoomToDo goalRoomToDo = GoalRoomMapper.convertToGoalRoomTodo(goalRoomTodoRequest);
+        goalRoom.addGoalRoomTodo(goalRoomToDo);
+        goalRoomRepository.save(goalRoom);
+        return goalRoom.findLastGoalRoomTodo().getId();
+    }
+
+    private void checkGoalRoomCompleted(final GoalRoom goalRoom) {
+        if (goalRoom.isCompleted()) {
+            throw new BadRequestException("이미 종료된 골룸입니다.");
+        }
+    }
+
+    private void checkGoalRoomLeader(final Member member, final GoalRoom goalRoom) {
+        if (goalRoom.isNotLeader(member)) {
+            throw new BadRequestException("골룸의 리더만 투드리스트를 추가할 수 있습니다.");
+        }
     }
 
     @Transactional
@@ -119,7 +145,7 @@ public class GoalRoomCreateService {
         validateEmptyImage(checkFeedImage);
         final ImageContentType imageType = getImageContentType(checkFeedImage);
 
-        final GoalRoom goalRoom = findById(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
         final GoalRoomRoadmapNode currentNode = goalRoom.getNodeByDate(LocalDate.now());
         final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(
@@ -191,16 +217,15 @@ public class GoalRoomCreateService {
     }
 
     @Scheduled(cron = "0 0 0 * * *")
-    @Transactional
     public void startGoalRooms() {
-        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDateWithGoalRoomRoadmapNode();
+        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDateNow();
         for (final GoalRoom goalRoom : goalRoomsToStart) {
             final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
                     goalRoom);
             final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
             goalRoomMemberRepository.saveAll(goalRoomMembers);
             goalRoomPendingMemberRepository.deleteAll(goalRoomPendingMembers);
-            goalRoom.updateStatus(GoalRoomStatus.RUNNING);
+            goalRoom.start();
         }
     }
 
