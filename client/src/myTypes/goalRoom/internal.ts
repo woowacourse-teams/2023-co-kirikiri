@@ -1,3 +1,5 @@
+import { GoalRoomDetailResponse } from './remote';
+
 export type GoalRoomRecruitmentStatus =
   | 'RECRUITING'
   | 'RUNNING'
@@ -29,3 +31,5 @@ export type CheckFeed = {
   id: number;
   imageUrl: string;
 };
+
+export type GoalRoomDetailType = GoalRoomDetailResponse;

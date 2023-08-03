@@ -1,16 +1,28 @@
-import client from '@apis/axios/client';
 import {
+  GoalRoomListRequest,
   GoalRoomBrowseResponse,
-  newTodoPayload,
   CreateGoalRoomRequest,
-  GoalRoomTodoResponse,
-} from '@myTypes/goalRoom/remote';
+  GoalRoomDetailResponse,
+} from '@/myTypes/goalRoom/remote';
+import client from '@apis/axios/client';
+
+export const getGoalRoomList = async ({
+  roadmapId,
+  filterCond = 'LATEST',
+  lastCreatedAt = '',
+  size = 10,
+}: GoalRoomListRequest): Promise<GoalRoomDetailResponse[]> => {
+  const { data } = await client.get<GoalRoomDetailResponse[]>(
+    `/roadmaps/${roadmapId}/goal-rooms?filterCond=${filterCond}&lastCreatedAt=${lastCreatedAt}&size=${size}`
+  );
+  return data;
+};
+
 
 export const getGoalRoomDashboard = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomBrowseResponse>(
     `/goal-rooms/${goalRoomId}/me`
   );
-
   return data;
 };
 

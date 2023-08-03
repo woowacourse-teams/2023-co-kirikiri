@@ -1,13 +1,20 @@
-import { CreateGoalRoomRequest, newTodoPayload } from '@myTypes/goalRoom/remote';
+
+import { CreateGoalRoomRequest, newTodoPayload, GoalRoomListRequest } from '@myTypes/goalRoom/remote';
 import {
   postCreateGoalRoom,
   getGoalRoomDashboard,
   postCreateNewTodo,
   getGoalRoomTodos,
   postCreateNewCertificationFeed,
+  getGoalRoomList
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+export const useGoalRoomList = (params: GoalRoomListRequest) => {
+  const { data } = useSuspendedQuery(['goalRoomList'], () => getGoalRoomList(params));
+  return { goalRoomList: data };
+};
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
   const { data: goalRoomRes } = useSuspendedQuery(['goalRoom', goalRoomId], () =>

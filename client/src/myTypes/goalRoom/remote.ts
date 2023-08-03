@@ -5,6 +5,15 @@ import {
   GoalRoomTodo,
 } from '@myTypes/goalRoom/internal';
 
+type FilterCondType = 'LATEST';
+
+export type GoalRoomListRequest = {
+  roadmapId: number;
+  lastCreatedAt?: any;
+  size?: number;
+  filterCond?: FilterCondType;
+};
+
 export type GoalRoomBrowseResponse = {
   name: string;
   status: GoalRoomRecruitmentStatus;
@@ -34,6 +43,21 @@ export type CreateGoalRoomRequest = {
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };
 
+type GoalRoomLeaderType = {
+  id: number;
+  name: string;
+};
+
+export type GoalRoomDetailResponse = {
+  goalRoomId: number;
+  name: string;
+  currentMemberCount: number;
+  limitedMemberCount: number;
+  createdAt: number[];
+  startDate: number[];
+  endDate: number[];
+  goalRoomLeader: GoalRoomLeaderType;
+};
 export type newTodoPayload = {
   content: string;
   startDate: string;
