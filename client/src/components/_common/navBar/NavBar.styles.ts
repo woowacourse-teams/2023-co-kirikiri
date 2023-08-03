@@ -54,8 +54,15 @@ export const Item = styled(NavLink)`
 
 export const ItemIcon = styled.span`
   display: inline-block;
-  width: 1rem;
+  width: 2rem;
   margin-right: 0.5rem;
+`;
+
+export const UserProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: ${({ theme }) => theme.shadows.threeD};
 `;
 
 export const Text = styled.span`
