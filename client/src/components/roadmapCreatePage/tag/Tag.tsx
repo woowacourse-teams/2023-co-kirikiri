@@ -3,9 +3,17 @@ import InputDescription from '../input/inputDescription/InputDescription';
 import InputLabel from '../input/inputLabel/InputLebel';
 import TagItem from './TagItem';
 import { useCreateTag } from '@/hooks/roadmap/useCreateTag';
+import { useEffect } from 'react';
 
-const Tag = () => {
+type TagProps = {
+  getTags: (tags: string[]) => void;
+};
+const Tag = ({ getTags }: TagProps) => {
   const { tags, ref, getAddedTagText, checkIsTagCountMax } = useCreateTag();
+
+  useEffect(() => {
+    getTags(tags);
+  }, [tags]);
 
   return (
     <S.Container>
