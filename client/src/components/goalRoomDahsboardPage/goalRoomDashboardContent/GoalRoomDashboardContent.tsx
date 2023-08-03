@@ -8,16 +8,16 @@ import GoalRoomCertificationFeed from '@components/goalRoomDahsboardPage/goalRoo
 import { useFetchGoalRoom } from '@hooks/queries/goalRoom';
 
 import * as S from './GoalRoomDashboardContent.styles';
-import useValidParams from '@hooks/_common/useValidParams';
 import { Suspense } from 'react';
 import Spinner from '@components/_common/spinner/Spinner';
+import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
 
 export type GoalRoomDashboardContentParams = {
   goalroomId: string;
 };
 
 const GoalRoomDashboardContent = () => {
-  const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
+  const { goalroomId } = useGoalRoomDashboardContext();
 
   const { goalRoom } = useFetchGoalRoom(goalroomId);
 
@@ -27,7 +27,7 @@ const GoalRoomDashboardContent = () => {
         <GoalRoomDashboardHeader goalRoomData={goalRoom} />
         <S.GoalRoomGridContainer>
           <GoalRoomDashboardChat />
-          <GoalRoomDashboardTodo goalRoomData={goalRoom} goalRoomId={goalroomId} />
+          <GoalRoomDashboardTodo goalRoomData={goalRoom} />
           <GoalRoomDashboardRoadmap />
           <GoalRoomDashboardCalender />
           <GoalRoomCertificationFeed goalRoomData={goalRoom} />

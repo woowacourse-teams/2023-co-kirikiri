@@ -3,16 +3,15 @@ import { FormEvent } from 'react';
 import useNewTodoFormValidation from '@hooks/goalRoom/useNewTodoFormValidation';
 import { useCreateTodo } from '@hooks/queries/goalRoom';
 import removeDashesFromStr from '@utils/_common/removeDashesFromStr';
+import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
 
-type TodoFormProps = {
-  goalRoomId: string;
-};
+const TodoForm = () => {
+  const { goalroomId } = useGoalRoomDashboardContext();
 
-const TodoForm = ({ goalRoomId }: TodoFormProps) => {
   const { formState, validateForm, contentInput, startDateInput, endDateInput } =
     useNewTodoFormValidation();
 
-  const { createTodo } = useCreateTodo(goalRoomId);
+  const { createTodo } = useCreateTodo(goalroomId);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
