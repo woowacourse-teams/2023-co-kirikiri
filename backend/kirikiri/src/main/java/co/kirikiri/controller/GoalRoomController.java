@@ -8,6 +8,7 @@ import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import jakarta.validation.Valid;
@@ -86,5 +87,14 @@ public class GoalRoomController {
     public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(@PathVariable final Long goalRoomId) {
         final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId);
         return ResponseEntity.ok(goalRoomMembers);
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/checkFeeds")
+    public ResponseEntity<List<GoalRoomCheckFeedResponse>> findGoalRoomCheckFeeds(
+            @MemberIdentifier final String identifier,
+            @PathVariable("goalRoomId") final Long goalRoomId) {
+        final List<GoalRoomCheckFeedResponse> response = goalRoomReadService.findGoalRoomCheckFeeds(identifier, goalRoomId);
+        return ResponseEntity.ok(response);
     }
 }
