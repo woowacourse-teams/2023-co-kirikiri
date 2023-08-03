@@ -1,26 +1,43 @@
 import { DialogTrigger } from '@/components/_common/dialog/dialog';
+import { useGoalRoomDetail } from '@/hooks/queries/goalRoom';
 import * as S from './goalRoomDetailDialog.styles';
 
-const GoalRoomDetailDialogContent = () => {
+type GoalRoomDetailDialogContentProps = {
+  closeGoalroomDetail: () => void;
+  goalRoomId: number;
+};
+
+const GoalRoomDetailDialogContent = ({
+  closeGoalroomDetail,
+  goalRoomId,
+}: GoalRoomDetailDialogContentProps) => {
+  const { goalRoomInfo } = useGoalRoomDetail(goalRoomId);
+
   return (
     <S.Container>
       <S.TitleWrapper>
         <div />
-        <S.Title>골룸입니당</S.Title>
+        <S.Title>{goalRoomInfo.name}</S.Title>
         <DialogTrigger asChild>
-          <S.CloseButton>X</S.CloseButton>
+          <S.CloseButton onClick={closeGoalroomDetail}>X</S.CloseButton>
         </DialogTrigger>
       </S.TitleWrapper>
       <S.Participant>
-        <p>7</p>/10
+        <p>{goalRoomInfo.currentMemberCount}</p>/{goalRoomInfo.limitedMemberCount}
       </S.Participant>
       <S.RoadmapContainer>
         <S.RoadmapTitle>🐘 로드맵 둘러보기🐘🐘</S.RoadmapTitle>
-        <S.NodeContainer>
-          <S.NodePeriod>2023-07-19 ~ 2023-07-30</S.NodePeriod>
-          <S.NodeTitle>로드맵 1주차</S.NodeTitle>
-          <S.FeedCount>인증횟수 17회</S.FeedCount>
-        </S.NodeContainer>
+        {goalRoomInfo.goalRoomNodes.map((node) => {
+          return (
+            <S.NodeContainer>
+              <S.NodePeriod>
+                {node.startDate} ~ {node.endDate}
+              </S.NodePeriod>
+              <S.NodeTitle>{node.title}</S.NodeTitle>
+              <S.FeedCount>인증횟수 {node.checkCount}회</S.FeedCount>
+            </S.NodeContainer>
+          );
+        })}
       </S.RoadmapContainer>
     </S.Container>
   );

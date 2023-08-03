@@ -2,7 +2,6 @@ import * as S from './goalRoomList.styles';
 import GoalRoomItem from './GoalRoomItem';
 import { useGoalRoomList } from '@/hooks/queries/goalRoom';
 import useValidParams from '@/hooks/_common/useValidParams';
-import GoalRoomDetailDialog from '../goalRoomDetail/GoalRoomDetailDialog';
 
 const GoalRoomList = () => {
   const { id } = useValidParams<{ id: string }>();
@@ -19,7 +18,6 @@ const GoalRoomList = () => {
           return <GoalRoomItem {...goalRoomInfo} />;
         })}
       </S.ListWrapper>
-      <GoalRoomDetailDialog />
     </S.ListContainer>
   );
 };
