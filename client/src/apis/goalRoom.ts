@@ -8,7 +8,7 @@ import {
 
 export const getGoalRoomDashboard = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomBrowseResponse>(
-    `/members/goal-rooms/${goalRoomId}`
+    `/goal-rooms/${goalRoomId}/me`
   );
 
   return data;

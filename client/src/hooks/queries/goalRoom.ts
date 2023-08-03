@@ -10,12 +10,12 @@ import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
-  const { data } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
+  const { data: goalRoomRes } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
     getGoalRoomDashboard(goalRoomId)
   );
 
   return {
-    goalRoom: data,
+    goalRoom: goalRoomRes,
   };
 };
 
