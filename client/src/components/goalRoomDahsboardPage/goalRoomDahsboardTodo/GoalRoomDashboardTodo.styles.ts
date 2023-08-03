@@ -29,3 +29,13 @@ export const CountBox = styled.span`
   border-radius: 50%;
   box-shadow: ${({ theme }) => theme.shadows.main};
 `;
+
+export const BackDrop = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background-color: ${({ theme }) => theme.colors.backdrop};
+`;

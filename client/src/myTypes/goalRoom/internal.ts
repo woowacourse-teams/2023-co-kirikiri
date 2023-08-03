@@ -11,6 +11,7 @@ export type GoalRoomRoadmap = {
 };
 
 export type GoalRoomNode = {
+  id: number;
   title: string;
   startDate: string;
   endDate: string;
@@ -18,7 +19,7 @@ export type GoalRoomNode = {
 };
 
 export type GoalRoomTodo = {
-  id: number | null;
+  id: number;
   content: string;
   startDate: string;
   endDate: string;

@@ -3,6 +3,7 @@ import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 type GoalRoomFixture = {
   data: GoalRoomBrowseResponse;
   getBrowsedGoalRoom: () => GoalRoomBrowseResponse;
+  getBrowsedGoalRoomTodos: () => GoalRoomBrowseResponse['goalRoomTodos'];
 };
 
 const fixture: GoalRoomFixture = {
@@ -10,6 +11,7 @@ const fixture: GoalRoomFixture = {
     name: '골룸',
     status: 'RECRUITING',
     currentMemberCount: 10,
+    leaderId: 4,
     initMemberCount: 15,
     startDate: '2023-07-19',
     endDate: '2023-08-05',
@@ -19,12 +21,14 @@ const fixture: GoalRoomFixture = {
       hasBackNode: true,
       nodes: [
         {
+          id: 1,
           title: '로드맵 1주차',
           startDate: '2023-07-19',
           endDate: '2023-07-30',
           checkCount: 10,
         },
         {
+          id: 2,
           title: '로드맵 2주차',
           startDate: '2023-08-01',
           endDate: '2023-08-05',
@@ -35,7 +39,19 @@ const fixture: GoalRoomFixture = {
     goalRoomTodos: [
       {
         id: 1,
-        content: '투두 내용',
+        content: '투두 내용 11',
+        startDate: '2023-07-19',
+        endDate: '2023-07-20',
+      },
+      {
+        id: 2,
+        content: '투두 내용 22',
+        startDate: '2023-07-19',
+        endDate: '2023-07-20',
+      },
+      {
+        id: 3,
+        content: '투두 내용 33',
         startDate: '2023-07-19',
         endDate: '2023-07-20',
       },
@@ -66,6 +82,10 @@ const fixture: GoalRoomFixture = {
 
   getBrowsedGoalRoom() {
     return JSON.parse(JSON.stringify(this.data));
+  },
+
+  getBrowsedGoalRoomTodos() {
+    return this.data.goalRoomTodos;
   },
 };
 

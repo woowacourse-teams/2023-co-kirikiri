@@ -74,6 +74,7 @@ module.exports = {
     'import/order': 'off',
     'react/jsx-no-constructed-context-values': 'off',
     'react/jsx-props-no-spreading': 'off',
-    'no-nested-ternary': 'off'
+    'no-nested-ternary': 'off',
+    "react/jsx-no-useless-fragment": "off"
   }
 };
