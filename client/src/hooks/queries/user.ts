@@ -29,7 +29,6 @@ export const useLogin = () => {
         const { accessToken, refreshToken } = response.data;
         setCookie('access_token', accessToken);
         setCookie('refresh_token', refreshToken);
-        alert(`로그인 성공!  ${accessToken}`);
       },
       onError() {
         // TODO: 로그인 실패 시 로직

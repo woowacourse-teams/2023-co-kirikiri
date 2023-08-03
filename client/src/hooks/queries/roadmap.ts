@@ -1,5 +1,4 @@
 import { SelectedCategoryId } from '@myTypes/roadmap/internal';
-import { getRoadmapById, getRoadmapList } from '@apis/roadmap';
 import { RoadmapValueType } from '@/myTypes/roadmap/remote';
 import { getRoadmapById, getRoadmapList, postCreateRoadmap } from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
