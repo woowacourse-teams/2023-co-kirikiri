@@ -38,3 +38,5 @@ export type newTodoPayload = {
   startDate: string;
   endDate: string;
 };
+
+export type GoalRoomTodoResponse = GoalRoomTodo[];
