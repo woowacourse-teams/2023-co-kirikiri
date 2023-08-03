@@ -1,15 +1,18 @@
 import { TAG_LIMIT } from '@/constants/roadmap/tag';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 export const useCreateTag = () => {
   const [tags, setTags] = useState<string[]>([]);
   const ref = useRef<HTMLInputElement | null>(null);
 
-  const getAddedTagText = () => {
+  const getAddedTagText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (ref.current === null) return;
     if (ref.current.value === '') return;
 
-    setTags((prev) => [...prev, ref.current?.value as string]);
+    setTags((prev) => {
+      return [...prev, ref.current?.value as string];
+    });
     ref.current.value = '';
   };
 

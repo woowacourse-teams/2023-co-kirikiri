@@ -107,9 +107,7 @@ export const Nav = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   height: calc(100% - 10rem);
-  padding: 3rem 1rem;
 
   ${media.mobile`
     height:100%;

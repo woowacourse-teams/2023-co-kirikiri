@@ -1,11 +1,15 @@
-import { CreateGoalRoomRequest, GoalRoomListRequest } from '@myTypes/goalRoom/remote';
+
+import { CreateGoalRoomRequest, newTodoPayload, GoalRoomListRequest } from '@myTypes/goalRoom/remote';
 import {
   postCreateGoalRoom,
   getGoalRoomDashboard,
-  getGoalRoomList,
+  postCreateNewTodo,
+  getGoalRoomTodos,
+  postCreateNewCertificationFeed,
+  getGoalRoomList
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList'], () => getGoalRoomList(params));
@@ -13,12 +17,12 @@ export const useGoalRoomList = (params: GoalRoomListRequest) => {
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
-  const { data } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
+  const { data: goalRoomRes } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
     getGoalRoomDashboard(goalRoomId)
   );
 
   return {
-    goalRoom: data,
+    goalRoom: goalRoomRes,
   };
 };
 
@@ -33,5 +37,52 @@ export const useCreateGoalRoom = () => {
 
   return {
     createGoalRoom: mutate,
+  };
+};
+
+export const useCreateTodo = (goalRoomId: string) => {
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(
+    (body: newTodoPayload) => postCreateNewTodo(goalRoomId, body),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries([
+          ['goalRoom', goalRoomId],
+          ['goalRoomTodos', goalRoomId],
+        ]);
+      },
+    }
+  );
+
+  return {
+    createTodo: mutate,
+  };
+};
+
+export const useFetchGoalRoomTodos = (goalRoomId: string) => {
+  const { data } = useSuspendedQuery(['goalRoomTodos', goalRoomId], () =>
+    getGoalRoomTodos(goalRoomId)
+  );
+
+  return {
+    goalRoomTodos: data,
+  };
+};
+
+export const useCreateCertificationFeed = (goalRoomId: string) => {
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(
+    (formData: FormData) => postCreateNewCertificationFeed(goalRoomId, formData),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries([['goalRoom', goalRoomId]]);
+      },
+    }
+  );
+
+  return {
+    createCertificationFeed: mutate,
   };
 };

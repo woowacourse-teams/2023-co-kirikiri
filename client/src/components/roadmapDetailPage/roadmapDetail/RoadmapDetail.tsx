@@ -7,19 +7,29 @@ import * as S from './RoadmapDetail.styles';
 
 const DummyData: RoadmapItemType = {
   roadmapId: 1,
-  roadmapTitle: '안녕하세요 로드맵입니다',
-  introduction: '로드맵 소개글입니다',
-  difficulty: 'VERY_DIFFICULT',
+  roadmapTitle: '로드맵 제목1',
+  introduction: '로드맵 소개글1',
+  difficulty: 'NORMAL',
   recommendedRoadmapPeriod: 10,
+  createdAt: [2023, 8, 2, 19, 17, 28, 81052591],
   creator: {
     id: 1,
-    name: 'woody',
+    name: '코끼리',
   },
   category: {
     id: 1,
-    name: '어학',
-    iconName: 'LanguageIcon',
+    name: '여행',
   },
+  tags: [
+    {
+      id: 1,
+      name: '태그1',
+    },
+    {
+      id: 2,
+      name: '태그2',
+    },
+  ],
 };
 
 const RoadmapDetail = () => {

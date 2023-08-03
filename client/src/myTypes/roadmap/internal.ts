@@ -1,11 +1,9 @@
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
 import { CategoriesInfo } from '@constants/roadmap/category';
-import * as Icons from '@components/icons/svgIcons';
 
 export type CategoryType = {
   id: keyof typeof CategoriesInfo;
   name: string;
-  iconName: keyof typeof Icons;
 };
 
 export type CreatorType = {
@@ -31,7 +29,7 @@ export type ContentType = {
   nodes: NodeType[];
 };
 
-export type TagsType = TagType[];
+export type SelectedCategoryId = number | undefined;
 
 export type RoadmapItemType = {
   roadmapId: number;
@@ -41,12 +39,8 @@ export type RoadmapItemType = {
   recommendedRoadmapPeriod: number;
   creator: CreatorType;
   category: CategoryType;
-};
-
-export type RoadmapListResponseType = {
-  currentPage: number;
-  totalPage: number;
-  data: RoadmapItemType[];
+  createdAt: number[];
+  tags: TagType[];
 };
 
 export type PatternType = {

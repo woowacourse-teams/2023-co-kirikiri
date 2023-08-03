@@ -1,25 +1,43 @@
+import { SelectedCategoryId } from '@myTypes/roadmap/internal';
 import { getRoadmapById, getRoadmapList } from '@apis/roadmap';
+import { RoadmapValueType } from '@/myTypes/roadmap/remote';
+import { getRoadmapById, getRoadmapList, postCreateRoadmap } from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
-import { CategoriesInfo } from '@constants/roadmap/category';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
+import { useMutation } from '@tanstack/react-query';
 
 export const useRoadmapList = (
-  categoryId?: keyof typeof CategoriesInfo,
+  categoryId?: SelectedCategoryId,
   page = 1,
   size = 10,
   filterCond = 'LATEST'
 ) => {
-  return useSuspendedQuery(['roadmapList', categoryId, page, size, filterCond], () =>
-    getRoadmapList(categoryId, page, size, filterCond)
+  const { data } = useSuspendedQuery(
+    ['roadmapList', categoryId, page, size, filterCond],
+    () => getRoadmapList(categoryId, page, size, filterCond)
   );
+
+  return data;
 };
 
 export const useRoadmapDetail = (id: number) => {
-  return useSuspendedQuery(
-    [QUERY_KEYS.roadmap.detail, id],
-    () => (id ? getRoadmapById(id) : null),
+  const { data } = useSuspendedQuery([QUERY_KEYS.roadmap.detail, id], () =>
+    getRoadmapById(id)
+  );
+
+  return data;
+};
+
+export const useCreateRoadmap = () => {
+  const { mutate } = useMutation(
+    (roadmapValue: RoadmapValueType) => postCreateRoadmap(roadmapValue),
     {
-      enabled: !!id,
+      onSuccess() {},
+      onError() {},
     }
   );
+
+  return {
+    createRoadmap: mutate,
+  };
 };

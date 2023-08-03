@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactElement } from 'react';
+import React, { PropsWithChildren, ReactElement } from 'react';
 import { useContextScope } from '@/hooks/_common/useContextScope';
 import { combineStates, getCustomElement } from '@/hooks/_common/compound';
 import {
@@ -66,10 +66,22 @@ export const Trigger = (props: PropsWithChildren<TriggerProps>) => {
   if (asChild) {
     return getCustomElement(children as ReactElement, {
       ...restProps,
-      onClick: toggleBoxOpen,
+      onClick: (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        toggleBoxOpen();
+      },
     });
   }
-  return <S.DefaultTrigger onClick={toggleBoxOpen}>{children}</S.DefaultTrigger>;
+  return (
+    <S.DefaultTrigger
+      onClick={(e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        toggleBoxOpen();
+      }}
+    >
+      {children}
+    </S.DefaultTrigger>
+  );
 };
 
 // Option들을 담는 컨테이너 컴포넌트
@@ -107,11 +119,20 @@ export const Option = (props: PropsWithChildren<OptionProps>) => {
     return getCustomElement(children as ReactElement, {
       ...restProps,
       isSelected,
-      onClick: () => selectOption(restProps.id),
+      onClick: (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        selectOption(restProps.id);
+      },
     });
   }
   return (
-    <S.DefaultOption isSelected={isSelected} onClick={() => selectOption(restProps.id)}>
+    <S.DefaultOption
+      isSelected={isSelected}
+      onClick={(e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        selectOption(restProps.id);
+      }}
+    >
       {children}
     </S.DefaultOption>
   );

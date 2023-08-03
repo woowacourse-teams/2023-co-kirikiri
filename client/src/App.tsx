@@ -24,7 +24,7 @@ const App = () => {
         <ResponsiveContainer>
           <PageLayout>
             <Routes>
-              <Route path='/' element={<MainPage />} />
+              <Route path='/' element={<RoadmapListPage />} />
               <Route path='/login' element={<LoginPage />} />
               <Route path='/join' element={<SignUpPage />} />
               <Route path='/roadmap-list' element={<RoadmapListPage />} />

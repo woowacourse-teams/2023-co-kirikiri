@@ -21,8 +21,10 @@ export const CategoriesRow = styled.div`
   column-gap: 1.4rem;
 `;
 
-export const Category = styled.div`
+export const Category = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.fonts.description5}
+  cursor: pointer;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,6 +32,8 @@ export const Category = styled.div`
 
   width: 8.2rem;
   height: 7.8rem;
+
+  color: ${({ theme, selected }) => selected && theme.colors.main_dark};
 
   background-color: white;
   border-radius: 8px;

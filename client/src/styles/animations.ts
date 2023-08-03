@@ -17,3 +17,8 @@ export const shake = keyframes`
     transform: translate3d(1px, 0, 0) rotate(0.5deg);
   }
 `;
+
+export const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;

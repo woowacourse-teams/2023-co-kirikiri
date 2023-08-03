@@ -2,6 +2,13 @@ import * as S from './GoalRoomCertificationFeed.styles';
 import SVGIcon from '@components/icons/SVGIcon';
 import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import { StyledImage } from './GoalRoomCertificationFeed.styles';
+import {
+  DialogBackdrop,
+  DialogBox,
+  DialogContent,
+  DialogTrigger,
+} from '@components/_common/dialog/dialog';
+import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/certificationFeedModal/CertificationFeedModal';
 
 type GoalRoomCertificationFeedProps = {
   goalRoomData: GoalRoomBrowseResponse;
@@ -13,24 +20,37 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
   const { checkFeeds } = goalRoomData;
 
   return (
-    <S.CertificationFeedWrapper>
-      <div>
-        <h2>인증 피드</h2>
-        <button aria-labelledby='이미지 피드 전체보기'>
-          <span>전체보기</span>
-          <SVGIcon name='RightArrowIcon' aria-hidden='true' />
-        </button>
-      </div>
-      <S.ImageGrid>
-        {checkFeeds.map((feed) => {
-          return (
-            <button key={feed.id} aria-label='이미지 크게보기'>
-              <StyledImage src={feed.imageUrl} alt={`Image ${feed.id}`} />
+    <DialogBox>
+      <S.CertificationFeedWrapper>
+        <div>
+          <h2>인증 피드</h2>
+
+          <DialogTrigger asChild>
+            <button aria-labelledby='이미지 피드 전체보기'>
+              <span>전체보기</span>
+              <SVGIcon name='RightArrowIcon' aria-hidden='true' />
             </button>
-          );
-        })}
-      </S.ImageGrid>
-    </S.CertificationFeedWrapper>
+          </DialogTrigger>
+        </div>
+        <S.ImageGrid>
+          {checkFeeds.map((feed) => {
+            return (
+              <button key={feed.id} aria-label='이미지 크게보기'>
+                <StyledImage src={feed.imageUrl} alt={`Image ${feed.id}`} />
+              </button>
+            );
+          })}
+        </S.ImageGrid>
+      </S.CertificationFeedWrapper>
+
+      <DialogBackdrop asChild>
+        <S.ModalBackdrop />
+      </DialogBackdrop>
+
+      <DialogContent>
+        <CertificationFeedModal />
+      </DialogContent>
+    </DialogBox>
   );
 };
 
