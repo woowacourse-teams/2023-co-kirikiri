@@ -9,7 +9,7 @@ type GoalRoomDashboardHeaderProps = {
 };
 
 const GoalRoomDashboardHeader = ({ goalRoomData }: GoalRoomDashboardHeaderProps) => {
-  const { name, status, currentMemberCount, initMemberCount, startDate, endDate } =
+  const { name, status, currentMemberCount, limitedMemberCount, startDate, endDate } =
     goalRoomData;
 
   return (
@@ -22,7 +22,7 @@ const GoalRoomDashboardHeader = ({ goalRoomData }: GoalRoomDashboardHeaderProps)
       <S.GoalRoomLabel>
         <SVGIcon name='PersonIcon' />
         <span>
-          {currentMemberCount} / {initMemberCount} 명 참여 중
+          {currentMemberCount} / {limitedMemberCount} 명 참여 중
         </span>
       </S.GoalRoomLabel>
       <S.GoalRoomLabel>

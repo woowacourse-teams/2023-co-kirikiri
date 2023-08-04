@@ -12,7 +12,7 @@ const fixture: GoalRoomFixture = {
     status: 'RECRUITING',
     currentMemberCount: 10,
     leaderId: 4,
-    initMemberCount: 15,
+    limitedMemberCount: 15,
     startDate: '2023-07-19',
     endDate: '2023-08-05',
     roadmapContentId: 1,

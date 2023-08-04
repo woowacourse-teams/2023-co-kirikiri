@@ -36,12 +36,6 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
 
   return (
     <S.RoadmapItem hasBorder={hasBorder} aria-label='로드맵 항목'>
-      <S.ItemHeader>
-        <S.AchieversCount aria-label='목표 달성률'>
-          지금까지 1024명이 목표를 달성했어요!
-        </S.AchieversCount>
-        <S.ReviewersCount aria-label='로드맵 좋아요 개수'>❤️ 240</S.ReviewersCount>
-      </S.ItemHeader>
       <div>
         <S.RoadmapTitle aria-label='로드맵 제목'>{item.roadmapTitle}</S.RoadmapTitle>
         <S.Description aria-label='로드맵 소개'>{item.introduction}</S.Description>

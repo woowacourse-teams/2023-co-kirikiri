@@ -9,11 +9,11 @@ import {
   DialogTrigger,
 } from '@components/_common/dialog/dialog';
 import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/certificationFeedModal/CertificationFeedModal';
+import { BASE_URL } from '@apis/axios/client';
 
 type GoalRoomCertificationFeedProps = {
   goalRoomData: GoalRoomBrowseResponse;
 };
-
 // TODO: 사진 누르면 모달로 사진 크게 보여주기
 
 const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedProps) => {
@@ -36,7 +36,7 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
           {checkFeeds.map((feed) => {
             return (
               <button key={feed.id} aria-label='이미지 크게보기'>
-                <StyledImage src={feed.imageUrl} alt={`Image ${feed.id}`} />
+                <StyledImage src={BASE_URL + feed.imageUrl} alt={`Image ${feed.id}`} />
               </button>
             );
           })}

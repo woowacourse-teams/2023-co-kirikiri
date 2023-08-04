@@ -21,7 +21,7 @@ export type GoalRoomBrowseResponse = {
   status: GoalRoomRecruitmentStatus;
   currentMemberCount: number;
   leaderId: number;
-  initMemberCount: number;
+  limitedMemberCount: number;
   startDate: string;
   endDate: string;
   roadmapContentId: number;
