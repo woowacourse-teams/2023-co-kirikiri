@@ -142,7 +142,8 @@ public class GoalRoomCreateService {
         }
     }
 
-    public GoalRoomToDoCheckResponse checkGoalRoomTodo(final Long goalRoomId, final Long todoId, final String identifier) {
+    public GoalRoomToDoCheckResponse checkGoalRoomTodo(final Long goalRoomId, final Long todoId,
+                                                       final String identifier) {
         final Identifier memberIdentifier = new Identifier(identifier);
         final GoalRoom goalRoom = findGoalRoomWithTodos(goalRoomId);
         final GoalRoomToDo goalRoomToDo = goalRoom.getGoalRoomToDos().findById(todoId);
@@ -151,7 +152,7 @@ public class GoalRoomCreateService {
         final boolean isAlreadyChecked = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoIdAndMemberIdentifier(
                 goalRoomId, todoId, memberIdentifier).isPresent();
         if (isAlreadyChecked) {
-            goalRoomToDoCheckRepository.deleteById(todoId);
+            goalRoomToDoCheckRepository.deleteByGoalRoomMemberAndToDoId(goalRoomMember, todoId);
             return new GoalRoomToDoCheckResponse(false);
         }
         final GoalRoomToDoCheck goalRoomToDoCheck = new GoalRoomToDoCheck(goalRoomMember, goalRoomToDo);
