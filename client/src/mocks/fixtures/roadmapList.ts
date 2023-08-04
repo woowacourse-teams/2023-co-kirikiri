@@ -1,7 +1,7 @@
 import { RoadmapListResponse } from '@myTypes/roadmap/remote';
 
 type RoadmapsFixture = {
-  data: RoadmapListResponse;
+  data: any;
   getBrowsedRoadmaps: () => RoadmapListResponse;
 };
 

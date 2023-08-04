@@ -45,6 +45,10 @@ export const BodyFieldWrapper = styled.div`
   border-radius: 2rem;
 `;
 
+export const NodeBodyInputField = styled.textarea`
+  width: 80%;
+`;
+
 export const AddButton = styled.button`
   width: 13rem;
   height: 4rem;

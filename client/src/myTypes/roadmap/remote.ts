@@ -1,9 +1,10 @@
 import type {
-  CreatorType,
-  CategoryType,
-  ContentType,
-  TagType,
+  // CreatorType,
+  // CategoryType,
+  // ContentType,
+  // TagType,
   RoadmapItemType,
+  RoadmapDetailType,
 } from './internal';
 
 type RoadmapNodes = {
@@ -21,18 +22,8 @@ export type RoadmapValueType = {
   roadmapNodes: RoadmapNodes[];
 };
 
-export type RoadmapListResponse = RoadmapItemType[];
+export type RoadmapListResponse = RoadmapItemType;
 
-export type RoadmapDetailResponse = {
-  roadmapId: number;
-  category: CategoryType;
-  roadmapTitle: string;
-  introduction: string;
-  creator: CreatorType;
-  content: ContentType;
-  difficulty: string;
-  recommendedRoadmapPeriod: number;
-  tags: TagType[];
-};
+export type RoadmapDetailResponse = RoadmapDetailType;
 
 export type RoadmapValueRequest = RoadmapValueType;

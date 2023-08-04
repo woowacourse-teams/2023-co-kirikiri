@@ -1,6 +1,6 @@
-import type { RoadmapItemType } from '@myTypes/roadmap/internal';
+import type { RoadmapDetailType } from '@myTypes/roadmap/internal';
 
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
 import { CategoriesInfo } from '@constants/roadmap/category';
@@ -8,16 +8,13 @@ import Button from '../button/Button';
 import * as S from './RoadmapItem.styles';
 
 type RoadmapItemProps = {
-  item: RoadmapItemType;
+  item: Omit<RoadmapDetailType, 'content'>;
   hasBorder?: boolean;
+  roadmapId: number;
 };
 
-const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
-  const categoryIcon = (
-    <div aria-label={CategoriesInfo[item.category.id].name}>
-      <SVGIcon name={CategoriesInfo[item.category.id].iconName} aria-hidden='true' />
-    </div>
-  );
+const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) => {
+  const categoryIcon = <SVGIcon name={CategoriesInfo[item.category.id].iconName} />;
   const difficultyIcon = (
     <div aria-label={DIFFICULTY_ICON_NAME[item.difficulty]}>
       <SVGIcon
@@ -27,6 +24,15 @@ const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
       />
     </div>
   );
+  const navigate = useNavigate();
+
+  const moveGoalRoomListPage = () => {
+    if (hasBorder) {
+      navigate(`/roadmap/${roadmapId}`);
+      return;
+    }
+    navigate(`/roadmap/${roadmapId}/goalroom-list`);
+  };
 
   return (
     <S.RoadmapItem hasBorder={hasBorder} aria-label='로드맵 항목'>
@@ -42,18 +48,16 @@ const RoadmapItem = ({ item, hasBorder = true }: RoadmapItemProps) => {
           <div aria-label='일'>Days</div>
         </S.RecommendedRoadmapPeriod>
       </S.ItemExtraInfos>
-      <Link to={`/roadmap/${item.roadmapId}`}>
-        <Button aria-label={hasBorder ? '자세히 보기' : '진행중인 골룸 보기'}>
-          {hasBorder ? '자세히 보기' : '진행중인 골룸 보기'}
-        </Button>
-      </Link>
-      <S.ItemFooter aria-label='로드맵 추가 정보'>
-        <S.CreatedBy aria-label='로드맵 생성자'>
-          Created by {item.creator.name}
-        </S.CreatedBy>
-        <S.Tags aria-label='로드맵 태그 목록'>
-          <span># Programming</span>
-          <span># Study</span>
+      <Button onClick={moveGoalRoomListPage}>
+        {hasBorder ? '자세히 보기' : '진행중인 골룸 보기'}
+      </Button>
+      <S.ItemFooter>
+        <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>
+        <S.Tags>
+          {item.tags.map((tag) => {
+            return <span># {tag.name}</span>;
+          })}
+
         </S.Tags>
       </S.ItemFooter>
     </S.RoadmapItem>

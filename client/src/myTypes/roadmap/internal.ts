@@ -43,6 +43,18 @@ export type RoadmapItemType = {
   tags: TagType[];
 };
 
+export type RoadmapDetailType = {
+  roadmapId: number;
+  category: CategoryType;
+  roadmapTitle: string;
+  introduction: string;
+  creator: CreatorType;
+  content: ContentType;
+  difficulty: keyof typeof DIFFICULTY_ICON_NAME;
+  recommendedRoadmapPeriod: number;
+  tags: TagType[];
+};
+
 export type PatternType = {
   rule: RegExp;
   message: string;

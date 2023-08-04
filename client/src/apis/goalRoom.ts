@@ -5,6 +5,7 @@ import {
   GoalRoomDetailResponse,
   GoalRoomTodoResponse,
   newTodoPayload,
+  GoalRoomInfoResponse,
   GoalRoomTodoChangeStatusRequest,
 } from '@/myTypes/goalRoom/remote';
 import client from '@apis/axios/client';
@@ -18,6 +19,13 @@ export const getGoalRoomList = async ({
   const { data } = await client.get<GoalRoomDetailResponse[]>(
     `/roadmaps/${roadmapId}/goal-rooms?filterCond=${filterCond}&lastCreatedAt=${lastCreatedAt}&size=${size}`
   );
+  return data;
+};
+
+export const getGoalRoomDetail = async (
+  goalRoomId: number
+): Promise<GoalRoomInfoResponse> => {
+  const { data } = await client.get<GoalRoomInfoResponse>(`/goal-rooms/${goalRoomId}`);
   return data;
 };
 

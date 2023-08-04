@@ -11,6 +11,7 @@ import {
   getGoalRoomTodos,
   postCreateNewCertificationFeed,
   getGoalRoomList,
+  getGoalRoomDetail,
   postToChangeTodoCheckStatus,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
@@ -20,6 +21,13 @@ import useToast from '@hooks/_common/useToast';
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList'], () => getGoalRoomList(params));
   return { goalRoomList: data };
+};
+
+export const useGoalRoomDetail = (goalRoomId: number) => {
+  const { data } = useSuspendedQuery(['goalRoomDetail'], () =>
+    getGoalRoomDetail(goalRoomId)
+  );
+  return { goalRoomInfo: data };
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {

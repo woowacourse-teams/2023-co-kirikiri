@@ -36,7 +36,10 @@ const RoadmapCreateForm = () => {
 
   return (
     <RefProvider>
-      <form onSubmit={handleSubmit}>
+      <S.Title>
+        <p>로드맵</p>을 생성해주세요
+      </S.Title>
+      <S.Form onSubmit={handleSubmit}>
         <Category getSelectedCategoryId={getSelectedCategoryId} />
         <Title />
         <Description />
@@ -58,8 +61,10 @@ const RoadmapCreateForm = () => {
             <S.AddButton onClick={addNode}>로드맵 추가하기</S.AddButton>
           </>
         </Roadmap>
-        <button>done!!</button>
-      </form>
+        <S.ButtonWrapper>
+          <S.CompleteButton>로드맵 생성완료</S.CompleteButton>
+        </S.ButtonWrapper>
+      </S.Form>
     </RefProvider>
   );
 };
