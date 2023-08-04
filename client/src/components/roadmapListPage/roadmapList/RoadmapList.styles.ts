@@ -10,11 +10,11 @@ export const RoadmapList = styled.div`
 `;
 
 export const CreateRoadmapButton = styled.button`
-  ${({ theme }) => theme.fonts.h1}
+  ${({ theme }) => theme.fonts.h2}
   position: fixed;
   top: 1rem;
 
-  width: 50%;
+  width: 30%;
   height: 5rem;
 
   color: ${({ theme }) => theme.colors.white};

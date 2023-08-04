@@ -61,3 +61,8 @@ export type GoalRoomTodoChangeStatusRequest = {
   goalRoomId: string;
   todoId: string;
 };
+
+export type JoinGoalRoomRequest = {
+  goalRoomId: string;
+  roadmapId: string;
+};
