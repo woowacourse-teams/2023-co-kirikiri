@@ -5,6 +5,8 @@ import * as S from './goalRoomList.styles';
 
 const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
   const [showDetail, setShowDetail] = useState(false);
+  console.log(goalRoomInfo);
+
   const showGoalroomDetail = () => {
     setShowDetail(true);
   };
@@ -37,6 +39,7 @@ const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
         <GoalRoomDetailDialog
           closeGoalroomDetail={closeGoalroomDetail}
           goalRoomId={goalRoomInfo.goalRoomId}
+          isJoined={goalRoomInfo.isJoined}
         />
       )}
     </>

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const GoalRoomList = () => {
   const { id } = useValidParams<{ id: string }>();
   const { goalRoomList } = useGoalRoomList({ roadmapId: Number(id) });
+
   const navigate = useNavigate();
 
   const moveCreateGoalRoomPage = () => {

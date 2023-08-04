@@ -46,6 +46,8 @@ export type GoalRoomDetailType = {
   createdAt: number[];
   startDate: number[];
   endDate: number[];
+  period: number;
+  isJoined: boolean;
   goalRoomLeader: GoalRoomLeaderType;
 };
 

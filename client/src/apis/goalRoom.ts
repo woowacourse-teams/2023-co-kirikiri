@@ -71,3 +71,7 @@ export const postCreateNewCertificationFeed = (
     },
   });
 };
+
+export const postJoinGoalRoom = (goalRoomId: string) => {
+  return client.post(`/goal-rooms/${goalRoomId}/join`);
+};
