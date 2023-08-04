@@ -13,7 +13,7 @@ export const getRoadmapList = async (
   size = 10,
   filterCond = 'LATEST'
 ) => {
-  const { data } = await client.get<RoadmapListResponse>(`/roadmaps`, {
+  const { data } = await client.get<RoadmapListResponse[]>(`/roadmaps`, {
     params: {
       ...(categoryId && { categoryId }),
       page,
@@ -25,7 +25,7 @@ export const getRoadmapList = async (
   return data;
 };
 
-export const getRoadmapById = async (id: number) => {
+export const getRoadmapDetail = async (id: number): Promise<RoadmapDetailResponse> => {
   const { data } = await client.get<RoadmapDetailResponse>(`/roadmaps/${id}`);
 
   return data;

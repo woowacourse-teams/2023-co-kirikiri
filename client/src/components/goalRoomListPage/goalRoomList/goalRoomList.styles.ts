@@ -1,3 +1,4 @@
+import media from '@/styles/media';
 import styled from 'styled-components';
 
 export const ListContainer = styled.section`
@@ -31,6 +32,11 @@ export const ListWrapper = styled.div`
   display: grid;
   grid-row-gap: 6rem;
   grid-template-columns: repeat(2, 1fr);
+
+  ${media.mobile`
+  grid-template-columns: repeat(1, 1fr);
+
+  `}
 `;
 
 export const Recruiting = styled.div`
@@ -95,4 +101,20 @@ export const DetailButton = styled.button`
 
   background-color: ${({ theme }) => theme.colors.main_dark};
   border-radius: 85px;
+`;
+
+export const CreateGoalRoomButton = styled.button`
+  ${({ theme }) => theme.fonts.h1}
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translate(-50%);
+
+  width: 50%;
+  height: 5rem;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_middle};
+  border-radius: 20px;
 `;

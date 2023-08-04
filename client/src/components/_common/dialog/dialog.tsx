@@ -2,10 +2,13 @@ import { DialogContext } from '@/context/dialogContext';
 import { getCustomElement } from '@/hooks/_common/compound';
 import { useContextScope } from '@/hooks/_common/useContextScope';
 import { DialogBackdropProps, DialogTriggerProps } from '@/myTypes/_common/dialog';
-import { PropsWithChildren, ReactElement, useState } from 'react';
+import { PropsWithChildren, ReactElement, useEffect, useState } from 'react';
 
-export const DialogBox = ({ children }: PropsWithChildren) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const DialogBox = ({
+  children,
+  defaultOpen = false,
+}: PropsWithChildren<{ defaultOpen?: boolean }>) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen ?? false);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -44,6 +47,10 @@ export const DialogTrigger = (props: PropsWithChildren<DialogTriggerProps>) => {
 export const DialogBackdrop = (props: PropsWithChildren<DialogBackdropProps>) => {
   const { asChild = false, children, ...restProps } = props;
   const { isOpen, closeDialog } = useContextScope(DialogContext);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+  }, [isOpen]);
 
   if (asChild) {
     return isOpen

@@ -1,5 +1,3 @@
-import { GoalRoomDetailResponse } from './remote';
-
 export type GoalRoomRecruitmentStatus =
   | 'RECRUITING'
   | 'RUNNING'
@@ -35,4 +33,34 @@ export type CheckFeed = {
   imageUrl: string;
 };
 
-export type GoalRoomDetailType = GoalRoomDetailResponse;
+type GoalRoomLeaderType = {
+  id: number;
+  name: string;
+};
+
+export type GoalRoomDetailType = {
+  goalRoomId: number;
+  name: string;
+  currentMemberCount: number;
+  limitedMemberCount: number;
+  createdAt: number[];
+  startDate: number[];
+  endDate: number[];
+  goalRoomLeader: GoalRoomLeaderType;
+};
+
+type GoalRoomNodesType = {
+  title: string;
+  startDate: number[];
+  endDate: number[];
+  checkCount: number;
+};
+
+export type GoalRoomInfoType = {
+  name: string;
+  currentMemberCount: number;
+  limitedMemberCount: number;
+  goalRoomNodes: GoalRoomNodesType[];
+  period: number;
+  isJoined: boolean;
+};

@@ -1,9 +1,13 @@
+import { ChangeEvent } from 'react';
 import * as S from './roadmap.styles';
 
 type RoadmapItemProps = {
   roadmapNumber: number;
   itemId: number;
-  getRoadmapItemTitle: (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => void;
+  getRoadmapItemTitle: <T extends HTMLInputElement | HTMLTextAreaElement>(
+    e: React.ChangeEvent<T>,
+    itemId: number
+  ) => void;
 };
 
 const RoadmapItem = ({
@@ -17,15 +21,17 @@ const RoadmapItem = ({
         <S.RoadmapNumber>{roadmapNumber}</S.RoadmapNumber>
         <S.TitleFieldWrapper>
           <input
-            onChange={(e) => getRoadmapItemTitle(e, itemId)}
+            onChange={(e) => getRoadmapItemTitle<HTMLInputElement>(e, itemId)}
             maxLength={40}
             name='title'
           />
         </S.TitleFieldWrapper>
       </S.TitleWrapper>
       <S.BodyFieldWrapper>
-        <input
-          onChange={(e) => getRoadmapItemTitle(e, itemId)}
+        <S.NodeBodyInputField
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+            getRoadmapItemTitle<HTMLTextAreaElement>(e, itemId)
+          }
           maxLength={2000}
           name='content'
         />
