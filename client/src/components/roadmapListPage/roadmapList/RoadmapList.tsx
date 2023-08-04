@@ -15,6 +15,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   const moveRoadmapCreatePage = () => {
     navigate('/roadmap-create');
   };
+
   return (
     <S.RoadmapList>
       {roadmapList?.map((item) => (

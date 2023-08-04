@@ -102,3 +102,19 @@ export const DetailButton = styled.button`
   background-color: ${({ theme }) => theme.colors.main_dark};
   border-radius: 85px;
 `;
+
+export const CreateGoalRoomButton = styled.button`
+  ${({ theme }) => theme.fonts.h1}
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translate(-50%);
+
+  width: 50%;
+  height: 5rem;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_middle};
+  border-radius: 20px;
+`;
