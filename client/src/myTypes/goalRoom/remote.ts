@@ -41,7 +41,7 @@ export type CreateGoalRoomRequest = {
   roadmapContentId: number;
   name: string;
   limitedMemberCount: number;
-  goalRoomTodo: Omit<GoalRoomTodo, 'id'>;
+  goalRoomTodo: Partial<GoalRoomTodo>;
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };
 
@@ -56,3 +56,8 @@ export type newTodoPayload = {
 };
 
 export type GoalRoomTodoResponse = GoalRoomTodo[];
+
+export type GoalRoomTodoChangeStatusRequest = {
+  goalRoomId: string;
+  todoId: string;
+};

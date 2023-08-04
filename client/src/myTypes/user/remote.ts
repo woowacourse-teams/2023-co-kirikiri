@@ -16,3 +16,15 @@ export type UserLoginResponse = {
   accessToken: string;
   refreshToken: string;
 };
+
+export type UserGender = 'MALE' | 'FEMALE';
+
+export type UserInfoResponse = {
+  id: number | null;
+  nickname: string;
+  profileImageUrl: string;
+  gender: UserGender | null;
+  identifier: string;
+  phoneNumber: string;
+  birthday: string;
+};

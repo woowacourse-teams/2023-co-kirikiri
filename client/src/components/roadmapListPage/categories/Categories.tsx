@@ -6,7 +6,7 @@ import * as S from './Categories.styles';
 
 type CategoriesProps = {
   selectedCategoryId: SelectedCategoryId;
-  selectCategory: ({ currentTarget }: MouseEvent<HTMLDivElement>) => void;
+  selectCategory: ({ currentTarget }: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => {
@@ -21,6 +21,8 @@ const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => 
         id={String(id)}
         onClick={selectCategory}
         selected={selectedCategoryId === id}
+        aria-label={name}
+        role='button'
       >
         <SVGIcon name={CategoriesInfo[id].iconName} />
         <S.CategoryName>{name}</S.CategoryName>
@@ -29,7 +31,7 @@ const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => 
   };
 
   return (
-    <S.Categories>
+    <S.Categories aria-label='카테고리 목록'>
       <S.CategoriesRow>{upCategories.map(renderCategory)}</S.CategoriesRow>
       <S.CategoriesRow>{downCategories.map(renderCategory)}</S.CategoriesRow>
     </S.Categories>

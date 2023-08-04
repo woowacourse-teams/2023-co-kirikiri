@@ -21,7 +21,7 @@ export const CategoriesRow = styled.div`
   column-gap: 1.4rem;
 `;
 
-export const Category = styled.div<{ selected: boolean }>`
+export const Category = styled.button<{ selected: boolean }>`
   ${({ theme }) => theme.fonts.description5}
   cursor: pointer;
 

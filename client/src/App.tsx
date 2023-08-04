@@ -12,43 +12,54 @@ import GoalRoomDashboardPage from '@pages/goalRoomDashboardPage/GoalRoomDashboar
 import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
+import ToastProvider from '@components/_common/toastProvider/ToastProvider';
 import GoalRoomListPage from './pages/goalRoomListPage/GoalRoomListPage';
 import GoalRoomCreatePage from './pages/goalRoomCreatePage/GoalRoomCreatePage';
+import UserInfoProvider from '@components/_providers/UserInfoProvider';
+import MyPage from '@pages/myPage/MyPage';
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <BrowserRouter>
-        <ResponsiveContainer>
-          <PageLayout>
-            <Routes>
-              <Route path='/' element={<RoadmapListPage />} />
-              <Route path='/login' element={<LoginPage />} />
-              <Route path='/join' element={<SignUpPage />} />
-              <Route path='/roadmap-list' element={<RoadmapListPage />} />
-              <Route
-                path='/roadmap/:id'
-                element={
-                  <Suspense fallback={<Fallback />}>
-                    <RoadmapDetailPage />
-                  </Suspense>
-                }
-              />
-              <Route path='/roadmap/:id/goalroom-list' element={<GoalRoomListPage />} />
-              <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
-              <Route
-                path='/roadmap/:id/goalroom-create'
-                element={<GoalRoomCreatePage />}
-              />
-              <Route
-                path='/goalroom-dashboard/:goalroomId'
-                element={<GoalRoomDashboardPage />}
-              />
-            </Routes>
-          </PageLayout>
-        </ResponsiveContainer>
-      </BrowserRouter>
+      <UserInfoProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <ResponsiveContainer>
+              <PageLayout>
+                <Routes>
+                  <Route path='/' element={<RoadmapListPage />} />
+                  <Route path='/login' element={<LoginPage />} />
+                  <Route path='/join' element={<SignUpPage />} />
+                  <Route path='/roadmap-list' element={<RoadmapListPage />} />
+                  <Route
+                    path='/roadmap/:id'
+                    element={
+                      <Suspense fallback={<Fallback />}>
+                        <RoadmapDetailPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path='/roadmap/:id/goalroom-list'
+                    element={<GoalRoomListPage />}
+                  />
+                  <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
+                  <Route
+                    path='/roadmap/:id/goalroom-create'
+                    element={<GoalRoomCreatePage />}
+                  />
+                  <Route
+                    path='/goalroom-dashboard/:goalroomId'
+                    element={<GoalRoomDashboardPage />}
+                  />
+                  <Route path='/myPage' element={<MyPage />} />
+                </Routes>
+              </PageLayout>
+            </ResponsiveContainer>
+          </BrowserRouter>
+        </ToastProvider>
+      </UserInfoProvider>
     </ThemeProvider>
   );
 };

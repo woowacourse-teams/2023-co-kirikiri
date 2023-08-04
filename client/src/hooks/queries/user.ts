@@ -1,7 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
-import { MemberJoinRequest, UserLoginRequest } from '@myTypes/user/remote';
-import { login, signUp } from '@apis/user';
+import {
+  MemberJoinRequest,
+  UserInfoResponse,
+  UserLoginRequest,
+} from '@myTypes/user/remote';
+import { getUserInfo, login, signUp } from '@apis/user';
 import { setCookie } from '@utils/_common/cookies';
+import useToast from '@hooks/_common/useToast';
+import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
+import { AxiosResponse } from 'axios';
 
 export const useSignUp = () => {
   const { mutate } = useMutation(
@@ -22,6 +29,9 @@ export const useSignUp = () => {
 };
 
 export const useLogin = () => {
+  const { triggerToast } = useToast();
+  const { setUserInfo } = useUserInfoContext();
+
   const { mutate } = useMutation(
     (loginPayload: UserLoginRequest) => login(loginPayload),
     {
@@ -29,6 +39,11 @@ export const useLogin = () => {
         const { accessToken, refreshToken } = response.data;
         setCookie('access_token', accessToken);
         setCookie('refresh_token', refreshToken);
+        triggerToast({ message: '로그인 성공!' });
+
+        getUserInfo().then((response: AxiosResponse<UserInfoResponse>) => {
+          setUserInfo(response.data);
+        });
       },
       onError() {
         // TODO: 로그인 실패 시 로직

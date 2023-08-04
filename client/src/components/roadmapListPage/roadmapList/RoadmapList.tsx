@@ -17,7 +17,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   };
 
   return (
-    <S.RoadmapList>
+    <S.RoadmapList aria-label='로드맵 목록'>
       {roadmapList?.map((item) => (
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}

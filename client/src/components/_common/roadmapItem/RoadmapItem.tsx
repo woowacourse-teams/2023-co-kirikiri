@@ -16,7 +16,13 @@ type RoadmapItemProps = {
 const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) => {
   const categoryIcon = <SVGIcon name={CategoriesInfo[item.category.id].iconName} />;
   const difficultyIcon = (
-    <SVGIcon name={DIFFICULTY_ICON_NAME[item.difficulty]} size={50} />
+    <div aria-label={DIFFICULTY_ICON_NAME[item.difficulty]}>
+      <SVGIcon
+        name={DIFFICULTY_ICON_NAME[item.difficulty]}
+        size={50}
+        aria-hidden='true'
+      />
+    </div>
   );
   const navigate = useNavigate();
 
@@ -29,21 +35,23 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
   };
 
   return (
-    <S.RoadmapItem hasBorder={hasBorder}>
+    <S.RoadmapItem hasBorder={hasBorder} aria-label='로드맵 항목'>
       <S.ItemHeader>
-        <S.AchieversCount>지금까지 1024명이 목표를 달성했어요!</S.AchieversCount>
-        <S.ReviewersCount>❤️ 240</S.ReviewersCount>
+        <S.AchieversCount aria-label='목표 달성률'>
+          지금까지 1024명이 목표를 달성했어요!
+        </S.AchieversCount>
+        <S.ReviewersCount aria-label='로드맵 좋아요 개수'>❤️ 240</S.ReviewersCount>
       </S.ItemHeader>
       <div>
-        <S.RoadmapTitle>{item.roadmapTitle}</S.RoadmapTitle>
-        <S.Description>{item.introduction}</S.Description>
+        <S.RoadmapTitle aria-label='로드맵 제목'>{item.roadmapTitle}</S.RoadmapTitle>
+        <S.Description aria-label='로드맵 소개'>{item.introduction}</S.Description>
       </div>
-      <S.ItemExtraInfos>
-        <S.ExtraInfoBox>{categoryIcon}</S.ExtraInfoBox>
-        <S.Difficulty>{difficultyIcon}</S.Difficulty>
-        <S.RecommendedRoadmapPeriod>
+      <S.ItemExtraInfos aria-label='로드맵 속성'>
+        <S.ExtraInfoBox aria-label='로드맵 카테고리 분류'>{categoryIcon}</S.ExtraInfoBox>
+        <S.Difficulty aria-label='로드맵 난이도'>{difficultyIcon}</S.Difficulty>
+        <S.RecommendedRoadmapPeriod aria-label='로드맵 진행 기간'>
           <div>{item.recommendedRoadmapPeriod}</div>
-          <div>Days</div>
+          <div aria-label='일'>Days</div>
         </S.RecommendedRoadmapPeriod>
       </S.ItemExtraInfos>
       <Button onClick={moveGoalRoomListPage}>
@@ -55,6 +63,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
           {item.tags.map((tag) => {
             return <span># {tag.name}</span>;
           })}
+
         </S.Tags>
       </S.ItemFooter>
     </S.RoadmapItem>

@@ -2,20 +2,27 @@ import SVGIcon from '@components/icons/SVGIcon';
 import { GoalRoomTodo } from '@myTypes/goalRoom/internal';
 import * as S from './SingleTodo.styles';
 import useHover from '@hooks/_common/useHover';
-
-/*
-    TODO:
-     1. 투두리스트 생성 모달 구현
-     2. 투두리스트 실제 눌렀을 때 체크되는 기능 구현
-*/
+import { usePostChangeTodoCheckStatus } from '@hooks/queries/goalRoom';
+import useValidParams from '@hooks/_common/useValidParams';
+import { GoalRoomDashboardContentParams } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent';
 
 type SingleTodoProps = {
   todoContent: GoalRoomTodo;
 };
 
 const SingleTodo = ({ todoContent }: SingleTodoProps) => {
-  const { content, startDate, endDate } = todoContent;
+  const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
+
+  const { content, startDate, endDate, check } = todoContent;
   const { isHovered, handleMouseEnter, handleMouseLeave } = useHover();
+  const { changeTodoCheckStatus } = usePostChangeTodoCheckStatus({
+    goalRoomId: goalroomId,
+    todoId: String(todoContent.id),
+  });
+
+  const handleTodoCheckButtonClick = () => {
+    changeTodoCheckStatus();
+  };
 
   return (
     <S.Todo>
@@ -23,8 +30,9 @@ const SingleTodo = ({ todoContent }: SingleTodoProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         aria-label='hidden'
+        onClick={handleTodoCheckButtonClick}
       >
-        <SVGIcon name={isHovered ? 'CheckedCircle' : 'EmptyCircle'} />
+        <SVGIcon name={check.isChecked || isHovered ? 'CheckedCircle' : 'EmptyCircle'} />
       </S.TodoButton>
       <S.TodoContent>{content}</S.TodoContent>
       <S.TodoDate>

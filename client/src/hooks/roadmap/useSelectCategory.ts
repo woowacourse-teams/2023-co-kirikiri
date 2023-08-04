@@ -4,7 +4,7 @@ import { MouseEvent, useState } from 'react';
 export const useSelectCategory = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<SelectedCategoryId>();
 
-  const selectCategory = ({ currentTarget }: MouseEvent<HTMLDivElement>) => {
+  const selectCategory = ({ currentTarget }: MouseEvent<HTMLButtonElement>) => {
     if (!currentTarget.id) return;
 
     const categoryId = Number(currentTarget.id);
