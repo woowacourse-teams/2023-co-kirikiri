@@ -43,8 +43,8 @@ export const useCollectRoadmapData = () => {
     });
   };
 
-  const getRoadmapItemTitle = (
-    e: React.ChangeEvent<HTMLInputElement>,
+  const getRoadmapItemTitle = <T extends HTMLInputElement | HTMLTextAreaElement>(
+    e: React.ChangeEvent<T>,
     itemId: number
   ) => {
     setRoadmapValue((prev) => {
