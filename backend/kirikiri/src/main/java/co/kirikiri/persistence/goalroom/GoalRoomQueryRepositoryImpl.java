@@ -93,7 +93,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
                 .fetchJoin()
-                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                //.innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
                 .innerJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
                 .fetchJoin()
                 .where(goalRoomIdCond(goalRoomId))
