@@ -88,10 +88,8 @@ export const usePostChangeTodoCheckStatus = ({
     {
       onSuccess() {
         triggerToast({ message: '투두리스트 상태 변경 완료!' });
-        queryClient.invalidateQueries([
-          ['goalRoom', goalRoomId],
-          ['goalRoomTodos', goalRoomId],
-        ]);
+        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
+        queryClient.invalidateQueries(['goalRoomTodos', goalRoomId]);
       },
     }
   );
@@ -108,7 +106,7 @@ export const useCreateCertificationFeed = (goalRoomId: string) => {
     (formData: FormData) => postCreateNewCertificationFeed(goalRoomId, formData),
     {
       onSuccess() {
-        queryClient.invalidateQueries([['goalRoom', goalRoomId]]);
+        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
       },
     }
   );
