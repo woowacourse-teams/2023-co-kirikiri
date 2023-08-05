@@ -34,7 +34,16 @@ public class GoalRoomPendingMembers {
 
     public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
         return values.stream()
-                .anyMatch(value -> value.isSameMemberWith(goalRoomPendingMember.getMember()));
+                .anyMatch(value -> value.isSameMember(goalRoomPendingMember.getMember()));
+    }
+
+    public boolean isMember(final Member member) {
+        return values.stream()
+                .anyMatch(value -> value.isSameMember(member));
+    }
+
+    public int size() {
+        return values.size();
     }
 
     public Member findGoalRoomLeader() {
@@ -45,9 +54,14 @@ public class GoalRoomPendingMembers {
                 .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
     }
 
+    public boolean isNotLeader(final Member member) {
+        final Member goalRoomLeader = findGoalRoomLeader();
+        return !goalRoomLeader.equals(member);
+    }
+
     public Optional<GoalRoomPendingMember> findByMember(final Member member) {
         return values.stream()
-                .filter(value -> value.isSameMemberWith(member))
+                .filter(value -> value.isSameMember(member))
                 .findFirst();
     }
 
@@ -61,10 +75,6 @@ public class GoalRoomPendingMembers {
 
     public void remove(final GoalRoomPendingMember goalRoomPendingMember) {
         values.remove(goalRoomPendingMember);
-    }
-
-    public int size() {
-        return values.size();
     }
 
     public boolean isEmpty() {

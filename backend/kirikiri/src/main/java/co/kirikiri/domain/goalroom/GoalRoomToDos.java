@@ -1,5 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -26,5 +27,20 @@ public class GoalRoomToDos {
 
     public void add(final GoalRoomToDo goalRoomToDo) {
         values.add(goalRoomToDo);
+    }
+
+    public GoalRoomToDo findLast() {
+        return values.get(values.size() - 1);
+    }
+
+    public GoalRoomToDo findById(final Long todoId) {
+        return values.stream()
+                .filter(todo -> todo.getId().equals(todoId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 투두입니다. todoId = " + todoId));
+    }
+
+    public List<GoalRoomToDo> getValues() {
+        return new ArrayList<>(values);
     }
 }

@@ -28,4 +28,16 @@ public class MemberProfile extends BaseUpdatedTimeEntity {
         this.birthday = birthday;
         this.phoneNumber = phoneNumber;
     }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 }

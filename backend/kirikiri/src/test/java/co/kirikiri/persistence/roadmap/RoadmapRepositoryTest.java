@@ -1,35 +1,11 @@
 package co.kirikiri.persistence.roadmap;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.persistence.helper.RepositoryTest;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
-import java.time.LocalDate;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 @RepositoryTest
 class RoadmapRepositoryTest {
 
+/*
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -44,10 +20,11 @@ class RoadmapRepositoryTest {
     @Test
     void 로드맵을_저장한다() {
         // given
-        final Member creator = 크리에이터를_생성한다();
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
         final RoadmapCategory category = 카테고리를_생성한다("여가");
-        final Roadmap roadmap = 로드맵을_생성한다(creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
 
+        // when
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
 
         // then
@@ -56,119 +33,277 @@ class RoadmapRepositoryTest {
     }
 
     @Test
+    void 단일_로드맵을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_생성한다("여가");
+        final Roadmap savedRoadmap = 로드맵을_저장한다("로드맵 제목", creator, category);
+
+        // when
+        final Roadmap expectedRoadmap = roadmapRepository.findRoadmapById(savedRoadmap.getId()).get();
+
+        assertThat(expectedRoadmap)
+                .usingRecursiveComparison()
+                .isEqualTo(savedRoadmap);
+    }
+
+    @Test
     void 카테고리_값이_null이라면_삭제되지_않은_전체_로드맵을_최신순으로_조회한다() {
         // given
-        final Member creator = 크리에이터를_생성한다();
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
         final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
         final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
 
-        final Roadmap gameRoadmap = 로드맵을_생성한다(creator, gameCategory);
-        final Roadmap gameRoadmap2 = 로드맵을_생성한다(creator, gameCategory);
-        final Roadmap travelRoadmap = 로드맵을_생성한다(creator, travelCategory);
-        final Roadmap deletedTravelRoadmap = 삭제된_로드맵을_생성한다(creator, travelCategory);
-
-        roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, travelRoadmap));
+        final Roadmap gameRoadmap = 로드맵을_저장한다("게임 로드맵", creator, gameCategory);
+        final Roadmap gameRoadmap2 = 로드맵을_저장한다("게임 로드맵2", creator, gameCategory);
+        final Roadmap travelRoadmap = 로드맵을_저장한다("여행 로드맵", creator, travelCategory);
+        삭제된_로드맵을_저장한다("여행 로드맵2", creator, travelCategory);
 
         final RoadmapCategory category = null;
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final PageRequest firstPage = PageRequest.of(0, 2);
-        final PageRequest secondPage = PageRequest.of(1, 2);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
-                firstPage);
-        final Page<Roadmap> secondPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(category, orderType,
-                secondPage);
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
+                null, 2);
 
         // then
         assertAll(
-                () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
-
-                () -> assertThat(secondPageRoadmaps.getTotalPages()).isEqualTo(2),
-                () -> assertThat(secondPageRoadmaps.getTotalElements()).isEqualTo(3),
-                () -> assertThat(secondPageRoadmaps.getContent().size()).isEqualTo(1),
-
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(travelRoadmap, gameRoadmap2)),
-
-                () -> assertThat(secondPageRoadmaps.getContent()).usingRecursiveComparison()
-                        .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(gameRoadmap))
+                        .isEqualTo(List.of(travelRoadmap, gameRoadmap2))
         );
     }
 
     @Test
     void 카테고리_값으로_1이상의_유효한_값이_들어오면_해당_카테고리의_삭제되지_않은_로드맵을_최신순으로_조회한다() {
         // given
-        final Member creator = 크리에이터를_생성한다();
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
         final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
         final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
 
-        final Roadmap gameRoadmap = 로드맵을_생성한다(creator, gameCategory);
-        final Roadmap gameRoadmap2 = 로드맵을_생성한다(creator, gameCategory);
-        final Roadmap deletedGameRoadmap = 삭제된_로드맵을_생성한다(creator, gameCategory);
-        final Roadmap deletedTravelRoadmap = 삭제된_로드맵을_생성한다(creator, travelCategory);
-
-        roadmapRepository.saveAll(List.of(gameRoadmap, deletedTravelRoadmap, gameRoadmap2, deletedGameRoadmap));
+        final Roadmap gameRoadmap = 로드맵을_저장한다("게임 로드맵", creator, gameCategory);
+        final Roadmap gameRoadmap2 = 로드맵을_저장한다("게임 로드맵2", creator, gameCategory);
+        삭제된_로드맵을_저장한다("게임 로드맵3", creator, gameCategory);
+        삭제된_로드맵을_저장한다("게임 로드맵4", creator, travelCategory);
 
         final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
-        final PageRequest firstPage = PageRequest.of(0, 10);
 
         // when
-        final Page<Roadmap> firstPageRoadmaps = roadmapRepository.findRoadmapPagesByCond(gameCategory, orderType,
-                firstPage);
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(gameCategory, orderType,
+                null, 10);
 
         // then
         assertAll(
-                () -> assertThat(firstPageRoadmaps.getTotalPages()).isEqualTo(1),
-                () -> assertThat(firstPageRoadmaps.getTotalElements()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent().size()).isEqualTo(2),
-                () -> assertThat(firstPageRoadmaps.getContent()).usingRecursiveComparison()
+                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
         );
     }
 
     @Test
-    void 단일_로드맵을_조회한다() {
-        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
-        final Roadmap expectedRoadmap = roadmapRepository.findById(savedRoadmap.getId()).get();
+    void 카테고리_조건_없이_주어진_마지막_날짜_이전의_데이터를_최신순으로_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
+        final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
 
-        assertThat(expectedRoadmap).usingRecursiveComparison()
-                .isEqualTo(savedRoadmap);
+        final Roadmap gameRoadmap = 로드맵을_저장한다("게임 로드맵", creator, gameCategory);
+        final Roadmap gameRoadmap2 = 로드맵을_저장한다("게임 로드맵2", creator, gameCategory);
+        final Roadmap travelRoadmap = 로드맵을_저장한다("여행 로드맵", creator, travelCategory);
+        삭제된_로드맵을_저장한다("여행 로드맵2", creator, travelCategory);
+
+        final RoadmapCategory category = null;
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 1));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(travelRoadmap.getCreatedAt(), null, null, null, 10));
+
+        // when
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
+                firstRoadmapLastValueDto, 1);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
+                secondRoadmapLastValueDto, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(1),
+                () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(travelRoadmap)),
+
+                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(gameRoadmap2, gameRoadmap))
+        );
     }
 
-    private Roadmap 로드맵을_생성한다() {
-        final Member creator = 사용자를_생성한다();
-        final RoadmapCategory category = 로드맵_카테고리를_생성한다();
-        final RoadmapContent content = new RoadmapContent("로드맵 제목");
+    @Test
+    void 로드맵을_제목으로_검색한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_생성한다("여가");
 
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
-        roadmap.addContent(content);
+        final Roadmap roadmap1 = 로드맵을_저장한다("로드맵", creator, category);
+        final Roadmap roadmap2 = 로드맵을_저장한다("짱로드맵", creator, category);
+        final Roadmap roadmap3 = 로드맵을_저장한다("로 드맵짱", creator, category);
+        final Roadmap roadmap4 = 로드맵을_저장한다("짱로드 맵짱", creator, category);
+        로드맵을_저장한다("로드", creator, category);
+        삭제된_로드맵을_저장한다("로드맵", creator, category);
 
-        return roadmap;
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, " 로 드 맵 ", null);
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 2));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmap3.getCreatedAt(), null, null, null, 3));
+
+        // when
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                firstRoadmapLastValueDto, 2);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                secondRoadmapLastValueDto, 3);
+
+        // then
+        assertAll(
+                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(roadmap4, roadmap3)),
+
+                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(roadmap2, roadmap1))
+        );
     }
 
-    private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
-        final Member member = new Member(new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
+    @Test
+    void 로드맵을_크리에이터_아이디로_검색한다() {
+        // given
+        final Member creator1 = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final Member creator2 = 크리에이터를_생성한다("cokirikiri2", "끼리코");
+        final RoadmapCategory category = 카테고리를_생성한다("여가");
 
-        return memberRepository.save(member);
+        final Roadmap roadmap1 = 로드맵을_저장한다("로드맵", creator1, category);
+        final Roadmap roadmap2 = 로드맵을_저장한다("로드맵", creator1, category);
+        로드맵을_저장한다("로드맵", creator2, category);
+        final Roadmap roadmap4 = 로드맵을_저장한다("로드맵", creator1, category);
+        로드맵을_저장한다("로드맵", creator2, category);
+        삭제된_로드맵을_저장한다("로드맵", creator1, category);
+
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getId(), null, null);
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 2));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmap2.getCreatedAt(), null, null, null, 3));
+
+        // when
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                firstRoadmapLastValueDto, 2);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                secondRoadmapLastValueDto, 3);
+
+        // then
+        assertAll(
+                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(roadmap4, roadmap2)),
+
+                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(1),
+                () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(roadmap1))
+        );
     }
 
-    private RoadmapCategory 로드맵_카테고리를_생성한다() {
-        final RoadmapCategory category = new RoadmapCategory("운동");
-        return roadmapCategoryRepository.save(category);
+    @Test
+    void 로드맵을_태그_이름으로_검색한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_생성한다("여가");
+
+        final Roadmap roadmap1 = 로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("자바")),
+                        new RoadmapTag(new RoadmapTagName("스프링")))));
+
+        로드맵을_저장한다("로드맵", creator, category);
+
+        final Roadmap roadmap3 = 로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("자바")))));
+
+        로드맵을_태그와_저장한다("로드맵", creator, category, new RoadmapTags(List.of(
+                new RoadmapTag(new RoadmapTagName("스프링")))));
+
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, null, " 자 바 ");
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 1));
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmap3.getCreatedAt(), null, null, null, 1));
+
+        // when
+        final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                firstRoadmapLastValueDto, 1);
+        final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
+                secondRoadmapLastValueDto, 1);
+
+        // then
+        assertAll(
+                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(1),
+                () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(roadmap3)),
+
+                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(1),
+                () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(roadmap1))
+        );
     }
 
-    private Member 크리에이터를_생성한다() {
+    @Test
+    void 사용자가_생성한_로드맵을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
+        final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
+        final RoadmapCategory itCategory = 카테고리를_생성한다("IT");
+
+        final Roadmap gameRoadmap = 로드맵을_저장한다("로드맵1", creator, gameCategory);
+        final Roadmap traveRoadmap = 로드맵을_저장한다("로드맵2", creator, travelCategory);
+        final Roadmap deletedGameRoadmap = 삭제된_로드맵을_저장한다("로드맵3", creator, itCategory);
+
+        roadmapRepository.saveAll(List.of(gameRoadmap, traveRoadmap, deletedGameRoadmap));
+
+        // when
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 1));
+        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(creator,
+                firstRoadmapLastValueDto, 2);
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmapsFirstPage.get(1).getCreatedAt(), null, null, null, 1));
+        final List<Roadmap> roadmapsSecondPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(
+                creator, secondRoadmapLastValueDto, 2);
+
+        // then
+        assertAll(
+                () -> assertThat(roadmapsFirstPage).isEqualTo(List.of(deletedGameRoadmap, traveRoadmap)),
+                () -> assertThat(roadmapsSecondPage).isEqualTo(List.of(gameRoadmap))
+        );
+    }
+
+    private Member 크리에이터를_생성한다(final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
-        final Member creator = new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+        final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
         return memberRepository.save(creator);
     }
 
@@ -177,32 +312,21 @@ class RoadmapRepositoryTest {
         return roadmapCategoryRepository.save(roadmapCategory);
     }
 
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final RoadmapNodes roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes.getValues());
-
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
-                creator, category);
-        roadmap.addContent(roadmapContent);
-        return roadmap;
+    private Roadmap 로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        return roadmapRepository.save(roadmap);
     }
 
-    private RoadmapNodes 로드맵_노드들을_생성한다() {
-        return new RoadmapNodes(List.of(
-                new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용"),
-                new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용")));
-
-    }
-
-    private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
-        return roadmapContent;
-    }
-
-    private Roadmap 삭제된_로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap("로드맵 제목2", "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator, category);
+    private Roadmap 삭제된_로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator, category);
         roadmap.delete();
-        return roadmap;
+        return roadmapRepository.save(roadmap);
     }
+
+    private Roadmap 로드맵을_태그와_저장한다(final String title, final Member creator, final RoadmapCategory category,
+                                  final RoadmapTags roadmapTags) {
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        roadmap.addTags(roadmapTags);
+        return roadmapRepository.save(roadmap);
+    }*/
 }

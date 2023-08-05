@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Roadmap extends BaseEntity {
+public class Roadmap extends BaseCreatedTimeEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
     private static final int TITLE_MAX_LENGTH = 40;
@@ -55,6 +56,9 @@ public class Roadmap extends BaseEntity {
 
     @Embedded
     private RoadmapContents contents = new RoadmapContents();
+
+    @Embedded
+    private RoadmapTags tags = new RoadmapTags();
 
     @Embedded
     private RoadmapReviews reviews = new RoadmapReviews();
@@ -128,6 +132,10 @@ public class Roadmap extends BaseEntity {
         }
     }
 
+    public void addTags(final RoadmapTags tags) {
+        this.tags.addAll(tags);
+    }
+
     public boolean isCreator(final Member member) {
         return Objects.equals(creator.getId(), member.getId());
     }
@@ -169,5 +177,13 @@ public class Roadmap extends BaseEntity {
 
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
+    }
+
+    public RoadmapTags getTags() {
+        return tags;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

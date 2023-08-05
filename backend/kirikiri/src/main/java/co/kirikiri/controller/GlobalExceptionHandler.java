@@ -3,9 +3,11 @@ package co.kirikiri.controller;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ConflictException;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.dto.ErrorResponse;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,13 @@ public class GlobalExceptionHandler {
         log.warn(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(final ForbiddenException exception) {
+        log.warn(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     @ExceptionHandler(ConflictException.class)
@@ -54,6 +63,13 @@ public class GlobalExceptionHandler {
         log.warn(exception.getMessage(), exception);
         final List<ErrorResponse> errorResponses = makeErrorResponses(exception);
         return ResponseEntity.badRequest().body(errorResponses);
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFormatException(final InvalidFormatException exception) {
+        log.error(exception.getMessage(), exception);
+        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(ServerException.class)

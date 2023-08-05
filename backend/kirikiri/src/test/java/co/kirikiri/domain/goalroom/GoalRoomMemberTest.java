@@ -47,7 +47,7 @@ class GoalRoomMemberTest {
                 member);
 
         // when
-        final boolean result = goalRoomMember.isSameMemberWith(member);
+        final boolean result = goalRoomMember.isSameMember(member);
 
         // then
         assertThat(result).isTrue();
@@ -67,7 +67,7 @@ class GoalRoomMemberTest {
                 member1);
 
         // when
-        final boolean result = goalRoomMember.isSameMemberWith(member2);
+        final boolean result = goalRoomMember.isSameMember(member2);
 
         // then
         assertThat(result).isFalse();

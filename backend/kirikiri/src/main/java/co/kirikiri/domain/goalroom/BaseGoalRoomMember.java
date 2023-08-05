@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -52,7 +53,7 @@ public abstract class BaseGoalRoomMember extends BaseEntity {
         return role == GoalRoomRole.LEADER;
     }
 
-    public boolean isSameMemberWith(final Member member) {
+    public boolean isSameMember(final Member member) {
         return this.member.equals(member);
     }
 
@@ -60,8 +61,36 @@ public abstract class BaseGoalRoomMember extends BaseEntity {
         this.role = GoalRoomRole.LEADER;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final BaseGoalRoomMember that = (BaseGoalRoomMember) o;
+        return Objects.equals(goalRoom, that.goalRoom) && Objects.equals(member, that.member);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), goalRoom, member);
+    }
+
+    public GoalRoomRole getRole() {
+        return role;
+    }
+
     public LocalDateTime getJoinedAt() {
         return joinedAt;
+    }
+
+    public GoalRoom getGoalRoom() {
+        return goalRoom;
     }
 
     public Member getMember() {

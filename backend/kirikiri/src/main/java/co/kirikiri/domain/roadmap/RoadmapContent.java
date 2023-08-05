@@ -23,16 +23,15 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
     @Column(length = 2200)
     private String content;
 
-    @Embedded
-    private final RoadmapNodes nodes = new RoadmapNodes();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id", nullable = false)
     private Roadmap roadmap;
 
+    @Embedded
+    private final RoadmapNodes nodes = new RoadmapNodes();
+
     public RoadmapContent(final String content) {
-        validate(content);
-        this.content = content;
+        this(null, content);
     }
 
     public RoadmapContent(final Long id, final String content) {
@@ -50,7 +49,7 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
 
     private void validateContentLength(final String content) {
         if (content.length() > CONTENT_MAX_LENGTH) {
-            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자 입니다.", CONTENT_MAX_LENGTH));
+            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자입니다.", CONTENT_MAX_LENGTH));
         }
     }
 

@@ -15,8 +15,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -25,7 +28,6 @@ import lombok.NoArgsConstructor;
 public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private static final int DATE_OFFSET = 1;
-    private static final int MIN_MEMBER_SIZE_TO_FIND_NEXT_LEADER = 1;
 
     @Embedded
     private GoalRoomName name;
@@ -47,16 +49,16 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     private LocalDate endDate;
 
     @Embedded
-    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(new ArrayList<>());
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
 
     @Embedded
     private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
 
     @Embedded
-    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos(new ArrayList<>());
+    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos();
 
     @Embedded
-    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(new ArrayList<>());
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent, final Member member) {
@@ -78,6 +80,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomPendingMembers.add(leader);
     }
 
+    public void updateStatus(final GoalRoomStatus status) {
+        this.status = status;
+    }
+
     public void join(final Member member) {
         final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
         newMember.updateGoalRoom(this);
@@ -92,7 +98,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     }
 
     private void validateMemberCount() {
-        if (getCurrentPendingMemberCount() >= limitedMemberCount.getValue()) {
+        if (getCurrentMemberCount() >= limitedMemberCount.getValue()) {
             throw new BadRequestException("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
         }
     }
@@ -121,6 +127,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return (int) ChronoUnit.DAYS.between(startDate, endDate) + DATE_OFFSET;
     }
 
+    public int getAllCheckCount() {
+        return goalRoomRoadmapNodes.calculateAllCheckCount();
+    }
+
     public boolean isRecruiting() {
         return status == GoalRoomStatus.RECRUITING;
     }
@@ -146,8 +156,48 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomToDos.add(goalRoomToDo);
     }
 
-    public Member findGoalRoomLeaderInPendingMember() {
-        return goalRoomPendingMembers.findGoalRoomLeader();
+    public Member findGoalRoomLeader() {
+        if (status == GoalRoomStatus.RECRUITING) {
+            return goalRoomPendingMembers.findGoalRoomLeader();
+        }
+        return goalRoomMembers.findGoalRoomLeader();
+    }
+
+    public boolean isNotLeader(final Member member) {
+        if (status == GoalRoomStatus.RECRUITING) {
+            return goalRoomPendingMembers.isNotLeader(member);
+        }
+        return goalRoomMembers.isNotLeader(member);
+    }
+
+    public boolean isCompleted() {
+        return this.status == GoalRoomStatus.COMPLETED;
+    }
+
+    public GoalRoomToDo findLastGoalRoomTodo() {
+        return goalRoomToDos.findLast();
+    }
+
+    public Optional<GoalRoomRoadmapNode> getNodeByDate(final LocalDate date) {
+        return goalRoomRoadmapNodes.getNodeByDate(date);
+    }
+
+    public Integer getCurrentMemberCount() {
+        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+            return goalRoomPendingMembers.size();
+        }
+        return goalRoomMembers.size();
+    }
+
+    public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
+        this.goalRoomMembers.addAll(new ArrayList<>(members));
+    }
+
+    public boolean isGoalRoomMember(final Member member) {
+        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+            return goalRoomPendingMembers.isMember(member);
+        }
+        return goalRoomMembers.isMember(member);
     }
 
     public void leave(final Member member) {
@@ -193,10 +243,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomPendingMembers.isEmpty() && goalRoomMembers.isEmpty();
     }
 
-    public Integer getCurrentPendingMemberCount() {
-        return goalRoomPendingMembers.size();
-    }
-
     public GoalRoomName getName() {
         return name;
     }
@@ -213,7 +259,27 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return endDate;
     }
 
+    public GoalRoomStatus getStatus() {
+        return status;
+    }
+
+    public RoadmapContent getRoadmapContent() {
+        return roadmapContent;
+    }
+
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
         return goalRoomRoadmapNodes;
+    }
+
+    public GoalRoomMembers getGoalRoomMembers() {
+        return goalRoomMembers;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public GoalRoomToDos getGoalRoomToDos() {
+        return goalRoomToDos;
     }
 }

@@ -20,4 +20,11 @@ public interface GoalRoomMemberRepository extends JpaRepository<GoalRoomMember, 
             @Param("goalRoom") final GoalRoom goalRoom, @Param("identifier") final Identifier identifier);
 
     List<GoalRoomMember> findByGoalRoom(final GoalRoom goalRoom);
+
+    @Query("select gm from GoalRoomMember gm "
+            + "join fetch gm.goalRoom g "
+            + "join fetch gm.member m "
+            + "where g=:goalRoom "
+            + "and gm.member = m")
+    List<GoalRoomMember> findAllByGoalRoom(@Param("goalRoom") final GoalRoom goalRoom);
 }
