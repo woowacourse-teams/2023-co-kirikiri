@@ -17,16 +17,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -240,6 +245,113 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         });
 
         assertThat(responses).isEqualTo(new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1"));
+    }
+
+    @Test
+    void 골룸의_인증피드를_전체_조회한다() throws Exception {
+        // given
+        final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
+                new MemberNameAndImageResponse(1L, "name1", "imageUrl"),
+                new CheckFeedResponse(1L, "imageUrl", "image description1", LocalDateTime.now()));
+        final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
+                new MemberNameAndImageResponse(2L, "name2", "imageUrl"),
+                new CheckFeedResponse(2L, "imageUrl", "image description2", LocalDateTime.now()));
+
+        final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse2,
+                goalRoomCheckFeedResponse1);
+
+        when(goalRoomReadService.findGoalRoomCheckFeeds(any(), any()))
+                .thenReturn(expected);
+
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
+                                .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                                ),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[0].member.id").description("사용자 ID"),
+                                        fieldWithPath("[0].member.nickname").description("사용자 닉네임"),
+                                        fieldWithPath("[0].member.imageUrl").description("사용자 이미지 Url"),
+                                        fieldWithPath("[0].checkFeed.id").description("인증 피드 ID"),
+                                        fieldWithPath("[0].checkFeed.imageUrl").description("인증 피드 이미지 Url"),
+                                        fieldWithPath("[0].checkFeed.description").description("인증 피드 설명"),
+                                        fieldWithPath("[0].checkFeed.createdAt").description("인증 피드 등록 날짜"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<GoalRoomCheckFeedResponse> 골룸_인증피드_전체_조회_응답 = objectMapper.readValue(response,
+                new TypeReference<>() {
+                });
+        assertThat(골룸_인증피드_전체_조회_응답)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸_인증피드_전체_조회_시_존재하지_않는_골룸일_경우_예외가_발생한다() throws Exception {
+        //given
+        doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
+                .when(goalRoomReadService)
+                .findGoalRoomCheckFeeds(any(), any());
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메세지")
+                                )))
+                .andReturn();
+
+        // then
+        final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).isEqualTo(new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1"));
+    }
+
+    @Test
+    void 골룸_인증피드_전체_조회_시_골룸에_참여하지_않은_사용자일_경우_예외가_발생한다() throws Exception {
+        //given
+        doThrow(new BadRequestException("골룸에 참여하지 않은 회원입니다."))
+                .when(goalRoomReadService)
+                .findGoalRoomCheckFeeds(any(), any());
+
+        //when
+        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메세지")
+                                )))
+                .andReturn();
+
+        // then
+        final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses).isEqualTo(new ErrorResponse("골룸에 참여하지 않은 회원입니다."));
     }
 
     private GoalRoomResponse 골룸_조회_응답을_생성한다() {

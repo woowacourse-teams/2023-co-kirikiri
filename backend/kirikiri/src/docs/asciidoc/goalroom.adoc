@@ -142,3 +142,18 @@ operation::goal-room-create-api-test/골룸_투두_추가시_리더가_아닌_�
 === *6-6* 실패 - 골룸 투두 추가시 컨텐츠가 250글자가 넘을 경우
 
 operation::goal-room-create-api-test/골룸_투두_추가시_컨텐츠가_250글자가_넘을_경우[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+[[골룸인증피드전체조회-API]]
+== *7. 골룸 인증 피드 전체 조회 API*
+
+=== *7-1* 성공
+
+operation::goal-room-read-api-test/골룸의_인증피드를_전체_조회한다[snippets='http-request,path-parameters,request-headers,http-response,response-fields']
+
+=== *7-2* 실패 - 골룸 인증 피드 전체 조회 시 존재하지 않는 골룸인 경우
+
+operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_존재하지_않는_골룸일_경우_예외가_발생한다[snippets='http-request,http-response,response-fields']
+
+=== *7-3* 실패 - 골룸 인증 피드 전체 조회 시 해당 골룸에 참여하지 않은 사용자인 경우
+
+operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_골룸에_참여하지_않은_사용자일_경우_예외가_발생한다[snippets='http-request,http-response,response-fields']
