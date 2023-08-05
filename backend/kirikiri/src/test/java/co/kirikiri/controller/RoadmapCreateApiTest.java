@@ -8,11 +8,15 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,7 +33,6 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,12 +40,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.request.RequestPartDescriptor;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.restdocs.snippet.Attributes.Attribute;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebMvcTest(RoadmapController.class)
-public class RoadmapCreateApiTest extends ControllerTestHelper {
+class RoadmapCreateApiTest extends ControllerTestHelper {
 
     @MockBean
     private RoadmapCreateService roadmapCreateService;
@@ -55,15 +63,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         // given
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willReturn(1L);
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isCreated());
+        로드맵_생성_요청(request, status().isCreated());
     }
 
     @Test
@@ -71,15 +78,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         // given
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new AuthenticationException("존재하지 않는 회원입니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isUnauthorized());
+        로드맵_생성_요청(request, status().isUnauthorized());
     }
 
     @Test
@@ -88,15 +94,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final Long categoryId = 10L;
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(categoryId, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 10"));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isNotFound());
+        로드맵_생성_요청(request, status().isNotFound());
     }
 
     @Test
@@ -105,12 +110,11 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final Long categoryId = null;
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(categoryId, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -119,15 +123,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String title = "a".repeat(41);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, title, "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -136,12 +139,11 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String title = null;
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, title, "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -150,15 +152,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String introduction = "a".repeat(151);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", introduction, "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 소개글의 길이는 최소 1글자, 최대 150글자입니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -167,12 +168,11 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String introduction = null;
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", introduction, "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -181,15 +181,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String content = "a".repeat(2001);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", content,
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 본문의 길이는 최대 2000글자입니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -198,12 +197,11 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final RoadmapDifficultyType difficulty = null;
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 difficulty, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @ParameterizedTest
@@ -212,15 +210,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         // given
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, requiredPeriod,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 추천 소요 기간은 최소 0일, 최대 1000일입니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -229,12 +226,11 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final Integer requiredPeriod = null;
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, requiredPeriod,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -243,29 +239,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String nodeTitle = "a".repeat(41);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest(nodeTitle, "로드맵 1주차에는 알고리즘을 배울거에요.")),
+                List.of(new RoadmapNodeSaveRequest(nodeTitle, "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 노드의 제목의 길이는 최소 1글자, 최대 40글자입니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
-    }
-
-    @Test
-    void 로드맵_생성시_로드맵_노드의_제목을_입력하지_않으면_예외가_발생한다() throws Exception {
-        // given
-        final String nodeTitle = null;
-        final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest(nodeTitle, "로드맵 1주차에는 알고리즘을 배울거에요.")),
-                List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
-
-        // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -274,15 +255,27 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String nodeContent = "a".repeat(2001);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", nodeContent)),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", nodeContent, null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("로드맵 노드의 설명의 길이는 최소 1글자, 최대 2000글자입니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
+    }
+
+    @Test
+    void 로드맵_생성시_로드맵_노드의_제목을_입력하지_않으면_예외가_발생한다() throws Exception {
+        // given
+        final String nodeTitle = null;
+        final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
+                RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest(nodeTitle, "로드맵 1주차에는 알고리즘을 배울거에요.", null)),
+                List.of(new RoadmapTagSaveRequest("태그1")));
+
+        // expect
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -291,12 +284,11 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String nodeContent = null;
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", nodeContent)),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", nodeContent, null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @ParameterizedTest
@@ -306,15 +298,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         final String tagName = "a".repeat(nameLength);
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 내용", null)),
                 List.of(new RoadmapTagSaveRequest(tagName)));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("태그 이름은 최소 1자부터 최대 10자까지 가능합니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -322,17 +313,16 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         // given
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 내용", null)),
                 List.of(new RoadmapTagSaveRequest("태그1"), new RoadmapTagSaveRequest("태그2"),
                         new RoadmapTagSaveRequest("태그3"), new RoadmapTagSaveRequest("태그4"),
                         new RoadmapTagSaveRequest("태그5"), new RoadmapTagSaveRequest("태그6")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("태그의 개수는 최대 5개까지 가능합니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -340,15 +330,14 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
         // given
         final RoadmapSaveRequest request = 로드맵_생성_요청을_생성한다(1L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 내용", null)),
                 List.of(new RoadmapTagSaveRequest("태그1"), new RoadmapTagSaveRequest("태그1")));
-        final String jsonRequest = objectMapper.writeValueAsString(request);
 
         given(roadmapCreateService.create(any(), any()))
                 .willThrow(new BadRequestException("태그 이름은 중복될 수 없습니다."));
 
         // expect
-        로드맵_생성_요청(jsonRequest, status().isBadRequest());
+        로드맵_생성_요청(request, status().isBadRequest());
     }
 
     @Test
@@ -653,18 +642,38 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                 requiredPeriod, roadmapNodesSaveRequests, roadmapTagSaveRequests);
     }
 
-    private void 로드맵_생성_요청(final String jsonRequest, final ResultMatcher httpStatus) throws Exception {
-        mockMvc.perform(post(API_PREFIX + "/roadmaps")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+    private void 로드맵_생성_요청(final RoadmapSaveRequest request, final ResultMatcher httpStatus) throws Exception {
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        final MockMultipartFile jsonData = new MockMultipartFile("jsonData", "", MediaType.APPLICATION_JSON_VALUE, jsonRequest.getBytes());
+        
+        final List<RequestPartDescriptor> MULTIPART_FORM_데이터_설명_리스트 = new ArrayList<>();
+        MULTIPART_FORM_데이터_설명_리스트.add(partWithName("jsonData").description("로드맵 생성 요청 json 데이터"));
+
+        MockMultipartHttpServletRequestBuilder httpServletRequestBuilder = multipart(API_PREFIX + "/roadmaps")
+                .file(jsonData);
+
+        for (final RoadmapNodeSaveRequest roadmapNode : request.roadmapNodes()) {
+            final String 로드맵_노드_제목 = roadmapNode.getTitle() != null ? roadmapNode.getTitle() : "name";
+            final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile(로드맵_노드_제목,
+                    "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
+            httpServletRequestBuilder = httpServletRequestBuilder.file(가짜_이미지_객체);
+
+            MULTIPART_FORM_데이터_설명_리스트.add(
+                    partWithName(로드맵_노드_제목).description("로드맵 노드 title")
+            );
+        }
+
+        mockMvc.perform(httpServletRequestBuilder
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
-                        .content(jsonRequest)
                         .contextPath(API_PREFIX))
                 .andExpect(httpStatus)
                 .andDo(documentationResultHandler.document(
                         requestHeaders(
                                 headerWithName("Authorization").description("access token")
                         ),
-                        requestFields(
+                        requestParts(MULTIPART_FORM_데이터_설명_리스트),
+                        requestPartFields("jsonData",
                                 fieldWithPath("categoryId").description("로드맵 카테고리 아이디"),
                                 fieldWithPath("title").description("로드맵 제목")
                                         .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 1-40")),
@@ -681,6 +690,7 @@ public class RoadmapCreateApiTest extends ControllerTestHelper {
                                         .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 1-40")),
                                 fieldWithPath("roadmapNodes[0].content").description("로드맵 노드의 설명")
                                         .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 1-2000")),
+                                fieldWithPath("roadmapNodes[0].images").ignored(),
                                 fieldWithPath("roadmapTags[0].name").description("로드맵 태그 이름")
                                         .attributes(new Attributes.Attribute(RESTRICT, "- 길이 : 1-10"))
                                         .optional()
