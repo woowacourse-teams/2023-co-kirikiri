@@ -41,9 +41,9 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
         final HttpServletRequest request = (HttpServletRequest) nativeWebRequest.getNativeRequest();
         checkIsMultipart(request);
         final MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        final RoadmapSaveRequest roadmapSaveRequest = makeRoadmapSaveRequest(multipartRequest);
-        validateRequest(parameter, nativeWebRequest, binderFactory, roadmapSaveRequest);
-        return roadmapSaveRequest;
+        final RoadmapSaveRequest roadmapSaveRequestNotIncludeImage = makeRoadmapSaveRequestNotIncludeImage(multipartRequest);
+        validateRequest(parameter, nativeWebRequest, binderFactory, roadmapSaveRequestNotIncludeImage);
+        return makeRoadmapSaveRequestIncludeImage(roadmapSaveRequestNotIncludeImage, multipartRequest);
     }
 
     private void checkIsMultipart(final HttpServletRequest request) {
@@ -53,14 +53,9 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
         }
     }
 
-    private RoadmapSaveRequest makeRoadmapSaveRequest(final MultipartHttpServletRequest multipartRequest) {
-        final String jsonData = extractJsonData(getJsonData(multipartRequest));
-        final RoadmapSaveRequest roadmapSaveRequest = bindRoadmapSaveRequest(jsonData);
-        for (final RoadmapNodeSaveRequest roadmapNode : roadmapSaveRequest.roadmapNodes()) {
-            final List<MultipartFile> images = multipartRequest.getFiles(roadmapNode.getTitle());
-            roadmapNode.setImages(images);
-        }
-        return roadmapSaveRequest;
+    private RoadmapSaveRequest makeRoadmapSaveRequestNotIncludeImage(final MultipartHttpServletRequest multipartRequest) {
+        final String jsonData = getJsonData(multipartRequest);
+        return bindRoadmapSaveRequest(jsonData);
     }
 
     private void validateRequest(final MethodParameter parameter, final NativeWebRequest nativeWebRequest, final WebDataBinderFactory binderFactory, final RoadmapSaveRequest roadmapSaveRequest) throws MethodArgumentNotValidException {
@@ -70,6 +65,14 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
         if (binder.getBindingResult().hasErrors()) {
             throw new MethodArgumentNotValidException(parameter, binder.getBindingResult());
         }
+    }
+
+    private RoadmapSaveRequest makeRoadmapSaveRequestIncludeImage(final RoadmapSaveRequest roadmapSaveRequest, final MultipartHttpServletRequest multipartRequest) {
+        for (final RoadmapNodeSaveRequest roadmapNode : roadmapSaveRequest.roadmapNodes()) {
+            final List<MultipartFile> images = multipartRequest.getFiles(roadmapNode.getTitle());
+            roadmapNode.setImages(images);
+        }
+        return roadmapSaveRequest;
     }
 
     private WebDataBinder findWebDataBinder(final NativeWebRequest nativeWebRequest, final WebDataBinderFactory binderFactory, final RoadmapSaveRequest roadmapSaveRequest) {
@@ -90,9 +93,9 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
         return roadmapSaveRequest;
     }
 
-    private MultipartFile getJsonData(final MultipartHttpServletRequest multipartRequest) {
+    private String getJsonData(final MultipartHttpServletRequest multipartRequest) {
         try {
-            return multipartRequest.getFile("jsonData");
+            return multipartRequest.getParameter("jsonData");
         } catch (final NullPointerException exception) {
             throw new BadRequestException("로드맵 생성 시 jsonData는 필수입니다.");
         }

@@ -56,13 +56,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 class GoalRoomReadIntegrationTest extends IntegrationTest {
 
@@ -101,7 +105,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸_아이디로_골룸_정보를_조회한다() {
+    void 골룸_아이디로_골룸_정보를_조회한다() throws IOException {
         // given
         final Member 크리에이터 = 크리에이터를_저장한다();
         final String 로그인_토큰_정보 = 로그인();
@@ -130,7 +134,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸_아이디와_사용자_아이디로_골룸_정보를_조회한다() {
+    void 골룸_아이디와_사용자_아이디로_골룸_정보를_조회한다() throws IOException {
         // given
         final Member 크리에이터 = 크리에이터를_저장한다();
         final String 로그인_토큰_정보 = 로그인();
@@ -375,28 +379,52 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         return roadmapCategoryRepository.save(로드맵_카테고리);
     }
 
-    private Long 제목별로_로드맵을_생성한다(final String 로그인_토큰_정보, final RoadmapCategory 로드맵_카테고리, final String 로드맵_제목) {
-        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(
-                로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(
-                new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용"),
-                new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")),
-                List.of(new RoadmapTagSaveRequest("태그")));
+    private Long 제목별로_로드맵을_생성한다(final String 로그인_토큰_정보, final RoadmapCategory 로드맵_카테고리, final String 로드맵_제목) throws IOException {
+        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(로드맵_카테고리.getId(), 로드맵_제목, "roadmap introduction", "roadmap content",
+                RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest("roadmap 1st week", "roadmap 1st week content", null),
+                        new RoadmapNodeSaveRequest("roadmap 2nd week", "roadmap 2nd week content", null)),
+                List.of(new RoadmapTagSaveRequest("tag")));
 
-        final String 생성된_로드맵_아이디 = given()
-                .header(AUTHORIZATION, 로그인_토큰_정보)
-                .body(로드맵_저장_요청)
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .post("/api/roadmaps")
-                .then()
-                .log().all()
-                .extract()
+        final String 생성된_로드맵_아이디 = 로드맵_생성(로드맵_저장_요청, 로그인_토큰_정보)
                 .response()
                 .getHeader(LOCATION)
                 .replace("/api/roadmaps/", "");
 
         return Long.valueOf(생성된_로드맵_아이디);
+    }
+
+    private ExtractableResponse<Response> 로드맵_생성(final RoadmapSaveRequest 로드맵_저장_요청, final String 로그인_토큰_정보)
+            throws IOException {
+        final String jsonRequest = objectMapper.writeValueAsString(로드맵_저장_요청);
+
+        RequestSpecification requestSpecification = given().log().all()
+                .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .multiPart("jsonData", "jsonData.json", jsonRequest, MediaType.APPLICATION_JSON_VALUE);
+
+        requestSpecification = makeRequestSpecification(로드맵_저장_요청, requestSpecification);
+
+        return requestSpecification
+                .log().all()
+                .post(API_PREFIX + "/roadmaps")
+                .then().log().all()
+                .extract();
+    }
+
+    private RequestSpecification makeRequestSpecification(final RoadmapSaveRequest 로드맵_생성_요청값, RequestSpecification requestSpecification) throws IOException {
+        if (로드맵_생성_요청값.roadmapNodes() == null) {
+            return requestSpecification;
+        }
+        for (final RoadmapNodeSaveRequest roadmapNode : 로드맵_생성_요청값.roadmapNodes()) {
+            final String 로드맵_노드_제목 = roadmapNode.getTitle() != null ? roadmapNode.getTitle() : "name";
+            final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile(로드맵_노드_제목, "originalFileName.jpeg",
+                    "image/jpeg", "tempImage".getBytes());
+            requestSpecification = requestSpecification
+                    .multiPart(가짜_이미지_객체.getName(), 가짜_이미지_객체.getOriginalFilename(),
+                            가짜_이미지_객체.getBytes(), 가짜_이미지_객체.getContentType());
+        }
+        return requestSpecification;
     }
 
     private RoadmapResponse 로드맵을_조회한다(final Long 로드맵_아이디) {
@@ -464,15 +492,15 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
 
     private GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", 오늘, 십일_후, 10),
-                new GoalRoomNodeResponse("로드맵 2주차", 이십일_후, 삼십일_후, 2));
+                new GoalRoomNodeResponse("roadmap 1st week", 오늘, 십일_후, 10),
+                new GoalRoomNodeResponse("roadmap 2nd week", 이십일_후, 삼십일_후, 2));
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 31);
     }
 
     private GoalRoomCertifiedResponse 로그인후_예상하는_골룸_응답을_생성한다() {
         final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", 오늘, 십일_후, 10),
-                new GoalRoomNodeResponse("로드맵 2주차", 이십일_후, 삼십일_후, 2));
+                new GoalRoomNodeResponse("roadmap 1st week", 오늘, 십일_후, 10),
+                new GoalRoomNodeResponse("roadmap 2nd week", 이십일_후, 삼십일_후, 2));
         return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 31, true);
     }
 
@@ -515,7 +543,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     private RoadmapNodeSaveRequest 로드맵_노드_요청값을_생성한다(final String 노드_제목, final String 노드_내용) {
-        return new RoadmapNodeSaveRequest(노드_제목, 노드_내용);
+        return new RoadmapNodeSaveRequest(노드_제목, 노드_내용, Collections.emptyList());
     }
 
     private Long 로드맵을_생성한다(final String 토큰, final Long 카테고리_아이디, final String 로드맵_제목, final String 로드맵_소개글,

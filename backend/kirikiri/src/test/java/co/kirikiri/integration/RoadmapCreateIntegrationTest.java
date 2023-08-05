@@ -46,10 +46,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.List;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -57,8 +54,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Collections;
+import java.util.List;
 
-public class RoadmapCreateIntegrationTest extends IntegrationTest {
+class RoadmapCreateIntegrationTest extends IntegrationTest {
 
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
@@ -93,11 +97,11 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 정상적으로_로드맵을_생성한다() {
+    void 정상적으로_로드맵을_생성한다() throws IOException {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글",
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -108,14 +112,14 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 본문의_값이_없는_로드맵이_정상적으로_생성한다() {
+    void 본문의_값이_없는_로드맵이_정상적으로_생성한다() throws IOException {
         // given
         final String 로드맵_본문 = null;
 
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", 로드맵_본문,
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -126,7 +130,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_생성시_잘못된_빈값을_넘기면_실패한다() {
+    void 로드맵_생성시_잘못된_빈값을_넘기면_실패한다() throws IOException {
         // given
         final Long 카테고리_id = null;
         final String 로드맵_제목 = null;
@@ -139,7 +143,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리_id, 로드맵_제목, 로드맵_소개글, "로드맵 본문",
                 로드맵_난이도, 추천_소요_기간,
-                List.of(new RoadmapNodeSaveRequest(로드맵_노드_제목, 로드맵_노드_설명)),
+                List.of(new RoadmapNodeSaveRequest(로드맵_노드_제목, 로드맵_노드_설명, Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -161,14 +165,14 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 존재하지_않는_카테고리_아이디를_입력한_경우_실패한다() {
+    void 존재하지_않는_카테고리_아이디를_입력한_경우_실패한다() throws IOException {
         // given
         final long 카테고리_id = 2L;
 
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리_id, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -181,13 +185,13 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 제목의_길이가_40보다_크면_실패한다() {
+    void 제목의_길이가_40보다_크면_실패한다() throws IOException {
         // given
         final String 로드맵_제목 = "a".repeat(41);
 
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -199,14 +203,14 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 소개글의_길이가_150보다_크면_실패한다() {
+    void 소개글의_길이가_150보다_크면_실패한다() throws IOException {
         // given
         final String 로드맵_소개글 = "a".repeat(151);
 
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", 로드맵_소개글, "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -218,14 +222,14 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 본문의_길이가_2000보다_크면_실패한다() {
+    void 본문의_길이가_2000보다_크면_실패한다() throws IOException {
         // given
         final String 로드맵_본문 = "a".repeat(2001);
 
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", 로드맵_본문,
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -237,7 +241,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 추천_소요_기간이_0보다_작으면_실패한다() {
+    void 추천_소요_기간이_0보다_작으면_실패한다() throws IOException {
         // given
         final Integer 추천_소요_기간 = -1;
 
@@ -245,7 +249,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글",
                 "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 추천_소요_기간,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
@@ -257,7 +261,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_노드를_입력하지_않으면_실패한다() {
+    void 로드맵_노드를_입력하지_않으면_실패한다() throws IOException {
         // given
         final List<RoadmapNodeSaveRequest> 로드맵_노드들 = null;
 
@@ -274,11 +278,11 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_노드의_제목의_길이가_40보다_크면_실패한다() {
+    void 로드맵_노드의_제목의_길이가_40보다_크면_실패한다() throws IOException {
         // given
         final String 로드맵_노드_제목 = "a".repeat(41);
         final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(
-                new RoadmapNodeSaveRequest(로드맵_노드_제목, "로드맵 1주차 내용"));
+                new RoadmapNodeSaveRequest(로드맵_노드_제목, "로드맵 1주차 내용", Collections.emptyList()));
 
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글",
@@ -293,11 +297,11 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_노드의_설명의_길이가_2000보다_크면_실패한다() {
+    void 로드맵_노드의_설명의_길이가_2000보다_크면_실패한다() throws IOException {
         // given
         final String 로드맵_노드_설명 = "a".repeat(2001);
         final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(
-                new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명));
+                new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명, Collections.emptyList()));
         로드맵_카테고리를_저장한다("여행");
 
         // when
@@ -313,7 +317,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰를_생성한다() {
+    void 로드맵_리뷰를_생성한다() throws IOException {
         // given
         final Member 크리에이터 = 회원가입("크리에이터", "creator");
         final Member 리더 = 회원가입("리더", "leader");
@@ -363,7 +367,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_별점이_잘못된_값이면_예외가_발생한다() {
+    void 로드맵_리뷰_생성시_별점이_잘못된_값이면_예외가_발생한다() throws IOException {
         // given
         final Member 크리에이터 = 회원가입("크리에이터", "creator");
         final Member 리더 = 회원가입("리더", "leader");
@@ -395,7 +399,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_내용이_1000자가_넘으면_예외가_발생한다() {
+    void 로드맵_리뷰_생성시_내용이_1000자가_넘으면_예외가_발생한다() throws IOException {
         // given
         final Member 크리에이터 = 회원가입("크리에이터", "creator");
         final Member 리더 = 회원가입("리더", "leader");
@@ -444,7 +448,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_완료한_골룸이_없다면_예외가_발생한다() {
+    void 로드맵_리뷰_생성시_완료한_골룸이_없다면_예외가_발생한다() throws IOException {
         // given
         final Member 크리에이터 = 회원가입("크리에이터", "creator");
         final Member 리더 = 회원가입("리더", "leader");
@@ -477,7 +481,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_로드맵_생성자가_리뷰를_달려고_하면_예외가_발생한다() {
+    void 로드맵_리뷰_생성시_로드맵_생성자가_리뷰를_달려고_하면_예외가_발생한다() throws IOException {
         // given
         final Member 크리에이터 = 회원가입("크리에이터", "creator");
         final Member 리더 = 회원가입("리더", "leader");
@@ -509,7 +513,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_리뷰_생성시_이미_리뷰를_단적이_있으면_예외가_발생한다() {
+    void 로드맵_리뷰_생성시_이미_리뷰를_단적이_있으면_예외가_발생한다() throws IOException {
         // given
         final Member 크리에이터 = 회원가입("크리에이터", "creator");
         final Member 리더 = 회원가입("리더", "leader");
@@ -543,7 +547,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_태그_이름이_중복되면_예외가_발생한다() {
+    void 로드맵_태그_이름이_중복되면_예외가_발생한다() throws IOException {
         // given
         final List<RoadmapTagSaveRequest> 태그_저장_요청 = List.of(new RoadmapTagSaveRequest("태그"),
                 new RoadmapTagSaveRequest("태그"));
@@ -551,7 +555,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명")), 태그_저장_요청);
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
@@ -562,7 +566,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 로드맵_태그_개수가_5개_초과면_예외가_발생한다() {
+    void 로드맵_태그_개수가_5개_초과면_예외가_발생한다() throws IOException {
         // given
         final List<RoadmapTagSaveRequest> 태그_저장_요청 = List.of(new RoadmapTagSaveRequest("태그1"),
                 new RoadmapTagSaveRequest("태그2"), new RoadmapTagSaveRequest("태그3"),
@@ -572,7 +576,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명")), 태그_저장_요청);
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
@@ -584,7 +588,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
 
     @ParameterizedTest
     @ValueSource(ints = {0, 11})
-    void 로드맵_태그_이름의_길이가_1자_미만_10자_초과면_예외가_발생한다(final int nameLength) {
+    void 로드맵_태그_이름의_길이가_1자_미만_10자_초과면_예외가_발생한다(final int nameLength) throws IOException {
         // given
         final String 태그_이름 = "a".repeat(nameLength);
         final List<RoadmapTagSaveRequest> 태그_저장_요청 = List.of(new RoadmapTagSaveRequest(태그_이름));
@@ -592,7 +596,7 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명")), 태그_저장_요청);
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
         final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
@@ -642,15 +646,37 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
         return String.format(BEARER_TOKEN_FORMAT, 토큰_응답.accessToken());
     }
 
-    private ExtractableResponse<Response> 로드맵_생성_요청(final RoadmapSaveRequest 로드맵_생성_요청값,
-                                                    final String accessToken) {
-        return given().log().all()
+    private ExtractableResponse<Response> 로드맵_생성_요청(final RoadmapSaveRequest 로드맵_생성_요청값, final String accessToken)
+            throws IOException {
+        final String jsonRequest = objectMapper.writeValueAsString(로드맵_생성_요청값);
+
+        RequestSpecification requestSpecification = given().log().all()
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(로드맵_생성_요청값).log().all()
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE + "; charset=utf-8")
+                .multiPart("jsonData", "jsonData.json", jsonRequest, MediaType.APPLICATION_JSON_VALUE);
+
+        requestSpecification = makeRequestSpecification(로드맵_생성_요청값, requestSpecification);
+
+        return requestSpecification
+                .log().all()
                 .post(API_PREFIX + "/roadmaps")
                 .then().log().all()
                 .extract();
+    }
+
+    private RequestSpecification makeRequestSpecification(final RoadmapSaveRequest 로드맵_생성_요청값, RequestSpecification requestSpecification) throws IOException {
+        if (로드맵_생성_요청값.roadmapNodes() == null) {
+            return requestSpecification;
+        }
+        for (final RoadmapNodeSaveRequest roadmapNode : 로드맵_생성_요청값.roadmapNodes()) {
+            final String 로드맵_노드_제목 = roadmapNode.getTitle() != null ? roadmapNode.getTitle() : "name";
+            final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile(로드맵_노드_제목, "originalFileName.jpeg",
+                    "image/jpeg", "tempImage".getBytes());
+            requestSpecification = requestSpecification
+                    .multiPart(가짜_이미지_객체.getName(), 가짜_이미지_객체.getOriginalFilename(),
+                            가짜_이미지_객체.getBytes(), 가짜_이미지_객체.getContentType());
+        }
+        return requestSpecification;
     }
 
     private void 응답_상태_코드_검증(final ExtractableResponse<Response> 응답, final HttpStatus http_상태) {
@@ -669,8 +695,8 @@ public class RoadmapCreateIntegrationTest extends IntegrationTest {
     private RoadmapSaveRequest 로드맵_저장_요청을_생성한다() {
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용"),
-                        new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList()),
+                        new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그")));
         return 로드맵_생성_요청값;
     }

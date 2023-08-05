@@ -644,13 +644,13 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
 
     private void 로드맵_생성_요청(final RoadmapSaveRequest request, final ResultMatcher httpStatus) throws Exception {
         final String jsonRequest = objectMapper.writeValueAsString(request);
-        final MockMultipartFile jsonData = new MockMultipartFile("jsonData", "", MediaType.APPLICATION_JSON_VALUE, jsonRequest.getBytes());
-        
+        final MockMultipartFile jsonDataFile = new MockMultipartFile("jsonData", "", "application/json",
+                objectMapper.writeValueAsBytes(request));
+
         final List<RequestPartDescriptor> MULTIPART_FORM_데이터_설명_리스트 = new ArrayList<>();
         MULTIPART_FORM_데이터_설명_리스트.add(partWithName("jsonData").description("로드맵 생성 요청 json 데이터"));
 
-        MockMultipartHttpServletRequestBuilder httpServletRequestBuilder = multipart(API_PREFIX + "/roadmaps")
-                .file(jsonData);
+        MockMultipartHttpServletRequestBuilder httpServletRequestBuilder = multipart(API_PREFIX + "/roadmaps");
 
         for (final RoadmapNodeSaveRequest roadmapNode : request.roadmapNodes()) {
             final String 로드맵_노드_제목 = roadmapNode.getTitle() != null ? roadmapNode.getTitle() : "name";
@@ -664,14 +664,14 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
         }
 
         mockMvc.perform(httpServletRequestBuilder
+                        .file(jsonDataFile)
+                        .param("jsonData", jsonRequest)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                         .contextPath(API_PREFIX))
                 .andExpect(httpStatus)
                 .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName("Authorization").description("access token")
-                        ),
+                        requestHeaders(headerWithName("Authorization").description("access token")),
                         requestParts(MULTIPART_FORM_데이터_설명_리스트),
                         requestPartFields("jsonData",
                                 fieldWithPath("categoryId").description("로드맵 카테고리 아이디"),

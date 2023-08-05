@@ -10,6 +10,10 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
 logging:
   level:
     org:
@@ -34,3 +38,7 @@ image:
     serverFilePath: /api/default-member-image
     imageContentType: PNG
     extension: .png
+
+file:
+  upload-dir: src/test/resources/static/images/
+  server-path: http://localhost/images/
