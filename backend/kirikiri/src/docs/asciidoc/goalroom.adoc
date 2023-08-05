@@ -209,3 +209,26 @@ operation::goal-room-read-api-test/골룸_투두리스트_조회시_존재하지
 
 operation::goal-room-read-api-test/골룸_투두리스트_조회시_참여하지_않은_사용자일_경우[snippets='http-request,http-response']
 
+
+[[골룸나가기-API]]
+== *12. 골룸 나가기 API*
+
+=== *12-1* 성공
+
+operation::goal-room-create-api-test/정상적으로_골룸을_나간다[snippets='http-request,http-response,request-headers,path-parameters']
+
+=== *12-2* 실패 - 존재하지 않는 회원인 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_회원이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *12-3* 실패 - 골룸의 아이디가 유효하지 않은 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *12-4* 실패 - 진행중인 골룸인 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_진행중인_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *12-5* 실패 - 참여하지 않은 골룸인 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_참여하지_않은_골룸이면_실패한다[snippets='http-request,http-response,response-fields']

@@ -86,9 +86,6 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
     private static final String IDENTIFIER = "identifier1";
     private static final String PASSWORD = "password1!";
-    private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname",
-            "010-1234-5678",
-            GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
     private static final LocalDate 오늘 = LocalDate.now();
     private static final LocalDate 십일_후 = 오늘.plusDays(10L);
     private static final LocalDate 이십일_후 = 오늘.plusDays(20);
@@ -98,8 +95,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private final String storageLocation;
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final RoadmapNodeRepository roadmapNodeRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomCreateService goalRoomCreateService;
 
     public GoalRoomReadIntegrationTest(@Value("${file.upload-dir}") final String storageLocation,

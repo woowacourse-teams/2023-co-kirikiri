@@ -13,6 +13,7 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 class GoalRoomPendingMemberTest {
@@ -47,5 +48,57 @@ class GoalRoomPendingMemberTest {
 
         // then
         assertThat(goalRoomPendingMember.isLeader()).isFalse();
+    }
+
+    @Test
+    void 입력받은_멤버가_자신과_같은_멤버이면_true를_반환한다() {
+        // given
+        final Member member = new Member(new Identifier("identifier"),
+                new EncryptedPassword(new Password("password1!")),
+                new Nickname("name"), null);
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.now(), null,
+                member);
+
+        // when
+        final boolean result = goalRoomPendingMember.isSameMember(member);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 입력받은_멤버가_자신과_다른_멤버이면_false를_반환한다() {
+        // given
+        final Member member1 = new Member(1L, new Identifier("identifier1"),
+                new EncryptedPassword(new Password("password1!")),
+                new Nickname("name1"), null);
+        final Member member2 = new Member(2L, new Identifier("identifier2"),
+                new EncryptedPassword(new Password("password2!")),
+                new Nickname("name2"), null);
+
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.now(), null,
+                member1);
+
+        // when
+        final boolean result = goalRoomPendingMember.isSameMember(member2);
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void 팔로워가_리더로_변경된다() {
+        // given
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.now(), null,
+                null);
+
+        // when
+        goalRoomPendingMember.becomeLeader();
+
+        // then
+        assertThat(goalRoomPendingMember.isLeader()).isTrue();
     }
 }

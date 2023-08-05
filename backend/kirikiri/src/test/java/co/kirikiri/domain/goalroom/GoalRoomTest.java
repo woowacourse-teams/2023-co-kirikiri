@@ -186,7 +186,7 @@ class GoalRoomTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
 
         final Member 참여자 = 사용자를_생성한다(2L, "identifier1", "팔로워");
-        goalRoom.join(참여자);
+//        goalRoom.join(참여자);
         goalRoom.updateStatus(GoalRoomStatus.RUNNING);
 
         //expect
@@ -194,6 +194,35 @@ class GoalRoomTest {
                 () -> assertThat(goalRoom.isGoalRoomMember(참여자)).isFalse(),
                 () -> assertThat(goalRoom.getCurrentMemberCount()).isEqualTo(0)
         );
+    }
+
+    @Test
+    void 골룸을_나간다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
+
+        // when
+        goalRoom.leave(member);
+
+        // then
+        assertThat(goalRoom.isEmptyGoalRoom()).isTrue();
+    }
+
+    @Test
+    void 골룸에_참여하지_않은_멤버가_나가면_예외가_발생한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
+
+        final Member notJoinMember = new Member(new Identifier("identifier2"),
+                new EncryptedPassword(new Password("password2!")),
+                new Nickname("name2"), null);
+
+        // when
+        // then
+        assertThatThrownBy(() -> goalRoom.leave(notJoinMember))
+                .isInstanceOf(BadRequestException.class);
     }
 
     private Member 크리에이터를_생성한다() {

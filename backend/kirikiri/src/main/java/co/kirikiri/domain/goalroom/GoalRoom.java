@@ -52,13 +52,13 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
 
     @Embedded
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
+
+    @Embedded
     private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos();
 
     @Embedded
     private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
-
-    @Embedded
-    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent, final Member member) {
@@ -135,6 +135,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return status == GoalRoomStatus.RECRUITING;
     }
 
+    public boolean isRunning() {
+        return status == GoalRoomStatus.RUNNING;
+    }
+
     public void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
         checkTotalSize(goalRoomRoadmapNodes.size() + this.goalRoomRoadmapNodes.size());
         this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
@@ -194,6 +198,49 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
             return goalRoomPendingMembers.isMember(member);
         }
         return goalRoomMembers.isMember(member);
+    }
+
+    public void leave(final Member member) {
+        if (status == GoalRoomStatus.RECRUITING) {
+            final GoalRoomPendingMember goalRoomPendingMember = findGoalRoomPendingMemberByMember(member);
+            changeRoleIfLeaderLeave(goalRoomPendingMembers, goalRoomPendingMember);
+            goalRoomPendingMembers.remove(goalRoomPendingMember);
+            return;
+        }
+        final GoalRoomMember goalRoomMember = findGoalRoomMemberByMember(member);
+        changeRoleIfLeaderLeave(goalRoomMembers, goalRoomMember);
+        goalRoomMembers.remove(goalRoomMember);
+    }
+
+    private GoalRoomPendingMember findGoalRoomPendingMemberByMember(final Member member) {
+        return goalRoomPendingMembers.findByMember(member)
+                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+    }
+
+    private void changeRoleIfLeaderLeave(final GoalRoomPendingMembers goalRoomPendingMembers,
+                                         final GoalRoomPendingMember goalRoomPendingMember) {
+        if (goalRoomPendingMember.isLeader()) {
+            goalRoomPendingMembers.findNextLeader()
+                    .ifPresent(GoalRoomPendingMember::becomeLeader);
+
+        }
+    }
+
+    private GoalRoomMember findGoalRoomMemberByMember(final Member member) {
+        return goalRoomMembers.findByMember(member)
+                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+    }
+
+    private void changeRoleIfLeaderLeave(final GoalRoomMembers goalRoomMembers,
+                                         final GoalRoomMember goalRoomMember) {
+        if (goalRoomMember.isLeader()) {
+            goalRoomMembers.findNextLeader()
+                    .ifPresent(GoalRoomMember::becomeLeader);
+        }
+    }
+
+    public boolean isEmptyGoalRoom() {
+        return goalRoomPendingMembers.isEmpty() && goalRoomMembers.isEmpty();
     }
 
     public GoalRoomName getName() {

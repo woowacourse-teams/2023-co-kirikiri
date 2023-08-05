@@ -69,7 +69,8 @@ public class GoalRoomController {
     public ResponseEntity<GoalRoomToDoCheckResponse> checkTodo(@PathVariable final Long goalRoomId,
                                                                @PathVariable final Long todoId,
                                                                @MemberIdentifier final String identifier) {
-        final GoalRoomToDoCheckResponse checkResponse = goalRoomCreateService.checkGoalRoomTodo(goalRoomId, todoId, identifier);
+        final GoalRoomToDoCheckResponse checkResponse = goalRoomCreateService.checkGoalRoomTodo(goalRoomId, todoId,
+                identifier);
         return ResponseEntity.ok(checkResponse);
     }
 
@@ -82,8 +83,8 @@ public class GoalRoomController {
         return ResponseEntity.created(URI.create(imageUrl)).build();
     }
 
-    @Authenticated
     @GetMapping(value = "/{goalRoomId}", headers = "Authorization")
+    @Authenticated
     public ResponseEntity<GoalRoomCertifiedResponse> findGoalRoom(@MemberIdentifier final String identifier,
                                                                   @PathVariable("goalRoomId") final Long goalRoomId) {
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(identifier, goalRoomId);
@@ -134,5 +135,13 @@ public class GoalRoomController {
             @MemberIdentifier final String identifier) {
         final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.getAllGoalRoomTodo(goalRoomId, identifier);
         return ResponseEntity.ok(todoResponses);
+    }
+
+    @PostMapping("/{goalRoomId}/leave")
+    @Authenticated
+    public ResponseEntity<Void> leave(@MemberIdentifier final String identifier,
+                                      @PathVariable("goalRoomId") final Long goalRoomId) {
+        goalRoomCreateService.leave(identifier, goalRoomId);
+        return ResponseEntity.ok().build();
     }
 }
