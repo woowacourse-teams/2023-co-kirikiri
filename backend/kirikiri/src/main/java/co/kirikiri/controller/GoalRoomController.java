@@ -69,7 +69,8 @@ public class GoalRoomController {
     public ResponseEntity<GoalRoomToDoCheckResponse> checkTodo(@PathVariable final Long goalRoomId,
                                                                @PathVariable final Long todoId,
                                                                @MemberIdentifier final String identifier) {
-        final GoalRoomToDoCheckResponse checkResponse = goalRoomCreateService.checkGoalRoomTodo(goalRoomId, todoId, identifier);
+        final GoalRoomToDoCheckResponse checkResponse = goalRoomCreateService.checkGoalRoomTodo(goalRoomId, todoId,
+                identifier);
         return ResponseEntity.ok(checkResponse);
     }
 

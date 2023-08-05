@@ -236,7 +236,8 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("goalRoomTodos[0].content").description("골룸 투두 내용"),
                                         fieldWithPath("goalRoomTodos[0].startDate").description("골룸 투두 시작일"),
                                         fieldWithPath("goalRoomTodos[0].endDate").description("골룸 투두 종료일"),
-                                        fieldWithPath("goalRoomTodos[0].check.isChecked").description("골룸 투두 체크 여부(true/false)"),
+                                        fieldWithPath("goalRoomTodos[0].check.isChecked").description(
+                                                "골룸 투두 체크 여부(true/false)"),
                                         fieldWithPath("checkFeeds[0].id").description("인증 피드 아이디"),
                                         fieldWithPath("checkFeeds[0].imageUrl").description("인증 피드 이미지 저장경로"),
                                         fieldWithPath("checkFeeds[0].description").description("인증 피드 본문")

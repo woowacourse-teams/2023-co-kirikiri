@@ -1,7 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.Member;
 import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
@@ -9,7 +8,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.AccessLevel;
