@@ -25,9 +25,9 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -44,7 +44,7 @@ public final class RoadmapMapper {
     }
 
     private static RoadmapNodeSaveDto convertToRoadmapNodesSaveDto(final RoadmapNodeSaveRequest request) {
-        return new RoadmapNodeSaveDto(request.title(), request.content());
+        return new RoadmapNodeSaveDto(request.getTitle(), request.getContent(), request.getImages());
     }
 
     private static RoadmapTagSaveDto convertToRoadmapTagSaveDto(final RoadmapTagSaveRequest request) {

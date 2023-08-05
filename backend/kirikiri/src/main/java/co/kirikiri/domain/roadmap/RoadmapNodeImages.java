@@ -5,13 +5,12 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 @Embeddable
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class RoadmapNodeImages {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -24,6 +23,10 @@ public class RoadmapNodeImages {
 
     public void addAll(final RoadmapNodeImages images) {
         this.values.addAll(new ArrayList<>(images.values));
+    }
+
+    public void add(final RoadmapNodeImage roadmapNodeImage) {
+        this.values.add(roadmapNodeImage);
     }
 
     public List<RoadmapNodeImage> getValues() {

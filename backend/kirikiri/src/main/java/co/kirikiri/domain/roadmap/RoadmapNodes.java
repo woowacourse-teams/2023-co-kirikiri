@@ -4,11 +4,11 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,7 +43,13 @@ public class RoadmapNodes {
 
     public Optional<RoadmapNode> findById(final Long roadmapNodeId) {
         return values.stream()
-                .filter(it -> roadmapNodeId.equals(it.getId()))
+                .filter(it -> it.getId().equals(roadmapNodeId))
+                .findAny();
+    }
+
+    public Optional<RoadmapNode> findByTitle(final String title) {
+        return values.stream()
+                .filter(it -> it.getTitle().equals(title))
                 .findAny();
     }
 
