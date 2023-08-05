@@ -5,10 +5,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,6 +25,13 @@ public class RoadmapContents {
 
     public void add(final RoadmapContent content) {
         this.values.add(content);
+    }
+
+    public Optional<RoadmapContent> findLastRoadmapContent() {
+        if (values.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(values.get(values.size() - 1));
     }
 
     public List<RoadmapContent> getValues() {
