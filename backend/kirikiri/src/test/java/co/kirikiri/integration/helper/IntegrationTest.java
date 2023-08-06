@@ -18,7 +18,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class IntegrationTest {
-
+    
     protected final String AUTHORIZATION = "Authorization";
     protected final String LOCATION = "Location";
     protected final String BEARER_TOKEN_FORMAT = "Bearer %s";

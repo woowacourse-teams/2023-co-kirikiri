@@ -13,6 +13,9 @@ import java.nio.file.Path;
 @Transactional
 public class FileService {
 
+    private static final int MAX_RETRIES = 10;
+    private static final long WAIT_TIME = 1000L;
+
     private final String storageLocation;
     private final String imagePathPrefix;
     private final FilePathGenerator filePathGenerator;
@@ -32,7 +35,7 @@ public class FileService {
         final String saveFileName = storageLocation + filePath + fileName;
         final Path savePath = Path.of(saveFileName);
         makePathDirectories(savePath);
-        trasferFilePath(multiPartFile, savePath);
+        tryTransferFileToSavePath(multiPartFile, savePath);
         return imagePathPrefix + filePath + fileName;
     }
 
@@ -44,16 +47,37 @@ public class FileService {
 
         try {
             Files.createDirectories(parentDir);
-        } catch (final IOException e) {
-            throw new ServerException("파일 저장 중에 문제가 생겼습니다. (파일 경로)");
+        } catch (final IOException exception) {
+            throw new ServerException(exception.getMessage());
         }
     }
 
-    private void trasferFilePath(final MultipartFile multiPartFile, final Path savePath) {
+    private void tryTransferFileToSavePath(final MultipartFile multiPartFile, final Path savePath) {
+        int attempt = 0;
+        while (attempt < MAX_RETRIES) {
+            if (!Files.exists(savePath)) {
+                attempt++;
+                threadSleep();
+                continue;
+            }
+            transferFileToSavePath(multiPartFile, savePath);
+        }
+    }
+
+    private void threadSleep() {
+        try {
+            Thread.sleep(WAIT_TIME);
+        } catch (final InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new ServerException(exception.getMessage());
+        }
+    }
+
+    private synchronized void transferFileToSavePath(final MultipartFile multiPartFile, final Path savePath) {
         try {
             multiPartFile.transferTo(savePath);
-        } catch (final IOException e) {
-            throw new ServerException("파일 저장 중에 문제가 생겼습니다. (파일 경로 수정)");
+        } catch (final IOException exception) {
+            throw new ServerException(exception.getMessage());
         }
     }
 }
