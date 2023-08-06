@@ -13,6 +13,7 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
@@ -34,6 +35,7 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AccessLevel;
@@ -147,7 +149,7 @@ public class GoalRoomMapper {
     }
 
     private static GoalRoomTodoResponse convertGoalRoomTodoResponse(final List<Long> checkedTodoIds,
-                                                                final GoalRoomToDo goalRoomToDo) {
+                                                                    final GoalRoomToDo goalRoomToDo) {
         final GoalRoomToDoCheckResponse checkResponse = new GoalRoomToDoCheckResponse(
                 isCheckedTodo(goalRoomToDo.getId(), checkedTodoIds));
         return new GoalRoomTodoResponse(goalRoomToDo.getId(),
@@ -165,7 +167,8 @@ public class GoalRoomMapper {
                                                                          final List<Long> checkedTodoIds) {
         final GoalRoomRoadmapNodesResponse nodeResponses = convertToGoalRoomRoadmapNodesResponse(
                 goalRoom.getGoalRoomRoadmapNodes());
-        final List<GoalRoomTodoResponse> todoResponses = convertGoalRoomTodoResponsesLimit(goalRoom.getGoalRoomToDos(), checkedTodoIds);
+        final List<GoalRoomTodoResponse> todoResponses = convertGoalRoomTodoResponsesLimit(goalRoom.getGoalRoomToDos(),
+                checkedTodoIds);
         final List<CheckFeedResponse> checkFeedResponses = convertToCheckFeedResponses(checkFeeds);
 
         return new MemberGoalRoomResponse(goalRoom.getName().getValue(), goalRoom.getStatus().name(),
@@ -194,7 +197,7 @@ public class GoalRoomMapper {
     }
 
     private static List<GoalRoomTodoResponse> convertGoalRoomTodoResponsesLimit(final GoalRoomToDos goalRoomToDos,
-                                                                           final List<Long> checkedTodoIds) {
+                                                                                final List<Long> checkedTodoIds) {
         return goalRoomToDos.getValues()
                 .stream()
                 .map(goalRoomToDo -> convertGoalRoomTodoResponse(checkedTodoIds, goalRoomToDo))
@@ -228,5 +231,17 @@ public class GoalRoomMapper {
                 goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 new MemberResponse(leader.getId(), leader.getNickname().getValue()));
+    }
+
+    public static List<RoadmapReviewResponse> convertToRoadmapReviewResponses(
+            final List<RoadmapReview> roadmapReviews) {
+        return roadmapReviews.stream()
+                .map(GoalRoomMapper::convertToRaodmapReviewResponse)
+                .toList();
+    }
+
+    private static RoadmapReviewResponse convertToRaodmapReviewResponse(final RoadmapReview roadmapReview) {
+        return new RoadmapReviewResponse(roadmapReview.getId(), roadmapReview.getMemberNickname(),
+                roadmapReview.getUpdatedAt(), roadmapReview.getContent(), roadmapReview.getRate());
     }
 }

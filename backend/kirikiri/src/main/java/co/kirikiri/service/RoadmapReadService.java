@@ -6,6 +6,7 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
@@ -17,6 +18,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
@@ -42,6 +44,7 @@ public class RoadmapReadService {
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapContentRepository roadmapContentRepository;
+    private final RoadmapReviewRepository roadmapReviewRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final MemberRepository memberRepository;
 
@@ -124,6 +127,8 @@ public class RoadmapReadService {
     }
 
     public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId) {
-        return null;
+        final Roadmap roadmap = findRoadmapById(roadmapId);
+        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findByRoadmapOrderByUpdatedAtDesc(roadmap);
+        return GoalRoomMapper.convertToRoadmapReviewResponses(roadmapReviews);
     }
 }

@@ -82,7 +82,7 @@ class RoadmapReviewRepositoryTest {
     }
 
     @Test
-    void 로드맵에_대한_리뷰_정보를_조회한다() {
+    void 로드맵에_대한_리뷰_정보를_최신순으로_조회한다() {
         // given
         final Member member = 사용자를_저장한다("코끼리", "cokirikiri");
         final Member member2 = 사용자를_저장한다("끼리코", "kirikirico");

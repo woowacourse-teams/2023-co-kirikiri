@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -72,5 +73,21 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
 
     public boolean isNotSameRoadmap(final Roadmap roadmap) {
         return this.roadmap == null || !this.roadmap.equals(roadmap);
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public String getMemberNickname() {
+        return member.getNickname().getValue();
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
