@@ -4,6 +4,7 @@ import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
@@ -21,6 +22,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
@@ -150,5 +152,17 @@ public class GoalRoomReadService {
         final GoalRoomStatus goalRoomStatus = GoalRoomMapper.convertToGoalRoomStatus(goalRoomStatusTypeRequest);
         final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMemberAndStatus(member, goalRoomStatus);
         return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRooms);
+    }
+
+    public List<GoalRoomRoadmapNodeResponse> getAllGoalRoomNodes(final Long goalRoomId, final String identifier) {
+        validateGoalRoomMember(goalRoomId, identifier);
+        final GoalRoomRoadmapNodes goalRoomNodes = findGoalRoomNodesByGoalRoomId(goalRoomId);
+        return GoalRoomMapper.convertGoalRoomNodeResponses(goalRoomNodes);
+    }
+
+    private GoalRoomRoadmapNodes findGoalRoomNodesByGoalRoomId(final Long goalRoomId) {
+        return goalRoomRepository.findByIdWithNodes(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId))
+                .getGoalRoomRoadmapNodes();
     }
 }

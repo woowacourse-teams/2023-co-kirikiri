@@ -52,7 +52,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
@@ -635,6 +634,61 @@ class GoalRoomReadServiceTest {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 골룸의_전체_노드를_조회한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+                .thenReturn(Optional.of(goalRoomMember));
+        when(goalRoomRepository.findByIdWithNodes(1L))
+                .thenReturn(Optional.of(goalRoom));
+
+        // when
+        final List<GoalRoomRoadmapNodeResponse> responses = goalRoomReadService.getAllGoalRoomNodes(1L, "identifier");
+        final List<GoalRoomRoadmapNodeResponse> expected = List.of(
+                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2)
+        );
+
+        // then
+        assertThat(responses)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸의_노드_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
+        // given
+        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+                .thenReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomNodes(1L, "identifier"))
+                .isInstanceOf(ForbiddenException.class);
+    }
+
+    @Test
+    void 골룸의_노드_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+                .thenReturn(Optional.of(goalRoomMember));
+        when(goalRoomRepository.findByIdWithNodes(1L))
+                .thenReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomNodes(1L, "identifier"))
+                .isInstanceOf(NotFoundException.class);
+    }
+
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         return new Member(1L, new Identifier("cokirikiri"),
@@ -685,11 +739,11 @@ class GoalRoomReadServiceTest {
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
         final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                new Period(TODAY, TEN_DAY_LATER), 10, firstRoadmapNode);
+                1L, new Period(TODAY, TEN_DAY_LATER), 10, firstRoadmapNode);
 
         final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
         final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
-                new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER), 2, secondRoadmapNode);
+                2L, new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER), 2, secondRoadmapNode);
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
@@ -698,16 +752,16 @@ class GoalRoomReadServiceTest {
     }
 
     private static GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
-        final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomNodeResponse("로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 31);
     }
 
     private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined) {
-        final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomNodeResponse("로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
         return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 31, isJoined);
     }
 
