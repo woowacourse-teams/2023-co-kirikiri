@@ -35,8 +35,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     public Optional<GoalRoom> findByIdWithRoadmapContent(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .where(goalRoomIdCond(goalRoomId))
                 .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
                 .fetchFirst());
     }
 
@@ -72,8 +72,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     public Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .leftJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
-                .where(goalRoomIdCond(goalRoomId))
                 .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
                 .fetchFirst());
     }
 
@@ -151,5 +151,14 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                         .or(goalRoomMember.member.eq(member)))
                 .where(statusCond(goalRoomStatus))
                 .fetch();
+    }
+
+    @Override
+    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchFirst());
     }
 }
