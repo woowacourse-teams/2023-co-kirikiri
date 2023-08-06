@@ -93,7 +93,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
                 .fetchJoin()
-                //.innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
                 .innerJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
                 .fetchJoin()
                 .where(goalRoomIdCond(goalRoomId))
@@ -150,6 +149,14 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .where(goalRoomPendingMember.member.eq(member)
                         .or(goalRoomMember.member.eq(member)))
                 .where(statusCond(goalRoomStatus))
+                .fetch();
+    }
+
+    @Override
+    public List<GoalRoom> findByRoadmap(final Roadmap roadmap) {
+        return selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .on(roadmapContent.roadmap.eq(roadmap))
                 .fetch();
     }
 }

@@ -14,7 +14,10 @@ public record RoadmapResponse(
         String difficulty,
         int recommendedRoadmapPeriod,
         LocalDateTime createdAt,
-        List<RoadmapTagResponse> tags
+        List<RoadmapTagResponse> tags,
+        Long recruitedGoalRoomNumber,
+        Long runningGoalRoomNumber,
+        Long completedGoalRoomNumber
 ) {
 
 }

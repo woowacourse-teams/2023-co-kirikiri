@@ -1,6 +1,7 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
@@ -47,8 +48,19 @@ public class RoadmapReadService {
     public RoadmapResponse findRoadmap(final Long id) {
         final Roadmap roadmap = findRoadmapById(id);
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
 
-        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent);
+        final long recruitedGoalRoomNumber = calculateGoalRoomNumberByStatus(goalRooms, GoalRoomStatus.RECRUITING);
+        final long runningGoalRoomNumber = calculateGoalRoomNumberByStatus(goalRooms, GoalRoomStatus.RUNNING);
+        final long completedGoalRoomNumber = calculateGoalRoomNumberByStatus(goalRooms, GoalRoomStatus.COMPLETED);
+
+        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent,
+                recruitedGoalRoomNumber, runningGoalRoomNumber, completedGoalRoomNumber);
+    }
+
+    private Roadmap findRoadmapById(final Long id) {
+        return roadmapRepository.findRoadmapById(id)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
     private RoadmapContent findRecentContent(final Roadmap roadmap) {
@@ -56,9 +68,22 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
-    private Roadmap findRoadmapById(final Long id) {
-        return roadmapRepository.findRoadmapById(id)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
+    private long calculateGoalRoomNumberByStatus(final List<GoalRoom> goalRooms, final GoalRoomStatus status) {
+        if (status == GoalRoomStatus.RECRUITING) {
+            return goalRooms.stream()
+                    .filter(GoalRoom::isRecruiting)
+                    .count();
+        }
+
+        if (status == GoalRoomStatus.RUNNING) {
+            return goalRooms.stream()
+                    .filter(GoalRoom::isRunning)
+                    .count();
+        }
+
+        return goalRooms.stream()
+                .filter(GoalRoom::isCompleted)
+                .count();
     }
 
     public List<RoadmapForListResponse> findRoadmapsByFilterType(final Long categoryId,

@@ -31,4 +31,6 @@ public interface GoalRoomQueryRepository {
     List<GoalRoom> findByMember(final Member member);
 
     List<GoalRoom> findByMemberAndStatus(final Member member, final GoalRoomStatus goalRoomStatus);
+
+    List<GoalRoom> findByRoadmap(final Roadmap roadmap);
 }

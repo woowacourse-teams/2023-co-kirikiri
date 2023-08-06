@@ -8,15 +8,18 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
@@ -69,6 +72,7 @@ class RoadmapReadServiceTest {
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            new MemberImage("프로필 이미지", "profile-file-path", ImageContentType.JPEG),
             new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
     private final LocalDateTime now = LocalDateTime.now();
 
@@ -93,17 +97,20 @@ class RoadmapReadServiceTest {
     @Test
     void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() {
         //given
-        final Member member = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다(1L, "운동");
         final RoadmapContent content = 로드맵_컨텐츠를_생성한다(1L, "콘텐츠 내용");
         final Roadmap roadmap = 로드맵을_생성한다("로드맵 제목", category);
         roadmap.addContent(content);
         final Long roadmapId = 1L;
 
+        final List<GoalRoom> goalRooms = 상태별_골룸_목록을_생성한다();
+
         when(roadmapRepository.findRoadmapById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(any()))
                 .thenReturn(Optional.of(roadmap.getContents().getValues().get(0)));
+        when(goalRoomRepository.findByRoadmap(any()))
+                .thenReturn(goalRooms);
 
         //when
         final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
@@ -111,7 +118,7 @@ class RoadmapReadServiceTest {
         //then
         final RoadmapResponse expectedResponse = new RoadmapResponse(
                 roadmapId, new RoadmapCategoryResponse(1L, "운동"), "로드맵 제목", "로드맵 소개글",
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "profile-file-path"),
                 new RoadmapContentResponse(1L, "로드맵 본문",
                         List.of(
                                 new RoadmapNodeResponse(1L, "로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList())
@@ -119,7 +126,8 @@ class RoadmapReadServiceTest {
                 "DIFFICULT", 30, now,
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
-                        new RoadmapTagResponse(2L, "태그2"))
+                        new RoadmapTagResponse(2L, "태그2")),
+                2L, 2L, 2L
         );
 
         assertThat(roadmapResponse)
@@ -537,5 +545,29 @@ class RoadmapReadServiceTest {
         final RoadmapCategoryResponse category9 = new RoadmapCategoryResponse(9L, "기타");
         return List.of(category1, category2, category3, category4, category5,
                 category6, category7, category8, category9);
+    }
+
+    private List<GoalRoom> 상태별_골룸_목록을_생성한다() {
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 내용");
+        final GoalRoom recruitedGoalRoom1 = new GoalRoom(new GoalRoomName("모집 중 골룸 1"),
+                new LimitedMemberCount(20), roadmapContent, member);
+        final GoalRoom recruitedGoalRoom2 = new GoalRoom(new GoalRoomName("모집 중 골룸 2"),
+                new LimitedMemberCount(20), roadmapContent, member);
+        final GoalRoom runningGoalRoom1 = new GoalRoom(new GoalRoomName("진행 중 골룸 1"),
+                new LimitedMemberCount(20), roadmapContent, member);
+        final GoalRoom runningGoalRoom2 = new GoalRoom(new GoalRoomName("진행 중 골룸 2"),
+                new LimitedMemberCount(20), roadmapContent, member);
+        final GoalRoom completedGoalRoom1 = new GoalRoom(new GoalRoomName("완료된 골룸 1"),
+                new LimitedMemberCount(20), roadmapContent, member);
+        final GoalRoom completedGoalRoom2 = new GoalRoom(new GoalRoomName("완료된 골룸 2"),
+                new LimitedMemberCount(20), roadmapContent, member);
+
+        runningGoalRoom1.updateStatus(GoalRoomStatus.RUNNING);
+        runningGoalRoom2.updateStatus(GoalRoomStatus.RUNNING);
+        completedGoalRoom1.updateStatus(GoalRoomStatus.COMPLETED);
+        completedGoalRoom2.updateStatus(GoalRoomStatus.COMPLETED);
+
+        return List.of(recruitedGoalRoom1, recruitedGoalRoom2, runningGoalRoom1, runningGoalRoom2,
+                completedGoalRoom1, completedGoalRoom2);
     }
 }

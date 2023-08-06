@@ -439,6 +439,38 @@ class GoalRoomRepositoryTest {
         );
     }
 
+    @Test
+    void 로드맵에_생성된_모든_골룸을_조회한다() {
+        //given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final RoadmapNode roadmapNode = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode));
+        final Roadmap roadmap = 로드맵을_생성한다(creator, category, roadmapContent);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TEN_DAY_LATER,
+                roadmapNode);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TEN_DAY_LATER, TWENTY_DAY_LAYER,
+                roadmapNode);
+
+        final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1)), creator);
+        final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode2)), creator);
+        final GoalRoom goalRoom3 = 골룸을_생성한다("goalroom3", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1)), creator);
+        goalRoomRepository.save(goalRoom1);
+        goalRoomRepository.save(goalRoom2);
+        goalRoomRepository.save(goalRoom3);
+
+        // when
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
+
+        // then
+        assertThat(goalRooms)
+                .isEqualTo(List.of(goalRoom1, goalRoom2, goalRoom3));
+    }
+
     private Member 크리에이터를_저장한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
