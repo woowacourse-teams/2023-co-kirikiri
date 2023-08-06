@@ -26,6 +26,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
@@ -120,5 +121,9 @@ public class RoadmapReadService {
         final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
                 roadmap, filterType, goalRoomLastValueDto, scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(goalRoomsWithPendingMembers);
+    }
+
+    public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId) {
+        return null;
     }
 }

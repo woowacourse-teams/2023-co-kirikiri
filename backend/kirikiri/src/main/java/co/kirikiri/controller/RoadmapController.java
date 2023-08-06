@@ -15,6 +15,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -106,6 +107,12 @@ public class RoadmapController {
     ) {
         final List<RoadmapGoalRoomResponse> responses = roadmapReadService.findRoadmapGoalRoomsByFilterType(
                 roadmapId, roadmapGoalRoomsFilterTypeDto, scrollRequest);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{roadmapId}/reviews")
+    public ResponseEntity<List<RoadmapReviewResponse>> findRoadmapReview(@PathVariable final Long roadmapId) {
+        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId);
         return ResponseEntity.ok(responses);
     }
 }

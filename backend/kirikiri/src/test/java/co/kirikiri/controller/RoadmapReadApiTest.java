@@ -32,6 +32,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
@@ -540,6 +541,80 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final ErrorResponse expected = new ErrorResponse("존재하지 않는 로드맵입니다. roadmapId = 1");
         assertThat(errorResponse)
                 .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵의_리뷰들을_조회한다() throws Exception {
+        // given
+        final List<RoadmapReviewResponse> expected = List.of(
+                new RoadmapReviewResponse(1L, "작성자1", LocalDateTime.now(), "리뷰 내용", 4.5),
+                new RoadmapReviewResponse(2L, "작성자2", LocalDateTime.now(), "리뷰 내용", 5.0)
+        );
+
+        when(roadmapReadService.findRoadmapReviews(anyLong()))
+                .thenReturn(expected);
+
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                                .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("roadmapId").description("로드맵 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[0].id").description("리뷰 아이디"),
+                                        fieldWithPath("[0].name").description("작성자 닉네임"),
+                                        fieldWithPath("[0].updatedAt").description("리뷰 최종 작성날짜"),
+                                        fieldWithPath("[0].content").description("리뷰 내용"),
+                                        fieldWithPath("[0].rate").description("별점")
+                                )))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<RoadmapReviewResponse> reviewResponse = objectMapper.readValue(response,
+                new TypeReference<>() {
+                });
+
+        assertThat(reviewResponse)
+                .usingRecursiveComparison()
+                .ignoringFields("updatedAt")
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디일_경우_예외를_반환한다() throws Exception {
+        // given
+        when(roadmapReadService.findRoadmapReviews(anyLong()))
+                .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
+
+        // given
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                                .contextPath(API_PREFIX))
+                .andExpectAll(
+                        status().isNotFound())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("roadmapId").description("로드맵 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메시지")
+                                )))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, new TypeReference<>() {
+        });
+
+        assertThat(errorResponse.message())
+                .isEqualTo("존재하지 않는 로드맵입니다. roadmapId = 1");
     }
 
     private RoadmapResponse 단일_로드맵_조회에_대한_응답() {
