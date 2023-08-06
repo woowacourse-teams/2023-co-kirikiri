@@ -20,8 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
@@ -98,14 +96,6 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
             return multipartRequest.getParameter("jsonData");
         } catch (final NullPointerException exception) {
             throw new BadRequestException("로드맵 생성 시 jsonData는 필수입니다.");
-        }
-    }
-
-    private String extractJsonData(final MultipartFile file) {
-        try {
-            return new String(file.getBytes(), StandardCharsets.UTF_8);
-        } catch (final IOException e) {
-            throw new ServerException("Json 데이터 바인등에 실패 하였습니다.");
         }
     }
 }
