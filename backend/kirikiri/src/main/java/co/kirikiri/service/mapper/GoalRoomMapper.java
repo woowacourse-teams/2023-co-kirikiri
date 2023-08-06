@@ -13,7 +13,6 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
@@ -35,7 +34,6 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AccessLevel;
@@ -231,17 +229,5 @@ public class GoalRoomMapper {
                 goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 new MemberResponse(leader.getId(), leader.getNickname().getValue()));
-    }
-
-    public static List<RoadmapReviewResponse> convertToRoadmapReviewResponses(
-            final List<RoadmapReview> roadmapReviews) {
-        return roadmapReviews.stream()
-                .map(GoalRoomMapper::convertToRaodmapReviewResponse)
-                .toList();
-    }
-
-    private static RoadmapReviewResponse convertToRaodmapReviewResponse(final RoadmapReview roadmapReview) {
-        return new RoadmapReviewResponse(roadmapReview.getId(), roadmapReview.getMemberNickname(),
-                roadmapReview.getUpdatedAt(), roadmapReview.getContent(), roadmapReview.getRate());
     }
 }

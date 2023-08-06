@@ -410,29 +410,34 @@ class RoadmapReadServiceTest {
         roadmapReview1.updateRoadmap(roadmap);
         roadmapReview2.updateRoadmap(roadmap);
 
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 50);
+
         when(roadmapRepository.findRoadmapById(anyLong())).thenReturn(Optional.of(roadmap));
-        when(roadmapReviewRepository.findByRoadmapOrderByUpdatedAtDesc(any())).thenReturn(
-                List.of(roadmapReview2, roadmapReview1));
+        when(roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(any(), any(), anyInt()))
+                .thenReturn(List.of(roadmapReview2, roadmapReview1));
 
         // when
-        final List<RoadmapReviewResponse> response = roadmapService.findRoadmapReviews(1L);
+        final List<RoadmapReviewResponse> response = roadmapService.findRoadmapReviews(1L, scrollRequest);
 
         final List<RoadmapReviewResponse> expect = List.of(
                 new RoadmapReviewResponse(2L, "리뷰어2", LocalDateTime.now(), "리뷰 내용", 4.5),
                 new RoadmapReviewResponse(1L, "리뷰어1", LocalDateTime.now(), "리뷰 내용", 5.0));
 
         // then
-        assertThat(response).usingRecursiveComparison().ignoringFields("id", "updatedAt").isEqualTo(expect);
+        assertThat(response).usingRecursiveComparison().ignoringFields("id", "createdAt").isEqualTo(expect);
     }
 
     @Test
     void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디라면_예외를_반환한다() {
         // given
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 2);
+
         when(roadmapRepository.findRoadmapById(anyLong()))
                 .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
         // when, then
-        assertThatThrownBy(() -> roadmapService.findRoadmapReviews(1L)).isInstanceOf(NotFoundException.class)
+        assertThatThrownBy(() -> roadmapService.findRoadmapReviews(1L, scrollRequest))
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 로드맵입니다. roadmapId = 1");
     }
 

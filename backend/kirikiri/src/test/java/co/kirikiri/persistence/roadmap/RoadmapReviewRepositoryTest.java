@@ -1,6 +1,7 @@
 package co.kirikiri.persistence.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -16,8 +17,10 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
+import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -97,12 +100,23 @@ class RoadmapReviewRepositoryTest {
         roadmapReviewRepository.save(roadmapReview2);
 
         // when
-        final List<RoadmapReview> findRoadmapReviews = roadmapReviewRepository.findByRoadmapOrderByUpdatedAtDesc(
-                roadmap);
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 2));
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, firstRoadmapLastValueDto, 2);
+
+        final RoadmapLastValueDto secondRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(roadmapReviewsFirstPage.get(1).getCreatedAt(), null, null, null, 2));
+        final List<RoadmapReview> roadmapReviewsSecondPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, secondRoadmapLastValueDto, 2);
 
         // then
-        assertThat(findRoadmapReviews)
-                .isEqualTo(List.of(roadmapReview2, roadmapReview1));
+        assertAll(
+                () -> assertThat(roadmapReviewsFirstPage)
+                        .isEqualTo(List.of(roadmapReview2, roadmapReview1)),
+                () -> assertThat(roadmapReviewsSecondPage)
+                        .isEmpty()
+        );
     }
 
     @Test
@@ -119,10 +133,13 @@ class RoadmapReviewRepositoryTest {
         roadmapReviewRepository.save(roadmapReview);
 
         // when
-        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findByRoadmapOrderByUpdatedAtDesc(roadmap2);
+        final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
+                new CustomScrollRequest(null, null, null, null, 1));
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap2, firstRoadmapLastValueDto, 1);
 
         // then
-        assertThat(roadmapReviews).isEmpty();
+        assertThat(roadmapReviewsFirstPage).isEmpty();
     }
 
     private Member 사용자를_저장한다(final String name, final String identifier) {

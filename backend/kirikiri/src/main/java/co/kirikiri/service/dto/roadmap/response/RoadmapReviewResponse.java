@@ -7,7 +7,7 @@ public record RoadmapReviewResponse(
         Long id,
         String name,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        LocalDateTime updatedAt,
+        LocalDateTime createdAt,
         String content,
         Double rate
 ) {

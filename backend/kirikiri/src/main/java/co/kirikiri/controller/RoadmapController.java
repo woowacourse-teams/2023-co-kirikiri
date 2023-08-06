@@ -111,8 +111,10 @@ public class RoadmapController {
     }
 
     @GetMapping("/{roadmapId}/reviews")
-    public ResponseEntity<List<RoadmapReviewResponse>> findRoadmapReview(@PathVariable final Long roadmapId) {
-        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId);
+    public ResponseEntity<List<RoadmapReviewResponse>> findRoadmapReview(
+            @PathVariable final Long roadmapId,
+            @ModelAttribute final CustomScrollRequest scrollRequest) {
+        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId, scrollRequest);
         return ResponseEntity.ok(responses);
     }
 }

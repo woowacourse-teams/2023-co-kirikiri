@@ -13,5 +13,5 @@ public class BaseUpdatedTimeEntity extends BaseCreatedTimeEntity {
 
     @LastModifiedDate
     @Column(nullable = false)
-    protected LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }

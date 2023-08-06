@@ -551,27 +551,32 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 new RoadmapReviewResponse(2L, "작성자2", LocalDateTime.now(), "리뷰 내용", 5.0)
         );
 
-        when(roadmapReadService.findRoadmapReviews(anyLong()))
+        when(roadmapReadService.findRoadmapReviews(anyLong(), any()))
                 .thenReturn(expected);
 
         // when
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                                .param("lastCreatedAt", "")
+                                .param("size", "10")
                                 .contextPath(API_PREFIX))
-                .andExpectAll(
-                        status().isOk())
-                .andDo(
-                        documentationResultHandler.document(
-                                pathParameters(
-                                        parameterWithName("roadmapId").description("로드맵 아이디")
-                                ),
-                                responseFields(
-                                        fieldWithPath("[0].id").description("리뷰 아이디"),
-                                        fieldWithPath("[0].name").description("작성자 닉네임"),
-                                        fieldWithPath("[0].updatedAt").description("리뷰 최종 작성날짜"),
-                                        fieldWithPath("[0].content").description("리뷰 내용"),
-                                        fieldWithPath("[0].rate").description("별점")
-                                )))
+                .andExpect(status().isOk())
+                .andDo(documentationResultHandler.document(
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디")
+                        ),
+                        queryParameters(
+                                parameterWithName("lastCreatedAt").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 생성일자(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
+                        ),
+                        responseFields(
+                                fieldWithPath("[0].id").description("리뷰 아이디"),
+                                fieldWithPath("[0].name").description("작성자 닉네임"),
+                                fieldWithPath("[0].createdAt").description("리뷰 최종 작성날짜"),
+                                fieldWithPath("[0].content").description("리뷰 내용"),
+                                fieldWithPath("[0].rate").description("별점")
+                        )))
                 .andReturn().getResponse()
                 .getContentAsString();
 
@@ -582,30 +587,35 @@ class RoadmapReadApiTest extends ControllerTestHelper {
 
         assertThat(reviewResponse)
                 .usingRecursiveComparison()
-                .ignoringFields("updatedAt")
+                .ignoringFields("createdAt")
                 .isEqualTo(expected);
     }
 
     @Test
     void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디일_경우_예외를_반환한다() throws Exception {
         // given
-        when(roadmapReadService.findRoadmapReviews(anyLong()))
+        when(roadmapReadService.findRoadmapReviews(anyLong(), any()))
                 .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
         // given
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                                .param("lastCreatedAt", "")
+                                .param("size", "10")
                                 .contextPath(API_PREFIX))
-                .andExpectAll(
-                        status().isNotFound())
-                .andDo(
-                        documentationResultHandler.document(
-                                pathParameters(
-                                        parameterWithName("roadmapId").description("로드맵 아이디")
-                                ),
-                                responseFields(
-                                        fieldWithPath("message").description("예외 메시지")
-                                )))
+                .andExpect(status().isNotFound())
+                .andDo(documentationResultHandler.document(
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디")
+                        ),
+                        queryParameters(
+                                parameterWithName("lastCreatedAt").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 생성일자(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메시지")
+                        )))
                 .andReturn().getResponse()
                 .getContentAsString();
 

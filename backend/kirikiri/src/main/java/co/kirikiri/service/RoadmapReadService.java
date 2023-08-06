@@ -126,9 +126,12 @@ public class RoadmapReadService {
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(goalRoomsWithPendingMembers);
     }
 
-    public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId) {
+    public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId,
+                                                          final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findByRoadmapOrderByUpdatedAtDesc(roadmap);
-        return GoalRoomMapper.convertToRoadmapReviewResponses(roadmapReviews);
+        final RoadmapLastValueDto roadmapLastValueDto = RoadmapLastValueDto.create(scrollRequest);
+        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, roadmapLastValueDto, scrollRequest.size());
+        return RoadmapMapper.convertToRoadmapReviewResponses(roadmapReviews);
     }
 }

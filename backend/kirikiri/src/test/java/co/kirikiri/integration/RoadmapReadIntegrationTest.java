@@ -5,16 +5,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomRole;
+import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
+import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
+import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
@@ -28,6 +42,7 @@ import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
@@ -37,6 +52,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -86,23 +102,32 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     private Long 골룸_목록_조회할_로드맵_아이디;
     private final MemberRepository memberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final RoadmapRepository roadmapRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomRepository goalRoomRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final RoadmapReviewRepository roadmapReviewRepository;
 
     public RoadmapReadIntegrationTest(final MemberRepository memberRepository,
                                       final RoadmapCategoryRepository roadmapCategoryRepository,
+                                      final RoadmapRepository roadmapRepository,
                                       final RoadmapNodeRepository roadmapNodeRepository,
-                                      final GoalRoomRepository goalRoomRepository) {
+                                      final GoalRoomRepository goalRoomRepository,
+                                      final GoalRoomMemberRepository goalRoomMemberRepository,
+                                      final RoadmapReviewRepository roadmapReviewRepository) {
         this.memberRepository = memberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.roadmapRepository = roadmapRepository;
         this.roadmapNodeRepository = roadmapNodeRepository;
         this.goalRoomRepository = goalRoomRepository;
+        this.goalRoomMemberRepository = goalRoomMemberRepository;
+        this.roadmapReviewRepository = roadmapReviewRepository;
     }
 
     @Test
-    void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보를_조회를_성공한다() {
+    void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보_조회를_성공한다() {
         //given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("운동");
         final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 카테고리, "로드맵 제목");
@@ -121,24 +146,16 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
         });
 
-        final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(
-                로드맵_아이디,
-                new RoadmapCategoryResponse(카테고리.getId(), "운동"),
-                "로드맵 제목",
-                "로드맵 소개글",
+        final RoadmapResponse 예상되는_단일_로드맵_응답 = new RoadmapResponse(로드맵_아이디,
+                new RoadmapCategoryResponse(카테고리.getId(), "운동"), "로드맵 제목", "로드맵 소개글",
                 new MemberResponse(저장된_크리에이터_아이디, "코끼리"),
-                new RoadmapContentResponse(
-                        1L, "로드맵 본문",
-                        List.of(
-                                new RoadmapNodeResponse(1L, "로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())
-                        )),
+                new RoadmapContentResponse(1L, "로드맵 본문", List.of(
+                        new RoadmapNodeResponse(1L, "로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList()),
+                        new RoadmapNodeResponse(2L, "로드맵 2주차", "로드맵 2주차 내용", Collections.emptyList()))),
                 RoadmapDifficultyType.DIFFICULT.name(),
                 30,
                 단일_로드맵_응답.createdAt(),
-                List.of(
-                        new RoadmapTagResponse(1L, "태그")
-                )
-        );
+                List.of(new RoadmapTagResponse(1L, "태그")));
 
         assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(단일_로드맵_응답).isEqualTo(예상되는_단일_로드맵_응답);
@@ -171,7 +188,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 카테고리_아이디와_정렬_조건에_따라_로드맵_목록을_조회한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -215,7 +232,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 카테고리_아이디에_따라_로드맵_목록을_조회한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -259,7 +276,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 최신순으로_로드맵_목록을_조회한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -304,7 +321,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 사이즈_조건으로_로드맵_목록을_조회한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -394,7 +411,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 로드맵을_제목을_기준으로_검색한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -437,10 +454,10 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 로드맵을_크리에이터_기준으로_검색한다() {
         // given
-        final Long 저장된_첫번째_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_첫번째_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 첫번째_크리에이터_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
-        크리에이터를_저장한다("cocokirikiri", "코코끼리끼리");
+        사용자를_저장한다("cocokirikiri", "코코끼리끼리");
         final String 두번째_크리에이터_토큰_정보 = 로그인(new LoginRequest("cocokirikiri", PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -483,7 +500,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 로드맵을_태그_이름을_기준으로_검색한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -526,7 +543,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 사용자가_생성한_로드맵을_조회한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -565,7 +582,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 사용자가_생성한_로드맵을_이전에_받아온_리스트_이후로_조회한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final Long 저장된_크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -690,7 +707,115 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         assertThat(참가율순_골룸_목록_조회_응답값).isEqualTo(참가율순_골룸_목록_조회_예상_응답값);
     }
 
-    private Long 크리에이터를_저장한다(final String 아이디, final String 닉네임) {
+    @Test
+    void 로드맵에_대한_리뷰를_조회한다() throws JsonProcessingException {
+        // given
+        final Long 크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
+        final Member 크리에이터 = memberRepository.findById(크리에이터_아이디).get();
+        final String 크리에이터_로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
+
+        final Long 리더_아이디 = 사용자를_저장한다("identifier2", "리더");
+        final Member 리더 = memberRepository.findById(리더_아이디).get();
+        final String 리더_로그인_토큰_정보 = 로그인(new LoginRequest("identifier2", PASSWORD));
+
+        final Long 팔로워_아이디 = 사용자를_저장한다("identifier3", "팔로워");
+        final Member 팔로워 = memberRepository.findById(팔로워_아이디).get();
+        final String 팔로워_로그인_토큰_정보 = 로그인(new LoginRequest("identifier3", PASSWORD));
+
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(크리에이터_로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회한다(로드맵_아이디);
+        final Roadmap 저장된_로드맵 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답);
+        final List<RoadmapContent> 로드맵_본문_리스트 = 저장된_로드맵.getContents().getValues();
+
+        // TODO 임의로 완료된 골룸을 생성한다 (골룸 완료 API 추가 시 변경)
+        final GoalRoom 골룸 = 완료한_골룸을_생성한다(로드맵_본문_리스트, 리더);
+        골룸에_대한_참여자_리스트를_생성한다(리더, 팔로워, 골룸);
+
+        final RoadmapReviewSaveRequest 리더_로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest("리더 리뷰 내용", 5.0);
+        final RoadmapReviewSaveRequest 팔로워_로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest("팔로워 리뷰 내용", 1.5);
+        리뷰를_생성한다(리더_로그인_토큰_정보, 저장된_로드맵.getId(), 리더_로드맵_리뷰_생성_요청);
+        리뷰를_생성한다(팔로워_로그인_토큰_정보, 저장된_로드맵.getId(), 팔로워_로드맵_리뷰_생성_요청);
+
+        final CustomScrollRequest 스크롤_요청 = new CustomScrollRequest(null, null, null, null, 10);
+        final List<RoadmapReviewResponse> 로드맵_리뷰_조회_요청_예상값 = List.of(
+                new RoadmapReviewResponse(2L, "팔로워", LocalDateTime.now(), "팔로워 리뷰 내용", 1.5),
+                new RoadmapReviewResponse(1L, "리더", LocalDateTime.now(), "리더 리뷰 내용", 5.0)
+        );
+
+        // when
+        final ExtractableResponse<Response> 로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(저장된_로드맵.getId(), 스크롤_요청);
+
+        // then
+        final List<RoadmapReviewResponse> 로드맵_리뷰_조회_응답값 = jsonToClass(로드맵_리뷰_조회_응답.asString(),
+                new TypeReference<>() {
+                });
+
+        assertThat(로드맵_리뷰_조회_응답값)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt")
+                .isEqualTo(로드맵_리뷰_조회_요청_예상값);
+    }
+
+    @Test
+    void 로드맵_리뷰_조회_요청_시_작성된_리뷰가_없다면_빈_값을_반환한다() throws JsonProcessingException {
+        // given
+        final Long 크리에이터_아이디 = 사용자를_저장한다(IDENTIFIER, NICKNAME);
+        final Member 크리에이터 = memberRepository.findById(크리에이터_아이디).get();
+        final String 크리에이터_로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
+
+        final Long 리더_아이디 = 사용자를_저장한다("identifier2", "리더");
+        final Member 리더 = memberRepository.findById(리더_아이디).get();
+        final Long 팔로워_아이디 = 사용자를_저장한다("identifier3", "팔로워");
+        final Member 팔로워 = memberRepository.findById(팔로워_아이디).get();
+
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(크리에이터_로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회한다(로드맵_아이디);
+        final Roadmap 저장된_로드맵 = 로드맵_응답으로부터_로드맵_본문을_생성한다(크리에이터, 여행_카테고리, 로드맵_응답);
+        final List<RoadmapContent> 로드맵_본문_리스트 = 저장된_로드맵.getContents().getValues();
+
+        // TODO 임의로 완료된 골룸을 생성한다 (골룸 완료 API 추가 시 변경)
+        final GoalRoom 골룸 = 완료한_골룸을_생성한다(로드맵_본문_리스트, 리더);
+        골룸에_대한_참여자_리스트를_생성한다(리더, 팔로워, 골룸);
+
+        final CustomScrollRequest 스크롤_요청 = new CustomScrollRequest(null, null, null, null, 10);
+
+        // when
+        final ExtractableResponse<Response> 로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(저장된_로드맵.getId(), 스크롤_요청);
+
+        // then
+        final List<RoadmapReviewResponse> 로드맵_리뷰_조회_응답값 = jsonToClass(로드맵_리뷰_조회_응답.asString(),
+                new TypeReference<>() {
+                });
+
+        assertThat(로드맵_리뷰_조회_응답값).isEmpty();
+    }
+
+    @Test
+    void 로드맵_리뷰_조회_요청_시_유효하지_않은_로드맵_아이디로_요청_시_예외를_반환한다() throws JsonProcessingException {
+        //when
+        final CustomScrollRequest 스크롤_요청 = new CustomScrollRequest(null, null, null, null, 10);
+
+        // when
+        final ExtractableResponse<Response> 로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(1L, 스크롤_요청);
+
+        // then
+        final ErrorResponse 로드맵_리뷰_조회_응답값 = jsonToClass(로드맵_리뷰_조회_응답.asString(),
+                new TypeReference<>() {
+                });
+
+        assertAll(
+                () -> assertThat(로드맵_리뷰_조회_응답.statusCode())
+                        .isEqualTo(HttpStatus.NOT_FOUND.value()),
+                () -> assertThat(로드맵_리뷰_조회_응답값.message())
+                        .isEqualTo("존재하지 않는 로드맵입니다. roadmapId = 1")
+        );
+    }
+
+    private Long 사용자를_저장한다(final String 아이디, final String 닉네임) {
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(아이디, PASSWORD, 닉네임, "010-1234-5678",
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
@@ -741,8 +866,11 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     private Long 제목별로_로드맵을_생성한다(final String 로그인_토큰_정보, final RoadmapCategory 로드맵_카테고리, final String 로드맵_제목) {
-        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(로드맵_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용")),
+        final RoadmapSaveRequest 로드맵_저장_요청 = new RoadmapSaveRequest(로드맵_카테고리.getId(), 로드맵_제목,
+                "로드맵 소개글", "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(
+                        new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용"),
+                        new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")),
                 List.of(new RoadmapTagSaveRequest("태그")));
 
         final String 생성된_로드맵_아이디 = given()
@@ -827,17 +955,35 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 카테고리9);
     }
 
-    private RoadmapResponse 로드맵을_아이디로_조회한다(final Long 세번째_로드맵_아이디) {
+    private RoadmapResponse 로드맵을_아이디로_조회한다(final Long 로드맵_아이디) {
         return given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get(API_PREFIX + "/roadmaps/{roadmapId}", 세번째_로드맵_아이디)
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 로드맵_아이디)
                 .then()
                 .log().all()
                 .extract()
                 .as(new TypeRef<>() {
                 });
+    }
+
+    private Roadmap 로드맵_응답으로부터_로드맵_본문을_생성한다(final Member 크리에이터, final RoadmapCategory 카테고리,
+                                            final RoadmapResponse 로드맵_응답) {
+        final Roadmap 로드맵 = new Roadmap(로드맵_응답.roadmapTitle(), 로드맵_응답.introduction(),
+                로드맵_응답.recommendedRoadmapPeriod(), RoadmapDifficulty.valueOf(로드맵_응답.difficulty()), 크리에이터, 카테고리);
+        final RoadmapContentResponse 로드맵_본문_응답 = 로드맵_응답.content();
+        final RoadmapContent 로드맵_본문 = new RoadmapContent(로드맵_본문_응답.content());
+        final List<RoadmapNodeResponse> 로드맵_본문_노드_응답 = 로드맵_본문_응답.nodes();
+        final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문_노드_응답.stream()
+                .map(response -> new RoadmapNode(response.title(), response.description()))
+                .toList();
+
+        로드맵_본문.addNodes(new RoadmapNodes(로드맵_노드_리스트));
+        로드맵.addContent(로드맵_본문);
+
+        // TODO 추후 골룸 생성 API가 들어오면 제거될 로직 (리뷰 생성 시에는 골룸이 완료되어 있어야 하기 때문에 골룸 완료 API가 있어야 제거 가능한 로직)
+        return roadmapRepository.save(로드맵);
     }
 
     private GoalRoomCreateRequest 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다() throws JsonProcessingException {
@@ -950,6 +1096,61 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 .when()
                 .get(API_PREFIX + "/roadmaps/{roadmapId}/goal-rooms", roadmapId)
                 .then().log().all()
+                .extract();
+    }
+
+    private GoalRoom 완료한_골룸을_생성한다(final List<RoadmapContent> 로드맵_본문_리스트, final Member 리더) {
+        final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
+        final GoalRoom 골룸 = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), 로드맵_본문, 리더);
+        final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
+
+        final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);
+        final GoalRoomRoadmapNode 첫번째_골룸_노드 = new GoalRoomRoadmapNode(
+                new Period(LocalDate.now().plusDays(1),
+                        LocalDate.now().plusDays(5)), 3, 첫번째_로드맵_노드);
+
+        final RoadmapNode 두번째_로드맵_노드 = 로드맵_노드_리스트.get(1);
+        final GoalRoomRoadmapNode 두번째_골룸_노드 = new GoalRoomRoadmapNode(
+                new Period(LocalDate.now().plusDays(6),
+                        LocalDate.now().plusDays(10)), 2, 두번째_로드맵_노드);
+
+        final GoalRoomRoadmapNodes 골룸_노드들 = new GoalRoomRoadmapNodes(List.of(첫번째_골룸_노드, 두번째_골룸_노드));
+        골룸.addAllGoalRoomRoadmapNodes(골룸_노드들);
+        골룸.complete();
+        return goalRoomRepository.save(골룸);
+    }
+
+    private void 골룸에_대한_참여자_리스트를_생성한다(final Member 리더, final Member 팔로워, final GoalRoom 골룸) {
+        final GoalRoomMember 골룸_멤버_리더 = new GoalRoomMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 1, 12, 0), 골룸, 리더);
+        final GoalRoomMember 골룸_멤버_팔로워 = new GoalRoomMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.of(2023, 7, 5, 18, 0), 골룸, 팔로워);
+        goalRoomMemberRepository.saveAll(List.of(골룸_멤버_리더, 골룸_멤버_팔로워));
+    }
+
+    private ExtractableResponse<Response> 리뷰를_생성한다(final String 팔로워_토큰_정보, final Long 로드맵_아이디,
+                                                   final RoadmapReviewSaveRequest 로드맵_리뷰_생성_요청) {
+        final ExtractableResponse<Response> 리뷰_생성_요청_결과 = given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .header(AUTHORIZATION, 팔로워_토큰_정보)
+                .body(로드맵_리뷰_생성_요청)
+                .post("/api/roadmaps/{roadmapId}/reviews", 로드맵_아이디)
+                .then()
+                .log().all()
+                .extract();
+        return 리뷰_생성_요청_결과;
+    }
+
+    private ExtractableResponse<Response> 로드맵_리뷰를_조회한다(final Long 로드맵_아이디, final CustomScrollRequest 스크롤_요청) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .param("lastCreatedAt", 스크롤_요청.lastCreatedAt())
+                .param("size", 스크롤_요청.size())
+                .get("/api/roadmaps/{roadmapId}/reviews", 로드맵_아이디)
+                .then()
+                .log().all()
                 .extract();
     }
 }
