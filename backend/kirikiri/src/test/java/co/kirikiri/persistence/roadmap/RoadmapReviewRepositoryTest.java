@@ -81,6 +81,50 @@ class RoadmapReviewRepositoryTest {
                 .isEmpty();
     }
 
+    @Test
+    void 로드맵에_대한_리뷰_정보를_조회한다() {
+        // given
+        final Member member = 사용자를_저장한다("코끼리", "cokirikiri");
+        final Member member2 = 사용자를_저장한다("끼리코", "kirikirico");
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(member, category);
+
+        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰", 2.5, member);
+        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰", 4.0, member2);
+        roadmapReview1.updateRoadmap(roadmap);
+        roadmapReview2.updateRoadmap(roadmap);
+        roadmapReviewRepository.save(roadmapReview1);
+        roadmapReviewRepository.save(roadmapReview2);
+
+        // when
+        final List<RoadmapReview> findRoadmapReviews = roadmapReviewRepository.findByRoadmapOrderByUpdatedAtDesc(
+                roadmap);
+
+        // then
+        assertThat(findRoadmapReviews)
+                .isEqualTo(List.of(roadmapReview2, roadmapReview1));
+    }
+
+    @Test
+    void 로드맵에_대한_리뷰_정보가_없으면_빈_값을_반환한다() {
+        // given
+        final Member member = 사용자를_저장한다("코끼리", "cokirikiri");
+        final Member member2 = 사용자를_저장한다("끼리코", "kirikirico");
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap1 = 로드맵을_저장한다(member, category);
+        final Roadmap roadmap2 = 로드맵을_저장한다(member2, category);
+
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member);
+        roadmapReview.updateRoadmap(roadmap1);
+        roadmapReviewRepository.save(roadmapReview);
+
+        // when
+        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findByRoadmapOrderByUpdatedAtDesc(roadmap2);
+
+        // then
+        assertThat(roadmapReviews).isEmpty();
+    }
+
     private Member 사용자를_저장한다(final String name, final String identifier) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
