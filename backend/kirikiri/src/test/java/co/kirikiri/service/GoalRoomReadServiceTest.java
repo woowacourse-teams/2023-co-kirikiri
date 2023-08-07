@@ -265,7 +265,7 @@ class GoalRoomReadServiceTest {
                 ));
 
         // when
-        final List<GoalRoomTodoResponse> responses = goalRoomReadService.getAllGoalRoomTodo(1L, "identifier");
+        final List<GoalRoomTodoResponse> responses = goalRoomReadService.findAllGoalRoomTodo(1L, "identifier");
         final List<GoalRoomTodoResponse> expected = List.of(
                 new GoalRoomTodoResponse(1L, "투두 1", TODAY, TEN_DAY_LATER, new GoalRoomToDoCheckResponse(true)),
                 new GoalRoomTodoResponse(2L, "투두 2", TWENTY_DAY_LAYER, THIRTY_DAY_LATER,
@@ -283,7 +283,7 @@ class GoalRoomReadServiceTest {
                 .thenReturn(Optional.empty());
 
         // expected
-        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomTodo(1L, "identifier"))
+        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
                 .isInstanceOf(ForbiddenException.class);
     }
 
@@ -301,7 +301,7 @@ class GoalRoomReadServiceTest {
                 .thenReturn(Optional.empty());
 
         // expected
-        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomTodo(1L, "identifier"))
+        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -649,7 +649,7 @@ class GoalRoomReadServiceTest {
                 .thenReturn(Optional.of(goalRoom));
 
         // when
-        final List<GoalRoomRoadmapNodeResponse> responses = goalRoomReadService.getAllGoalRoomNodes(1L, "identifier");
+        final List<GoalRoomRoadmapNodeResponse> responses = goalRoomReadService.findAllGoalRoomNodes(1L, "identifier");
         final List<GoalRoomRoadmapNodeResponse> expected = List.of(
                 new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
                 new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2)
@@ -663,29 +663,28 @@ class GoalRoomReadServiceTest {
     @Test
     void 골룸의_노드_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
         // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+
+        when(goalRoomRepository.findByIdWithNodes(1L))
+                .thenReturn(Optional.of(goalRoom));
         when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.empty());
 
         // expected
-        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomNodes(1L, "identifier"))
+        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomNodes(1L, "identifier"))
                 .isInstanceOf(ForbiddenException.class);
     }
 
     @Test
     void 골룸의_노드_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
         // given
-        final Member creator = 사용자를_생성한다(1L);
-        final Roadmap roadmap = 로드맵을_생성한다(creator);
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
-        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                creator);
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
-                .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithNodes(1L))
                 .thenReturn(Optional.empty());
 
         // expected
-        assertThatThrownBy(() -> goalRoomReadService.getAllGoalRoomNodes(1L, "identifier"))
+        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomNodes(1L, "identifier"))
                 .isInstanceOf(NotFoundException.class);
     }
 

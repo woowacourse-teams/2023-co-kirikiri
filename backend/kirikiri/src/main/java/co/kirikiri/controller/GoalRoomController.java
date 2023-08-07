@@ -139,20 +139,20 @@ public class GoalRoomController {
 
     @Authenticated
     @GetMapping("/{goalRoomId}/todos")
-    public ResponseEntity<List<GoalRoomTodoResponse>> getAllTodos(
+    public ResponseEntity<List<GoalRoomTodoResponse>> findAllTodos(
             @PathVariable final Long goalRoomId,
             @MemberIdentifier final String identifier) {
-        final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.getAllGoalRoomTodo(goalRoomId, identifier);
+        final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.findAllGoalRoomTodo(goalRoomId, identifier);
         return ResponseEntity.ok(todoResponses);
     }
 
     @Authenticated
     @GetMapping("/{goalRoomId}/nodes")
-    public ResponseEntity<List<GoalRoomRoadmapNodeResponse>> getAllNodes(
+    public ResponseEntity<List<GoalRoomRoadmapNodeResponse>> findAllNodes(
             @PathVariable final Long goalRoomId,
             @MemberIdentifier final String identifier
     ) {
-        final List<GoalRoomRoadmapNodeResponse> nodeResponses = goalRoomReadService.getAllGoalRoomNodes(goalRoomId, identifier);
+        final List<GoalRoomRoadmapNodeResponse> nodeResponses = goalRoomReadService.findAllGoalRoomNodes(goalRoomId, identifier);
         return ResponseEntity.ok(nodeResponses);
     }
 }

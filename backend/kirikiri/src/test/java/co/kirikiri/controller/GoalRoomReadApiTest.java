@@ -410,7 +410,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 new GoalRoomTodoResponse(2L, "투두 2", today.plusDays(20), today.plusDays(30),
                         new GoalRoomToDoCheckResponse(false)));
 
-        when(goalRoomReadService.getAllGoalRoomTodo(any(), any()))
+        when(goalRoomReadService.findAllGoalRoomTodo(any(), any()))
                 .thenReturn(goalRoomTodoResponses);
 
         // when
@@ -448,7 +448,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
                 .when(goalRoomReadService)
-                .getAllGoalRoomTodo(any(), any());
+                .findAllGoalRoomTodo(any(), any());
 
         // when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
@@ -478,7 +478,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         doThrow(new ForbiddenException("골룸에 참여하지 않은 사용자입니다. goalRoomId = 1 memberIdentifier = identifier"))
                 .when(goalRoomReadService)
-                .getAllGoalRoomTodo(any(), any());
+                .findAllGoalRoomTodo(any(), any());
 
         // when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
@@ -507,12 +507,12 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     void 골룸의_노드를_조회한다() throws Exception {
         // given
         final LocalDate today = LocalDate.now();
-        final List<GoalRoomRoadmapNodeResponse> goalRoomTodoResponses = List.of(
+        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomRoadmapNodeResponse(1L, "골룸 노드 1", today, today.plusDays(10), 10),
                 new GoalRoomRoadmapNodeResponse(2L, "골룸 노드 2", today.plusDays(20), today.plusDays(30), 5));
 
-        when(goalRoomReadService.getAllGoalRoomNodes(any(), any()))
-                .thenReturn(goalRoomTodoResponses);
+        when(goalRoomReadService.findAllGoalRoomNodes(any(), any()))
+                .thenReturn(goalRoomNodeResponses);
 
         // when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/nodes", 1L)
@@ -528,7 +528,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         parameterWithName("goalRoomId").description("골룸 아이디")
                                 ),
                                 responseFields(
-                                        fieldWithPath("[0].id").description("로드맵 노드 아이디"),
+                                        fieldWithPath("[0].id").description("골룸 로드맵 노드 아이디"),
                                         fieldWithPath("[0].title").description("노드 제목"),
                                         fieldWithPath("[0].startDate").description("노드 시작 날짜"),
                                         fieldWithPath("[0].endDate").description("노드 종료 날짜"),
@@ -541,7 +541,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         });
 
         assertThat(response)
-                .isEqualTo(goalRoomTodoResponses);
+                .isEqualTo(goalRoomNodeResponses);
     }
 
     @Test
@@ -549,7 +549,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
                 .when(goalRoomReadService)
-                .getAllGoalRoomNodes(any(), any());
+                .findAllGoalRoomNodes(any(), any());
 
         // when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/nodes", 1L)
@@ -579,7 +579,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         doThrow(new ForbiddenException("골룸에 참여하지 않은 사용자입니다. goalRoomId = 1 memberIdentifier = identifier"))
                 .when(goalRoomReadService)
-                .getAllGoalRoomNodes(any(), any());
+                .findAllGoalRoomNodes(any(), any());
 
         // when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/nodes", 1L)

@@ -81,7 +81,7 @@ public class GoalRoomReadService {
         }
     }
 
-    public List<GoalRoomTodoResponse> getAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
+    public List<GoalRoomTodoResponse> findAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
         validateGoalRoomMember(goalRoomId, identifier);
         final GoalRoomToDos goalRoomToDos = findGoalRoomTodosByGoalRoomId(goalRoomId);
         final List<Long> checkedTodoIds = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
@@ -91,7 +91,7 @@ public class GoalRoomReadService {
     private void validateGoalRoomMember(final Long goalRoomId, final String identifier) {
         if (goalRoomRepository.findGoalRoomMember(goalRoomId, new Identifier(identifier)).isEmpty()) {
             throw new ForbiddenException(
-                    "골룸에 참여하지 않은 사용자입니다. goalRoomId = " + goalRoomId + "  memberIdentifier = " + identifier);
+                    "골룸에 참여하지 않은 사용자입니다. goalRoomId = " + goalRoomId + " memberIdentifier = " + identifier);
         }
     }
 
@@ -154,9 +154,9 @@ public class GoalRoomReadService {
         return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRooms);
     }
 
-    public List<GoalRoomRoadmapNodeResponse> getAllGoalRoomNodes(final Long goalRoomId, final String identifier) {
-        validateGoalRoomMember(goalRoomId, identifier);
+    public List<GoalRoomRoadmapNodeResponse> findAllGoalRoomNodes(final Long goalRoomId, final String identifier) {
         final GoalRoomRoadmapNodes goalRoomNodes = findGoalRoomNodesByGoalRoomId(goalRoomId);
+        validateGoalRoomMember(goalRoomId, identifier);
         return GoalRoomMapper.convertGoalRoomNodeResponses(goalRoomNodes);
     }
 
