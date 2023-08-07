@@ -57,7 +57,6 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
           {item.tags.map((tag) => {
             return <span># {tag.name}</span>;
           })}
-
         </S.Tags>
       </S.ItemFooter>
     </S.RoadmapItem>
