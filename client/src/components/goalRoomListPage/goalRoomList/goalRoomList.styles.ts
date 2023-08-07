@@ -32,6 +32,7 @@ export const ListWrapper = styled.div`
   display: grid;
   grid-row-gap: 6rem;
   grid-template-columns: repeat(2, 1fr);
+  min-height: 100vh;
 
   ${media.mobile`
   grid-template-columns: repeat(1, 1fr);
