@@ -7,6 +7,7 @@ import PageSection from '../pageSection/PageSection';
 import * as S from './CreateGoalRoomForm.styles';
 import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
 import { NodeType } from '@myTypes/roadmap/internal';
+import { useNavigate } from 'react-router-dom';
 
 type CreateGoalRoomFormProps = {
   roadmapContentId: number;
@@ -14,6 +15,7 @@ type CreateGoalRoomFormProps = {
 };
 
 const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps) => {
+  const navigate = useNavigate();
   const { createGoalRoom } = useCreateGoalRoom();
   const { formState, handleInputChange } = useFormInput<CreateGoalRoomRequest>({
     roadmapContentId: Number(roadmapContentId),
@@ -41,6 +43,7 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
     ]);
 
     createGoalRoom(transformedFormState as CreateGoalRoomRequest);
+    navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
   };
 
   return (
