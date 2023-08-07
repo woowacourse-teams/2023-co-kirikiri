@@ -9,13 +9,11 @@ const useFormInput = <T extends object>(initialState: T) => {
     // 이름을 '['를 기준으로 분리하고, ']'를 제거
     const parts = name.split('[').map((part) => part.replace(']', ''));
     // 배열 요소인지 확인하기 위해 첫 번째 요소가 'goalRoomRoadmapNodeRequests'인지 확인
-    // const isArray = parts.length > 1 && parts[0] === 'goalRoomRoadmapNodeRequests';
     const isArray = parts.length > 2;
 
     // 배열 요소일 때. 즉, NodeList 내부의 값이 변했을 때
     if (isArray) {
       const [baseName, arrayIndex, arrayPropName] = parts;
-
       setFormState((prevState: any) => {
         if (Array.isArray(prevState[baseName])) {
           return {
