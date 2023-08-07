@@ -45,10 +45,13 @@ export const useFetchGoalRoom = (goalRoomId: string) => {
 };
 
 export const useCreateGoalRoom = () => {
+  const { triggerToast } = useToast();
   const { mutate } = useMutation(
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
-      onSuccess() {},
+      onSuccess() {
+        triggerToast({ message: '골룸을 생성했습니다!' });
+      },
       onError() {},
     }
   );
