@@ -13,7 +13,7 @@ export const DialogBox = ({
     isSwitchOn: isOpen,
     turnSwitchOn: openDialog,
     turnSwitchOff: closeDialog,
-  } = useSwitch(defaultOpen ?? false);
+  } = useSwitch(defaultOpen);
 
   return (
     <DialogContext.Provider value={{ isOpen, openDialog, closeDialog }}>

@@ -3,12 +3,10 @@ import { useGoalRoomDetail } from '@/hooks/queries/goalRoom';
 import * as S from './goalRoomDetailDialog.styles';
 
 type GoalRoomDetailDialogContentProps = {
-  closeGoalroomDetail: () => void;
   goalRoomId: number;
 };
 
 const GoalRoomDetailDialogContent = ({
-  closeGoalroomDetail,
   goalRoomId,
 }: GoalRoomDetailDialogContentProps) => {
   const { goalRoomInfo } = useGoalRoomDetail(goalRoomId);
@@ -19,7 +17,7 @@ const GoalRoomDetailDialogContent = ({
         <div />
         <S.Title>{goalRoomInfo.name}</S.Title>
         <DialogTrigger asChild>
-          <S.CloseButton onClick={closeGoalroomDetail}>X</S.CloseButton>
+          <S.CloseButton>X</S.CloseButton>
         </DialogTrigger>
       </S.TitleWrapper>
       <S.Participant>

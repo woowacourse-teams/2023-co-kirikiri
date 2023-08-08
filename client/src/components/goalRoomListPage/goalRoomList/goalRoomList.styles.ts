@@ -92,17 +92,6 @@ export const Particpant = styled.div`
   }
 `;
 
-export const DetailButton = styled.button`
-  width: 100%;
-  height: 4.5rem;
-  margin-top: 3rem;
-
-  color: ${({ theme }) => theme.colors.white};
-
-  background-color: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 85px;
-`;
-
 export const CreateGoalRoomButton = styled.button`
   ${({ theme }) => theme.fonts.h1}
   position: fixed;
