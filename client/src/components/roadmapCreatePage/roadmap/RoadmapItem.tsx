@@ -26,6 +26,7 @@ const RoadmapItem = ({
             }
             maxLength={40}
             name='title'
+            placeholder='로드맵의 제목을 입렵해주세요'
           />
         </S.TitleFieldWrapper>
       </S.TitleWrapper>
@@ -36,6 +37,7 @@ const RoadmapItem = ({
           }
           maxLength={2000}
           name='content'
+          placeholder='로드맵의 본문을 입렵해주세요'
         />
       </S.BodyFieldWrapper>
     </>
