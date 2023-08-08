@@ -2,6 +2,7 @@ package co.kirikiri.integration;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.ImageDirType;
@@ -396,25 +397,31 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(첫번째_골룸_아이디, 정상적인_골룸_이름, "RUNNING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
-                        new MemberResponse(1L, "코끼리")),
+                        new MemberResponse(1L, "코끼리", "default-member-image")),
                 new MemberGoalRoomForListResponse(두번째_골룸_아이디, 정상적인_골룸_이름, "RECRUITING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
 
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+        assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     @Test
     void 사용자가_참여한_골룸_중_모집_중인_골룸_목록을_조회한다() {
         // given
-        회원가입을_한다(IDENTIFIER, PASSWORD, "코끼리", "010-1234-5678", GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
-        final String 로그인_토큰_정보 = 로그인을_한다(IDENTIFIER, PASSWORD);
+        회원가입을_한다("identifier", "password1!", "코끼리", "010-1111-2222", GenderType.MALE, LocalDate.of(1999, 9, 9));
+        final String 액세스_토큰 = 로그인을_한다("identifier", "password1!");
+        회원가입을_한다("follower1", "password1!", "팔로워", "010-1111-1111", GenderType.FEMALE, LocalDate.of(1111, 11, 11));
+        final String 팔로워_액세스_토큰 = 로그인을_한다("follower1", "password1!");
 
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("여가");
-        final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(로그인_토큰_정보, 카테고리.getId(), "첫번째_로드맵 제목",
+        final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "첫번째_로드맵 제목",
                 "첫번째_로드맵 소개글", "첫번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("첫번째_로드맵 1주차", "첫번째_로드맵 1주차 내용")));
         final RoadmapResponse 첫번째_로드맵_응답 = 로드맵을_조회한다(첫번째_로드맵_아이디);
@@ -425,9 +432,9 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
         final GoalRoomCreateRequest 첫번째_골룸_생성_요청 = new GoalRoomCreateRequest(첫번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 첫번째_골룸_투두_요청, 첫번째_골룸_노드_별_기간_요청);
-        골룸을_생성하고_id를_알아낸다(첫번째_골룸_생성_요청, 로그인_토큰_정보);
+        final Long 첫번째_골룸_아이디 = 골룸을_생성하고_id를_알아낸다(첫번째_골룸_생성_요청, 액세스_토큰);
 
-        final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(로그인_토큰_정보, 카테고리.getId(), "두번째_로드맵 제목",
+        final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "두번째_로드맵 제목",
                 "두번째_로드맵 소개글", "두번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("두번째_로드맵 1주차", "두번째_로드맵 1주차 내용")));
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_조회한다(두번째_로드맵_아이디);
@@ -438,13 +445,15 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 new GoalRoomRoadmapNodeRequest(두번째_로드맵_노드_아이디, 정상적인_골룸_노드_인증_횟수, 십일_후, 이십일_후));
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 두번째_골룸_투두_요청, 두번째_골룸_노드_별_기간_요청);
-        final Long 두번째_골룸_아이디 = 골룸을_생성하고_id를_알아낸다(두번째_골룸_생성_요청, 로그인_토큰_정보);
+        final Long 두번째_골룸_아이디 = 골룸을_생성하고_id를_알아낸다(두번째_골룸_생성_요청, 액세스_토큰);
 
+        골룸_참가_요청(첫번째_골룸_아이디, 팔로워_액세스_토큰);
+        골룸_참가_요청(두번째_골룸_아이디, 팔로워_액세스_토큰);
         골룸을_시작한다();
 
         // when
         final List<MemberGoalRoomForListResponse> 요청_응답값 = given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .header(AUTHORIZATION, 팔로워_액세스_토큰)
                 .queryParam("statusCond", "RECRUITING")
                 .when()
                 .get(API_PREFIX + "/goal-rooms/me")
@@ -457,23 +466,29 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         // then
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(두번째_골룸_아이디, 정상적인_골룸_이름, "RECRUITING",
-                        1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        2, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
 
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+        assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     @Test
     void 사용자가_참여한_골룸_중_진행_중인_골룸_목록을_조회한다() {
         // given
-        회원가입을_한다(IDENTIFIER, PASSWORD, "코끼리", "010-1234-5678", GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
-        final String 로그인_토큰_정보 = 로그인을_한다(IDENTIFIER, PASSWORD);
+        회원가입을_한다("identifier", "password1!", "코끼리", "010-1111-2222", GenderType.MALE, LocalDate.of(1999, 9, 9));
+        final String 액세스_토큰 = 로그인을_한다("identifier", "password1!");
+        회원가입을_한다("follower1", "password1!", "팔로워", "010-1111-1111", GenderType.FEMALE, LocalDate.of(1111, 11, 11));
+        final String 팔로워_액세스_토큰 = 로그인을_한다("follower1", "password1!");
 
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("여가");
-        final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(로그인_토큰_정보, 카테고리.getId(), "첫번째_로드맵 제목",
+        final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "첫번째_로드맵 제목",
                 "첫번째_로드맵 소개글", "첫번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("첫번째_로드맵 1주차", "첫번째_로드맵 1주차 내용")));
         final RoadmapResponse 첫번째_로드맵_응답 = 로드맵을_조회한다(첫번째_로드맵_아이디);
@@ -484,9 +499,9 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
         final GoalRoomCreateRequest 첫번째_골룸_생성_요청 = new GoalRoomCreateRequest(첫번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 첫번째_골룸_투두_요청, 첫번째_골룸_노드_별_기간_요청);
-        final Long 첫번째_골룸_아이디 = 골룸을_생성하고_id를_알아낸다(첫번째_골룸_생성_요청, 로그인_토큰_정보);
+        final Long 첫번째_골룸_아이디 = 골룸을_생성하고_id를_알아낸다(첫번째_골룸_생성_요청, 액세스_토큰);
 
-        final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(로그인_토큰_정보, 카테고리.getId(), "두번째_로드맵 제목",
+        final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "두번째_로드맵 제목",
                 "두번째_로드맵 소개글", "두번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("두번째_로드맵 1주차", "두번째_로드맵 1주차 내용")));
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_조회한다(두번째_로드맵_아이디);
@@ -497,13 +512,15 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 new GoalRoomRoadmapNodeRequest(두번째_로드맵_노드_아이디, 정상적인_골룸_노드_인증_횟수, 십일_후, 이십일_후));
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 두번째_골룸_투두_요청, 두번째_골룸_노드_별_기간_요청);
-        final Long 두번째_골룸_아이디 = 골룸을_생성하고_id를_알아낸다(두번째_골룸_생성_요청, 로그인_토큰_정보);
+        final Long 두번째_골룸_아이디 = 골룸을_생성하고_id를_알아낸다(두번째_골룸_생성_요청, 액세스_토큰);
 
+        골룸_참가_요청(첫번째_골룸_아이디, 팔로워_액세스_토큰);
+        골룸_참가_요청(두번째_골룸_아이디, 팔로워_액세스_토큰);
         골룸을_시작한다();
 
         // when
         final List<MemberGoalRoomForListResponse> 요청_응답값 = given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .header(AUTHORIZATION, 팔로워_액세스_토큰)
                 .queryParam("statusCond", "RUNNING")
                 .when()
                 .get(API_PREFIX + "/goal-rooms/me")
@@ -516,12 +533,17 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         // then
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(첫번째_골룸_아이디, 정상적인_골룸_이름, "RUNNING",
-                        1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
-                        new MemberResponse(1L, "코끼리")));
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+                        2, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
+
+        assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     @Test

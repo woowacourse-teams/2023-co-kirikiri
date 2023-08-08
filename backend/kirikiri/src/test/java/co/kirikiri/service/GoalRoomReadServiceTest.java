@@ -337,7 +337,7 @@ class GoalRoomReadServiceTest {
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
 
         final List<CheckFeed> checkFeeds = 인증_피드_목록을_생성한다(goalRoomRoadmapNode1, member, goalRoom);
-        given(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        given(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .willReturn(Optional.of(goalRoom));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -376,7 +376,7 @@ class GoalRoomReadServiceTest {
     @Test
     void 사용자_단일_목록_조회_시_유효하지_않은_골룸_아이디일_경우_예외를_반환한다() {
         //given
-        when(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        when(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1"));
 
         //when, then
@@ -396,7 +396,7 @@ class GoalRoomReadServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
 
-        when(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        when(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
         when(memberRepository.findByIdentifier(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
@@ -418,7 +418,7 @@ class GoalRoomReadServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
 
-        when(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        when(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(member));
@@ -453,10 +453,11 @@ class GoalRoomReadServiceTest {
 
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2, 10, LocalDateTime.now(), TODAY,
-                        THIRTY_DAY_LATER, new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        THIRTY_DAY_LATER,
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(2L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -515,10 +516,10 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(2L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -568,10 +569,10 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(3L, "골룸", "RUNNING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(4L, "골룸", "RUNNING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -621,10 +622,10 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(3L, "골룸", "COMPLETED", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(4L, "골룸", "COMPLETED", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -808,8 +809,10 @@ class GoalRoomReadServiceTest {
 
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
-        return new Member(1L, new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+        final MemberImage memberImage = new MemberImage("originalFileName", "default-member-image",
+                ImageContentType.JPG);
+        return new Member(1L, new Identifier("cokirikiri"), new EncryptedPassword(new Password("password1!")),
+                new Nickname("코끼리"), memberImage, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id) {
