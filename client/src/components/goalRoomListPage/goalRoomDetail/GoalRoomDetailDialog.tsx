@@ -6,7 +6,7 @@ import {
 } from '@components/_common/dialog/dialog';
 import * as S from './goalRoomDetailDialog.styles';
 import GoalRoomDetailDialogContent from './GoalRoomDetailDialogContent';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 type GoalRoomDetailDialogProps = {
   goalRoomId: number;
@@ -15,12 +15,6 @@ type GoalRoomDetailDialogProps = {
 
 const GoalRoomDetailDialog = ({ goalRoomId, isJoined }: GoalRoomDetailDialogProps) => {
   console.log(isJoined);
-
-  const navigate = useNavigate();
-
-  const enterGoalRoom = () => {
-    navigate(`/goalroom-dashboard/${goalRoomId}`);
-  };
 
   return (
     <DialogBox>
@@ -31,9 +25,9 @@ const GoalRoomDetailDialog = ({ goalRoomId, isJoined }: GoalRoomDetailDialogProp
         <S.BackDrop>
           <DialogContent>
             <GoalRoomDetailDialogContent goalRoomId={goalRoomId} />
-            <S.EnterGoalRoomButton onClick={enterGoalRoom}>
-              골룸 대시보드 입장하기
-            </S.EnterGoalRoomButton>
+            <Link to={`/goalroom-dashboard/${goalRoomId}`}>
+              <S.EnterGoalRoomButton>골룸 대시보드 입장하기</S.EnterGoalRoomButton>
+            </Link>
           </DialogContent>
         </S.BackDrop>
       </DialogBackdrop>
