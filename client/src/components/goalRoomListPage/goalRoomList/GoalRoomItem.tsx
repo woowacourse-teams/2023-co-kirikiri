@@ -1,5 +1,5 @@
 import { GoalRoomDetailType } from '@/myTypes/goalRoom/internal';
-import GoalRoomDetailDialog from '../goalRoomDetail/GoalRoomDetailDialog';
+import GoalRoomDetailDialog from '@components/goalRoomListPage/goalRoomDetail/GoalRoomDetailDialog';
 import * as S from './goalRoomList.styles';
 
 const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {

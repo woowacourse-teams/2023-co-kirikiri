@@ -28,12 +28,14 @@ const NavBar = ({ isSwitchOn }: NavBarProps) => {
             </S.ItemIcon>
             <S.Text>로드맵</S.Text>
           </S.Item>
-          <S.Item to='/goalroom-list'>
-            <S.ItemIcon>
-              <SVGIcon name='GoalRoomIcon' />
-            </S.ItemIcon>
-            <S.Text>골룸</S.Text>
-          </S.Item>
+          {isValidUserInfo(userInfo) && (
+            <S.Item to='/mypage'>
+              <S.ItemIcon>
+                <SVGIcon name='GoalRoomIcon' />
+              </S.ItemIcon>
+              <S.Text>마이 페이지</S.Text>
+            </S.Item>
+          )}
         </S.Links>
 
         {isValidUserInfo(userInfo) ? (

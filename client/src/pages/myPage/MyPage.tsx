@@ -1,5 +1,14 @@
+import Spinner from '@components/_common/spinner/Spinner';
+
+import { Suspense } from 'react';
+import MyPageContent from '@components/myPage/myPageContent/MyPageContent';
+
 const MyPage = () => {
-  return <div>MyPage</div>;
+  return (
+    <Suspense fallback={<Spinner />}>
+      <MyPageContent />
+    </Suspense>
+  );
 };
 
 export default MyPage;

@@ -15,10 +15,12 @@ import {
   getGoalRoomDetail,
   postToChangeTodoCheckStatus,
   postJoinGoalRoom,
+  getMyGoalRoomList,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useToast from '@hooks/_common/useToast';
+import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 import { useNavigate } from 'react-router-dom';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
@@ -26,6 +28,14 @@ export const useGoalRoomList = (params: GoalRoomListRequest) => {
     getGoalRoomList(params)
   );
   return { goalRoomList: data };
+};
+
+export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => {
+  const { data } = useSuspendedQuery(['myGoalRoomList', statusCond], () =>
+    getMyGoalRoomList(statusCond)
+  );
+
+  return { myGoalRoomList: data };
 };
 
 export const useGoalRoomDetail = (goalRoomId: number) => {
@@ -45,11 +55,16 @@ export const useFetchGoalRoom = (goalRoomId: string) => {
   };
 };
 
-export const useCreateGoalRoom = () => {
+export const useCreateGoalRoom = (roadmapContentId: number) => {
+  const navigate = useNavigate();
+  const { triggerToast } = useToast();
   const { mutate } = useMutation(
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
-      onSuccess() {},
+      onSuccess() {
+        navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
+        triggerToast({ message: '골룸을 생성했습니다!' });
+      },
       onError() {},
     }
   );

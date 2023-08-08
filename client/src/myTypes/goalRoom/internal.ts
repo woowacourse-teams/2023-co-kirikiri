@@ -66,3 +66,15 @@ export type GoalRoomInfoType = {
   period: number;
   isJoined: boolean;
 };
+
+export type MyPageGoalRoom = {
+  goalRoomId: number;
+  name: string;
+  goalRoomStatus: GoalRoomRecruitmentStatus;
+  currentMemberCount: number;
+  limitedMemberCount: number;
+  createdAt: string;
+  startDate: string;
+  endDate: string;
+  goalRoomLeader: GoalRoomLeaderType;
+};
