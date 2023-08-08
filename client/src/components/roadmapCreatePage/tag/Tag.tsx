@@ -9,7 +9,8 @@ type TagProps = {
   getTags: (tags: string[]) => void;
 };
 const Tag = ({ getTags }: TagProps) => {
-  const { tags, ref, getAddedTagText, checkIsTagCountMax, delegeTag } = useCreateTag();
+  const { tags, ref, addTagByButton, addTagByEnter, checkIsTagCountMax, delegeTag } =
+    useCreateTag();
 
   useEffect(() => {
     getTags(tags);
@@ -28,8 +29,8 @@ const Tag = ({ getTags }: TagProps) => {
             </S.DeleteButton>
           </>
         ))}
-        <TagItem ref={ref} getAddedTagText={getAddedTagText} placeholder='# 태그명' />
-        {checkIsTagCountMax() && <S.AddButton onClick={getAddedTagText}>+</S.AddButton>}
+        <TagItem ref={ref} addTagByEnter={addTagByEnter} placeholder='# 태그명' />
+        {checkIsTagCountMax() && <S.AddButton onClick={addTagByButton}>+</S.AddButton>}
       </S.TagWrapper>
     </S.Container>
   );
