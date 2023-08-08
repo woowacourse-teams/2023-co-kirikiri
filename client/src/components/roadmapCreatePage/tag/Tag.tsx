@@ -9,7 +9,7 @@ type TagProps = {
   getTags: (tags: string[]) => void;
 };
 const Tag = ({ getTags }: TagProps) => {
-  const { tags, ref, getAddedTagText, checkIsTagCountMax } = useCreateTag();
+  const { tags, ref, getAddedTagText, checkIsTagCountMax, delegeTag } = useCreateTag();
 
   useEffect(() => {
     getTags(tags);
@@ -21,9 +21,14 @@ const Tag = ({ getTags }: TagProps) => {
       <InputDescription text='컨텐츠와 어울리는 태그를 작성해주세요' />
       <S.TagWrapper>
         {tags.map((item) => (
-          <S.AddedTagItem key={item}>{item}</S.AddedTagItem>
+          <>
+            <S.AddedTagItem key={item}># {item}</S.AddedTagItem>
+            <S.DeleteButton value={item} onClick={delegeTag}>
+              X
+            </S.DeleteButton>
+          </>
         ))}
-        <TagItem ref={ref} />
+        <TagItem ref={ref} getAddedTagText={getAddedTagText} placeholder='# 태그명' />
         {checkIsTagCountMax() && <S.AddButton onClick={getAddedTagText}>+</S.AddButton>}
       </S.TagWrapper>
     </S.Container>
