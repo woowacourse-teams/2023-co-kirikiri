@@ -7,6 +7,7 @@ import {
 import * as S from './goalRoomDetailDialog.styles';
 import GoalRoomDetailDialogContent from './GoalRoomDetailDialogContent';
 import { Link } from 'react-router-dom';
+import { useJoinGoalRoom } from '@/hooks/queries/goalRoom';
 
 type GoalRoomDetailDialogProps = {
   goalRoomId: number;
@@ -14,6 +15,8 @@ type GoalRoomDetailDialogProps = {
 };
 
 const GoalRoomDetailDialog = ({ goalRoomId, isJoined }: GoalRoomDetailDialogProps) => {
+  const { joinGoalRoom } = useJoinGoalRoom({ goalRoomId: String(goalRoomId) });
+
   return (
     <DialogBox>
       <DialogTrigger asChild>
@@ -23,11 +26,15 @@ const GoalRoomDetailDialog = ({ goalRoomId, isJoined }: GoalRoomDetailDialogProp
         <S.BackDrop>
           <DialogContent>
             <GoalRoomDetailDialogContent goalRoomId={goalRoomId} />
-            <Link to={`/goalroom-dashboard/${goalRoomId}`}>
-              <S.EnterGoalRoomButton>
-                {isJoined ? '골룸 대시보드 입장하기' : '골룸 참여하기'}
+            {isJoined ? (
+              <Link to={`/goalroom-dashboard/${goalRoomId}`}>
+                <S.EnterGoalRoomButton>골룸 대시보드 입장하기</S.EnterGoalRoomButton>
+              </Link>
+            ) : (
+              <S.EnterGoalRoomButton onClick={() => joinGoalRoom()}>
+                골룸 참여하기
               </S.EnterGoalRoomButton>
-            </Link>
+            )}
           </DialogContent>
         </S.BackDrop>
       </DialogBackdrop>
