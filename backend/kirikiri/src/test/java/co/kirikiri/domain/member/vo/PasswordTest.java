@@ -25,7 +25,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -35,7 +35,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -45,7 +45,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -55,7 +55,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -65,7 +65,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -75,6 +75,6 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

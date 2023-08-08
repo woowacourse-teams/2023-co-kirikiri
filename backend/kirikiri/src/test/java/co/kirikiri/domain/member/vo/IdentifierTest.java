@@ -25,7 +25,7 @@ class IdentifierTest {
         //when
         //then
         assertThatThrownBy(() -> new Identifier(identifier))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -35,7 +35,7 @@ class IdentifierTest {
         //when
         //then
         assertThatThrownBy(() -> new Identifier(identifier))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -45,6 +45,6 @@ class IdentifierTest {
         //when
         //then
         assertThatThrownBy(() -> new Identifier(identifier))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

@@ -11,6 +11,6 @@ public class TestObjectMapperConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper()
-            .registerModule(new JavaTimeModule());
+                .registerModule(new JavaTimeModule());
     }
 }

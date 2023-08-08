@@ -2,6 +2,7 @@ package co.kirikiri.domain.member.vo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.domain.member.EncryptedPassword;
 import org.junit.jupiter.api.Test;
 
 class EncryptedPasswordTest {

@@ -25,6 +25,6 @@ class NicknameTest {
         //when
         //then
         assertThatThrownBy(() -> new Nickname(nickname))
-            .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

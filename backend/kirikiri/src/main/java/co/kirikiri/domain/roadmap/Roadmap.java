@@ -1,31 +1,33 @@
 package co.kirikiri.domain.roadmap;
 
+import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.member.Member;
-import jakarta.persistence.CascadeType;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Roadmap {
+@AllArgsConstructor
+public class Roadmap extends BaseCreatedTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private static final int TITLE_MIN_LENGTH = 1;
+    private static final int TITLE_MAX_LENGTH = 40;
+    private static final int INTRODUCTION_MIN_LENGTH = 1;
+    private static final int INTRODUCTION_MAX_LENGTH = 150;
+    private static final int REQUIRED_MIN_PERIOD = 0;
+    private static final int REQUIRED_MAX_PERIOD = 1000;
 
     @Column(length = 50, nullable = false)
     private String title;
@@ -42,7 +44,7 @@ public class Roadmap {
 
     @Enumerated(value = EnumType.STRING)
     @Column(length = 10, nullable = false)
-    private RoadmapStatus status;
+    private RoadmapStatus status = RoadmapStatus.CREATED;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
@@ -52,9 +54,19 @@ public class Roadmap {
     @JoinColumn(name = "category_id", nullable = false)
     private RoadmapCategory category;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmap")
-    @Column(nullable = false)
-    private final List<RoadmapContent> contents = new ArrayList<>();
+    @Embedded
+    private RoadmapContents contents = new RoadmapContents();
+
+    @Embedded
+    private RoadmapTags tags = new RoadmapTags();
+
+    @Embedded
+    private RoadmapReviews reviews = new RoadmapReviews();
+
+    public Roadmap(final String title, final String introduction, final int requiredPeriod,
+                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
+        this(null, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
+    }
 
     public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
                    final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
@@ -63,8 +75,14 @@ public class Roadmap {
     }
 
     public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
+                   final RoadmapDifficulty difficulty, final Member creator, final RoadmapCategory category) {
+        this(id, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creator, category);
+    }
+
+    public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
                    final RoadmapDifficulty difficulty, final RoadmapStatus status, final Member creator,
                    final RoadmapCategory category) {
+        validate(title, introduction, requiredPeriod);
         this.id = id;
         this.title = title;
         this.introduction = introduction;
@@ -75,6 +93,38 @@ public class Roadmap {
         this.category = category;
     }
 
+    private void validate(final String title, final String introduction, final int requiredPeriod) {
+        validateTitleLength(title);
+        validateIntroductionLength(introduction);
+        validateRequiredPeriod(requiredPeriod);
+    }
+
+    private void validateTitleLength(final String title) {
+        if (title.length() < TITLE_MIN_LENGTH || title.length() > TITLE_MAX_LENGTH) {
+            throw new BadRequestException(
+                    String.format("로드맵 제목의 길이는 최소 %d글자, 최대 %d글자입니다.", TITLE_MIN_LENGTH, TITLE_MAX_LENGTH)
+            );
+        }
+    }
+
+    private void validateIntroductionLength(final String introduction) {
+        if (introduction.length() < INTRODUCTION_MIN_LENGTH || introduction.length() > INTRODUCTION_MAX_LENGTH) {
+            throw new BadRequestException(
+                    String.format("로드맵 소개글의 길이는 최소 %d글자, 최대 %d글자입니다.",
+                            INTRODUCTION_MIN_LENGTH, INTRODUCTION_MAX_LENGTH
+                    )
+            );
+        }
+    }
+
+    private void validateRequiredPeriod(final int requiredPeriod) {
+        if (requiredPeriod < REQUIRED_MIN_PERIOD || requiredPeriod > REQUIRED_MAX_PERIOD) {
+            throw new BadRequestException(
+                    String.format("로드맵 추천 소요 기간은 최소 %d일, 최대 %d일입니다.", REQUIRED_MIN_PERIOD, REQUIRED_MAX_PERIOD)
+            );
+        }
+    }
+
     public void addContent(final RoadmapContent content) {
         contents.add(content);
         if (content.isNotSameRoadmap(this)) {
@@ -82,37 +132,27 @@ public class Roadmap {
         }
     }
 
-    public void removeContent(final RoadmapContent content) {
-        contents.remove(content);
+    public void addTags(final RoadmapTags tags) {
+        this.tags.addAll(tags);
     }
 
-    public boolean notContainsContent(final RoadmapContent content) {
-        return !contents.contains(content);
+    public boolean isCreator(final Member member) {
+        return Objects.equals(creator.getId(), member.getId());
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
+    public void addReview(final RoadmapReview review) {
+        reviews.add(review);
+        if (review.isNotSameRoadmap(this)) {
+            review.updateRoadmap(this);
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Roadmap roadmap = (Roadmap) o;
-        return Objects.equals(id, roadmap.id);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void delete() {
+        this.status = RoadmapStatus.DELETED;
     }
 
     public Member getCreator() {
         return creator;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getTitle() {
@@ -123,7 +163,7 @@ public class Roadmap {
         return category;
     }
 
-    public List<RoadmapContent> getContents() {
+    public RoadmapContents getContents() {
         return contents;
     }
 
@@ -137,5 +177,13 @@ public class Roadmap {
 
     public RoadmapDifficulty getDifficulty() {
         return difficulty;
+    }
+
+    public RoadmapTags getTags() {
+        return tags;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

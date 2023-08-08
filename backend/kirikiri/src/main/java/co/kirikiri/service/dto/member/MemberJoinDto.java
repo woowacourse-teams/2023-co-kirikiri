@@ -7,12 +7,12 @@ import co.kirikiri.domain.member.vo.Password;
 import java.time.LocalDate;
 
 public record MemberJoinDto(
-    Identifier identifier,
-    Password password,
-    Nickname nickname,
-    String phoneNumber,
-    Gender gender,
-    LocalDate birthday
+        Identifier identifier,
+        Password password,
+        Nickname nickname,
+        String phoneNumber,
+        Gender gender,
+        LocalDate birthday
 ) {
 
 }
