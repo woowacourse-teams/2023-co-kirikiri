@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -33,11 +34,10 @@ public class GoalRoomToDos {
         return values.get(values.size() - 1);
     }
 
-    public GoalRoomToDo findById(final Long todoId) {
+    public Optional<GoalRoomToDo> findById(final Long todoId) {
         return values.stream()
-                .filter(todo -> todo.getId().equals(todoId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 투두입니다. todoId = " + todoId));
+                .filter(goalRoomToDo -> goalRoomToDo.isSameId(todoId))
+                .findFirst();
     }
 
     public List<GoalRoomToDo> getValues() {

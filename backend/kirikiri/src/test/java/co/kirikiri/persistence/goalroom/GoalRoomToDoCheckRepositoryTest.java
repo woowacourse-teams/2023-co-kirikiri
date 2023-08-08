@@ -98,9 +98,8 @@ class GoalRoomToDoCheckRepositoryTest {
         goalRoomToDoCheckRepository.saveAll(List.of(firstGoalRoomToDoCheck, secondGoalRoomToDoCheck));
 
         // when
-        final GoalRoomToDoCheck findGoalRoomTodoCheck = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoIdAndMemberIdentifier(
-                goalRoom.getId(), firstGoalRoomTodo.getId(),
-                new Identifier("identifier1")).get();
+        final GoalRoomToDoCheck findGoalRoomTodoCheck = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoAndMemberIdentifier(
+                goalRoom.getId(), firstGoalRoomTodo, new Identifier("identifier1")).get();
 
         // then
         assertThat(findGoalRoomTodoCheck)

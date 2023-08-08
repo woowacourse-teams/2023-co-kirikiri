@@ -11,10 +11,8 @@ import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
@@ -78,17 +76,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier) {
-        return Optional.ofNullable(selectFrom(goalRoomMember)
-                .innerJoin(goalRoomMember.goalRoom, goalRoom)
-                .where(
-                        goalRoomIdCond(goalRoomId),
-                        memberIdentifierCond(memberIdentifier))
-                .fetchJoin()
-                .fetchFirst());
-    }
-
-    @Override
     public Optional<GoalRoom> findByIdWithContentAndNodesAndTodos(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
@@ -111,10 +98,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
-    }
-
-    private BooleanExpression memberIdentifierCond(final Identifier memberIdentifier) {
-        return goalRoomMember.member.identifier.eq(memberIdentifier);
     }
 
     private BooleanExpression statusCond(final GoalRoomStatus status) {

@@ -100,6 +100,11 @@ public class GoalRoomRoadmapNodes {
                 .sum();
     }
 
+    public GoalRoomRoadmapNode nextNode(final GoalRoomRoadmapNode roadmapNode) {
+        sortByStartDateAsc(values);
+        return values.get(values.indexOf(roadmapNode) + 1);
+    }
+
     public List<GoalRoomRoadmapNode> getValues() {
         return new ArrayList<>(values);
     }

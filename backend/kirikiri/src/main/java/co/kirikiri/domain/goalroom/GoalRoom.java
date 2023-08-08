@@ -243,6 +243,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomPendingMembers.isEmpty() && goalRoomMembers.isEmpty();
     }
 
+    public Optional<GoalRoomToDo> findGoalRoomTodoByTodoId(final Long todoId) {
+        return goalRoomToDos.findById(todoId);
+    }
+
     public GoalRoomName getName() {
         return name;
     }
@@ -281,5 +285,9 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public GoalRoomToDos getGoalRoomToDos() {
         return goalRoomToDos;
+    }
+
+    public GoalRoomPendingMembers getGoalRoomPendingMembers() {
+        return goalRoomPendingMembers;
     }
 }

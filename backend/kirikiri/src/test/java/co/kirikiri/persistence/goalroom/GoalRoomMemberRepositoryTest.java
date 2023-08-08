@@ -36,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -183,6 +184,35 @@ class GoalRoomMemberRepositoryTest {
         assertThat(goalRoomMembers).isEqualTo(expected);
     }
 
+    @Test
+    void 골룸_아이디와_사용자_아이디로_골룸_멤버를_조회한다() {
+        // given
+        final Member creator = 사용자를_생성한다("identifier1", "password!1", "name1", "01011111111");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
+        goalRoomRepository.save(goalRoom);
+
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(
+                GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator
+        );
+        goalRoomMemberRepository.save(goalRoomMember);
+
+        // when
+        final GoalRoomMember findGoalRoomMember = goalRoomMemberRepository.findGoalRoomMember(goalRoom.getId(),
+                creator.getIdentifier()).get();
+
+        // then
+        Assertions.assertThat(findGoalRoomMember)
+                .usingRecursiveComparison()
+                .ignoringFields("joinedAt")
+                .isEqualTo(goalRoomMember);
+    }
+
     private Member 크리에이터를_저장한다() {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
@@ -204,14 +234,6 @@ class GoalRoomMemberRepositoryTest {
         return roadmapCategoryRepository.save(roadmapCategory);
     }
 
-    private Roadmap 로드맵을_저장한다(final Member creator, final RoadmapCategory category) {
-        final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
-        roadmap.addContent(roadmapContent);
-        return roadmapRepository.save(roadmap);
-    }
-
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
         roadmapNode1.addImages(new RoadmapNodeImages(노드_이미지들을_생성한다()));
@@ -230,6 +252,14 @@ class GoalRoomMemberRepositoryTest {
                 new RoadmapNodeImage("node-image1.png", "node-image1-save-path", ImageContentType.PNG),
                 new RoadmapNodeImage("node-image2.png", "node-image2-save-path", ImageContentType.PNG)
         );
+    }
+
+    private Roadmap 로드맵을_저장한다(final Member creator, final RoadmapCategory category) {
+        final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        roadmap.addContent(roadmapContent);
+        return roadmapRepository.save(roadmap);
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final Member member) {
@@ -258,5 +288,10 @@ class GoalRoomMemberRepositoryTest {
         final Member follower = new Member(1L, new Identifier("follower1"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("팔로워1"), memberImage, memberProfile);
         return memberRepository.save(follower);
+    }
+
+    private GoalRoomRoadmapNode 골룸_로드맵_노드를_생성한다(final LocalDate startDate, final LocalDate endDate,
+                                                final RoadmapNode roadmapNode) {
+        return new GoalRoomRoadmapNode(new Period(startDate, endDate), 1, roadmapNode);
     }
 }

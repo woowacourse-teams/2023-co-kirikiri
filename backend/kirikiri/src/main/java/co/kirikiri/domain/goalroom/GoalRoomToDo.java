@@ -29,6 +29,10 @@ public class GoalRoomToDo extends BaseUpdatedTimeEntity {
         this.period = period;
     }
 
+    public boolean isSameId(final Long todoId) {
+        return this.id.equals(todoId);
+    }
+
     public String getContent() {
         return content.getValue();
     }

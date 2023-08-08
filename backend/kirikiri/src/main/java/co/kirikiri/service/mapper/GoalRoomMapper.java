@@ -7,6 +7,7 @@ import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
+import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
@@ -144,33 +145,36 @@ public class GoalRoomMapper {
     }
 
     public static List<GoalRoomTodoResponse> convertGoalRoomTodoResponses(final GoalRoomToDos goalRoomToDos,
-                                                                          final List<Long> checkedTodoIds) {
+                                                                          final List<GoalRoomToDoCheck> checkedTodoIds) {
         return goalRoomToDos.getValues().stream()
                 .map(goalRoomToDo -> convertGoalRoomTodoResponse(checkedTodoIds, goalRoomToDo))
                 .toList();
     }
 
-    private static GoalRoomTodoResponse convertGoalRoomTodoResponse(final List<Long> checkedTodoIds,
+    private static GoalRoomTodoResponse convertGoalRoomTodoResponse(final List<GoalRoomToDoCheck> checkedTodos,
                                                                     final GoalRoomToDo goalRoomToDo) {
         final GoalRoomToDoCheckResponse checkResponse = new GoalRoomToDoCheckResponse(
-                isCheckedTodo(goalRoomToDo.getId(), checkedTodoIds));
+                isCheckedTodo(goalRoomToDo.getId(), checkedTodos));
         return new GoalRoomTodoResponse(goalRoomToDo.getId(),
                 goalRoomToDo.getContent(),
                 goalRoomToDo.getStartDate(), goalRoomToDo.getEndDate(),
                 checkResponse);
     }
 
-    private static boolean isCheckedTodo(final Long targetTodoId, final List<Long> checkedTodoIds) {
-        return checkedTodoIds.contains(targetTodoId);
+    private static boolean isCheckedTodo(final Long targetTodoId, final List<GoalRoomToDoCheck> checkedTodos) {
+        final List<Long> checkTodoIds = checkedTodos.stream()
+                .map(goalRoomToDoCheck -> goalRoomToDoCheck.getGoalRoomToDo().getId())
+                .toList();
+        return checkTodoIds.contains(targetTodoId);
     }
 
     public static MemberGoalRoomResponse convertToMemberGoalRoomResponse(final GoalRoom goalRoom,
                                                                          final List<CheckFeed> checkFeeds,
-                                                                         final List<Long> checkedTodoIds) {
+                                                                         final List<GoalRoomToDoCheck> checkedTodos) {
         final GoalRoomRoadmapNodesResponse nodeResponses = convertToGoalRoomRoadmapNodesResponse(
                 goalRoom.getGoalRoomRoadmapNodes());
         final List<GoalRoomTodoResponse> todoResponses = convertGoalRoomTodoResponsesLimit(goalRoom.getGoalRoomToDos(),
-                checkedTodoIds);
+                checkedTodos);
         final List<CheckFeedResponse> checkFeedResponses = convertToCheckFeedResponses(checkFeeds);
 
         return new MemberGoalRoomResponse(goalRoom.getName().getValue(), goalRoom.getStatus().name(),
@@ -191,16 +195,16 @@ public class GoalRoomMapper {
             );
         }
 
-        final GoalRoomRoadmapNode nextNode = nodes.getNodeByDate(currentNode.getEndDate().plusDays(1)).get();
+        final GoalRoomRoadmapNode nextNode = nodes.nextNode(currentNode);
         return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(currentNode), nodes.hasBackNode(nextNode),
                 List.of(convertGoalRoomNodeResponse(currentNode), convertGoalRoomNodeResponse(nextNode)));
     }
 
     private static List<GoalRoomTodoResponse> convertGoalRoomTodoResponsesLimit(final GoalRoomToDos goalRoomToDos,
-                                                                                final List<Long> checkedTodoIds) {
+                                                                                final List<GoalRoomToDoCheck> checkedTodos) {
         return goalRoomToDos.getValues()
                 .stream()
-                .map(goalRoomToDo -> convertGoalRoomTodoResponse(checkedTodoIds, goalRoomToDo))
+                .map(goalRoomToDo -> convertGoalRoomTodoResponse(checkedTodos, goalRoomToDo))
                 .limit(MAX_MEMBER_GOAL_ROOM_TODO_NUMBER)
                 .toList();
     }

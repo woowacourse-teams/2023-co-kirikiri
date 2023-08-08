@@ -15,4 +15,6 @@ public interface GoalRoomMemberQueryRepository {
             @Param("status") final GoalRoomStatus status);
 
     List<GoalRoomMember> findByGoalRoomIdOrderByAccomplishmentRateDesc(final Long goalRoomId);
+
+    Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier);
 }

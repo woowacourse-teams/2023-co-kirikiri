@@ -1,13 +1,11 @@
 package co.kirikiri.domain.goalroom;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.exception.NotFoundException;
 import java.time.LocalDate;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class GoalRoomToDosTest {
@@ -25,15 +23,15 @@ class GoalRoomToDosTest {
         ));
 
         // when
-        final GoalRoomToDo findGoalRoomTodo = goalRoomToDos.findById(1L);
+        final GoalRoomToDo findGoalRoomTodo = goalRoomToDos.findById(1L).get();
 
         // then
-        Assertions.assertThat(findGoalRoomTodo)
-                .isEqualTo(findGoalRoomTodo);
+        assertThat(findGoalRoomTodo)
+                .isEqualTo(firstTodo);
     }
 
     @Test
-    void 아이디로_투두_조회시_없으면_예외가_발생한다() {
+    void 아이디로_투두_조회시_없으면_빈값을_반환한다() {
         // given
         final GoalRoomToDo firstTodo = new GoalRoomToDo(1L, new GoalRoomTodoContent("투두1"),
                 new Period(LocalDate.now(), LocalDate.now().plusDays(3)));
@@ -45,7 +43,7 @@ class GoalRoomToDosTest {
         ));
 
         // expected
-        assertThatThrownBy(() -> goalRoomToDos.findById(3L))
-                .isInstanceOf(NotFoundException.class);
+        assertThat(goalRoomToDos.findById(3L))
+                .isEmpty();
     }
 }

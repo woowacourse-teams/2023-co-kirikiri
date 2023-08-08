@@ -259,7 +259,7 @@ class GoalRoomReadServiceTest {
 
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
                 creator);
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithTodos(1L))
                 .thenReturn(Optional.of(goalRoom));
@@ -281,32 +281,38 @@ class GoalRoomReadServiceTest {
     }
 
     @Test
-    void 골룸의_투두리스트_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
-        // given
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
-                .thenReturn(Optional.empty());
-
-        // expected
-        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
-                .isInstanceOf(ForbiddenException.class);
-    }
-
-    @Test
     void 골룸의_투두리스트_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
         // given
-        final Member creator = 사용자를_생성한다(1L);
-        final Roadmap roadmap = 로드맵을_생성한다(creator);
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
-        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                creator);
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
-                .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithTodos(1L))
                 .thenReturn(Optional.empty());
 
         // expected
         assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
                 .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸의_투두리스트_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+
+        final GoalRoomToDo firstGoalRoomTodo = new GoalRoomToDo(1L, new GoalRoomTodoContent("투두 1"),
+                new Period(TODAY, TEN_DAY_LATER));
+        final GoalRoomToDo secondGoalRoomTodo = new GoalRoomToDo(2L, new GoalRoomTodoContent("투두 2"),
+                new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER));
+        goalRoom.addGoalRoomTodo(firstGoalRoomTodo);
+        goalRoom.addGoalRoomTodo(secondGoalRoomTodo);
+
+        when(goalRoomRepository.findByIdWithTodos(1L))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
+                .thenReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
+                .isInstanceOf(ForbiddenException.class);
     }
 
     @Test
@@ -647,7 +653,7 @@ class GoalRoomReadServiceTest {
 
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
                 creator);
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithNodes(1L))
                 .thenReturn(Optional.of(goalRoom));
@@ -673,7 +679,7 @@ class GoalRoomReadServiceTest {
 
         when(goalRoomRepository.findByIdWithNodes(1L))
                 .thenReturn(Optional.of(goalRoom));
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.empty());
 
         // expected

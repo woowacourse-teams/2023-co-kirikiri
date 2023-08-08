@@ -11,7 +11,6 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
 import co.kirikiri.service.GoalRoomCreateService;
@@ -87,7 +86,6 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomCreateService goalRoomCreateService;
-    private final MemberRepository memberRepository;
 
     public GoalRoomCreateIntegrationTest(@Value("${file.upload-dir}") final String storageLocation,
                                          @Value("${file.server-path}") final String serverPathPrefix,
@@ -95,8 +93,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
                                          final GoalRoomMemberRepository goalRoomMemberRepository,
                                          final RoadmapCategoryRepository roadmapCategoryRepository,
                                          final RoadmapNodeRepository roadmapNodeRepository,
-                                         final GoalRoomCreateService goalRoomCreateService,
-                                         final MemberRepository memberRepository) {
+                                         final GoalRoomCreateService goalRoomCreateService) {
         this.storageLocation = storageLocation;
         this.serverPathPrefix = serverPathPrefix;
         this.goalRoomRepository = goalRoomRepository;
@@ -104,7 +101,6 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapNodeRepository = roadmapNodeRepository;
         this.goalRoomCreateService = goalRoomCreateService;
-        this.memberRepository = memberRepository;
     }
 
     @Test
@@ -751,21 +747,11 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final Long 투두_아이디 = 골룸_투두리스트_추가후_아이디를_반환한다(로그인_토큰_정보, 골룸_아이디);
 
         // when
-        final GoalRoomToDoCheckResponse 골룸_투두리스트_채크_응답값 = given()
-                .header(AUTHORIZATION, 로그인_토큰_정보)
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 골룸_아이디, 투두_아이디)
-                .then()
-                .log().all()
-                .extract()
-                .as(new TypeRef<>() {
-                });
+        final GoalRoomToDoCheckResponse 골룸_투두리스트_체크_응답값 = 골룸_투두리스트를_체크한다(로그인_토큰_정보, 골룸_아이디, 투두_아이디);
 
         // then
         final GoalRoomToDoCheckResponse 예상하는_골룸_투두리스트_체크_응답값 = new GoalRoomToDoCheckResponse(true);
-        assertThat(골룸_투두리스트_채크_응답값)
+        assertThat(골룸_투두리스트_체크_응답값)
                 .isEqualTo(예상하는_골룸_투두리스트_체크_응답값);
     }
 
@@ -784,16 +770,73 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         골룸_투두리스트를_체크한다(로그인_토큰_정보, 골룸_아이디, 투두_아이디);
 
         // when
-        final GoalRoomToDoCheckResponse 두번째_골룸_투두리스트_채크_응답값 = 골룸_투두리스트를_체크한다(로그인_토큰_정보, 골룸_아이디, 투두_아이디);
+        final GoalRoomToDoCheckResponse 두번째_골룸_투두리스트_체크_응답값 = 골룸_투두리스트를_체크한다(로그인_토큰_정보, 골룸_아이디, 투두_아이디);
 
         // then
         final GoalRoomToDoCheckResponse 예상하는_골룸_투두리스트_체크_응답값 = new GoalRoomToDoCheckResponse(false);
-        assertThat(두번째_골룸_투두리스트_채크_응답값)
+        assertThat(두번째_골룸_투두리스트_체크_응답값)
                 .isEqualTo(예상하는_골룸_투두리스트_체크_응답값);
     }
 
     @Test
-    void 정상적으로_모집중인_골룸을_나간다() throws JsonProcessingException {
+    void 골룸_투두리스트_체크시_골룸이_존재하지_않으면_예외가_발생한다() {
+        // given
+        final String 로그인_토큰_정보 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
+
+        // when
+        final ErrorResponse 에러_응답 = given()
+                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 1L, 1L)
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        assertThat(에러_응답)
+                .isEqualTo(new ErrorResponse("골룸이 존재하지 않습니다. goalRoomId = 1"));
+    }
+
+    @Test
+    void 골룸_투두리스트_체크시_사용자가_없으면_예외가_발생한다()  {
+        // given
+        final String 로그인_토큰_정보 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
+        final String 골룸_리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자1_회원가입_요청, 골룸_참여자1_로그인_요청);
+
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
+        final Long 로드맵_아이디 = 로드맵_생성(로그인_토큰_정보, 카테고리);
+        final RoadmapNode 로드맵_노드 = 로드맵_노드();
+
+        final Long 골룸_아이디 = 정상적인_골룸_생성(로그인_토큰_정보, 로드맵_아이디, 로드맵_노드);
+        goalRoomCreateService.startGoalRooms();
+        final Long 투두_아이디 = 골룸_투두리스트_추가후_아이디를_반환한다(로그인_토큰_정보, 골룸_아이디);
+
+        // when
+        final ErrorResponse 에러_응답 = given()
+                .header(AUTHORIZATION, 골룸_리더_액세스_토큰)
+                .log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/todos/{todoId}", 골룸_아이디, 투두_아이디)
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        assertThat(에러_응답)
+                .isEqualTo(new ErrorResponse("골룸에 사용자가 존재하지 않습니다. goalRoomId = " + 골룸_아이디 +
+                        " memberIdentifier = " + 골룸_참여자1_회원가입_요청.identifier()));
+    }
+
+
+    @Test
+    void 정상적으로_모집중인_골룸을_나간다() {
         //given
         final String 액세스_토큰 = 회원을_생성하고_로그인을_한다(회원가입_요청, 로그인_요청);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
@@ -824,7 +867,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 정상적으로_완료된_골룸을_나간다() throws JsonProcessingException {
+    void 정상적으로_완료된_골룸을_나간다() {
         //given
         final GoalRoomCreateRequest 골룸_생성_요청 = 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다();
 
