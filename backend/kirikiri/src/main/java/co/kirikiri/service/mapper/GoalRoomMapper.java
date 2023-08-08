@@ -13,6 +13,7 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
@@ -22,6 +23,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
@@ -30,6 +32,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
+import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
@@ -205,7 +208,7 @@ public class GoalRoomMapper {
     private static List<CheckFeedResponse> convertToCheckFeedResponses(final List<CheckFeed> checkFeeds) {
         return checkFeeds.stream()
                 .map(checkFeed -> new CheckFeedResponse(checkFeed.getId(), checkFeed.getServerFilePath(),
-                        checkFeed.getDescription()))
+                        checkFeed.getDescription(), checkFeed.getCreatedAt()))
                 .limit(MAX_MEMBER_GOAL_ROOM_CHECK_FEED_NUMBER)
                 .toList();
     }
@@ -228,5 +231,20 @@ public class GoalRoomMapper {
                 goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 new MemberResponse(leader.getId(), leader.getNickname().getValue()));
+    }
+
+    public static List<GoalRoomCheckFeedResponse> convertToGoalRoomCheckFeedResponse(final List<CheckFeed> checkFeeds) {
+        return checkFeeds.stream()
+                .map(checkFeed -> {
+                    final GoalRoomMember goalRoomMember = checkFeed.getGoalRoomMember();
+                    final Member member = goalRoomMember.getMember();
+                    final MemberImage memberImage = member.getImage();
+                    return new GoalRoomCheckFeedResponse(
+                            new MemberNameAndImageResponse(member.getId(), member.getNickname().getValue(),
+                                    memberImage.getServerFilePath()),
+                            new CheckFeedResponse(checkFeed.getId(), checkFeed.getServerFilePath(),
+                                    checkFeed.getDescription(), checkFeed.getCreatedAt()));
+                })
+                .toList();
     }
 }

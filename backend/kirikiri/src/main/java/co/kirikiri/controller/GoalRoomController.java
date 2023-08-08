@@ -9,6 +9,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
@@ -142,7 +143,8 @@ public class GoalRoomController {
     public ResponseEntity<List<GoalRoomTodoResponse>> findAllTodos(
             @PathVariable final Long goalRoomId,
             @MemberIdentifier final String identifier) {
-        final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.findAllGoalRoomTodo(goalRoomId, identifier);
+        final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.findAllGoalRoomTodo(goalRoomId,
+                identifier);
         return ResponseEntity.ok(todoResponses);
     }
 
@@ -152,7 +154,18 @@ public class GoalRoomController {
             @PathVariable final Long goalRoomId,
             @MemberIdentifier final String identifier
     ) {
-        final List<GoalRoomRoadmapNodeResponse> nodeResponses = goalRoomReadService.findAllGoalRoomNodes(goalRoomId, identifier);
+        final List<GoalRoomRoadmapNodeResponse> nodeResponses = goalRoomReadService.findAllGoalRoomNodes(goalRoomId,
+                identifier);
         return ResponseEntity.ok(nodeResponses);
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/checkFeeds")
+    public ResponseEntity<List<GoalRoomCheckFeedResponse>> findGoalRoomCheckFeeds(
+            @MemberIdentifier final String identifier,
+            @PathVariable("goalRoomId") final Long goalRoomId) {
+        final List<GoalRoomCheckFeedResponse> response = goalRoomReadService.findGoalRoomCheckFeeds(identifier,
+                goalRoomId);
+        return ResponseEntity.ok(response);
     }
 }

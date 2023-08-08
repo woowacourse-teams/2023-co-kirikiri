@@ -100,6 +100,15 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchOne());
     }
 
+    @Override
+    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
+    }
+
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
     }
@@ -151,14 +160,5 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                         .or(goalRoomMember.member.eq(member)))
                 .where(statusCond(goalRoomStatus))
                 .fetch();
-    }
-
-    @Override
-    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
-        return Optional.ofNullable(selectFrom(goalRoom)
-                .leftJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
-                .fetchJoin()
-                .where(goalRoomIdCond(goalRoomId))
-                .fetchFirst());
     }
 }
