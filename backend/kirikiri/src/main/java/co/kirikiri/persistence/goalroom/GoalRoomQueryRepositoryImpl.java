@@ -134,7 +134,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return selectFrom(goalRoom)
                 .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
                 .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
-                .fetchJoin()
                 .where(goalRoomPendingMember.member.eq(member)
                         .or(goalRoomMember.member.eq(member)))
                 .fetch();
@@ -145,7 +144,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return selectFrom(goalRoom)
                 .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
                 .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
-                .fetchJoin()
                 .where(goalRoomPendingMember.member.eq(member)
                         .or(goalRoomMember.member.eq(member)))
                 .where(statusCond(goalRoomStatus))

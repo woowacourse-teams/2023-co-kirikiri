@@ -413,6 +413,9 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         // given
         회원가입을_한다("identifier", "password1!", "코끼리", "010-1111-2222", GenderType.MALE, LocalDate.of(1999, 9, 9));
         final String 액세스_토큰 = 로그인을_한다("identifier", "password1!");
+        회원가입을_한다("follower1", "password1!", "팔로워", "010-1111-1111", GenderType.FEMALE, LocalDate.of(1111, 11, 11));
+        final String 팔로워_액세스_토큰 = 로그인을_한다("follower1", "password1!");
+
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("여가");
         final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "첫번째_로드맵 제목",
                 "첫번째_로드맵 소개글", "첫번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
@@ -424,6 +427,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 첫번째_골룸_생성_요청 = new GoalRoomCreateRequest(첫번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 첫번째_골룸_투두_요청, 첫번째_골룸_노드_별_기간_요청);
         final Long 첫번째_골룸_아이디 = 골룸_생성(첫번째_골룸_생성_요청, 액세스_토큰);
+
         final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "두번째_로드맵 제목",
                 "두번째_로드맵 소개글", "두번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("두번째_로드맵 1주차", "두번째_로드맵 1주차 내용")));
@@ -434,10 +438,14 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 두번째_골룸_투두_요청, 두번째_골룸_노드_별_기간_요청);
         final Long 두번째_골룸_아이디 = 골룸_생성(두번째_골룸_생성_요청, 액세스_토큰);
+
+        골룸_참가_요청(첫번째_골룸_아이디, 팔로워_액세스_토큰);
+        골룸_참가_요청(두번째_골룸_아이디, 팔로워_액세스_토큰);
         goalRoomCreateService.startGoalRooms();
+
         // when
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
-                .header(AUTHORIZATION, 액세스_토큰)
+                .header(AUTHORIZATION, 팔로워_액세스_토큰)
                 .queryParam("statusCond", "RECRUITING")
                 .when()
                 .get(API_PREFIX + "/goal-rooms/me")
@@ -447,7 +455,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         // then
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(두번째_골룸_아이디, 정상적인_골룸_이름, "RECRUITING",
-                        1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
+                        2, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
                         new MemberResponse(1L, "코끼리", "default-member-image")));
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
@@ -468,6 +476,9 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         // given
         회원가입을_한다("identifier", "password1!", "코끼리", "010-1111-2222", GenderType.MALE, LocalDate.of(1999, 9, 9));
         final String 액세스_토큰 = 로그인을_한다("identifier", "password1!");
+        회원가입을_한다("follower1", "password1!", "팔로워", "010-1111-1111", GenderType.FEMALE, LocalDate.of(1111, 11, 11));
+        final String 팔로워_액세스_토큰 = 로그인을_한다("follower1", "password1!");
+
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("여가");
         final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "첫번째_로드맵 제목",
                 "첫번째_로드맵 소개글", "첫번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
@@ -479,6 +490,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 첫번째_골룸_생성_요청 = new GoalRoomCreateRequest(첫번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 첫번째_골룸_투두_요청, 첫번째_골룸_노드_별_기간_요청);
         final Long 첫번째_골룸_아이디 = 골룸_생성(첫번째_골룸_생성_요청, 액세스_토큰);
+
         final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "두번째_로드맵 제목",
                 "두번째_로드맵 소개글", "두번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("두번째_로드맵 1주차", "두번째_로드맵 1주차 내용")));
@@ -489,21 +501,27 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 두번째_골룸_투두_요청, 두번째_골룸_노드_별_기간_요청);
         final Long 두번째_골룸_아이디 = 골룸_생성(두번째_골룸_생성_요청, 액세스_토큰);
+
+        골룸_참가_요청(첫번째_골룸_아이디, 팔로워_액세스_토큰);
+        골룸_참가_요청(두번째_골룸_아이디, 팔로워_액세스_토큰);
         goalRoomCreateService.startGoalRooms();
+
         // when
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
-                .header(AUTHORIZATION, 액세스_토큰)
+                .header(AUTHORIZATION, 팔로워_액세스_토큰)
                 .queryParam("statusCond", "RUNNING")
                 .when()
                 .get(API_PREFIX + "/goal-rooms/me")
                 .then()
                 .log().all()
                 .extract();
+
         // then
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(첫번째_골룸_아이디, 정상적인_골룸_이름, "RUNNING",
-                        1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
+                        2, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
                         new MemberResponse(1L, "코끼리", "default-member-image")));
+
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
                 });
