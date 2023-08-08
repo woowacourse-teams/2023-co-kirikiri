@@ -334,7 +334,7 @@ class GoalRoomReadServiceTest {
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
 
         final List<CheckFeed> checkFeeds = 인증_피드_목록을_생성한다(goalRoomRoadmapNode1, member, goalRoom);
-        given(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        given(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .willReturn(Optional.of(goalRoom));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -373,7 +373,7 @@ class GoalRoomReadServiceTest {
     @Test
     void 사용자_단일_목록_조회_시_유효하지_않은_골룸_아이디일_경우_예외를_반환한다() {
         //given
-        when(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        when(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1"));
 
         //when, then
@@ -393,7 +393,7 @@ class GoalRoomReadServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
 
-        when(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        when(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
         when(memberRepository.findByIdentifier(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
@@ -415,7 +415,7 @@ class GoalRoomReadServiceTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
 
-        when(goalRoomRepository.findByIdWithContentAndNodesAndTodos(anyLong()))
+        when(goalRoomRepository.findByIdWithContentAndTodos(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(member));

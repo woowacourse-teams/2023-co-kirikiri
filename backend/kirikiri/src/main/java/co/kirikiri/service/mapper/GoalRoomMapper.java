@@ -187,7 +187,7 @@ public class GoalRoomMapper {
                             currentNode.getStartDate(), currentNode.getEndDate(), currentNode.getCheckCount())));
         }
 
-        final GoalRoomRoadmapNode nextNode = nodes.getNodeByDate(currentNode.getEndDate().plusDays(1)).get();
+        final GoalRoomRoadmapNode nextNode = nodes.nextNode(currentNode).get();
         return new GoalRoomRoadmapNodesResponse(nodes.hasFrontNode(currentNode), nodes.hasBackNode(nextNode),
                 List.of(new GoalRoomRoadmapNodeResponse(currentNode.getId(), currentNode.getRoadmapNode().getTitle(),
                                 currentNode.getStartDate(), currentNode.getEndDate(), currentNode.getCheckCount()),

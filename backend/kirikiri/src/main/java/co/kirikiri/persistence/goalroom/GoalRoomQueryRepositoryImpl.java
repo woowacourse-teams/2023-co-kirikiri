@@ -89,7 +89,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public Optional<GoalRoom> findByIdWithContentAndNodesAndTodos(final Long goalRoomId) {
+    public Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
                 .fetchJoin()

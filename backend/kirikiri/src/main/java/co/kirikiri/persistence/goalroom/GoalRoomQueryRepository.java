@@ -15,7 +15,7 @@ public interface GoalRoomQueryRepository {
 
     Optional<GoalRoom> findByIdWithRoadmapContent(final Long goalRoomId);
 
-    Optional<GoalRoom> findByIdWithContentAndNodesAndTodos(final Long goalRoomId);
+    Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId);
 
     List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
                                                                    final RoadmapGoalRoomsFilterType filterType,

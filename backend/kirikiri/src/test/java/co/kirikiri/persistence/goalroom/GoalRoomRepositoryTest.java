@@ -305,9 +305,9 @@ class GoalRoomRepositoryTest {
         final GoalRoom savedGoalRoom2 = goalRoomRepository.save(goalRoom2);
 
         // when
-        final GoalRoom findGoalRoom1 = goalRoomRepository.findByIdWithContentAndNodesAndTodos(goalRoom1.getId())
+        final GoalRoom findGoalRoom1 = goalRoomRepository.findByIdWithContentAndTodos(goalRoom1.getId())
                 .get();
-        final GoalRoom findGoalRoom2 = goalRoomRepository.findByIdWithContentAndNodesAndTodos(goalRoom2.getId())
+        final GoalRoom findGoalRoom2 = goalRoomRepository.findByIdWithContentAndTodos(goalRoom2.getId())
                 .get();
 
         //then
