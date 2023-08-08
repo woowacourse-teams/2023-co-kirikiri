@@ -1,19 +1,15 @@
+import { useSwitch } from '@/hooks/_common/useSwitch';
 import { GoalRoomDetailType } from '@/myTypes/goalRoom/internal';
-import { useState } from 'react';
 import GoalRoomDetailDialog from '../goalRoomDetail/GoalRoomDetailDialog';
 import * as S from './goalRoomList.styles';
 
 const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
-  const [showDetail, setShowDetail] = useState(false);
-  console.log(goalRoomInfo);
+  const {
+    isSwitchOn: showDetail,
+    turnSwitchOn: showGoalroomDetail,
+    turnSwitchOff: closeGoalroomDetail,
+  } = useSwitch(false);
 
-  const showGoalroomDetail = () => {
-    setShowDetail(true);
-  };
-
-  const closeGoalroomDetail = () => {
-    setShowDetail(false);
-  };
   return (
     <>
       <S.ItemContainer>
