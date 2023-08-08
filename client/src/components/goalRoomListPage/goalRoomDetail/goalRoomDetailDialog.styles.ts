@@ -16,14 +16,14 @@ export const Container = styled.section`
   left: 50%;
   transform: translate(-50%, -50%);
 
-  overflow: hidden;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
 
   width: 55rem;
   height: 55rem;
-  padding-top: 3.5rem;
+  padding: 3.5rem 0;
 
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 30px;
