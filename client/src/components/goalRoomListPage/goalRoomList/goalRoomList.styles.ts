@@ -7,8 +7,7 @@ export const ListContainer = styled.section`
 
 export const ItemContainer = styled.article`
   width: 40.7rem;
-  height: 28rem;
-  padding: 1.7rem 3rem 3rem;
+  padding: 1.7rem 4rem 3rem;
 
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 34px;
@@ -55,12 +54,6 @@ export const RoadmapCreator = styled.div`
   ${({ theme }) => theme.fonts.description1}
   color: ${({ theme }) => theme.colors.gray200};
   margin-top: 0.5rem;
-`;
-
-export const RoadmapIntroduce = styled.div`
-  ${({ theme }) => theme.fonts.description2}
-  color: ${({ theme }) => theme.colors.black};
-  margin-top: 2rem;
 `;
 
 export const Wrapper = styled.div`

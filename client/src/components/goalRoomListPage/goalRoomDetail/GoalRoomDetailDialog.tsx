@@ -14,8 +14,6 @@ type GoalRoomDetailDialogProps = {
 };
 
 const GoalRoomDetailDialog = ({ goalRoomId, isJoined }: GoalRoomDetailDialogProps) => {
-  console.log(isJoined);
-
   return (
     <DialogBox>
       <DialogTrigger asChild>
@@ -26,7 +24,9 @@ const GoalRoomDetailDialog = ({ goalRoomId, isJoined }: GoalRoomDetailDialogProp
           <DialogContent>
             <GoalRoomDetailDialogContent goalRoomId={goalRoomId} />
             <Link to={`/goalroom-dashboard/${goalRoomId}`}>
-              <S.EnterGoalRoomButton>골룸 대시보드 입장하기</S.EnterGoalRoomButton>
+              <S.EnterGoalRoomButton>
+                {isJoined ? '골룸 대시보드 입장하기' : '골룸 참여하기'}
+              </S.EnterGoalRoomButton>
             </Link>
           </DialogContent>
         </S.BackDrop>

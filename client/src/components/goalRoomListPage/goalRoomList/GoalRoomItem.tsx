@@ -7,8 +7,7 @@ const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
     <S.ItemContainer>
       <S.Recruiting>모집중 (~{goalRoomInfo.startDate})</S.Recruiting>
       <S.Name>{goalRoomInfo.name}</S.Name>
-      <S.RoadmapCreator>created by Woody ❤️</S.RoadmapCreator>
-      <S.RoadmapIntroduce>please save me</S.RoadmapIntroduce>
+      <S.RoadmapCreator>created by {goalRoomInfo.goalRoomLeader.name}</S.RoadmapCreator>
       <S.Period>
         진행기간
         <p>
