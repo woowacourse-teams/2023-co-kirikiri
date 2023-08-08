@@ -28,7 +28,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
@@ -76,6 +75,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("name").description("골룸 제목"),
                                         fieldWithPath("currentMemberCount").description("현재 참여 인원 수"),
                                         fieldWithPath("limitedMemberCount").description("모집 인원 수"),
+                                        fieldWithPath("goalRoomNodes[0].id").description("골룸 로드맵 노드 아이디"),
                                         fieldWithPath("goalRoomNodes[0].title").description("골룸 로드맵 노드 제목"),
                                         fieldWithPath("goalRoomNodes[0].startDate").description("골룸 로드맵 노드 시작 날짜"),
                                         fieldWithPath("goalRoomNodes[0].endDate").description("골룸 로드맵 노드 종료 날짜"),
@@ -142,6 +142,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("name").description("골룸 제목"),
                                         fieldWithPath("currentMemberCount").description("현재 참여 인원 수"),
                                         fieldWithPath("limitedMemberCount").description("모집 인원 수"),
+                                        fieldWithPath("goalRoomNodes[0].id").description("골룸 로드맵 노드 아이디"),
                                         fieldWithPath("goalRoomNodes[0].title").description("골룸 로드맵 노드 제목"),
                                         fieldWithPath("goalRoomNodes[0].startDate").description("골룸 로드맵 노드 시작 날짜"),
                                         fieldWithPath("goalRoomNodes[0].endDate").description("골룸 로드맵 노드 종료 날짜"),
@@ -258,14 +259,14 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     void 사용자_골룸_조회_시_유효하지_않은_골룸_아이디를_보내면_예외가_발생한다() throws Exception {
         //given
         when(goalRoomReadService.findMemberGoalRoom(any(), any()))
-                .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1"));
+                .thenThrow(new ForbiddenException("골룸 정보가 존재하지 않습니다. goalRoomId = 1"));
 
         //when
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/goal-rooms/{goalRoomId}/me", 1L)
                                 .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "access-token"))
                                 .contextPath(API_PREFIX))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isForbidden())
                 .andDo(
                         documentationResultHandler.document(
                                 requestHeaders(
@@ -409,7 +410,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 new GoalRoomTodoResponse(2L, "투두 2", today.plusDays(20), today.plusDays(30),
                         new GoalRoomToDoCheckResponse(false)));
 
-        when(goalRoomReadService.getAllGoalRoomTodo(any(), any()))
+        when(goalRoomReadService.findAllGoalRoomTodo(any(), any()))
                 .thenReturn(goalRoomTodoResponses);
 
         // when
@@ -447,7 +448,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
                 .when(goalRoomReadService)
-                .getAllGoalRoomTodo(any(), any());
+                .findAllGoalRoomTodo(any(), any());
 
         // when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
@@ -477,7 +478,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         doThrow(new ForbiddenException("골룸에 참여하지 않은 사용자입니다. goalRoomId = 1 memberIdentifier = identifier"))
                 .when(goalRoomReadService)
-                .getAllGoalRoomTodo(any(), any());
+                .findAllGoalRoomTodo(any(), any());
 
         // when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 1L)
@@ -502,20 +503,121 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 .isEqualTo(new ErrorResponse("골룸에 참여하지 않은 사용자입니다. goalRoomId = 1 memberIdentifier = identifier"));
     }
 
+    @Test
+    void 골룸의_노드를_조회한다() throws Exception {
+        // given
+        final LocalDate today = LocalDate.now();
+        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomRoadmapNodeResponse(1L, "골룸 노드 1", today, today.plusDays(10), 10),
+                new GoalRoomRoadmapNodeResponse(2L, "골룸 노드 2", today.plusDays(20), today.plusDays(30), 5));
+
+        when(goalRoomReadService.findAllGoalRoomNodes(any(), any()))
+                .thenReturn(goalRoomNodeResponses);
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/nodes", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(
+                        documentationResultHandler.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                                ),
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[0].id").description("골룸 로드맵 노드 아이디"),
+                                        fieldWithPath("[0].title").description("노드 제목"),
+                                        fieldWithPath("[0].startDate").description("노드 시작 날짜"),
+                                        fieldWithPath("[0].endDate").description("노드 종료 날짜"),
+                                        fieldWithPath("[0].checkCount").description("인증 횟수")
+                                )))
+                .andReturn();
+
+        // then
+        final List<GoalRoomRoadmapNodeResponse> response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(response)
+                .isEqualTo(goalRoomNodeResponses);
+    }
+
+    @Test
+    void 골룸_노드_조회시_존재하지_않은_골룸일_경우() throws Exception {
+        // given
+        doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
+                .when(goalRoomReadService)
+                .findAllGoalRoomNodes(any(), any());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/nodes", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메세지")
+                                )))
+                .andReturn();
+
+        // then
+        final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses)
+                .isEqualTo(new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1"));
+    }
+
+    @Test
+    void 골룸_노드_조회시_참여하지_않은_사용자일_경우() throws Exception {
+        // given
+        doThrow(new ForbiddenException("골룸에 참여하지 않은 사용자입니다. goalRoomId = 1 memberIdentifier = identifier"))
+                .when(goalRoomReadService)
+                .findAllGoalRoomNodes(any(), any());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/nodes", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isForbidden())
+                .andDo(
+                        documentationResultHandler.document(
+                                pathParameters(
+                                        parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("message").description("예외 메세지")
+                                )))
+                .andReturn();
+
+        // then
+        final ErrorResponse responses = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(responses)
+                .isEqualTo(new ErrorResponse("골룸에 참여하지 않은 사용자입니다. goalRoomId = 1 memberIdentifier = identifier"));
+    }
+
     private GoalRoomResponse 골룸_조회_응답을_생성한다() {
-        final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
+        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
-                new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
+                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
     }
 
     private GoalRoomCertifiedResponse 로그인시_골룸_조회_응답을_생성한다(final boolean isJoined) {
-        final List<GoalRoomNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomNodeResponse("로드맵 1주차", LocalDate.of(2023, 7, 19),
+        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
-                new GoalRoomNodeResponse("로드맵 2주차", LocalDate.of(2023, 8, 1),
+                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
         return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, isJoined);
     }

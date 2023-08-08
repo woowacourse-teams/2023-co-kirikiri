@@ -4,11 +4,11 @@ import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
@@ -21,6 +21,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
@@ -79,7 +80,7 @@ public class GoalRoomReadService {
         }
     }
 
-    public List<GoalRoomTodoResponse> getAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
+    public List<GoalRoomTodoResponse> findAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
         validateGoalRoomMember(goalRoomId, identifier);
         final GoalRoomToDos goalRoomToDos = findGoalRoomTodosByGoalRoomId(goalRoomId);
         final List<Long> checkedTodoIds = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
@@ -89,7 +90,7 @@ public class GoalRoomReadService {
     private void validateGoalRoomMember(final Long goalRoomId, final String identifier) {
         if (goalRoomRepository.findGoalRoomMember(goalRoomId, new Identifier(identifier)).isEmpty()) {
             throw new ForbiddenException(
-                    "골룸에 참여하지 않은 사용자입니다. goalRoomId = " + goalRoomId + "  memberIdentifier = " + identifier);
+                    "골룸에 참여하지 않은 사용자입니다. goalRoomId = " + goalRoomId + " memberIdentifier = " + identifier);
         }
     }
 
@@ -129,7 +130,7 @@ public class GoalRoomReadService {
 
     private void validateMemberInGoalRoom(final GoalRoom goalRoom, final Member member) {
         if (!goalRoom.isGoalRoomMember(member)) {
-            throw new BadRequestException("해당 골룸에 참여하지 않은 사용자입니다.");
+            throw new ForbiddenException("해당 골룸에 참여하지 않은 사용자입니다.");
         }
     }
 
@@ -150,5 +151,17 @@ public class GoalRoomReadService {
         final GoalRoomStatus goalRoomStatus = GoalRoomMapper.convertToGoalRoomStatus(goalRoomStatusTypeRequest);
         final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMemberAndStatus(member, goalRoomStatus);
         return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRooms);
+    }
+
+    public List<GoalRoomRoadmapNodeResponse> findAllGoalRoomNodes(final Long goalRoomId, final String identifier) {
+        final GoalRoomRoadmapNodes goalRoomNodes = findGoalRoomNodesByGoalRoomId(goalRoomId);
+        validateGoalRoomMember(goalRoomId, identifier);
+        return GoalRoomMapper.convertGoalRoomNodeResponses(goalRoomNodes);
+    }
+
+    private GoalRoomRoadmapNodes findGoalRoomNodesByGoalRoomId(final Long goalRoomId) {
+        return goalRoomRepository.findByIdWithNodes(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId))
+                .getGoalRoomRoadmapNodes();
     }
 }
