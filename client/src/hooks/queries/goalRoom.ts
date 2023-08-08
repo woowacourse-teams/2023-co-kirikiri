@@ -15,16 +15,26 @@ import {
   getGoalRoomDetail,
   postToChangeTodoCheckStatus,
   postJoinGoalRoom,
+  getMyGoalRoomList,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useToast from '@hooks/_common/useToast';
+import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList', params.roadmapId], () =>
     getGoalRoomList(params)
   );
   return { goalRoomList: data };
+};
+
+export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => {
+  const { data } = useSuspendedQuery(['myGoalRoomList', statusCond], () =>
+    getMyGoalRoomList(statusCond)
+  );
+
+  return { myGoalRoomList: data };
 };
 
 export const useGoalRoomDetail = (goalRoomId: number) => {
