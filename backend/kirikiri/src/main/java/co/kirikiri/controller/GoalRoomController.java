@@ -9,8 +9,10 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
@@ -83,6 +85,14 @@ public class GoalRoomController {
         return ResponseEntity.created(URI.create(imageUrl)).build();
     }
 
+    @PostMapping("/{goalRoomId}/leave")
+    @Authenticated
+    public ResponseEntity<Void> leave(@MemberIdentifier final String identifier,
+                                      @PathVariable("goalRoomId") final Long goalRoomId) {
+        goalRoomCreateService.leave(identifier, goalRoomId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping(value = "/{goalRoomId}", headers = "Authorization")
     @Authenticated
     public ResponseEntity<GoalRoomCertifiedResponse> findGoalRoom(@MemberIdentifier final String identifier,
@@ -130,18 +140,32 @@ public class GoalRoomController {
 
     @Authenticated
     @GetMapping("/{goalRoomId}/todos")
-    public ResponseEntity<List<GoalRoomTodoResponse>> getAllTodos(
+    public ResponseEntity<List<GoalRoomTodoResponse>> findAllTodos(
             @PathVariable final Long goalRoomId,
             @MemberIdentifier final String identifier) {
-        final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.getAllGoalRoomTodo(goalRoomId, identifier);
+        final List<GoalRoomTodoResponse> todoResponses = goalRoomReadService.findAllGoalRoomTodo(goalRoomId,
+                identifier);
         return ResponseEntity.ok(todoResponses);
     }
 
-    @PostMapping("/{goalRoomId}/leave")
     @Authenticated
-    public ResponseEntity<Void> leave(@MemberIdentifier final String identifier,
-                                      @PathVariable("goalRoomId") final Long goalRoomId) {
-        goalRoomCreateService.leave(identifier, goalRoomId);
-        return ResponseEntity.ok().build();
+    @GetMapping("/{goalRoomId}/nodes")
+    public ResponseEntity<List<GoalRoomRoadmapNodeResponse>> findAllNodes(
+            @PathVariable final Long goalRoomId,
+            @MemberIdentifier final String identifier
+    ) {
+        final List<GoalRoomRoadmapNodeResponse> nodeResponses = goalRoomReadService.findAllGoalRoomNodes(goalRoomId,
+                identifier);
+        return ResponseEntity.ok(nodeResponses);
+    }
+
+    @Authenticated
+    @GetMapping("/{goalRoomId}/checkFeeds")
+    public ResponseEntity<List<GoalRoomCheckFeedResponse>> findGoalRoomCheckFeeds(
+            @MemberIdentifier final String identifier,
+            @PathVariable("goalRoomId") final Long goalRoomId) {
+        final List<GoalRoomCheckFeedResponse> response = goalRoomReadService.findGoalRoomCheckFeeds(identifier,
+                goalRoomId);
+        return ResponseEntity.ok(response);
     }
 }
