@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -71,23 +72,32 @@ public class GoalRoomRoadmapNodes {
         return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
     }
 
-    public int calculateAllCheckCount() {
-        return values.stream()
-                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
-                .sum();
-    }
-
-    public GoalRoomRoadmapNode getNodeByDate(final LocalDate date) {
+    public Optional<GoalRoomRoadmapNode> getNodeByDate(final LocalDate date) {
         sortByStartDateAsc(values);
 
         return values.stream()
                 .filter(node -> node.isDayOfNode(date))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
+                .findFirst();
     }
 
     public int size() {
         return values.size();
+    }
+
+    public boolean hasFrontNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != 0;
+    }
+
+    public boolean hasBackNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != (size() - 1);
+    }
+
+    public int calculateAllCheckCount() {
+        return values.stream()
+                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
+                .sum();
     }
 
     public List<GoalRoomRoadmapNode> getValues() {

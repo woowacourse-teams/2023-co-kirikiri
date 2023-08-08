@@ -1,15 +1,20 @@
 package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
+import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
+import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
@@ -30,8 +35,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     public Optional<GoalRoom> findByIdWithRoadmapContent(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .where(goalRoomIdCond(goalRoomId))
                 .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
                 .fetchFirst());
     }
 
@@ -64,13 +69,35 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findAllByStartDateWithGoalRoomRoadmapNode() {
-        return selectFrom(goalRoom)
-                .join(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+    public Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
                 .fetchJoin()
-                .where(startDateEqualsToNow())
-                .orderBy(goalRoomRoadmapNode.period.startDate.asc())
-                .fetch();
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchFirst());
+    }
+
+    @Override
+    public Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier) {
+        return Optional.ofNullable(selectFrom(goalRoomMember)
+                .innerJoin(goalRoomMember.goalRoom, goalRoom)
+                .where(
+                        goalRoomIdCond(goalRoomId),
+                        memberIdentifierCond(memberIdentifier))
+                .fetchJoin()
+                .fetchFirst());
+    }
+
+    @Override
+    public Optional<GoalRoom> findByIdWithContentAndNodesAndTodos(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .fetchJoin()
+                //.innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .innerJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
     }
 
     @Override
@@ -84,6 +111,10 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
+    }
+
+    private BooleanExpression memberIdentifierCond(final Identifier memberIdentifier) {
+        return goalRoomMember.member.identifier.eq(memberIdentifier);
     }
 
     private BooleanExpression statusCond(final GoalRoomStatus status) {
@@ -106,5 +137,28 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression startDateEqualsToNow() {
         return goalRoomRoadmapNode.period.startDate.eq(LocalDate.now());
+    }
+
+    @Override
+    public List<GoalRoom> findByMember(final Member member) {
+        return selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
+                .fetchJoin()
+                .where(goalRoomPendingMember.member.eq(member)
+                        .or(goalRoomMember.member.eq(member)))
+                .fetch();
+    }
+
+    @Override
+    public List<GoalRoom> findByMemberAndStatus(final Member member, final GoalRoomStatus goalRoomStatus) {
+        return selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
+                .fetchJoin()
+                .where(goalRoomPendingMember.member.eq(member)
+                        .or(goalRoomMember.member.eq(member)))
+                .where(statusCond(goalRoomStatus))
+                .fetch();
     }
 }

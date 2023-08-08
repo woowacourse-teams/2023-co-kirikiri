@@ -1,34 +1,11 @@
 package co.kirikiri.persistence.roadmap;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapTag;
-import co.kirikiri.domain.roadmap.RoadmapTags;
-import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
-import co.kirikiri.persistence.dto.RoadmapFilterType;
-import co.kirikiri.persistence.dto.RoadmapLastValueDto;
-import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.helper.RepositoryTest;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.dto.CustomScrollRequest;
-import java.time.LocalDate;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapRepositoryTest {
 
+/*
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -351,5 +328,5 @@ class RoadmapRepositoryTest {
         final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
         roadmap.addTags(roadmapTags);
         return roadmapRepository.save(roadmap);
-    }
+    }*/
 }

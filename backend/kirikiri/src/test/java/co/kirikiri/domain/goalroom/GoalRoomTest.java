@@ -2,6 +2,7 @@ package co.kirikiri.domain.goalroom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
@@ -57,7 +58,7 @@ class GoalRoomTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
 
         // when
         final int totalPeriod = goalRoom.calculateTotalPeriod();
@@ -84,7 +85,7 @@ class GoalRoomTest {
         goalRoom.join(member2);
 
         // then
-        assertThat(goalRoom.getCurrentPendingMemberCount()).isEqualTo(3);
+        assertThat(goalRoom.getCurrentMemberCount()).isEqualTo(3);
     }
 
     @Test
@@ -92,13 +93,13 @@ class GoalRoomTest {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10),
                 new RoadmapContent("로드맵 내용"), member);
-        final Member follower = 사용자를_생성한다("identifier12", "시진이");
+        final Member follower = 사용자를_생성한다(2L, "identifier12", "시진이");
 
         //when
         goalRoom.join(follower);
 
         //then
-        final Integer currentMemberCount = goalRoom.getCurrentPendingMemberCount();
+        final Integer currentMemberCount = goalRoom.getCurrentMemberCount();
         assertThat(currentMemberCount)
                 .isEqualTo(2);
     }
@@ -107,7 +108,7 @@ class GoalRoomTest {
     void 모집중이_아닌_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), new RoadmapContent("로드맵 내용"),
-                사용자를_생성한다("identifier1", "시진이"));
+                사용자를_생성한다(2L, "identifier1", "시진이"));
         goalRoom.start();
 
         //when, then
@@ -120,7 +121,7 @@ class GoalRoomTest {
     void 제한_인원이_가득_찬_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), new RoadmapContent("로드맵 내용"),
-                사용자를_생성한다("identifier1", "시진이"));
+                사용자를_생성한다(2L, "identifier1", "시진이"));
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(member))
@@ -148,10 +149,80 @@ class GoalRoomTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
 
         //expect
         assertThat(goalRoom.getAllCheckCount()).isEqualTo(20);
+    }
+
+    @Test
+    void 골룸이_시작하기_전에_참여_멤버를_확인한다() {
+        //given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
+
+        final Member 참여자 = 사용자를_생성한다(2L, "identifier1", "팔로워");
+        goalRoom.join(참여자);
+
+        //expect
+        assertAll(
+                () -> assertThat(goalRoom.isGoalRoomMember(참여자)).isTrue(),
+                () -> assertThat(goalRoom.getCurrentMemberCount()).isEqualTo(2)
+        );
+    }
+
+    @Test
+    void 골룸이_시작한_후에_참여_멤버를_확인한다() {
+        //given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
+
+        final Member 참여자 = 사용자를_생성한다(2L, "identifier1", "팔로워");
+//        goalRoom.join(참여자);
+        goalRoom.updateStatus(GoalRoomStatus.RUNNING);
+
+        //expect
+        assertAll(
+                () -> assertThat(goalRoom.isGoalRoomMember(참여자)).isFalse(),
+                () -> assertThat(goalRoom.getCurrentMemberCount()).isEqualTo(0)
+        );
+    }
+
+    @Test
+    void 골룸을_나간다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
+
+        // when
+        goalRoom.leave(member);
+
+        // then
+        assertThat(goalRoom.isEmptyGoalRoom()).isTrue();
+    }
+
+    @Test
+    void 골룸에_참여하지_않은_멤버가_나가면_예외가_발생한다() {
+        //given
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
+                new RoadmapContent("로드맵 내용"), member);
+
+        final Member notJoinMember = new Member(new Identifier("identifier2"),
+                new EncryptedPassword(new Password("password2!")),
+                new Nickname("name2"), null);
+
+        // when
+        // then
+        assertThatThrownBy(() -> goalRoom.leave(notJoinMember))
+                .isInstanceOf(BadRequestException.class);
     }
 
     private Member 크리에이터를_생성한다() {
@@ -159,6 +230,14 @@ class GoalRoomTest {
                 "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+    }
+
+    private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1995, 9, 30), "010-1234-5678");
+
+        return new Member(id, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+                new Nickname(nickname), memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {
@@ -183,10 +262,9 @@ class GoalRoomTest {
         return roadmapContent;
     }
 
-    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent) {
+    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final Member creator) {
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"),
-                new LimitedMemberCount(10), roadmapContent,
-                사용자를_생성한다("identifier1", "닉네임"));
+                new LimitedMemberCount(10), roadmapContent, creator);
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -201,13 +279,5 @@ class GoalRoomTest {
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
         goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         return goalRoom;
-    }
-
-    private Member 사용자를_생성한다(final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
-                LocalDate.of(1995, 9, 30), "010-1234-5678");
-
-        return new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(nickname), memberProfile);
     }
 }

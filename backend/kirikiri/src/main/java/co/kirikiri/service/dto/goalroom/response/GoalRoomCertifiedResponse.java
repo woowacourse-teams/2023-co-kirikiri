@@ -6,7 +6,7 @@ public record GoalRoomCertifiedResponse(
         String name,
         Integer currentMemberCount,
         Integer limitedMemberCount,
-        List<GoalRoomNodeResponse> goalRoomNodes,
+        List<GoalRoomRoadmapNodeResponse> goalRoomNodes,
         int period,
         boolean isJoined
 ) {

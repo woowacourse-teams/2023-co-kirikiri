@@ -6,7 +6,7 @@ public record GoalRoomResponse(
         String name,
         Integer currentMemberCount,
         Integer limitedMemberCount,
-        List<GoalRoomNodeResponse> goalRoomNodes,
+        List<GoalRoomRoadmapNodeResponse> goalRoomNodes,
         int period
 ) {
 
