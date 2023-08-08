@@ -9,7 +9,6 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
@@ -131,7 +130,7 @@ public class GoalRoomReadService {
 
     private void validateMemberInGoalRoom(final GoalRoom goalRoom, final Member member) {
         if (!goalRoom.isGoalRoomMember(member)) {
-            throw new BadRequestException("해당 골룸에 참여하지 않은 사용자입니다.");
+            throw new ForbiddenException("해당 골룸에 참여하지 않은 사용자입니다.");
         }
     }
 

@@ -39,7 +39,6 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
@@ -421,7 +420,7 @@ class GoalRoomReadServiceTest {
 
         // when, then
         assertThatThrownBy(() -> goalRoomReadService.findMemberGoalRoom("identifier2", 1L))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(ForbiddenException.class)
                 .hasMessage("해당 골룸에 참여하지 않은 사용자입니다.");
     }
 

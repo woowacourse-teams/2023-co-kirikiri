@@ -259,14 +259,14 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     void 사용자_골룸_조회_시_유효하지_않은_골룸_아이디를_보내면_예외가_발생한다() throws Exception {
         //given
         when(goalRoomReadService.findMemberGoalRoom(any(), any()))
-                .thenThrow(new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = 1"));
+                .thenThrow(new ForbiddenException("골룸 정보가 존재하지 않습니다. goalRoomId = 1"));
 
         //when
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/goal-rooms/{goalRoomId}/me", 1L)
                                 .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "access-token"))
                                 .contextPath(API_PREFIX))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isForbidden())
                 .andDo(
                         documentationResultHandler.document(
                                 requestHeaders(
