@@ -29,6 +29,7 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -170,7 +171,11 @@ public class GoalRoomReadService {
     public List<GoalRoomCheckFeedResponse> findGoalRoomCheckFeeds(final String identifier, final Long goalRoomId) {
         final GoalRoom goalRoom = findGoalRoomWithNodesById(goalRoomId);
         validateJoinedMemberInRunningGoalRoom(goalRoom, identifier);
-        final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = findCurrentGoalRoomRoadmapNode(goalRoom);
+        final boolean canGetCheckFeed = goalRoom.getNodeByDate(LocalDate.now()).isPresent();
+        if (!canGetCheckFeed) {
+            return Collections.emptyList();
+        }
+        final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now()).get();
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(
                 currentGoalRoomRoadmapNode);
         return GoalRoomMapper.convertToGoalRoomCheckFeedResponse(checkFeeds);
@@ -184,10 +189,5 @@ public class GoalRoomReadService {
     private void validateJoinedMemberInRunningGoalRoom(final GoalRoom goalRoom, final String identifier) {
         goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
                 .orElseThrow(() -> new BadRequestException("골룸에 참여하지 않은 회원입니다."));
-    }
-
-    private GoalRoomRoadmapNode findCurrentGoalRoomRoadmapNode(final GoalRoom goalRoom) {
-        return goalRoom.getNodeByDate(LocalDate.now())
-                .orElseThrow(() -> new NotFoundException("현재 진행중인 노드가 없습니다."));
     }
 }

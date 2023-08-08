@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.ImageContentType;
@@ -741,6 +743,38 @@ class GoalRoomReadServiceTest {
     }
 
     @Test
+    void 골룸의_인증피드를_전체_조회시_현재_진행중인_노드가_없으면_빈_리스트를_반환한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Member follower = 사용자를_생성한다(2L);
+
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final GoalRoom goalRoom = 진행중인_노드가_없는_골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        final GoalRoomMember goalRoomMember2 = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                follower);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+
+        인증피드를_생성한다("serverFilePath1", "description1", goalRoomRoadmapNode, goalRoomMember1);
+        인증피드를_생성한다("serverFilePath2", "description2", goalRoomRoadmapNode, goalRoomMember1);
+        인증피드를_생성한다("serverFilePath3", "description3", goalRoomRoadmapNode, goalRoomMember2);
+
+        given(goalRoomRepository.findByIdWithNodes(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .willReturn(Optional.of(goalRoomMember1));
+
+        // when
+        final List<GoalRoomCheckFeedResponse> responses = goalRoomReadService.findGoalRoomCheckFeeds("cokirikiri", 1L);
+
+        // then
+        verify(checkFeedRepository, never()).findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(any());
+        assertThat(responses).isEqualTo(Collections.emptyList());
+    }
+
+    @Test
     void 골룸의_인증피드를_전체_조회할_때_존재하지_않는_골룸이면_예외가_발생한다() {
         // given
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
@@ -827,6 +861,25 @@ class GoalRoomReadServiceTest {
         final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
         final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
                 2L, new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER), 2, secondRoadmapNode);
+
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
+                List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
+        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+        return goalRoom;
+    }
+
+    private GoalRoom 진행중인_노드가_없는_골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
+                roadmapContent, member);
+        final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
+
+        final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
+        final GoalRoomRoadmapNode firstGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                1L, new Period(TEN_DAY_LATER, TWENTY_DAY_LAYER), 10, firstRoadmapNode);
+
+        final RoadmapNode secondRoadmapNode = roadmapNodes.get(1);
+        final GoalRoomRoadmapNode secondGoalRoomRoadmapNode = new GoalRoomRoadmapNode(
+                2L, new Period(THIRTY_DAY_LATER, THIRTY_DAY_LATER.plusDays(10)), 2, secondRoadmapNode);
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
