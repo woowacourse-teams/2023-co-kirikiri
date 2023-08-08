@@ -20,10 +20,7 @@ const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
           {goalRoomInfo.currentMemberCount} / {goalRoomInfo.limitedMemberCount}
         </p>
       </S.Particpant>
-      <GoalRoomDetailDialog
-        goalRoomId={goalRoomInfo.goalRoomId}
-        isJoined={goalRoomInfo.isJoined}
-      />
+      <GoalRoomDetailDialog goalRoomId={goalRoomInfo.goalRoomId} />
     </S.ItemContainer>
   );
 };
