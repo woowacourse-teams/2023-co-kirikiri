@@ -5,8 +5,8 @@ export const useCreateTag = () => {
   const [tags, setTags] = useState<string[]>([]);
   const ref = useRef<HTMLInputElement | null>(null);
 
-  const getAddedTagText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const getAddedTagText = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault();
     if (ref.current === null) return;
     if (ref.current.value === '') return;
 
@@ -20,5 +20,14 @@ export const useCreateTag = () => {
     return tags.length < TAG_LIMIT;
   };
 
-  return { tags, ref, getAddedTagText, checkIsTagCountMax };
+  const delegeTag = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    const target = e.target as HTMLButtonElement;
+
+    setTags((prev) => {
+      return prev.filter((tag) => tag !== target.value);
+    });
+  };
+  return { tags, ref, getAddedTagText, checkIsTagCountMax, delegeTag };
 };
