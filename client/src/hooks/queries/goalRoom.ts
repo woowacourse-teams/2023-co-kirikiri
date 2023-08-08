@@ -16,12 +16,14 @@ import {
   postToChangeTodoCheckStatus,
   postJoinGoalRoom,
   getMyGoalRoomList,
+  getCertificationFeeds,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useToast from '@hooks/_common/useToast';
 import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 import { useNavigate } from 'react-router-dom';
+import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList', params.roadmapId], () =>
@@ -158,5 +160,16 @@ export const useJoinGoalRoom = ({ goalRoomId, roadmapId }: JoinGoalRoomRequest) 
 
   return {
     joinGoalRoom: mutate,
+  };
+};
+
+export const useCertificationFeeds = (goalRoomId: string) => {
+  const { data } = useSuspendedQuery(
+    [QUERY_KEYS.goalRoom.certificationFeeds, goalRoomId],
+    () => getCertificationFeeds(goalRoomId)
+  );
+
+  return {
+    certificationFeeds: data,
   };
 };

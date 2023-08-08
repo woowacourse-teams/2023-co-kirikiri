@@ -66,3 +66,23 @@ export type JoinGoalRoomRequest = {
   goalRoomId: string;
   roadmapId: string;
 };
+
+export type UserType = {
+  id: number;
+  nickname: string;
+  imageUrl: string;
+};
+
+export type CheckFeedType = {
+  id: number;
+  imageUrl: string;
+  description: string;
+  createdAt: string;
+};
+
+export type CertificationFeedType = {
+  member: UserType;
+  checkFeed: CheckFeedType;
+};
+
+export type GoalRoomCertificationFeedsResponse = Array<CertificationFeedType>;
