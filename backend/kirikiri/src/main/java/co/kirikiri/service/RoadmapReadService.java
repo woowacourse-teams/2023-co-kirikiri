@@ -53,13 +53,13 @@ public class RoadmapReadService {
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
         final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
 
-        final Map<GoalRoomStatus, List<GoalRoom>> collect = goalRooms.stream()
+        final Map<GoalRoomStatus, List<GoalRoom>> goalRoomsDividedByStatus = goalRooms.stream()
                 .collect(Collectors.groupingBy(GoalRoom::getStatus));
 
         return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent,
-                collect.getOrDefault(GoalRoomStatus.RECRUITING, Collections.emptyList()).size(),
-                collect.getOrDefault(GoalRoomStatus.RUNNING, Collections.emptyList()).size(),
-                collect.getOrDefault(GoalRoomStatus.COMPLETED, Collections.emptyList()).size());
+                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RECRUITING, Collections.emptyList()).size(),
+                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RUNNING, Collections.emptyList()).size(),
+                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.COMPLETED, Collections.emptyList()).size());
     }
 
     private Roadmap findRoadmapById(final Long id) {
