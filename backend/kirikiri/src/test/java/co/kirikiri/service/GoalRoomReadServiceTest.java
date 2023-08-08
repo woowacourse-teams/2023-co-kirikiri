@@ -450,10 +450,11 @@ class GoalRoomReadServiceTest {
 
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2, 10, LocalDateTime.now(), TODAY,
-                        THIRTY_DAY_LATER, new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        THIRTY_DAY_LATER,
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(2L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -512,10 +513,10 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(2L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -565,10 +566,10 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(3L, "골룸", "RUNNING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(4L, "골룸", "RUNNING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -618,10 +619,10 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(3L, "골룸", "COMPLETED", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue())),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
                 new MemberGoalRoomForListResponse(4L, "골룸", "COMPLETED", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue()))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
         );
 
         //when
@@ -637,8 +638,10 @@ class GoalRoomReadServiceTest {
 
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
-        return new Member(1L, new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+        final MemberImage memberImage = new MemberImage("originalFileName", "default-member-image",
+                ImageContentType.JPG);
+        return new Member(1L, new Identifier("cokirikiri"), new EncryptedPassword(new Password("password1!")),
+                new Nickname("코끼리"), memberImage, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id) {

@@ -2,6 +2,7 @@ package co.kirikiri.integration;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
@@ -388,19 +389,23 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(첫번째_골룸_아이디, 정상적인_골룸_이름, "RUNNING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
-                        new MemberResponse(1L, "코끼리")),
+                        new MemberResponse(1L, "코끼리", "default-member-image")),
                 new MemberGoalRoomForListResponse(두번째_골룸_아이디, 정상적인_골룸_이름, "RECRUITING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
 
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
                 });
 
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+        assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     @Test
@@ -443,14 +448,19 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(두번째_골룸_아이디, 정상적인_골룸_이름, "RECRUITING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+
+        assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     @Test
@@ -493,14 +503,19 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(첫번째_골룸_아이디, 정상적인_골룸_이름, "RUNNING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+
+        assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     private Member 크리에이터를_저장한다() {

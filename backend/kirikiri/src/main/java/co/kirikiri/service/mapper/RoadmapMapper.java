@@ -124,7 +124,8 @@ public final class RoadmapMapper {
         final RoadmapCategoryResponse categoryResponse = new RoadmapCategoryResponse(category.getId(),
                 category.getName());
         final Member creator = roadmap.getCreator();
-        final MemberResponse creatorResponse = new MemberResponse(creator.getId(), creator.getNickname().getValue());
+        final MemberResponse creatorResponse = new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                creator.getImage().getServerFilePath());
         final List<RoadmapTagResponse> roadmapTagResponses = convertRoadmapTagResponses(roadmap.getTags());
 
         return new RoadmapForListResponse(

@@ -72,7 +72,7 @@ class RoadmapReadServiceTest {
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
-            new MemberImage("프로필 이미지", "profile-file-path", ImageContentType.JPEG),
+            new MemberImage("프로필 이미지", "default-member-image", ImageContentType.JPEG),
             new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
     private final LocalDateTime now = LocalDateTime.now();
 
@@ -118,7 +118,7 @@ class RoadmapReadServiceTest {
         //then
         final RoadmapResponse expectedResponse = new RoadmapResponse(
                 roadmapId, new RoadmapCategoryResponse(1L, "운동"), "로드맵 제목", "로드맵 소개글",
-                new MemberResponse(1L, "닉네임", "profile-file-path"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapContentResponse(1L, "로드맵 본문",
                         List.of(
                                 new RoadmapNodeResponse(1L, "로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList())
@@ -186,7 +186,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
                 1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -195,7 +195,7 @@ class RoadmapReadServiceTest {
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(
                 1L, "두 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30,
                 LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -231,7 +231,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
                 1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -239,7 +239,7 @@ class RoadmapReadServiceTest {
 
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -275,7 +275,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse roadmapResponse = new RoadmapForListResponse(
                 1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -327,7 +327,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
                 1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -335,7 +335,7 @@ class RoadmapReadServiceTest {
 
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임"),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -444,10 +444,12 @@ class RoadmapReadServiceTest {
                 List.of(
                         new RoadmapGoalRoomResponse(2L, "goalroom2", 1, 10, LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
-                                new MemberResponse(member3.getId(), member3.getNickname().getValue())),
+                                new MemberResponse(member3.getId(), member3.getNickname().getValue(),
+                                        "default-member-image")),
                         new RoadmapGoalRoomResponse(1L, "goalroom1", 1, 10, LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
-                                new MemberResponse(member2.getId(), member2.getNickname().getValue()))
+                                new MemberResponse(member2.getId(), member2.getNickname().getValue(),
+                                        "default-member-image"))
                 );
 
         assertThat(result).usingRecursiveComparison()
@@ -480,8 +482,8 @@ class RoadmapReadServiceTest {
     private Member 사용자를_생성한다(final Long id) {
         return new Member(id, new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1")), new Nickname("name1"),
-                new MemberProfile(Gender.FEMALE, LocalDate.of(2000, 7, 20),
-                        "010-1111-1111"));
+                new MemberImage("originalFileName", "default-member-image", ImageContentType.JPG),
+                new MemberProfile(Gender.FEMALE, LocalDate.of(2000, 7, 20), "010-1111-1111"));
     }
 
     private Roadmap 로드맵을_생성한다(final String roadmapTitle, final RoadmapCategory category) {

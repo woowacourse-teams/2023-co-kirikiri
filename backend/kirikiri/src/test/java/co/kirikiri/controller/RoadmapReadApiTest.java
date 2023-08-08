@@ -176,6 +176,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("[0].creator.name").description("로드맵 크리에이터 이름"),
+                                        fieldWithPath("[0].creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
                                         fieldWithPath("[0].category.id").description("로드맵 카테고리 아이디"),
                                         fieldWithPath("[0].category.name").description("로드맵 카테고리 이름"),
                                         fieldWithPath("[0].tags[0].id").description("로드맵 태그 아이디"),
@@ -342,6 +343,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("[0].creator.name").description("로드맵 크리에이터 이름"),
+                                        fieldWithPath("[0].creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
                                         fieldWithPath("[0].category.id").description("로드맵 카테고리 아이디"),
                                         fieldWithPath("[0].category.name").description("로드맵 카테고리 이름"),
                                         fieldWithPath("[0].tags[0].id").description("로드맵 태그 아이디"),
@@ -493,7 +495,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].startDate").description("골룸의 시작 날짜"),
                                         fieldWithPath("[0].endDate").description("골룸의 종료 날짜"),
                                         fieldWithPath("[0].goalRoomLeader.id").description("골룸 리더의 아이디"),
-                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 리더의 닉네임"))
+                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 리더의 닉네임"),
+                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 리더의 프로필 이미지 경로"))
                         )
                 )
                 .andReturn().getResponse()
@@ -570,9 +573,11 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         );
 
         final RoadmapForListResponse roadmapResponse1 = new RoadmapForListResponse(1L, "로드맵 제목1", "로드맵 소개글1", "NORMAL",
-                10, 오늘, new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1L, "여행"), tags);
+                10, 오늘, new MemberResponse(1L, "코끼리", "default-member-image"), new RoadmapCategoryResponse(1L, "여행"),
+                tags);
         final RoadmapForListResponse roadmapResponse2 = new RoadmapForListResponse(2L, "로드맵 제목2", "로드맵 소개글2",
-                "DIFFICULT", 7, 오늘, new MemberResponse(2L, "끼리코"), new RoadmapCategoryResponse(2L, "IT"), tags);
+                "DIFFICULT", 7, 오늘, new MemberResponse(2L, "끼리코", "default-member-image"),
+                new RoadmapCategoryResponse(2L, "IT"), tags);
         return List.of(roadmapResponse1, roadmapResponse2);
     }
 
@@ -604,11 +609,11 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final RoadmapGoalRoomResponse roadmapGoalRoomResponse1 = new RoadmapGoalRoomResponse(1L, "골룸 이름1", 3, 6,
                 LocalDateTime.of(2023, 7, 20, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(1L, "황시진"));
+                new MemberResponse(1L, "황시진", "default-member-image"));
         final RoadmapGoalRoomResponse roadmapGoalRoomResponse2 = new RoadmapGoalRoomResponse(2L, "골룸 이름2", 4, 10,
                 LocalDateTime.of(2023, 7, 10, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(2L, "시진이"));
+                new MemberResponse(2L, "시진이", "default-member-image"));
         return List.of(roadmapGoalRoomResponse1, roadmapGoalRoomResponse2);
     }
 }

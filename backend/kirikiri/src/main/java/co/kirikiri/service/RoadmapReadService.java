@@ -29,7 +29,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,12 +53,13 @@ public class RoadmapReadService {
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
         final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
 
-        final long recruitedGoalRoomNumber = calculateGoalRoomNumberByStatus(goalRooms, GoalRoomStatus.RECRUITING);
-        final long runningGoalRoomNumber = calculateGoalRoomNumberByStatus(goalRooms, GoalRoomStatus.RUNNING);
-        final long completedGoalRoomNumber = calculateGoalRoomNumberByStatus(goalRooms, GoalRoomStatus.COMPLETED);
+        final Map<GoalRoomStatus, List<GoalRoom>> collect = goalRooms.stream()
+                .collect(Collectors.groupingBy(GoalRoom::getStatus));
 
         return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent,
-                recruitedGoalRoomNumber, runningGoalRoomNumber, completedGoalRoomNumber);
+                collect.getOrDefault(GoalRoomStatus.RECRUITING, Collections.emptyList()).size(),
+                collect.getOrDefault(GoalRoomStatus.RUNNING, Collections.emptyList()).size(),
+                collect.getOrDefault(GoalRoomStatus.COMPLETED, Collections.emptyList()).size());
     }
 
     private Roadmap findRoadmapById(final Long id) {
@@ -66,24 +70,6 @@ public class RoadmapReadService {
     private RoadmapContent findRecentContent(final Roadmap roadmap) {
         return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
                 .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
-    }
-
-    private long calculateGoalRoomNumberByStatus(final List<GoalRoom> goalRooms, final GoalRoomStatus status) {
-        if (status == GoalRoomStatus.RECRUITING) {
-            return goalRooms.stream()
-                    .filter(GoalRoom::isRecruiting)
-                    .count();
-        }
-
-        if (status == GoalRoomStatus.RUNNING) {
-            return goalRooms.stream()
-                    .filter(GoalRoom::isRunning)
-                    .count();
-        }
-
-        return goalRooms.stream()
-                .filter(GoalRoom::isCompleted)
-                .count();
     }
 
     public List<RoadmapForListResponse> findRoadmapsByFilterType(final Long categoryId,
