@@ -7,8 +7,7 @@ export const ListContainer = styled.section`
 
 export const ItemContainer = styled.article`
   width: 40.7rem;
-  height: 28rem;
-  padding: 1.7rem 3rem 3rem;
+  padding: 1.7rem 4rem 3rem;
 
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 34px;
@@ -57,12 +56,6 @@ export const RoadmapCreator = styled.div`
   margin-top: 0.5rem;
 `;
 
-export const RoadmapIntroduce = styled.div`
-  ${({ theme }) => theme.fonts.description2}
-  color: ${({ theme }) => theme.colors.black};
-  margin-top: 2rem;
-`;
-
 export const Wrapper = styled.div`
   display: flex;
   align-items: center;
@@ -90,17 +83,6 @@ export const Particpant = styled.div`
     ${({ theme }) => theme.fonts.description3}
     margin-left: 4.3rem;
   }
-`;
-
-export const DetailButton = styled.button`
-  width: 100%;
-  height: 4.5rem;
-  margin-top: 3rem;
-
-  color: ${({ theme }) => theme.colors.white};
-
-  background-color: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 85px;
 `;
 
 export const CreateGoalRoomButton = styled.button`

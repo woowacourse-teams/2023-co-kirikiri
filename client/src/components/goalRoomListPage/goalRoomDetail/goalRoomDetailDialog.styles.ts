@@ -16,14 +16,14 @@ export const Container = styled.section`
   left: 50%;
   transform: translate(-50%, -50%);
 
-  overflow: hidden;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
 
   width: 55rem;
   height: 55rem;
-  padding-top: 3.5rem;
+  padding: 3.5rem 0;
 
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 30px;
@@ -117,4 +117,15 @@ export const EnterGoalRoomButton = styled.button`
 
   background-color: ${({ theme }) => theme.colors.main_dark};
   border-radius: 34px;
+`;
+
+export const DetailButton = styled.button`
+  width: 100%;
+  height: 4.5rem;
+  margin-top: 3rem;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_dark};
+  border-radius: 85px;
 `;

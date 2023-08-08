@@ -144,13 +144,14 @@ export const useCreateCertificationFeed = (goalRoomId: string) => {
   };
 };
 
-export const useJoinGoalRoom = ({ goalRoomId, roadmapId }: JoinGoalRoomRequest) => {
+export const useJoinGoalRoom = ({ goalRoomId }: JoinGoalRoomRequest) => {
+  const navigate = useNavigate();
   const { triggerToast } = useToast();
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(() => postJoinGoalRoom(goalRoomId), {
     onSuccess() {
-      console.log(roadmapId);
+      navigate(`/goalroom-dashboard/${goalRoomId}`);
       triggerToast({ message: '골룸에 참여하였습니다!' });
       queryClient.invalidateQueries(['goalRoomDetail', goalRoomId]);
     },

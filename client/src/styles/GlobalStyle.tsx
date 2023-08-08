@@ -31,8 +31,16 @@ const GlobalStyle = createGlobalStyle`
     border: none;
   }
 
+  * {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none; /* 크롬, 사파리, 오페라, 엣지 */
+    }
+  }
+
   *, :after, :before {
-    box-sizing: inherit
+    box-sizing: inherit;
   }
 
   img, video {

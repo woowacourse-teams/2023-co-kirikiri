@@ -1,22 +1,19 @@
 import { DialogContext } from '@/context/dialogContext';
 import { getCustomElement } from '@/hooks/_common/compound';
 import { useContextScope } from '@/hooks/_common/useContextScope';
+import { useSwitch } from '@/hooks/_common/useSwitch';
 import { DialogBackdropProps, DialogTriggerProps } from '@/myTypes/_common/dialog';
-import { PropsWithChildren, ReactElement, useEffect, useState } from 'react';
+import { PropsWithChildren, ReactElement, useEffect } from 'react';
 
 export const DialogBox = ({
   children,
   defaultOpen = false,
 }: PropsWithChildren<{ defaultOpen?: boolean }>) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen ?? false);
-
-  const openDialog = () => {
-    setIsOpen(true);
-  };
-
-  const closeDialog = () => {
-    setIsOpen(false);
-  };
+  const {
+    isSwitchOn: isOpen,
+    turnSwitchOn: openDialog,
+    turnSwitchOff: closeDialog,
+  } = useSwitch(defaultOpen);
 
   return (
     <DialogContext.Provider value={{ isOpen, openDialog, closeDialog }}>

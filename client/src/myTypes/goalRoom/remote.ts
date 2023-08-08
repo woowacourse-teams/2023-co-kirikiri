@@ -64,5 +64,4 @@ export type GoalRoomTodoChangeStatusRequest = {
 
 export type JoinGoalRoomRequest = {
   goalRoomId: string;
-  roadmapId: string;
 };
