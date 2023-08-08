@@ -9,6 +9,7 @@ import {
   GoalRoomTodoChangeStatusRequest,
 } from '@/myTypes/goalRoom/remote';
 import client from '@apis/axios/client';
+import { GoalRoomRecruitmentStatus, MyPageGoalRoom } from '@myTypes/goalRoom/internal';
 
 export const getGoalRoomList = async ({
   roadmapId,
@@ -19,6 +20,14 @@ export const getGoalRoomList = async ({
   const { data } = await client.get<GoalRoomDetailResponse[]>(
     `/roadmaps/${roadmapId}/goal-rooms?filterCond=${filterCond}&lastCreatedAt=${lastCreatedAt}&size=${size}`
   );
+  return data;
+};
+
+export const getMyGoalRoomList = async (statusCond: GoalRoomRecruitmentStatus) => {
+  const { data } = await client.get<MyPageGoalRoom[]>(
+    `/goal-rooms/me?statusCond=${statusCond}`
+  );
+
   return data;
 };
 

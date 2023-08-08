@@ -15,6 +15,7 @@ const theme: DefaultTheme = {
     white: '#fff',
     red: '#ff0000',
     backdrop: 'rgba(220, 220, 220, 0.44)',
+    transparent_blue: 'rgba(0, 100, 250, 0.1)',
   },
 
   fonts: {

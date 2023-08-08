@@ -1,7 +1,7 @@
 import { GoalRoomDetailType } from '@/myTypes/goalRoom/internal';
 import { useState } from 'react';
-import GoalRoomDetailDialog from '../goalRoomDetail/GoalRoomDetailDialog';
 import * as S from './goalRoomList.styles';
+import GoalRoomDetailDialog from '@components/goalRoomListPage/goalRoomDetail/GoalRoomDetailDialog';
 
 const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
   const [showDetail, setShowDetail] = useState(false);

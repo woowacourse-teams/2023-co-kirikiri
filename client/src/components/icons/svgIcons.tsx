@@ -2410,3 +2410,33 @@ export const CheckedCircle = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
+
+export const MaleFace = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 24 24'
+  >
+    <path
+      fill='currentColor'
+      d='M9 11.75A1.25 1.25 0 0 0 7.75 13A1.25 1.25 0 0 0 9 14.25A1.25 1.25 0 0 0 10.25 13A1.25 1.25 0 0 0 9 11.75m6 0A1.25 1.25 0 0 0 13.75 13A1.25 1.25 0 0 0 15 14.25A1.25 1.25 0 0 0 16.25 13A1.25 1.25 0 0 0 15 11.75M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 18c-4.41 0-8-3.59-8-8c0-.29 0-.58.05-.86c2.36-1.05 4.23-2.98 5.21-5.37a9.974 9.974 0 0 0 10.41 3.97c.21.71.33 1.47.33 2.26c0 4.41-3.59 8-8 8Z'
+    />
+  </svg>
+);
+
+export const FemaleFace = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 24 24'
+  >
+    <path
+      fill='currentColor'
+      d='M13.75 13a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0M22 12v10H2V12C2 6.5 6.5 2 12 2s10 4.5 10 10M4 12c0 4.41 3.59 8 8 8s8-3.59 8-8c0-.79-.12-1.55-.33-2.26A9.974 9.974 0 0 1 9.26 5.77c-.98 2.39-2.85 4.32-5.21 5.37c-.05.28-.05.57-.05.86m5 2.25a1.25 1.25 0 1 0 0-2.5a1.25 1.25 0 0 0 0 2.5Z'
+    />
+  </svg>
+);
