@@ -85,4 +85,4 @@ export type CertificationFeedType = {
   checkFeed: CheckFeedType;
 };
 
-export type GoalRoomCertificationFeedsResponse = Array<CertificationFeedType>;
+export type GoalRoomCertificationFeedsResponse = CertificationFeedType[];
