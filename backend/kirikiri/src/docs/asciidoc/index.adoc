@@ -1,0 +1,32 @@
+= Co-KiriKiri API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: Co-Kirikiri API Docs
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
+
+include::overview.adoc[Overview]
+
+== *회원 API*
+
+* link:member.html[Member API]
+
+== *인증/인가 API*
+
+* link:auth.html[Auth API]
+
+== *로드맵 API*
+
+* link:roadmap.html[Roadmap API]
+
+== *골룸 API*
+
+* link:goalroom.html[GoalRoom API]

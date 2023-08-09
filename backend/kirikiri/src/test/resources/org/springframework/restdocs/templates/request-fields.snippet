@@ -1,0 +1,10 @@
+|===
+|Field|Type|Description|Restrict|Required
+{{#fields}}
+|{{#tableCellContent}}`+{{path}}+`{{/tableCellContent}}
+|{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{description}}{{/tableCellContent}}
+|{{#tableCellContent}}{{^restrict}}제한 없음{{/restrict}}{{#restrict}}{{.}}{{/restrict}}{{/tableCellContent}}
+|{{#tableCellContent}}{{^optional}}true{{/optional}}{{#optional}}false{{/optional}}{{/tableCellContent}}
+{{/fields}}
+|===

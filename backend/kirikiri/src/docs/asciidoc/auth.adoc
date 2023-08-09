@@ -1,0 +1,60 @@
+= Auth API
+:toc-title: Auth API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+ifndef::page[]
+:page: src/docs/asciidoc
+endif::[]
+
+[[로그인-API]]
+== *1. 로그인*
+
+=== *1-1* 성공
+
+operation::auth-create-api-test/정상적으로_로그인에_성공한다[snippets='http-request,http-response,request-fields,response-fields']
+
+=== *1-2* 실패 - 아이디에 해당하는 회원이 없을때
+
+operation::auth-create-api-test/로그인_시_아이디에_해당하는_회원이_없을_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-3* 실패 - 비밀번호가 맞지 않을 때
+
+operation::auth-create-api-test/로그인_시_비밀번호가_맞지_않을_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-4* 실패 - 아이디에 빈값이 들어올 때
+
+operation::auth-create-api-test/로그인_시_아이디에_빈값이_들어올_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-5* 실패 - 비밀번호 빈값이 들어올 때
+
+operation::auth-create-api-test/로그인_시_비밀번호_빈값이_들어올_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *1-6* 실패 - 아이디와 비밀번호 모두 빈값이 들어올 때
+
+operation::auth-create-api-test/로그인_시_아이디와_비밀번호_모두_빈값이_들어올_때_예외를_던진다[snippets='http-request,http-response']
+
+[[토큰재발행-API]]
+== *2. 토큰 재발행*
+
+=== *2-1* 성공
+
+operation::auth-create-api-test/토큰을_정상적으로_재발행한다[snippets='http-request,http-response,request-fields,response-fields']
+
+=== *2-2* 실패 - 토큰 재발행 시 리프레시 토큰이 빈값일 때
+
+operation::auth-create-api-test/토큰_재발행_시_리프레시_토큰이_빈값일_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *2-3* 실패 - 토큰 재발행 시 토큰이 만료 됐을 때
+
+operation::auth-create-api-test/토큰_재발행_시_토큰이_만료_됐을_때_예외를_던진다[snippets='http-request,http-response']
+
+=== *2-4* 실패 - 토큰 재발행 시 토큰이 유효하지 않을 때
+
+operation::auth-create-api-test/토큰_재발행_시_토큰이_유효하지_않을_때_예외를_던진다[snippets='http-request,http-response']
