@@ -214,6 +214,45 @@ class RoadmapReadServiceTest {
     }
 
     @Test
+    void 로드맵_목록_조회시_다음_요소가_존재하면_true로_반환한다() {
+        // given
+        final RoadmapCategory category = new RoadmapCategory(1L, "여행");
+        final List<Roadmap> roadmaps = List.of(
+                로드맵을_생성한다("첫 번째 로드맵", category),
+                로드맵을_생성한다("두 번째 로드맵", category));
+
+        when(roadmapCategoryRepository.findById(any()))
+                .thenReturn(Optional.of(category));
+        when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
+                .thenReturn(roadmaps);
+
+        final Long categoryId = 1L;
+        final RoadmapFilterTypeRequest filterType = null;
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 1);
+
+        // when
+        final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
+                categoryId, filterType, scrollRequest);
+
+        // then
+        final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
+                1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
+                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new RoadmapCategoryResponse(1, "여행"),
+                List.of(
+                        new RoadmapTagResponse(1L, "태그1"),
+                        new RoadmapTagResponse(2L, "태그2")));
+
+        final List<RoadmapForListResponse> responses = List.of(firstRoadmapResponse);
+        final RoadmapForListResponses expected = new RoadmapForListResponses(responses, true);
+
+        assertThat(roadmapResponses)
+                .usingRecursiveComparison()
+                .ignoringFields("responses.createdAt")
+                .isEqualTo(expected);
+    }
+
+    @Test
     void 로드맵_목록_조회_시_카테고리_조건이_null이면_전체_카테고리를_대상으로_최신순으로_조회한다() {
         // given
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");

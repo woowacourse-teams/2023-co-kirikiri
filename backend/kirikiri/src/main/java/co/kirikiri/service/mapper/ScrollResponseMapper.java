@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Mapper {
+public final class ScrollResponseMapper {
 
     public static <T> List<T> getSubResponses(final List<T> responses, final int requestSize) {
         final int endIndex = Math.min(responses.size(), requestSize);

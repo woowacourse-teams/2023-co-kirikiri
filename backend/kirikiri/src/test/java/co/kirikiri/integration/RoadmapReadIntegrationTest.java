@@ -235,6 +235,50 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    void 로드맵_목록_조회시_다음_요소가_존재하면_hasNext가_true로_반환된다() {
+        // given
+        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
+
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final RoadmapCategory 게임_카테고리 = 로드맵_카테고리를_저장한다("게임");
+
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+        final Long 두번째_로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "두 번째 로드맵");
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 게임_카테고리, "세 번째 로드맵");
+
+        final RoadmapResponse 두번째_로드맵 = 로드맵을_아이디로_조회한다(두번째_로드맵_아이디);
+
+        // when
+        final RoadmapForListResponses 로드맵_리스트_응답 = given()
+                .log().all()
+                .when()
+                .get("/api/roadmaps?size=1&filterType=LATEST&categoryId=" + 여행_카테고리.getId())
+                .then().log().all()
+                .extract()
+                .response()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        final RoadmapForListResponse 두번째_로드맵_응답 = new RoadmapForListResponse(두번째_로드맵_아이디, "두 번째 로드맵",
+                "로드맵 소개글", "DIFFICULT", 30, 두번째_로드맵.createdAt(),
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리", "default-member-image"),
+                new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(두번째_로드맵.tags().get(0).id(), "태그")));
+
+        final RoadmapForListResponses 예상되는_로드맵_리스트_응답 = new RoadmapForListResponses(
+                List.of(두번째_로드맵_응답), true);
+
+        assertAll(
+                () -> assertThat(로드맵_리스트_응답)
+                        .usingRecursiveComparison()
+                        .ignoringFields("responses.creator.imageUrl")
+                        .isEqualTo(예상되는_로드맵_리스트_응답)
+        );
+    }
+
+    @Test
     void 카테고리_아이디에_따라_로드맵_목록을_조회한다() {
         // given
         final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
@@ -487,6 +531,49 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    void 로드맵_검색시_다음_요소가_존재하면_hasNext가_true로_반환된다() {
+        // given
+        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
+
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "첫 번째 로드맵");
+        제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "두 번째 로드");
+        final Long 세번째_로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 여행_카테고리, "세 번째 로드맵");
+
+        final RoadmapResponse 세번째_로드맵 = 로드맵을_아이디로_조회한다(세번째_로드맵_아이디);
+
+        // when
+        final RoadmapForListResponses 로드맵_리스트_응답 = given()
+                .log().all()
+                .when()
+                .get("/api/roadmaps/search?size=1&filterType=LATEST&roadmapTitle=로드맵")
+                .then().log().all()
+                .extract()
+                .response()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        final RoadmapForListResponse 세번째_로드맵_응답 = new RoadmapForListResponse(세번째_로드맵_아이디, "세 번째 로드맵",
+                "로드맵 소개글", "DIFFICULT", 30, 세번째_로드맵.createdAt(),
+                new MemberResponse(저장된_크리에이터_아이디, "코끼리", "default-member-image"),
+                new RoadmapCategoryResponse(여행_카테고리.getId(), "여행"),
+                List.of(new RoadmapTagResponse(세번째_로드맵.tags().get(0).id(), "태그")));
+
+        final RoadmapForListResponses 예상되는_로드맵_리스트_응답 = new RoadmapForListResponses(
+                List.of(세번째_로드맵_응답), true);
+
+        assertAll(
+                () -> assertThat(로드맵_리스트_응답)
+                        .usingRecursiveComparison()
+                        .ignoringFields("responses.creator.imageUrl")
+                        .isEqualTo(예상되는_로드맵_리스트_응답)
+        );
+    }
+
+    @Test
     void 로드맵을_크리에이터_기준으로_검색한다() {
         // given
         final Long 저장된_첫번째_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
@@ -636,7 +723,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 사용자가_생성한_로드맵을_이전에_받아온_리스트_이후로_조회한다() {
         // given
-        final Long 저장된_크리에이터_아이디 = 크리에이터를_저장한다(IDENTIFIER, NICKNAME);
+        크리에이터를_저장한다(IDENTIFIER, NICKNAME);
         final String 로그인_토큰_정보 = 로그인(new LoginRequest(IDENTIFIER, PASSWORD));
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
@@ -780,7 +867,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸을_참가율_순으로_조회할때_다음_요소가_있는지_반환한다() throws JsonProcessingException {
+    void 골룸을_참가율_순으로_조회할때_다음_요소가_있으면_hasNext가_true로_반환된다() throws JsonProcessingException {
         // given
         final GoalRoomCreateRequest 골룸_생성_요청 = 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다();
         final String 골룸1_리더_액세스_토큰 = 회원을_생성하고_로그인을_한다(골룸_참여자1_회원가입_요청, 골룸_참여자1_로그인_요청);

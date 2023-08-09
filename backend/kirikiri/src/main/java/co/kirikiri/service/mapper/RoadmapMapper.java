@@ -29,7 +29,6 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import java.util.List;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -120,8 +119,8 @@ public final class RoadmapMapper {
         final List<RoadmapForListResponse> responses = roadmaps.stream()
                 .map(RoadmapMapper::convertRoadmapResponse)
                 .toList();
-        final List<RoadmapForListResponse> subResponses = Mapper.getSubResponses(responses, requestSize);
-        final boolean hasNext = Mapper.hasNext(responses.size(), requestSize);
+        final List<RoadmapForListResponse> subResponses = ScrollResponseMapper.getSubResponses(responses, requestSize);
+        final boolean hasNext = ScrollResponseMapper.hasNext(responses.size(), requestSize);
         return new RoadmapForListResponses(subResponses, hasNext);
     }
 
@@ -165,8 +164,8 @@ public final class RoadmapMapper {
                 .map(RoadmapMapper::convertMemberRoadmapResponse)
                 .toList();
 
-        final List<MemberRoadmapResponse> subResponses = Mapper.getSubResponses(responses, requestSize);
-        final boolean hasNext = Mapper.hasNext(responses.size(), requestSize);
+        final List<MemberRoadmapResponse> subResponses = ScrollResponseMapper.getSubResponses(responses, requestSize);
+        final boolean hasNext = ScrollResponseMapper.hasNext(responses.size(), requestSize);
         return new MemberRoadmapResponses(subResponses, hasNext);
     }
 

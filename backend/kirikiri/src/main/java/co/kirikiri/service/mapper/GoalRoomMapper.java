@@ -118,8 +118,8 @@ public class GoalRoomMapper {
         final List<RoadmapGoalRoomResponse> responses = goalRooms.stream()
                 .map(GoalRoomMapper::convertToRoadmapGoalRoomResponse)
                 .toList();
-        final List<RoadmapGoalRoomResponse> subResponses = Mapper.getSubResponses(responses, requestSize);
-        final boolean hasNext = Mapper.hasNext(responses.size(), requestSize);
+        final List<RoadmapGoalRoomResponse> subResponses = ScrollResponseMapper.getSubResponses(responses, requestSize);
+        final boolean hasNext = ScrollResponseMapper.hasNext(responses.size(), requestSize);
         return new RoadmapGoalRoomResponses(subResponses, hasNext);
     }
 
