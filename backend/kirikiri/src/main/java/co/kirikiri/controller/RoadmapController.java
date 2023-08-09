@@ -21,6 +21,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -107,5 +108,13 @@ public class RoadmapController {
         final List<RoadmapGoalRoomResponse> responses = roadmapReadService.findRoadmapGoalRoomsByFilterType(
                 roadmapId, roadmapGoalRoomsFilterTypeDto, scrollRequest);
         return ResponseEntity.ok(responses);
+    }
+
+    @DeleteMapping("/{roadmapId}")
+    @Authenticated
+    public ResponseEntity<Void> deleteRoadmap(@MemberIdentifier final String identifier,
+                                              @PathVariable("roadmapId") final Long roadmapId) {
+        roadmapCreateService.deleteRoadmap(identifier, roadmapId);
+        return ResponseEntity.noContent().build();
     }
 }

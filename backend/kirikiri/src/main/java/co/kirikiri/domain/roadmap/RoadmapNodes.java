@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapNodes {
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "roadmapContent")
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            mappedBy = "roadmapContent")
     private final List<RoadmapNode> values = new ArrayList<>();
 
     public RoadmapNodes(final List<RoadmapNode> roadmapNodes) {

@@ -1,5 +1,6 @@
 package co.kirikiri.service;
 
+import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
@@ -16,8 +17,10 @@ import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
@@ -42,6 +45,7 @@ public class RoadmapCreateService {
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapReviewRepository roadmapReviewRepository;
+    private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
@@ -141,5 +145,20 @@ public class RoadmapCreateService {
             throw new BadRequestException(
                     "이미 작성한 리뷰가 존재합니다. roadmapId = " + roadmap.getId() + " memberId = " + member.getId());
         }
+    }
+
+    public void deleteRoadmap(final String identifier, final Long roadmapId) {
+        final Roadmap roadmap = findRoadmapById(roadmapId);
+        validateRoadmapCreator(roadmapId, identifier);
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
+        roadmap.delete();
+        if (goalRooms.isEmpty()) {
+            roadmapRepository.delete(roadmap);
+        }
+    }
+
+    private void validateRoadmapCreator(final Long roadmapId, final String identifier) {
+        roadmapRepository.findByIdAndMemberIdentifier(roadmapId, identifier)
+                .orElseThrow(() -> new ForbiddenException("해당 로드맵을 생성한 사용자가 아닙니다."));
     }
 }

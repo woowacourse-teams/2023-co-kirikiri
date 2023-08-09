@@ -52,7 +52,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
 
     @Embedded
-    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
 
     @Embedded
     private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos();
@@ -275,6 +275,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomMembers;
     }
 
+    @Override
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
