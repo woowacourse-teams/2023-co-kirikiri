@@ -14,6 +14,8 @@ export const login = (body: UserLoginRequest) => {
   return client.post<UserLoginResponse>('/auth/login', body);
 };
 
-export const getUserInfo = () => {
-  return client.get<UserInfoResponse>('/members/me');
+export const getUserInfo = (signal?: AbortSignal) => {
+  return client.get<UserInfoResponse>('/members/me', {
+    signal,
+  });
 };

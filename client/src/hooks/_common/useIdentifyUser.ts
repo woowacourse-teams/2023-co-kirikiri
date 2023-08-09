@@ -17,10 +17,26 @@ export const useIdentifyUser = () => {
   const [userInfo, setUserInfo] = useState(defaultUserInfo);
 
   useEffect(() => {
-    const accessToken = getCookie('access_token');
-    if (!accessToken) return;
+    const fetchController = new AbortController();
+    const { signal } = fetchController;
 
-    getUserInfo().then((response) => setUserInfo(response.data));
+    const fetchUserInfo = async () => {
+      try {
+        const accessToken = getCookie('access_token');
+
+        if (!accessToken) return;
+
+        const userInfo = (await getUserInfo(signal)).data;
+
+        setUserInfo(userInfo);
+      } catch (e) {
+        // 실패시 로직
+      }
+    };
+
+    fetchUserInfo();
+
+    return () => fetchController.abort();
   }, []);
 
   return {
