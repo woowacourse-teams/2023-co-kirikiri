@@ -31,7 +31,7 @@ export const useCreateTag = () => {
     return tags.length < TAG_LIMIT;
   };
 
-  const delegeTag = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const deleteTag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     const target = e.target as HTMLButtonElement;
@@ -40,5 +40,5 @@ export const useCreateTag = () => {
       return prev.filter((tag) => tag !== target.value);
     });
   };
-  return { tags, ref, addTagByButton, addTagByEnter, checkIsTagCountMax, delegeTag };
+  return { tags, ref, addTagByButton, addTagByEnter, checkIsTagCountMax, deleteTag };
 };

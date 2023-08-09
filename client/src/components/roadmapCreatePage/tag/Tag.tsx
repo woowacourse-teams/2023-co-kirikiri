@@ -9,7 +9,7 @@ type TagProps = {
   getTags: (tags: string[]) => void;
 };
 const Tag = ({ getTags }: TagProps) => {
-  const { tags, ref, addTagByButton, addTagByEnter, checkIsTagCountMax, delegeTag } =
+  const { tags, ref, addTagByButton, addTagByEnter, checkIsTagCountMax, deleteTag } =
     useCreateTag();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const Tag = ({ getTags }: TagProps) => {
         {tags.map((item) => (
           <>
             <S.AddedTagItem key={item}># {item}</S.AddedTagItem>
-            <S.DeleteButton value={item} onClick={delegeTag}>
+            <S.DeleteButton value={item} onClick={deleteTag}>
               X
             </S.DeleteButton>
           </>
