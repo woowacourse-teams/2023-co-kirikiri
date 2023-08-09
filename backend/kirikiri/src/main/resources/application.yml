@@ -4,10 +4,10 @@ spring:
   config:
     import: "classpath:properties/application-dev.yml"
 
-#---
-#
-#spring:
-#  profiles:
-#    active: prod
-#  config:
-#    import: "classpath:properties/application-prod.yml"
+---
+
+spring:
+  profiles:
+    active: prod
+  config:
+    import: "classpath:properties/application-prod.yml"
