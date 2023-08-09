@@ -176,7 +176,7 @@ public class GoalRoomReadService {
         final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now()).get();
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(
                 currentGoalRoomRoadmapNode);
-        return GoalRoomMapper.convertToGoalRoomCheckFeedResponse(checkFeeds);
+        return GoalRoomMapper.convertToGoalRoomCheckFeedResponses(checkFeeds);
     }
 
     private GoalRoom findGoalRoomWithNodesById(final Long goalRoomId) {

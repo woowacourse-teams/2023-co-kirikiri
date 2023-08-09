@@ -37,6 +37,7 @@ import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AccessLevel;
@@ -59,8 +60,7 @@ public class GoalRoomMapper {
                 goalRoomCreateRequest.roadmapContentId(),
                 new GoalRoomName(goalRoomCreateRequest.name()),
                 new LimitedMemberCount(goalRoomCreateRequest.limitedMemberCount()),
-                goalRoomToDo,
-                goalRoomRoadmapNodeDtos);
+                goalRoomToDo, goalRoomRoadmapNodeDtos);
     }
 
     public static GoalRoomToDo convertToGoalRoomTodo(final GoalRoomTodoRequest goalRoomTodoRequest) {
@@ -113,16 +113,20 @@ public class GoalRoomMapper {
         return RoadmapGoalRoomsFilterType.valueOf(filterType.name());
     }
 
-    public static List<RoadmapGoalRoomResponse> convertToRoadmapGoalRoomResponses(final List<GoalRoom> goalRooms) {
-        return goalRooms.stream()
+    public static RoadmapGoalRoomResponses convertToRoadmapGoalRoomResponses(final List<GoalRoom> goalRooms,
+                                                                             final int requestSize) {
+        final List<RoadmapGoalRoomResponse> responses = goalRooms.stream()
                 .map(GoalRoomMapper::convertToRoadmapGoalRoomResponse)
                 .toList();
+        final List<RoadmapGoalRoomResponse> subResponses = Mapper.getSubResponses(responses, requestSize);
+        final boolean hasNext = Mapper.hasNext(responses.size(), requestSize);
+        return new RoadmapGoalRoomResponses(subResponses, hasNext);
     }
 
     private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(final GoalRoom goalRoom) {
         return new RoadmapGoalRoomResponse(goalRoom.getId(), goalRoom.getName().getValue(),
-                goalRoom.getCurrentMemberCount(),
-                goalRoom.getLimitedMemberCount().getValue(), goalRoom.getCreatedAt(), goalRoom.getStartDate(),
+                goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
+                goalRoom.getCreatedAt(), goalRoom.getStartDate(),
                 goalRoom.getEndDate(), convertToMemberResponse(goalRoom));
     }
 
@@ -188,6 +192,7 @@ public class GoalRoomMapper {
             final GoalRoomRoadmapNodes nodes) {
         final GoalRoomRoadmapNode currentNode = nodes.getNodeByDate(LocalDate.now())
                 .orElse(nodes.getNodeByDate(nodes.getGoalRoomStartDate()).get());
+
         if (!nodes.hasBackNode(currentNode)) {
             return new GoalRoomRoadmapNodesResponse(
                     nodes.hasFrontNode(currentNode),
@@ -232,25 +237,29 @@ public class GoalRoomMapper {
     private static MemberGoalRoomForListResponse convertToMemberGoalRoomForListResponse(final GoalRoom goalRoom) {
         final Member leader = goalRoom.findGoalRoomLeader();
         return new MemberGoalRoomForListResponse(goalRoom.getId(), goalRoom.getName().getValue(),
-                goalRoom.getStatus().name(),
-                goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
+                goalRoom.getStatus().name(), goalRoom.getCurrentMemberCount(),
+                goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 new MemberResponse(leader.getId(), leader.getNickname().getValue(),
                         leader.getImage().getServerFilePath()));
     }
 
-    public static List<GoalRoomCheckFeedResponse> convertToGoalRoomCheckFeedResponse(final List<CheckFeed> checkFeeds) {
+    public static List<GoalRoomCheckFeedResponse> convertToGoalRoomCheckFeedResponses(
+            final List<CheckFeed> checkFeeds) {
         return checkFeeds.stream()
-                .map(checkFeed -> {
-                    final GoalRoomMember goalRoomMember = checkFeed.getGoalRoomMember();
-                    final Member member = goalRoomMember.getMember();
-                    final MemberImage memberImage = member.getImage();
-                    return new GoalRoomCheckFeedResponse(
-                            new MemberNameAndImageResponse(member.getId(), member.getNickname().getValue(),
-                                    memberImage.getServerFilePath()),
-                            new CheckFeedResponse(checkFeed.getId(), checkFeed.getServerFilePath(),
-                                    checkFeed.getDescription(), checkFeed.getCreatedAt()));
-                })
+                .map(GoalRoomMapper::convertToGoalRoomCheckFeedResponse)
                 .toList();
+    }
+
+    private static GoalRoomCheckFeedResponse convertToGoalRoomCheckFeedResponse(final CheckFeed checkFeed) {
+        final GoalRoomMember goalRoomMember = checkFeed.getGoalRoomMember();
+        final Member member = goalRoomMember.getMember();
+        final MemberImage memberImage = member.getImage();
+
+        return new GoalRoomCheckFeedResponse(
+                new MemberNameAndImageResponse(member.getId(), member.getNickname().getValue(),
+                        memberImage.getServerFilePath()),
+                new CheckFeedResponse(checkFeed.getId(), checkFeed.getServerFilePath(),
+                        checkFeed.getDescription(), checkFeed.getCreatedAt()));
     }
 }

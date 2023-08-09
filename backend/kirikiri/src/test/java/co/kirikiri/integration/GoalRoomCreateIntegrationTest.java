@@ -30,6 +30,7 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
@@ -1003,15 +1004,15 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 2,
                 GoalRoomFilterTypeDto.LATEST.name());
-        final List<GoalRoomForListResponse> 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
+        final RoadmapGoalRoomResponses 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(골룸_목록.get(0).currentMemberCount()).isEqualTo(2);
-        assertThat(골룸_목록.get(0).goalRoomLeader().name()).isEqualTo("name3");
+        assertThat(골룸_목록.responses().get(0).currentMemberCount()).isEqualTo(2);
+        assertThat(골룸_목록.responses().get(0).goalRoomLeader().name()).isEqualTo("name3");
     }
 
     @Test
-    void 완료된_골룸을_나갈때_리더가_나가면_다음으로_들어온_사용자가_리더가_된다() throws JsonProcessingException {
+    void 완료된_골룸을_나갈때_리더가_나가면_다음으로_들어온_사용자가_리더가_된다() {
         //given
         final GoalRoomCreateRequest 골룸_생성_요청 = 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다();
 
@@ -1060,11 +1061,11 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 1,
                 GoalRoomFilterTypeDto.LATEST.name());
-        final List<GoalRoomForListResponse> 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
+        final RoadmapGoalRoomResponses 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(골룸_목록.get(0).currentMemberCount()).isEqualTo(1);
-        assertThat(골룸_목록.get(0).goalRoomLeader().name()).isEqualTo("name2");
+        assertThat(골룸_목록.responses().get(0).currentMemberCount()).isEqualTo(1);
+        assertThat(골룸_목록.responses().get(0).goalRoomLeader().name()).isEqualTo("name2");
     }
 
     @Test
@@ -1111,10 +1112,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 1,
                 GoalRoomFilterTypeDto.LATEST.name());
-        final List<GoalRoomForListResponse> 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
+        final RoadmapGoalRoomResponses 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(골룸_목록).hasSize(0);
+        assertThat(골룸_목록.responses()).hasSize(0);
     }
 
     @Test
@@ -1140,10 +1141,10 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 1,
                 GoalRoomFilterTypeDto.LATEST.name());
-        final List<GoalRoomForListResponse> 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
+        final RoadmapGoalRoomResponses 골룸_목록 = jsonToClass(골룸_목록_조회_요청에_대한_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(골룸_목록).hasSize(0);
+        assertThat(골룸_목록.responses()).hasSize(0);
     }
 
     private GoalRoomCreateRequest 로드맵을_생성하고_그에_따른_골룸을_생성할_요청을_만든다() {

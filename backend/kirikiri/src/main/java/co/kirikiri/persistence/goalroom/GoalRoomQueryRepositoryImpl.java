@@ -25,6 +25,8 @@ import java.util.Optional;
 
 public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter implements GoalRoomQueryRepository {
 
+    private static final int LIMIT_OFFSET = 1;
+
     public GoalRoomQueryRepositoryImpl() {
         super(GoalRoom.class);
     }
@@ -54,7 +56,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchJoin()
                 .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastValue(lastValue))
                 .orderBy(sortCond(filterType))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .fetch();
     }
 

@@ -47,10 +47,13 @@ import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
@@ -180,7 +183,7 @@ class RoadmapReadServiceTest {
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // when
-        final List<RoadmapForListResponse> roadmapResponses = roadmapService.findRoadmapsByFilterType(
+        final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
                 categoryId, filterType, scrollRequest);
 
         // then
@@ -201,11 +204,12 @@ class RoadmapReadServiceTest {
                         new RoadmapTagResponse(1L, "태그1"),
                         new RoadmapTagResponse(2L, "태그2")));
 
-        final List<RoadmapForListResponse> expected = List.of(firstRoadmapResponse, secondRoadmapResponse);
+        final List<RoadmapForListResponse> responses = List.of(firstRoadmapResponse, secondRoadmapResponse);
+        final RoadmapForListResponses expected = new RoadmapForListResponses(responses, false);
 
         assertThat(roadmapResponses)
                 .usingRecursiveComparison()
-                .ignoringFields("createdAt")
+                .ignoringFields("responses.createdAt")
                 .isEqualTo(expected);
     }
 
@@ -225,7 +229,7 @@ class RoadmapReadServiceTest {
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // when
-        final List<RoadmapForListResponse> roadmapResponses = roadmapService.findRoadmapsByFilterType(
+        final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
                 categoryId, filterType, scrollRequest);
 
         // then
@@ -245,11 +249,12 @@ class RoadmapReadServiceTest {
                         new RoadmapTagResponse(1L, "태그1"),
                         new RoadmapTagResponse(2L, "태그2")));
 
-        final List<RoadmapForListResponse> expected = List.of(firstRoadmapResponse, secondRoadmapResponse);
+        final RoadmapForListResponses expected = new RoadmapForListResponses(
+                List.of(firstRoadmapResponse, secondRoadmapResponse), false);
 
         assertThat(roadmapResponses)
                 .usingRecursiveComparison()
-                .ignoringFields("createdAt")
+                .ignoringFields("responses.createdAt")
                 .isEqualTo(expected);
     }
 
@@ -269,7 +274,7 @@ class RoadmapReadServiceTest {
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // when
-        final List<RoadmapForListResponse> roadmapResponses = roadmapService.findRoadmapsByFilterType(
+        final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
                 categoryId, filterType, scrollRequest);
 
         // then
@@ -281,11 +286,11 @@ class RoadmapReadServiceTest {
                         new RoadmapTagResponse(1L, "태그1"),
                         new RoadmapTagResponse(2L, "태그2")));
 
-        final List<RoadmapForListResponse> expected = List.of(roadmapResponse);
+        final RoadmapForListResponses expected = new RoadmapForListResponses(List.of(roadmapResponse), false);
 
         assertThat(roadmapResponses)
                 .usingRecursiveComparison()
-                .ignoringFields("createdAt")
+                .ignoringFields("responses.createdAt")
                 .isEqualTo(expected);
     }
 
@@ -321,7 +326,7 @@ class RoadmapReadServiceTest {
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
 
         // when
-        final List<RoadmapForListResponse> roadmapResponses = roadmapService.search(
+        final RoadmapForListResponses roadmapResponses = roadmapService.search(
                 filterType, roadmapSearchRequest, scrollRequest);
 
         // then
@@ -341,11 +346,12 @@ class RoadmapReadServiceTest {
                         new RoadmapTagResponse(1L, "태그1"),
                         new RoadmapTagResponse(2L, "태그2")));
 
-        final List<RoadmapForListResponse> expected = List.of(firstRoadmapResponse, secondRoadmapResponse);
+        final RoadmapForListResponses expected = new RoadmapForListResponses(
+                List.of(firstRoadmapResponse, secondRoadmapResponse), false);
 
         assertThat(roadmapResponses)
                 .usingRecursiveComparison()
-                .ignoringFields("createdAt")
+                .ignoringFields("responses.createdAt")
                 .isEqualTo(expected);
     }
 
@@ -364,19 +370,20 @@ class RoadmapReadServiceTest {
                 .thenReturn(List.of(roadmap2, roadmap1));
 
         // when
-        final List<MemberRoadmapResponse> memberRoadmapResponse = roadmapService.findAllMemberRoadmaps(
+        final MemberRoadmapResponses memberRoadmapResponse = roadmapService.findAllMemberRoadmaps(
                 "identifier1",
                 new CustomScrollRequest(null, null, null, null, 10));
 
         // then
-        final List<MemberRoadmapResponse> expected = List.of(
+        final MemberRoadmapResponses expected = new MemberRoadmapResponses(List.of(
                 new MemberRoadmapResponse(2L, "로드맵2", RoadmapDifficulty.DIFFICULT.name(), LocalDateTime.now(),
                         new RoadmapCategoryResponse(2L, "여가")),
                 new MemberRoadmapResponse(1L, "로드맵1", RoadmapDifficulty.DIFFICULT.name(), LocalDateTime.now(),
-                        new RoadmapCategoryResponse(1L, "운동")));
+                        new RoadmapCategoryResponse(1L, "운동"))), false);
 
-        assertThat(memberRoadmapResponse).usingRecursiveComparison()
-                .ignoringFields("roadmapId", "createdAt")
+        assertThat(memberRoadmapResponse)
+                .usingRecursiveComparison()
+                .ignoringFields("responses.roadmapId", "responses.createdAt")
                 .isEqualTo(expected);
     }
 
@@ -437,11 +444,11 @@ class RoadmapReadServiceTest {
                 .willReturn(goalRooms);
 
         // when
-        final List<RoadmapGoalRoomResponse> result = roadmapService.findRoadmapGoalRoomsByFilterType(1L,
+        final RoadmapGoalRoomResponses result = roadmapService.findRoadmapGoalRoomsByFilterType(1L,
                 RoadmapGoalRoomsFilterTypeDto.LATEST, new CustomScrollRequest(null, null, null, null, 10));
 
-        final List<RoadmapGoalRoomResponse> expected =
-                List.of(
+        final RoadmapGoalRoomResponses expected =
+                new RoadmapGoalRoomResponses(List.of(
                         new RoadmapGoalRoomResponse(2L, "goalroom2", 1, 10, LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member3.getId(), member3.getNickname().getValue(),
@@ -449,11 +456,11 @@ class RoadmapReadServiceTest {
                         new RoadmapGoalRoomResponse(1L, "goalroom1", 1, 10, LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue(),
-                                        "default-member-image"))
-                );
+                                        "default-member-image"))), false);
 
-        assertThat(result).usingRecursiveComparison()
-                .ignoringFields("createdAt")
+        assertThat(result)
+                .usingRecursiveComparison()
+                .ignoringFields("responses.createdAt")
                 .isEqualTo(expected);
     }
 
