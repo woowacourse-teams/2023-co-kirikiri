@@ -1,7 +1,6 @@
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './NavBar.styles';
 import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
-import useValidationCheck from '@hooks/user/useValidationCheck';
 import isValidUserInfo from '@utils/user/isValidUserInfo';
 import { BASE_URL } from '@apis/axios/client';
 
@@ -10,7 +9,6 @@ type NavBarProps = {
 };
 
 const NavBar = ({ isSwitchOn }: NavBarProps) => {
-  useValidationCheck();
   const { userInfo } = useUserInfoContext();
 
   return (

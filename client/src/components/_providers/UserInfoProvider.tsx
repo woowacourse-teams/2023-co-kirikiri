@@ -1,6 +1,7 @@
-import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import { createContext, PropsWithChildren, useContext } from 'react';
 import { UserInfoResponse } from '@myTypes/user/remote';
 import { UserInfoContextType } from '@myTypes/_common/user';
+import { useIdentifyUser } from '@/hooks/_common/useIdentifyUser';
 
 export const defaultUserInfo: UserInfoResponse = {
   id: null,
@@ -18,7 +19,7 @@ export const userInfoContext = createContext<UserInfoContextType>({
 });
 
 const UserInfoProvider = ({ children }: PropsWithChildren) => {
-  const [userInfo, setUserInfo] = useState<UserInfoResponse>(defaultUserInfo);
+  const { userInfo, setUserInfo } = useIdentifyUser();
 
   return (
     <userInfoContext.Provider value={{ userInfo, setUserInfo }}>

@@ -2,43 +2,25 @@ import {
   DialogBackdrop,
   DialogBox,
   DialogContent,
-} from '@/components/_common/dialog/dialog';
+  DialogTrigger,
+} from '@components/_common/dialog/dialog';
 import * as S from './goalRoomDetailDialog.styles';
 import GoalRoomDetailDialogContent from './GoalRoomDetailDialogContent';
-import { useNavigate } from 'react-router-dom';
 
 type GoalRoomDetailDialogProps = {
-  closeGoalroomDetail: () => void;
   goalRoomId: number;
-  isJoined: boolean;
 };
 
-const GoalRoomDetailDialog = ({
-  closeGoalroomDetail,
-  goalRoomId,
-  isJoined,
-}: GoalRoomDetailDialogProps) => {
-  console.log(isJoined);
-
-  const navigate = useNavigate();
-
-  const enterGoalRoom = () => {
-    navigate(`/goalroom-dashboard/${goalRoomId}`);
-  };
-
+const GoalRoomDetailDialog = ({ goalRoomId }: GoalRoomDetailDialogProps) => {
   return (
-    <DialogBox defaultOpen>
+    <DialogBox>
+      <DialogTrigger asChild>
+        <S.DetailButton>자세히 보기</S.DetailButton>
+      </DialogTrigger>
       <DialogBackdrop asChild>
         <S.BackDrop>
           <DialogContent>
-            <GoalRoomDetailDialogContent
-              closeGoalroomDetail={closeGoalroomDetail}
-              goalRoomId={goalRoomId}
-            />
-
-            <S.EnterGoalRoomButton onClick={enterGoalRoom}>
-              골룸 대시보드 입장하기
-            </S.EnterGoalRoomButton>
+            <GoalRoomDetailDialogContent goalRoomId={goalRoomId} />
           </DialogContent>
         </S.BackDrop>
       </DialogBackdrop>
