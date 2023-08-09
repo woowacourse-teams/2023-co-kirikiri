@@ -93,6 +93,14 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .fetch();
     }
 
+    @Override
+    public Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier) {
+        return Optional.ofNullable(selectFrom(roadmap)
+                .where(memberIdentifierCond(identifier),
+                        roadmap.id.eq(roadmapId))
+                .fetchOne());
+    }
+
     private BooleanExpression categoryCond(final RoadmapCategory category) {
         if (category == null) {
             return null;
@@ -162,5 +170,9 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
 
     private OrderSpecifier<Long> orderByIdDesc() {
         return roadmap.id.desc();
+    }
+
+    private BooleanExpression memberIdentifierCond(final String identifier) {
+        return roadmap.creator.identifier.value.eq(identifier);
     }
 }

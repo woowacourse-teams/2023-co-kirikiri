@@ -109,6 +109,14 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchOne());
     }
 
+    @Override
+    public List<GoalRoom> findByRoadmap(final Roadmap roadmap) {
+        return selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .where(roadmapContent.roadmap.eq(roadmap))
+                .fetch();
+    }
+
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
     }

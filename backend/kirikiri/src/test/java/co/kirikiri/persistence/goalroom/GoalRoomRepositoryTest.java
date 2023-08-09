@@ -35,7 +35,6 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -269,7 +268,7 @@ class GoalRoomRepositoryTest {
                 creator.getIdentifier()).get();
 
         // then
-        Assertions.assertThat(findGoalRoomMember)
+        assertThat(findGoalRoomMember)
                 .usingRecursiveComparison()
                 .ignoringFields("joinedAt")
                 .isEqualTo(goalRoomMember);
@@ -463,6 +462,33 @@ class GoalRoomRepositoryTest {
                 .usingRecursiveComparison()
                 .ignoringFields("id", "createdAt", "updatedAt")
                 .isEqualTo(goalRoom);
+    }
+
+    @Test
+    void 로드맵으로_골룸을_조회한다() {
+        // given
+        final Member creator = 사용자를_생성한다("name1", "01011111111", "identifier1", "password!1");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
+        final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
+
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
+        final Roadmap roadmap = 로드맵을_생성한다(creator, category, roadmapContent);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TEN_DAY_LATER, roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TWENTY_DAY_LAYER, THIRTY_DAY_LATER,
+                roadmapNode2);
+
+        final Member member = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
+        final GoalRoom goalRoom = 골룸을_생성한다("goalroom1", 6, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)), member);
+        goalRoomRepository.save(goalRoom);
+
+        // when
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
+
+        // then
+        assertThat(goalRooms).isEqualTo(List.of(goalRoom));
     }
 
     private Member 크리에이터를_저장한다() {

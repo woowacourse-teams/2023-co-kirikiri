@@ -1,11 +1,28 @@
 package co.kirikiri.persistence.roadmap;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import co.kirikiri.domain.member.EncryptedPassword;
+import co.kirikiri.domain.member.Gender;
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberProfile;
+import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.member.vo.Nickname;
+import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.domain.roadmap.Roadmap;
+import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapDifficulty;
+import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.persistence.helper.RepositoryTest;
+import co.kirikiri.persistence.member.MemberRepository;
+import java.time.LocalDate;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapRepositoryTest {
 
-/*
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
@@ -17,6 +34,7 @@ class RoadmapRepositoryTest {
         this.roadmapCategoryRepository = roadmapCategoryRepository;
     }
 
+    /*
     @Test
     void 로드맵을_저장한다() {
         // given
@@ -278,10 +296,10 @@ class RoadmapRepositoryTest {
         final RoadmapCategory itCategory = 카테고리를_생성한다("IT");
 
         final Roadmap gameRoadmap = 로드맵을_저장한다("로드맵1", creator, gameCategory);
-        final Roadmap traveRoadmap = 로드맵을_저장한다("로드맵2", creator, travelCategory);
+        final Roadmap travelRoadmap = 로드맵을_저장한다("로드맵2", creator, travelCategory);
         final Roadmap deletedGameRoadmap = 삭제된_로드맵을_저장한다("로드맵3", creator, itCategory);
 
-        roadmapRepository.saveAll(List.of(gameRoadmap, traveRoadmap, deletedGameRoadmap));
+        roadmapRepository.saveAll(List.of(gameRoadmap, travelRoadmap, deletedGameRoadmap));
 
         // when
         final RoadmapLastValueDto firstRoadmapLastValueDto = RoadmapLastValueDto.create(
@@ -295,9 +313,51 @@ class RoadmapRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(roadmapsFirstPage).isEqualTo(List.of(deletedGameRoadmap, traveRoadmap)),
+                () -> assertThat(roadmapsFirstPage).isEqualTo(List.of(deletedGameRoadmap, travelRoadmap)),
                 () -> assertThat(roadmapsSecondPage).isEqualTo(List.of(gameRoadmap))
         );
+    }
+*/
+
+    @Test
+    void 사용자_아이디로_로드맵을_조회한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
+        final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
+
+        final Roadmap gameRoadmap = 로드맵을_저장한다("로드맵1", creator, gameCategory);
+        final Roadmap travelRoadmap = 로드맵을_저장한다("로드맵2", creator, travelCategory);
+
+        // when
+        final Roadmap savedRoadmap1 = roadmapRepository.findByIdAndMemberIdentifier(gameRoadmap.getId(), "cokirikiri")
+                .get();
+        final Roadmap savedRoadmap2 = roadmapRepository.findByIdAndMemberIdentifier(travelRoadmap.getId(), "cokirikiri")
+                .get();
+
+        // then
+        assertAll(
+                () -> assertThat(savedRoadmap1).isEqualTo(gameRoadmap),
+                () -> assertThat(savedRoadmap2).isEqualTo(travelRoadmap)
+        );
+    }
+
+    @Test
+    void 사용자_아이디로_로드맵을_조회시_없으면_빈_값을_감싸서_반환한다() {
+        // given
+        final Member creator = 크리에이터를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory gameCategory = 카테고리를_생성한다("게임");
+        final RoadmapCategory travelCategory = 카테고리를_생성한다("여행");
+
+        final Roadmap gameRoadmap = 로드맵을_저장한다("로드맵1", creator, gameCategory);
+        final Roadmap travelRoadmap = 로드맵을_저장한다("로드맵2", creator, travelCategory);
+
+        // when
+        final Optional<Roadmap> savedRoadmap = roadmapRepository.findByIdAndMemberIdentifier(travelRoadmap.getId() + 1,
+                "cokirikiri");
+
+        // then
+        assertThat(savedRoadmap).isEmpty();
     }
 
     private Member 크리에이터를_생성한다(final String identifier, final String nickname) {
@@ -328,5 +388,5 @@ class RoadmapRepositoryTest {
         final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
         roadmap.addTags(roadmapTags);
         return roadmapRepository.save(roadmap);
-    }*/
+    }
 }
