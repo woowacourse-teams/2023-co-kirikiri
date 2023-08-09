@@ -1,13 +1,13 @@
 spring:
-  profiles:
-    active: dev
   config:
     import: "classpath:properties/application-dev.yml"
+    activate:
+      on-profile: dev
 
 ---
 
 spring:
-  profiles:
-    active: prod
   config:
-    import: "classpath:properties/application-prod.yml"
+    import: "classpath:properties/application-dev.yml"
+    activate:
+      on-profile: prod
