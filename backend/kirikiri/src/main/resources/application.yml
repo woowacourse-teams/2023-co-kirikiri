@@ -8,6 +8,6 @@ spring:
 
 spring:
   config:
-    import: "classpath:properties/application-dev.yml"
+    import: "classpath:properties/application-prod.yml"
     activate:
       on-profile: prod
