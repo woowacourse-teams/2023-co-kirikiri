@@ -1,7 +1,9 @@
 import { ChangeEvent, useState } from 'react';
 import { PatternType } from '@myTypes/roadmap/internal';
 
-export const useValidateInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
+export const useValidateInput = <
+  T extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>(
   pattern: PatternType
 ) => {
   const { rule, message } = pattern;
@@ -14,14 +16,13 @@ export const useValidateInput = <T extends HTMLInputElement | HTMLTextAreaElemen
 
   const controlInputChange = (e: ChangeEvent<T>) => {
     const { value } = e.target;
+    setValue(value);
+
     if (!rule.test(value)) {
       setErrorMessage(message);
-
-      return;
+    } else {
+      setErrorMessage('');
     }
-
-    setErrorMessage('');
-    setValue(value);
   };
 
   const validateInput = () => {
