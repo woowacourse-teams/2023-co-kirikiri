@@ -62,8 +62,12 @@ const useFormInput = <T extends object>(
 
     const isFormValid = Object.entries(validations).every(([key, fieldValidations]) =>
       fieldValidations.every(({ validate, message }) => {
+        // key 문자열을 구문 분석하여 'parts' 배열 생성
+        // ex) "user[details][name]" => ["user", "details", "name"]
         const parts = key.split('[').map((part) => part.replace(']', ''));
 
+        // 중첩된 객체에서 필드 값을 검색
+        // "user[details][name]" ex에서 fieldValue는 "name"
         const fieldValue = parts.reduce((currentValue, part) => {
           return (currentValue as any)[part];
         }, formState);
