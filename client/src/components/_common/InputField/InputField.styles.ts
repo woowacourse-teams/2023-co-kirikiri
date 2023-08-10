@@ -15,19 +15,29 @@ export const Label = styled.label<{ size?: 'small' | 'normal' }>`
 `;
 
 export const Description = styled.p`
-  ${({ theme }) => theme.fonts.h2};
+  ${({ theme }) => theme.fonts.nav_text};
   color: ${({ theme }) => theme.colors.gray300};
 `;
 
-export const InputBox = styled.div<{ size?: 'small' | 'normal' }>`
+export const InputBox = styled.div<{
+  size?: 'small' | 'normal';
+  type?: 'text' | 'date' | 'textarea' | 'number';
+}>`
   position: relative;
 
   & > input {
     ${({ theme, size }) => (size === 'small' ? theme.fonts.button1 : theme.fonts.h2)};
-    width: ${({ size }) => (size === 'small' ? '' : '100%')};
-    padding: ${({ size }) => (size === 'small' ? '0.1rem' : '0.4rem')};
+    width: ${({ size, type }) =>
+      type === 'number' ? '7rem' : size === 'small' ? '' : '100%'};
+    padding: ${({ size, type }) =>
+      type === 'number' ? '0.4rem' : size === 'small' ? '0.1rem' : '0.4rem'};
+
     text-align: ${({ size }) => (size === 'small' ? 'center' : '')};
+
+    border: ${({ theme, type }) =>
+      type === 'number' ? `0.1rem solid ${theme.colors.black}` : 'none'};
     border-bottom: ${({ theme }) => `0.1rem solid ${theme.colors.black}`};
+    border-radius: ${({ type }) => (type === 'number' ? '4px' : '')};
   }
 `;
 
