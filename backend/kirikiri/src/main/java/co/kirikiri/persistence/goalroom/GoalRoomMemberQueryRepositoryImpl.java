@@ -10,6 +10,8 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
+import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
+import com.querydsl.core.types.OrderSpecifier;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,14 +41,25 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
     }
 
     @Override
-    public List<GoalRoomMember> findByGoalRoomIdOrderByAccomplishmentRateDesc(final Long goalRoomId) {
+    public List<GoalRoomMember> findByGoalRoomIdBySortType(final Long goalRoomId,
+                                                           final GoalRoomMemberSortType sortType) {
         return selectFrom(goalRoomMember)
                 .innerJoin(goalRoomMember.member, member)
                 .fetchJoin()
                 .innerJoin(member.image, memberImage)
                 .fetchJoin()
                 .where(goalRoomMember.goalRoom.id.eq(goalRoomId))
-                .orderBy(goalRoomMember.accomplishmentRate.desc())
+                .orderBy(sortCond(sortType))
                 .fetch();
+    }
+
+    private OrderSpecifier<?> sortCond(final GoalRoomMemberSortType sortType) {
+        if (sortType == null || sortType.isAccomplishmentRate()) {
+            return goalRoomMember.accomplishmentRate.desc();
+        }
+        if (sortType.isJoinedASC()) {
+            return goalRoomMember.joinedAt.asc();
+        }
+        return goalRoomMember.joinedAt.desc();
     }
 }
