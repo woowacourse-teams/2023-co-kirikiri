@@ -42,3 +42,16 @@ image:
 file:
   upload-dir: src/test/resources/static/images/
   server-path: http://localhost/images/
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      instanceProfile: true
+    s3:
+      bucket: 2023-team-project
+      root-directory: 2023-co-kirikiri
+      sub-directory: prod
