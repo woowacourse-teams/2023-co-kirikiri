@@ -69,7 +69,8 @@ public final class RoadmapMapper {
                 new RoadmapCategoryResponse(category.getId(), category.getName()),
                 roadmap.getTitle(),
                 roadmap.getIntroduction(),
-                new MemberResponse(creator.getId(), creator.getNickname().getValue()),
+                new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                        creator.getImage().getServerFilePath()),
                 roadmapContentResponse,
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
@@ -119,7 +120,8 @@ public final class RoadmapMapper {
         final RoadmapCategoryResponse categoryResponse = new RoadmapCategoryResponse(category.getId(),
                 category.getName());
         final Member creator = roadmap.getCreator();
-        final MemberResponse creatorResponse = new MemberResponse(creator.getId(), creator.getNickname().getValue());
+        final MemberResponse creatorResponse = new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                creator.getImage().getServerFilePath());
         final List<RoadmapTagResponse> roadmapTagResponses = convertRoadmapTagResponses(roadmap.getTags());
 
         return new RoadmapForListResponse(
@@ -165,8 +167,11 @@ public final class RoadmapMapper {
                 .toList();
     }
 
-    private static RoadmapReviewResponse convertToRoadmapReviewResponse(final RoadmapReview roadmapReview) {
-        return new RoadmapReviewResponse(roadmapReview.getId(), roadmapReview.getMemberNickname(),
-                roadmapReview.getCreatedAt(), roadmapReview.getContent(), roadmapReview.getRate());
+    private static RoadmapReviewResponse convertToRoadmapReviewResponse(final RoadmapReview review) {
+        final Member member = review.getMember();
+        return new RoadmapReviewResponse(review.getId(),
+                new MemberResponse(member.getId(), member.getNickname().getValue(),
+                        member.getImage().getServerFilePath()),
+                review.getCreatedAt(), review.getContent(), review.getRate());
     }
 }

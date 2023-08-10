@@ -11,6 +11,7 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.dto.RoadmapLastValueDto;
+import co.kirikiri.persistence.dto.RoadmapReviewLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
@@ -19,6 +20,7 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
+import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
@@ -127,11 +129,12 @@ public class RoadmapReadService {
     }
 
     public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId,
-                                                          final CustomScrollRequest scrollRequest) {
+                                                          final CustomReviewScrollRequest reviewScrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final RoadmapLastValueDto roadmapLastValueDto = RoadmapLastValueDto.create(scrollRequest);
+        final RoadmapReviewLastValueDto roadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
+                reviewScrollRequest);
         final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
-                roadmap, roadmapLastValueDto, scrollRequest.size());
+                roadmap, roadmapReviewLastValueDto, reviewScrollRequest.size());
         return RoadmapMapper.convertToRoadmapReviewResponses(roadmapReviews);
     }
 }

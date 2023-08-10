@@ -72,6 +72,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -357,6 +358,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 "010-1111-2222", GenderType.MALE, LocalDate.of(1999, 9, 9));
         final String 액세스_토큰 = 로그인을_한다("identifier", "password1!");
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("여가");
+
         final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "첫번째_로드맵 제목",
                 "첫번째_로드맵 소개글", "첫번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("첫번째_로드맵 1주차", "첫번째_로드맵 1주차 내용")));
@@ -379,6 +381,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 정상적인_골룸_제한_인원, 두번째_골룸_투두_요청, 두번째_골룸_노드_별_기간_요청);
         final Long 두번째_골룸_아이디 = 골룸_생성(두번째_골룸_생성_요청, 액세스_토큰);
         goalRoomCreateService.startGoalRooms();
+
         // when
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
                 .header(AUTHORIZATION, 액세스_토큰)
@@ -387,23 +390,29 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
+
         // then
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(첫번째_골룸_아이디, 정상적인_골룸_이름, "RUNNING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
-                        new MemberResponse(1L, "코끼리")),
+                        new MemberResponse(1L, "코끼리", "default-member-image")),
                 new MemberGoalRoomForListResponse(두번째_골룸_아이디, 정상적인_골룸_이름, "RECRUITING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
 
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
                 });
 
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+        Assertions.assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
+
     }
 
     @Test
@@ -415,6 +424,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "첫번째_로드맵 제목",
                 "첫번째_로드맵 소개글", "첫번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("첫번째_로드맵 1주차", "첫번째_로드맵 1주차 내용")));
+
         final RoadmapNode 첫번째_로드맵_노드 = roadmapNodeRepository.findAll().get(0);
         final GoalRoomTodoRequest 첫번째_골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 첫번째_골룸_노드_별_기간_요청 = List.of(
@@ -422,6 +432,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 첫번째_골룸_생성_요청 = new GoalRoomCreateRequest(첫번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 첫번째_골룸_투두_요청, 첫번째_골룸_노드_별_기간_요청);
         final Long 첫번째_골룸_아이디 = 골룸_생성(첫번째_골룸_생성_요청, 액세스_토큰);
+
         final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "두번째_로드맵 제목",
                 "두번째_로드맵 소개글", "두번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("두번째_로드맵 1주차", "두번째_로드맵 1주차 내용")));
@@ -433,6 +444,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 정상적인_골룸_제한_인원, 두번째_골룸_투두_요청, 두번째_골룸_노드_별_기간_요청);
         final Long 두번째_골룸_아이디 = 골룸_생성(두번째_골룸_생성_요청, 액세스_토큰);
         goalRoomCreateService.startGoalRooms();
+
         // when
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
                 .header(AUTHORIZATION, 액세스_토큰)
@@ -442,18 +454,24 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
+
         // then
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(두번째_골룸_아이디, 정상적인_골룸_이름, "RECRUITING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 십일_후, 이십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+
+        Assertions.assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     @Test
@@ -462,6 +480,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         회원가입을_한다("identifier", "password1!", "코끼리", "010-1111-2222", GenderType.MALE, LocalDate.of(1999, 9, 9));
         final String 액세스_토큰 = 로그인을_한다("identifier", "password1!");
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("여가");
+
         final Long 첫번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "첫번째_로드맵 제목",
                 "첫번째_로드맵 소개글", "첫번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("첫번째_로드맵 1주차", "첫번째_로드맵 1주차 내용")));
@@ -472,6 +491,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 첫번째_골룸_생성_요청 = new GoalRoomCreateRequest(첫번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 첫번째_골룸_투두_요청, 첫번째_골룸_노드_별_기간_요청);
         final Long 첫번째_골룸_아이디 = 골룸_생성(첫번째_골룸_생성_요청, 액세스_토큰);
+
         final Long 두번째_로드맵_아이디 = 로드맵을_생성한다(액세스_토큰, 카테고리.getId(), "두번째_로드맵 제목",
                 "두번째_로드맵 소개글", "두번째_로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("두번째_로드맵 1주차", "두번째_로드맵 1주차 내용")));
@@ -482,7 +502,9 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 두번째_골룸_투두_요청, 두번째_골룸_노드_별_기간_요청);
         final Long 두번째_골룸_아이디 = 골룸_생성(두번째_골룸_생성_요청, 액세스_토큰);
+
         goalRoomCreateService.startGoalRooms();
+
         // when
         final ExtractableResponse<Response> 사용자_단일_골룸_조회_응답 = given().log().all()
                 .header(AUTHORIZATION, 액세스_토큰)
@@ -492,18 +514,24 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
+
         // then
         final List<MemberGoalRoomForListResponse> 예상되는_응답 = List.of(
                 new MemberGoalRoomForListResponse(첫번째_골룸_아이디, 정상적인_골룸_이름, "RUNNING",
                         1, 정상적인_골룸_제한_인원, LocalDateTime.now(), 오늘, 십일_후,
-                        new MemberResponse(1L, "코끼리")));
+                        new MemberResponse(1L, "코끼리", "default-member-image")));
         final List<MemberGoalRoomForListResponse> 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(),
                 new TypeReference<>() {
                 });
-        assertThat(요청_응답값)
-                .usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(예상되는_응답);
+
+        Assertions.assertAll(
+                () -> assertThat(요청_응답값)
+                        .usingRecursiveComparison()
+                        .ignoringFields("createdAt", "goalRoomLeader.imageUrl")
+                        .isEqualTo(예상되는_응답),
+                () -> assertThat(요청_응답값.get(0).goalRoomLeader().imageUrl())
+                        .contains("default-member-image")
+        );
     }
 
     private Member 크리에이터를_저장한다() {

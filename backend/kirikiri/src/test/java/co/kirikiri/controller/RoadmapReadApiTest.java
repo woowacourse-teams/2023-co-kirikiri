@@ -9,6 +9,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -21,6 +22,7 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
+import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -43,6 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -82,6 +85,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                 fieldWithPath("createdAt").description("로드맵 생성 시간"),
                                 fieldWithPath("creator.id").description("로드맵 크리에이터 아이디"),
                                 fieldWithPath("creator.name").description("로드맵 크리에이터 닉네임"),
+                                fieldWithPath("creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
                                 fieldWithPath("content.id").description("로드맵 컨텐츠 아이디"),
                                 fieldWithPath("content.content").description("로드맵 컨텐츠 본문"),
                                 fieldWithPath("content.nodes[0].id").description("로드맵 노드 아이디"),
@@ -172,6 +176,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("[0].creator.name").description("로드맵 크리에이터 이름"),
+                                        fieldWithPath("[0].creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
                                         fieldWithPath("[0].category.id").description("로드맵 카테고리 아이디"),
                                         fieldWithPath("[0].category.name").description("로드맵 카테고리 이름"),
                                         fieldWithPath("[0].tags[0].id").description("로드맵 태그 아이디"),
@@ -338,6 +343,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("[0].creator.name").description("로드맵 크리에이터 이름"),
+                                        fieldWithPath("[0].creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
                                         fieldWithPath("[0].category.id").description("로드맵 카테고리 아이디"),
                                         fieldWithPath("[0].category.name").description("로드맵 카테고리 이름"),
                                         fieldWithPath("[0].tags[0].id").description("로드맵 태그 아이디"),
@@ -489,7 +495,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].startDate").description("골룸의 시작 날짜"),
                                         fieldWithPath("[0].endDate").description("골룸의 종료 날짜"),
                                         fieldWithPath("[0].goalRoomLeader.id").description("골룸 리더의 아이디"),
-                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 리더의 닉네임"))
+                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 리더의 닉네임"),
+                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 리더의 프로필 이미지 경로"))
                         )
                 )
                 .andReturn().getResponse()
@@ -546,9 +553,13 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 로드맵의_리뷰들을_조회한다() throws Exception {
         // given
+        final String reviewScrollRequest = objectMapper.writeValueAsString(
+                new CustomReviewScrollRequest(null, null, 10));
         final List<RoadmapReviewResponse> expected = List.of(
-                new RoadmapReviewResponse(1L, "작성자1", LocalDateTime.now(), "리뷰 내용", 4.5),
-                new RoadmapReviewResponse(2L, "작성자2", LocalDateTime.now(), "리뷰 내용", 5.0)
+                new RoadmapReviewResponse(1L, new MemberResponse(1L, "작성자1", "image1-file-path"),
+                        LocalDateTime.of(2023, 8, 15, 12, 30, 0, 123456), "리뷰 내용", 4.5),
+                new RoadmapReviewResponse(2L, new MemberResponse(2L, "작성자2", "image2-file-path"),
+                        LocalDateTime.of(2023, 8, 16, 12, 30, 0, 123456), "리뷰 내용", 5.0)
         );
 
         when(roadmapReadService.findRoadmapReviews(anyLong(), any()))
@@ -557,22 +568,26 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         // when
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
-                                .param("lastCreatedAt", "")
-                                .param("size", "10")
+                                .content(reviewScrollRequest)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
                 .andDo(documentationResultHandler.document(
                         pathParameters(
                                 parameterWithName("roadmapId").description("로드맵 아이디")
                         ),
-                        queryParameters(
-                                parameterWithName("lastCreatedAt").optional()
-                                        .description("이전에 가장 마지막으로 조회한 리뷰의 생성일자(첫 요청에는 없어도 상관없음)"),
-                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
+                        requestFields(
+                                fieldWithPath("lastCreatedAt").optional()
+                                        .description("이전 요청에서 받았던 리뷰 중 가장 옛날 날짜(첫 요청에는 없어도 상관없음)"),
+                                fieldWithPath("lastReviewRate").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음"),
+                                fieldWithPath("size").description("한 번에 조회할 리뷰갯수")
                         ),
                         responseFields(
                                 fieldWithPath("[0].id").description("리뷰 아이디"),
-                                fieldWithPath("[0].name").description("작성자 닉네임"),
+                                fieldWithPath("[0].member.id").description("작성자 아이디"),
+                                fieldWithPath("[0].member.name").description("작성자 닉네임"),
+                                fieldWithPath("[0].member.imageUrl").description("작성자 프로필 이미지 경로"),
                                 fieldWithPath("[0].createdAt").description("리뷰 최종 작성날짜"),
                                 fieldWithPath("[0].content").description("리뷰 내용"),
                                 fieldWithPath("[0].rate").description("별점")
@@ -594,24 +609,28 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디일_경우_예외를_반환한다() throws Exception {
         // given
+        final String reviewScrollRequest = objectMapper.writeValueAsString(
+                new CustomReviewScrollRequest(null, null, 10));
         when(roadmapReadService.findRoadmapReviews(anyLong(), any()))
                 .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
-        // given
+        // when
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
-                                .param("lastCreatedAt", "")
-                                .param("size", "10")
+                                .content(reviewScrollRequest)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
                 .andDo(documentationResultHandler.document(
                         pathParameters(
                                 parameterWithName("roadmapId").description("로드맵 아이디")
                         ),
-                        queryParameters(
-                                parameterWithName("lastCreatedAt").optional()
+                        requestFields(
+                                fieldWithPath("lastCreatedAt").optional()
                                         .description("이전에 가장 마지막으로 조회한 리뷰의 생성일자(첫 요청에는 없어도 상관없음)"),
-                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
+                                fieldWithPath("lastReviewRate").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음"),
+                                fieldWithPath("size").description("한 번에 조회할 리뷰갯수")
                         ),
                         responseFields(
                                 fieldWithPath("message").description("예외 메시지")
@@ -629,7 +648,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
 
     private RoadmapResponse 단일_로드맵_조회에_대한_응답() {
         final RoadmapCategoryResponse category = new RoadmapCategoryResponse(1, "운동");
-        final MemberResponse creator = new MemberResponse(1, "닉네임");
+        final MemberResponse creator = new MemberResponse(1, "닉네임", "image-file-path");
         final List<RoadmapNodeResponse> nodes = List.of(
                 new RoadmapNodeResponse(1L, "1번 노드", "1번 노드 설명", List.of("image1-filepath", "image2-filepath")),
                 new RoadmapNodeResponse(2L, "2번 노드", "2번 노드 설명", Collections.emptyList())
@@ -649,9 +668,10 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         );
 
         final RoadmapForListResponse roadmapResponse1 = new RoadmapForListResponse(1L, "로드맵 제목1", "로드맵 소개글1", "NORMAL",
-                10, 오늘, new MemberResponse(1L, "코끼리"), new RoadmapCategoryResponse(1L, "여행"), tags);
+                10, 오늘, new MemberResponse(1L, "코끼리", "image-file-path"), new RoadmapCategoryResponse(1L, "여행"), tags);
         final RoadmapForListResponse roadmapResponse2 = new RoadmapForListResponse(2L, "로드맵 제목2", "로드맵 소개글2",
-                "DIFFICULT", 7, 오늘, new MemberResponse(2L, "끼리코"), new RoadmapCategoryResponse(2L, "IT"), tags);
+                "DIFFICULT", 7, 오늘, new MemberResponse(2L, "끼리코", "image-file-path"),
+                new RoadmapCategoryResponse(2L, "IT"), tags);
         return List.of(roadmapResponse1, roadmapResponse2);
     }
 
@@ -683,11 +703,11 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final RoadmapGoalRoomResponse roadmapGoalRoomResponse1 = new RoadmapGoalRoomResponse(1L, "골룸 이름1", 3, 6,
                 LocalDateTime.of(2023, 7, 20, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(1L, "황시진"));
+                new MemberResponse(1L, "황시진", "image-file-path"));
         final RoadmapGoalRoomResponse roadmapGoalRoomResponse2 = new RoadmapGoalRoomResponse(2L, "골룸 이름2", 4, 10,
                 LocalDateTime.of(2023, 7, 10, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(2L, "시진이"));
+                new MemberResponse(2L, "시진이", "image-file-path"));
         return List.of(roadmapGoalRoomResponse1, roadmapGoalRoomResponse2);
     }
 }

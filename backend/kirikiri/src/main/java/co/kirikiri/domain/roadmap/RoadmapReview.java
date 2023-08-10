@@ -83,8 +83,8 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
         return rate;
     }
 
-    public String getMemberNickname() {
-        return member.getNickname().getValue();
+    public Member getMember() {
+        return member;
     }
 
     public LocalDateTime getCreatedAt() {

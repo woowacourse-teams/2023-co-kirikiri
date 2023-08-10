@@ -236,7 +236,8 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("goalRoomTodos[0].content").description("골룸 투두 내용"),
                                         fieldWithPath("goalRoomTodos[0].startDate").description("골룸 투두 시작일"),
                                         fieldWithPath("goalRoomTodos[0].endDate").description("골룸 투두 종료일"),
-                                        fieldWithPath("goalRoomTodos[0].check.isChecked").description("골룸 투두 체크 여부(true/false)"),
+                                        fieldWithPath("goalRoomTodos[0].check.isChecked").description(
+                                                "골룸 투두 체크 여부(true/false)"),
                                         fieldWithPath("checkFeeds[0].id").description("인증 피드 아이디"),
                                         fieldWithPath("checkFeeds[0].imageUrl").description("인증 피드 이미지 저장경로"),
                                         fieldWithPath("checkFeeds[0].description").description("인증 피드 본문")
@@ -318,7 +319,8 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].startDate").description("골룸 시작 날짜"),
                                         fieldWithPath("[0].endDate").description("골룸 종료 날짜"),
                                         fieldWithPath("[0].goalRoomLeader.id").description("골룸 생성 사용자 아이디"),
-                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 생성 사용자 닉네임")
+                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 생성 사용자 닉네임"),
+                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 생성 사용자 프로필 이미지 경로")
                                 )))
                 .andReturn().getResponse()
                 .getContentAsString();
@@ -542,11 +544,11 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         return List.of(new MemberGoalRoomForListResponse(1L, "골룸 이름", GoalRoomStatus.RUNNING.name(),
                         15, 20, LocalDateTime.of(2023, 7, 1, 0, 0),
                         LocalDate.of(2023, 7, 15), LocalDate.of(2023, 8, 15),
-                        new MemberResponse(1L, "황시진")),
+                        new MemberResponse(1L, "황시진", "image-file-path")),
                 new MemberGoalRoomForListResponse(2L, "골룸 이름", GoalRoomStatus.RUNNING.name(),
                         15, 20, LocalDateTime.of(2023, 7, 5, 0, 0),
                         LocalDate.of(2023, 7, 8), LocalDate.of(2023, 8, 1),
-                        new MemberResponse(2L, "시진이"))
+                        new MemberResponse(2L, "시진이", "image-file-path"))
         );
     }
 }

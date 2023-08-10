@@ -1,13 +1,12 @@
 package co.kirikiri.persistence.roadmap;
 
 import static co.kirikiri.domain.member.QMember.member;
-import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
 
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.persistence.dto.RoadmapLastValueDto;
+import co.kirikiri.persistence.dto.RoadmapReviewLastValueDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.time.LocalDateTime;
@@ -22,7 +21,7 @@ public class RoadmapReviewQueryRepositoryImpl extends QuerydslRepositorySupporte
 
     @Override
     public List<RoadmapReview> findRoadmapReviewWithMemberByRoadmapOrderByLatest(final Roadmap roadmap,
-                                                                                 final RoadmapLastValueDto lastValue,
+                                                                                 final RoadmapReviewLastValueDto lastValue,
                                                                                  final int pageSize) {
         return selectFrom(roadmapReview)
                 .innerJoin(roadmapReview.member, member)
@@ -37,11 +36,11 @@ public class RoadmapReviewQueryRepositoryImpl extends QuerydslRepositorySupporte
         return roadmapReview.roadmap.eq(roadmap);
     }
 
-    private BooleanExpression lessThanLastValue(final RoadmapLastValueDto lastValue) {
+    private BooleanExpression lessThanLastValue(final RoadmapReviewLastValueDto lastValue) {
         if (lastValue == null) {
             return null;
         }
-        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+        return roadmapReview.createdAt.lt(lastValue.getLastCreatedAt());
     }
 
     private OrderSpecifier<LocalDateTime> orderByCreatedAtDesc() {

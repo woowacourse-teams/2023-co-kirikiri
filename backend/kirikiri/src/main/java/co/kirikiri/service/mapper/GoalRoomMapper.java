@@ -123,7 +123,8 @@ public class GoalRoomMapper {
 
     private static MemberResponse convertToMemberResponse(final GoalRoom goalRoom) {
         final Member goalRoomLeader = goalRoom.findGoalRoomLeader();
-        return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue());
+        return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue(),
+                goalRoomLeader.getImage().getServerFilePath());
     }
 
     public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(
@@ -228,6 +229,6 @@ public class GoalRoomMapper {
                 goalRoom.getStatus().name(),
                 goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
-                new MemberResponse(leader.getId(), leader.getNickname().getValue()));
+                new MemberResponse(leader.getId(), leader.getNickname().getValue(), leader.getImage().getServerFilePath()));
     }
 }
