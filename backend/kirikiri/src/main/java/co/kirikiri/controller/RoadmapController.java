@@ -4,6 +4,7 @@ import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
+import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
@@ -15,6 +16,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -105,6 +107,16 @@ public class RoadmapController {
     ) {
         final RoadmapGoalRoomResponses responses = roadmapReadService.findRoadmapGoalRoomsByFilterType(
                 roadmapId, roadmapGoalRoomsFilterTypeDto, scrollRequest);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{roadmapId}/reviews")
+    public ResponseEntity<List<RoadmapReviewResponse>> findRoadmapReviews(
+            @PathVariable final Long roadmapId,
+            @ModelAttribute final CustomReviewScrollRequest reviewScrollRequest
+    ) {
+        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId,
+                reviewScrollRequest);
         return ResponseEntity.ok(responses);
     }
 }

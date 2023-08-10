@@ -35,6 +35,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
@@ -45,6 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -84,8 +86,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                 fieldWithPath("recommendedRoadmapPeriod").description("로드맵 추천 기간"),
                                 fieldWithPath("createdAt").description("로드맵 생성 시간"),
                                 fieldWithPath("creator.id").description("로드맵 크리에이터 아이디"),
-                                fieldWithPath("creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 주소"),
                                 fieldWithPath("creator.name").description("로드맵 크리에이터 닉네임"),
+                                fieldWithPath("creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
                                 fieldWithPath("content.id").description("로드맵 컨텐츠 아이디"),
                                 fieldWithPath("content.content").description("로드맵 컨텐츠 본문"),
                                 fieldWithPath("content.nodes[0].id").description("로드맵 노드 아이디"),
@@ -563,6 +565,98 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final ErrorResponse expected = new ErrorResponse("존재하지 않는 로드맵입니다. roadmapId = 1");
         assertThat(errorResponse)
                 .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵의_리뷰들을_조회한다() throws Exception {
+        // given
+        final List<RoadmapReviewResponse> expected = List.of(
+                new RoadmapReviewResponse(1L, new MemberResponse(1L, "작성자1", "image1-file-path"),
+                        LocalDateTime.of(2023, 8, 15, 12, 30, 0, 123456), "리뷰 내용", 4.5),
+                new RoadmapReviewResponse(2L, new MemberResponse(2L, "작성자2", "image2-file-path"),
+                        LocalDateTime.of(2023, 8, 16, 12, 30, 0, 123456), "리뷰 내용", 5.0)
+        );
+
+        when(roadmapReadService.findRoadmapReviews(anyLong(), any()))
+                .thenReturn(expected);
+
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                                .param("size", "10")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(documentationResultHandler.document(
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디")
+                        ),
+                        queryParameters(
+                                parameterWithName("lastCreatedAt").optional()
+                                        .description("이전 요청에서 받았던 리뷰 중 가장 옛날 날짜(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("lastReviewRate").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
+                        ),
+                        responseFields(
+                                fieldWithPath("[0].id").description("리뷰 아이디"),
+                                fieldWithPath("[0].member.id").description("작성자 아이디"),
+                                fieldWithPath("[0].member.name").description("작성자 닉네임"),
+                                fieldWithPath("[0].member.imageUrl").description("작성자 프로필 이미지 경로"),
+                                fieldWithPath("[0].createdAt").description("리뷰 최종 작성날짜"),
+                                fieldWithPath("[0].content").description("리뷰 내용"),
+                                fieldWithPath("[0].rate").description("별점")
+                        )))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final List<RoadmapReviewResponse> reviewResponse = objectMapper.readValue(response,
+                new TypeReference<>() {
+                });
+
+        assertThat(reviewResponse)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt")
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디일_경우_예외를_반환한다() throws Exception {
+        // given
+        when(roadmapReadService.findRoadmapReviews(anyLong(), any()))
+                .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
+
+        // when
+        final String response = mockMvc.perform(
+                        get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
+                                .param("size", "10")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(documentationResultHandler.document(
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디")
+                        ),
+                        queryParameters(
+                                parameterWithName("lastCreatedAt").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 생성일자(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("lastReviewRate").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메시지")
+                        )))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, new TypeReference<>() {
+        });
+
+        assertThat(errorResponse.message())
+                .isEqualTo("존재하지 않는 로드맵입니다. roadmapId = 1");
     }
 
     private RoadmapResponse 단일_로드맵_조회에_대한_응답() {

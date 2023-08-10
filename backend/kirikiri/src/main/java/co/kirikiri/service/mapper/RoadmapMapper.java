@@ -7,6 +7,7 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
+import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -28,6 +29,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
 import java.util.List;
 import lombok.AccessLevel;
@@ -173,5 +175,20 @@ public final class RoadmapMapper {
         return new MemberRoadmapResponse(roadmap.getId(), roadmap.getTitle(),
                 roadmap.getDifficulty().name(), roadmap.getCreatedAt(),
                 new RoadmapCategoryResponse(category.getId(), category.getName()));
+    }
+
+    public static List<RoadmapReviewResponse> convertToRoadmapReviewResponses(
+            final List<RoadmapReview> roadmapReviews) {
+        return roadmapReviews.stream()
+                .map(RoadmapMapper::convertToRoadmapReviewResponse)
+                .toList();
+    }
+
+    private static RoadmapReviewResponse convertToRoadmapReviewResponse(final RoadmapReview review) {
+        final Member member = review.getMember();
+        return new RoadmapReviewResponse(review.getId(),
+                new MemberResponse(member.getId(), member.getNickname().getValue(),
+                        member.getImage().getServerFilePath()),
+                review.getCreatedAt(), review.getContent(), review.getRate());
     }
 }

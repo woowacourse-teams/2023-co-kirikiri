@@ -325,7 +325,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].endDate").description("골룸 종료 날짜"),
                                         fieldWithPath("[0].goalRoomLeader.id").description("골룸 생성 사용자 아이디"),
                                         fieldWithPath("[0].goalRoomLeader.name").description("골룸 생성 사용자 닉네임"),
-                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 생성 사용자 프포필 이미지 경로")
+                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 생성 사용자 프로필 이미지 경로")
                                 )))
                 .andReturn().getResponse()
                 .getContentAsString();

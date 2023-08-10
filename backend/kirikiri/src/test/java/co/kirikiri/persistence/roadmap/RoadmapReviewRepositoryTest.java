@@ -1,6 +1,7 @@
 package co.kirikiri.persistence.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -16,8 +17,10 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
+import co.kirikiri.persistence.dto.RoadmapReviewLastValueDto;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +82,68 @@ class RoadmapReviewRepositoryTest {
         // then
         assertThat(findRoadmapReview)
                 .isEmpty();
+    }
+
+    @Test
+    void 로드맵에_대한_리뷰_정보를_최신순으로_조회한다() {
+        // given
+        final Member member = 사용자를_저장한다("코끼리", "cokirikiri");
+        final Member member2 = 사용자를_저장한다("끼리코", "kirikirico");
+        final Member member3 = 사용자를_저장한다("리끼코", "rikirikico");
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(member, category);
+
+        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰1", 2.5, member);
+        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰2", 4.0, member2);
+        final RoadmapReview roadmapReview3 = new RoadmapReview("리뷰3", 5.0, member3);
+        roadmapReview1.updateRoadmap(roadmap);
+        roadmapReview2.updateRoadmap(roadmap);
+        roadmapReview3.updateRoadmap(roadmap);
+        roadmapReviewRepository.save(roadmapReview1);
+        roadmapReviewRepository.save(roadmapReview2);
+        roadmapReviewRepository.save(roadmapReview3);
+
+        // when
+        final RoadmapReviewLastValueDto firstRoadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
+                new CustomReviewScrollRequest(null, null, 2));
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, firstRoadmapReviewLastValueDto, 2);
+
+        final RoadmapReviewLastValueDto secondRoadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
+                new CustomReviewScrollRequest(roadmapReviewsFirstPage.get(1).getCreatedAt(), null, 2));
+        final List<RoadmapReview> roadmapReviewsSecondPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, secondRoadmapReviewLastValueDto, 2);
+
+        // then
+        assertAll(
+                () -> assertThat(roadmapReviewsFirstPage)
+                        .isEqualTo(List.of(roadmapReview3, roadmapReview2)),
+                () -> assertThat(roadmapReviewsSecondPage)
+                        .isEqualTo(List.of(roadmapReview1))
+        );
+    }
+
+    @Test
+    void 로드맵에_대한_리뷰_정보가_없으면_빈_값을_반환한다() {
+        // given
+        final Member member = 사용자를_저장한다("코끼리", "cokirikiri");
+        final Member member2 = 사용자를_저장한다("끼리코", "kirikirico");
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap1 = 로드맵을_저장한다(member, category);
+        final Roadmap roadmap2 = 로드맵을_저장한다(member2, category);
+
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member);
+        roadmapReview.updateRoadmap(roadmap1);
+        roadmapReviewRepository.save(roadmapReview);
+
+        // when
+        final RoadmapReviewLastValueDto firstRoadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
+                new CustomReviewScrollRequest(null, null, 1));
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap2, firstRoadmapReviewLastValueDto, 1);
+
+        // then
+        assertThat(roadmapReviewsFirstPage).isEmpty();
     }
 
     private Member 사용자를_저장한다(final String name, final String identifier) {

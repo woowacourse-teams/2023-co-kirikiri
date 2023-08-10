@@ -1,16 +1,17 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.dto.RoadmapLastValueDto;
+import co.kirikiri.persistence.dto.RoadmapReviewLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
@@ -18,6 +19,8 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
+import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
@@ -28,12 +31,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,7 @@ public class RoadmapReadService {
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapContentRepository roadmapContentRepository;
+    private final RoadmapReviewRepository roadmapReviewRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final MemberRepository memberRepository;
 
@@ -126,5 +128,15 @@ public class RoadmapReadService {
         final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
                 roadmap, filterType, goalRoomLastValueDto, scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(goalRoomsWithPendingMembers, scrollRequest.size());
+    }
+
+    public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId,
+                                                          final CustomReviewScrollRequest reviewScrollRequest) {
+        final Roadmap roadmap = findRoadmapById(roadmapId);
+        final RoadmapReviewLastValueDto roadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
+                reviewScrollRequest);
+        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, roadmapReviewLastValueDto, reviewScrollRequest.size());
+        return RoadmapMapper.convertToRoadmapReviewResponses(roadmapReviews);
     }
 }
