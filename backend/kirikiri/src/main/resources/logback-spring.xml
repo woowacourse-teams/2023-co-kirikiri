@@ -1,0 +1,63 @@
+<configuration>
+    <springProperty name="LOG_PATH" source="logging.file-path"/>
+    <springProperty name="LOG_FILE_NAME" source="logging.file-name"/>
+    <springProperty name="LOG_PATTERN" source="logging.custom-pattern"/>
+    <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-url"/>
+
+    <timestamp key="DateFormat" datePattern="yyyy-MM-dd"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                ${LOG_PATTERN}
+            </Pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <file>${LOG_PATH}/${DateFormat}/${LOG_FILE_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}_%i.log
+            </fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+        <webhookUri>${SLACK_WEBHOOK_URI}</webhookUri>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="SLACK"/>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <root level="INFO">
+        <springProfile name="prod">
+            <appender-ref ref="ASYNC_SLACK"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </springProfile>
+        <springProfile name="dev">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </springProfile>
+    </root>
+</configuration>
+

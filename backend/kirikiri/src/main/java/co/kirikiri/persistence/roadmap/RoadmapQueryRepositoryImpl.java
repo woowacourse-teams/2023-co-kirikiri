@@ -24,6 +24,8 @@ import java.util.Optional;
 
 public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter implements RoadmapQueryRepository {
 
+    private static final int LIMIT_OFFSET = 1;
+
     public RoadmapQueryRepositoryImpl() {
         super(Roadmap.class);
     }
@@ -54,7 +56,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                         lessThanLastValue(lastValue, orderType),
                         statusCond(RoadmapStatus.CREATED),
                         categoryCond(category))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
                 .fetch();
     }
@@ -74,7 +76,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                         titleCond(searchRequest.getTitle()),
                         creatorCond(searchRequest.getCreatorId()),
                         tagCond(searchRequest.getTagName()))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
                 .fetch();
     }
@@ -88,7 +90,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
                 .where(memberCond(member), lessThanLastValue(lastValue))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(orderByIdDesc())
                 .fetch();
     }

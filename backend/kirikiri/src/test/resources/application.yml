@@ -26,6 +26,12 @@ logging:
         orm:
           jdbc:
             bind: TRACE
+  file-path: ./log
+  file-name: test-name
+  custom-pattern: test-pattern
+
+  slack:
+    webhook-url: test-url
 
 server:
   servlet:
