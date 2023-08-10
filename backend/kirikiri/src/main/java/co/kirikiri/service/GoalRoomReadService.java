@@ -75,7 +75,7 @@ public class GoalRoomReadService {
     public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId,
                                                             final GoalRoomMemberSortTypeDto sortType) {
 
-        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdBySortType(
+        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
                 goalRoomId, GoalRoomMemberSortType.valueOf(sortType.name()));
         checkGoalRoomEmpty(goalRoomId, goalRoomMembers);
         return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMembers);

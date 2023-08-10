@@ -15,6 +15,6 @@ public interface GoalRoomMemberQueryRepository {
             @Param("identifier") final Identifier identifier,
             @Param("status") final GoalRoomStatus status);
 
-    List<GoalRoomMember> findByGoalRoomIdBySortType(final Long goalRoomId,
-                                                    final GoalRoomMemberSortType sortType);
+    List<GoalRoomMember> findByGoalRoomIdOrderedBySortType(final Long goalRoomId,
+                                                           final GoalRoomMemberSortType sortType);
 }

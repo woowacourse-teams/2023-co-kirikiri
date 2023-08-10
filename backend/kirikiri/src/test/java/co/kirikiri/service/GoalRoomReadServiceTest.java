@@ -217,7 +217,7 @@ class GoalRoomReadServiceTest {
         final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
                 goalRoom, follower);
 
-        given(goalRoomMemberRepository.findByGoalRoomIdBySortType(anyLong(), any()))
+        given(goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
                 .willReturn(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
 
         //when
@@ -236,7 +236,7 @@ class GoalRoomReadServiceTest {
     @Test
     void 존재하지_않는_골룸일_경우_예외를_던진다() {
         //given
-        given(goalRoomMemberRepository.findByGoalRoomIdBySortType(anyLong(), any()))
+        given(goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
                 .willReturn(Collections.emptyList());
 
         //when

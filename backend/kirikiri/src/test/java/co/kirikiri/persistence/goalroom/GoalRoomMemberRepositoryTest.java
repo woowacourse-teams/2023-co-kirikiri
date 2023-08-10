@@ -177,7 +177,7 @@ class GoalRoomMemberRepositoryTest {
                 List.of(goalRoomMember1, goalRoomMember2, goalRoomMember3));
 
         // when
-        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdBySortType(
+        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
                 savedGoalRoom.getId(), GoalRoomMemberSortType.JOINED_ASC);
 
         // then
@@ -213,7 +213,7 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoomMember savedGoalRoomMember3 = goalRoomMemberRepository.save(goalRoomMember3);
 
         // when
-        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdBySortType(
+        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
                 savedGoalRoom.getId(), GoalRoomMemberSortType.JOINED_DESC);
 
         // then
@@ -251,9 +251,9 @@ class GoalRoomMemberRepositoryTest {
                 List.of(goalRoomMember2, goalRoomMember1, goalRoomMember3));
 
         // when
-        final List<GoalRoomMember> goalRoomMembers1 = goalRoomMemberRepository.findByGoalRoomIdBySortType(
+        final List<GoalRoomMember> goalRoomMembers1 = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
                 savedGoalRoom.getId(), GoalRoomMemberSortType.ACCOMPLISHMENT_RATE);
-        final List<GoalRoomMember> goalRoomMembers2 = goalRoomMemberRepository.findByGoalRoomIdBySortType(
+        final List<GoalRoomMember> goalRoomMembers2 = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
                 savedGoalRoom.getId(), null);
 
         // then

@@ -41,8 +41,8 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
     }
 
     @Override
-    public List<GoalRoomMember> findByGoalRoomIdBySortType(final Long goalRoomId,
-                                                           final GoalRoomMemberSortType sortType) {
+    public List<GoalRoomMember> findByGoalRoomIdOrderedBySortType(final Long goalRoomId,
+                                                                  final GoalRoomMemberSortType sortType) {
         return selectFrom(goalRoomMember)
                 .innerJoin(goalRoomMember.member, member)
                 .fetchJoin()
