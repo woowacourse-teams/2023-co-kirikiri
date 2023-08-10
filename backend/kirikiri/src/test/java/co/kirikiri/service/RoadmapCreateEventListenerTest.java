@@ -46,6 +46,9 @@ class RoadmapCreateEventListenerTest {
     private RoadmapContentRepository roadmapContentRepository;
 
     @Mock
+    private FilePathGenerator pathGenerator;
+
+    @Mock
     private FileService fileService;
 
     @InjectMocks

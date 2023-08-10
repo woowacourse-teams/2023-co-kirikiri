@@ -90,4 +90,8 @@ public class RoadmapNode extends BaseEntity {
     public RoadmapContent getRoadmapContent() {
         return roadmapContent;
     }
+
+    public RoadmapNodeImages getRoadmapNodeImages() {
+        return roadmapNodeImages;
+    }
 }

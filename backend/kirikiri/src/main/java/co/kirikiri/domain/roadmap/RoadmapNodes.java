@@ -1,5 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,15 +20,28 @@ public class RoadmapNodes {
     private final List<RoadmapNode> values = new ArrayList<>();
 
     public RoadmapNodes(final List<RoadmapNode> roadmapNodes) {
+        validateTitleDistinct(roadmapNodes);
         this.values.addAll(new ArrayList<>(roadmapNodes));
+    }
+
+    private void validateTitleDistinct(final List<RoadmapNode> roadmapNodes) {
+        final int distinctNameCount = roadmapNodes.stream()
+                .map(RoadmapNode::getTitle)
+                .collect(Collectors.toSet())
+                .size();
+        if (roadmapNodes.size() != distinctNameCount) {
+            throw new BadRequestException("한 로드맵에 같은 이름의 노드가 존재할 수 없습니다.");
+        }
     }
 
     public void add(final RoadmapNode roadmapNode) {
         this.values.add(roadmapNode);
+        validateTitleDistinct(values);
     }
 
     public void addAll(final RoadmapNodes roadmapNodes) {
         this.values.addAll(new ArrayList<>(roadmapNodes.values));
+        validateTitleDistinct(values);
     }
 
     public void updateAllRoadmapContent(final RoadmapContent content) {
