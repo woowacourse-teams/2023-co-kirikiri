@@ -1,19 +1,105 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 
-const useFormInput = <T extends object>(initialState: T) => {
+type FormErrorType = {
+  [key: string]: string;
+};
+
+type ValidationType = {
+  validate: (inputValue: string) => boolean;
+  message: string;
+  updateOnFail: boolean;
+};
+
+type ValidationsType = {
+  [key: string]: ValidationType[];
+};
+
+const useFormInput = <T extends object>(
+  initialState: T,
+  validations?: ValidationsType
+) => {
   const [formState, setFormState] = useState<T>(initialState);
+  const [error, setError] = useState<FormErrorType>();
+
+  const validateInputValue = (name: string, inputValue: string) => {
+    if (!validations || !validations?.[name]) return true;
+
+    const shouldUpdateValue = validations[name].every(
+      ({ validate, message, updateOnFail }) => {
+        if (!validate(inputValue)) {
+          setError((prev) => ({
+            ...prev,
+            [name]: message,
+          }));
+
+          return updateOnFail;
+        }
+
+        return true;
+      }
+    );
+
+    return shouldUpdateValue;
+  };
+
+  const cleanError = (name: string) => {
+    if (!error || !error[name]) return;
+
+    setError((prev) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [name]: _, ...rest } = prev as FormErrorType;
+
+      return rest;
+    });
+  };
+
+  const handleSubmit = (callback: () => void) => (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validations) {
+      callback();
+      return;
+    }
+
+    const isFormValid = Object.entries(validations).every(([key, fieldValidations]) =>
+      fieldValidations.every(({ validate, message }) => {
+        const parts = key.split('[').map((part) => part.replace(']', ''));
+
+        const fieldValue = parts.reduce((currentValue, part) => {
+          return (currentValue as any)[part];
+        }, formState);
+
+        const isValid = validate(String(fieldValue));
+
+        if (!isValid) {
+          setError((prev) => ({
+            ...prev,
+            [key]: message,
+          }));
+        }
+
+        return isValid;
+      })
+    );
+
+    if (isFormValid) {
+      callback();
+    }
+  };
 
   const handleInputChange = ({
     target: { name, value },
   }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    // 이름을 '['를 기준으로 분리하고, ']'를 제거
+    cleanError(name);
+
+    const shouldUpdateValue = validateInputValue(name, value);
+    if (!shouldUpdateValue) return;
+
     const parts = name.split('[').map((part) => part.replace(']', ''));
-    // 배열 요소인지 확인하기 위해 첫 번째 요소가 'goalRoomRoadmapNodeRequests'인지 확인
     const isArray = parts.length > 2;
 
-    // 배열 요소일 때. 즉, NodeList 내부의 값이 변했을 때
     if (isArray) {
       const [baseName, arrayIndex, arrayPropName] = parts;
+
       setFormState((prevState: any) => {
         if (Array.isArray(prevState[baseName])) {
           return {
@@ -32,10 +118,8 @@ const useFormInput = <T extends object>(initialState: T) => {
         return prevState;
       });
     } else {
-      // 배열 요소가 아닐 때
       const [propName, nestedPropName] = parts;
       setFormState((prevState: any) => {
-        // 객체 내부의 객체를 업데이트 하기 위함 (2 Depth)
         if (nestedPropName) {
           return {
             ...prevState,
@@ -45,7 +129,6 @@ const useFormInput = <T extends object>(initialState: T) => {
             },
           };
         }
-        // 속성을 업데이트 (1 Depth)
         return {
           ...prevState,
           [propName]: value,
@@ -62,6 +145,8 @@ const useFormInput = <T extends object>(initialState: T) => {
     formState,
     handleInputChange,
     resetFormState,
+    error,
+    handleSubmit,
   };
 };
 
