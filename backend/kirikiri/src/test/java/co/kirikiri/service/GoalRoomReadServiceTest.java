@@ -50,6 +50,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -216,11 +217,12 @@ class GoalRoomReadServiceTest {
         final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
                 goalRoom, follower);
 
-        given(goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(anyLong()))
+        given(goalRoomMemberRepository.findByGoalRoomIdBySortType(anyLong(), any()))
                 .willReturn(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
 
         //when
-        final List<GoalRoomMemberResponse> result = goalRoomReadService.findGoalRoomMembers(1L);
+        final List<GoalRoomMemberResponse> result = goalRoomReadService.findGoalRoomMembers(1L,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE);
 
         //then
         final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "name1",
@@ -234,12 +236,13 @@ class GoalRoomReadServiceTest {
     @Test
     void 존재하지_않는_골룸일_경우_예외를_던진다() {
         //given
-        given(goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(anyLong()))
+        given(goalRoomMemberRepository.findByGoalRoomIdBySortType(anyLong(), any()))
                 .willReturn(Collections.emptyList());
 
         //when
         //then
-        assertThatThrownBy(() -> goalRoomReadService.findGoalRoomMembers(1L))
+        assertThatThrownBy(() -> goalRoomReadService.findGoalRoomMembers(1L,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -283,6 +286,19 @@ class GoalRoomReadServiceTest {
     @Test
     void 골룸의_투두리스트_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
         // given
+        final Member creator = 사용자를_생성한다(1L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+
+        final GoalRoomToDo firstGoalRoomTodo = new GoalRoomToDo(1L, new GoalRoomTodoContent("투두 1"),
+                new Period(TODAY, TEN_DAY_LATER));
+        final GoalRoomToDo secondGoalRoomTodo = new GoalRoomToDo(2L, new GoalRoomTodoContent("투두 2"),
+                new Period(TWENTY_DAY_LAYER, THIRTY_DAY_LATER));
+        goalRoom.addGoalRoomTodo(firstGoalRoomTodo);
+        goalRoom.addGoalRoomTodo(secondGoalRoomTodo);
+
+        when(goalRoomRepository.findByIdWithTodos(1L))
+                .thenReturn(Optional.of(goalRoom));
         when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.empty());
 
@@ -294,13 +310,6 @@ class GoalRoomReadServiceTest {
     @Test
     void 골룸의_투두리스트_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
         // given
-        final Member creator = 사용자를_생성한다(1L);
-        final Roadmap roadmap = 로드맵을_생성한다(creator);
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
-        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
-                creator);
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
-                .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithTodos(1L))
                 .thenReturn(Optional.empty());
 

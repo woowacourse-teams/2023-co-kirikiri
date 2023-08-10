@@ -346,13 +346,15 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 50D);
         final GoalRoomMemberResponse goalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "nickname2", "imagePath2",
                 40D);
-        given(goalRoomReadService.findGoalRoomMembers(anyLong()))
+        given(goalRoomReadService.findGoalRoomMembers(anyLong(), any()))
                 .willReturn(List.of(goalRoomMemberResponse1, goalRoomMemberResponse2));
 
         // when
-        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
-                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
-                        .contextPath(API_PREFIX))
+        final MvcResult mvcResult = mockMvc.perform(
+                        get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
+                                .param("sortCond", "ACCOMPLISHMENT_RATE")
+                                .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                                .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
                 .andDo(
                         documentationResultHandler.document(
@@ -361,6 +363,14 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 pathParameters(
                                         parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                queryParameters(
+                                        parameterWithName("sortCond")
+                                                .description("정렬 조건 (null일 경우 달성률순으로 기본 정렬) +" + "\n"
+                                                        + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                        + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                        + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .optional()
                                 ),
                                 responseFields(
                                         fieldWithPath("[0].memberId").description("회원 id"),
@@ -382,17 +392,26 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         //given
         doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
                 .when(goalRoomReadService)
-                .findGoalRoomMembers(1L);
+                .findGoalRoomMembers(anyLong(), any());
 
         //when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .param("sortCond", "ACCOMPLISHMENT_RATE")
                         .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
                 .andDo(
                         documentationResultHandler.document(
                                 pathParameters(
                                         parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                queryParameters(
+                                        parameterWithName("sortCond")
+                                                .description("정렬 조건 (null일 경우 달성률순으로 기본 정렬) +" + "\n"
+                                                        + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                        + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                        + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .optional()
                                 ),
                                 responseFields(
                                         fieldWithPath("message").description("예외 메세지")
