@@ -28,7 +28,6 @@ import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
-import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
@@ -73,18 +72,15 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
     public RoadmapCreateIntegrationTest(final RoadmapRepository roadmapRepository,
                                         final GoalRoomRepository goalRoomRepository,
-                                        final RoadmapNodeRepository roadmapNodeRepository,
                                         final GoalRoomMemberRepository goalRoomMemberRepository,
                                         final RoadmapCategoryRepository roadmapCategoryRepository) {
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
-        this.roadmapNodeRepository = roadmapNodeRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
     }
@@ -103,7 +99,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // expect
         응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.CREATED);
@@ -121,7 +117,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.CREATED);
@@ -145,7 +141,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
                 로드맵_난이도, 추천_소요_기간,
                 List.of(new RoadmapNodeSaveRequest(로드맵_노드_제목, 로드맵_노드_설명, Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final List<ErrorResponse> 에러_메시지들 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -174,7 +170,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -193,7 +189,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -212,7 +208,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -231,7 +227,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -251,7 +247,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
                 RoadmapDifficultyType.DIFFICULT, 추천_소요_기간,
                 List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -268,7 +264,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글",
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -287,7 +283,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글",
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -307,7 +303,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         // when
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글",
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -328,7 +324,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final RoadmapSaveRequest 로드맵_생성_요청값 = 로드맵_저장_요청을_생성한다();
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
         final Long 로드맵_아이디 = 아이디를_반환한다(로드맵_생성_응답값);
 
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
@@ -378,7 +374,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final RoadmapSaveRequest 로드맵_생성_요청값 = 로드맵_저장_요청을_생성한다();
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
         final Long 로드맵_아이디 = 아이디를_반환한다(로드맵_생성_응답값);
 
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
@@ -410,7 +406,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final RoadmapSaveRequest 로드맵_생성_요청값 = 로드맵_저장_요청을_생성한다();
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
         final Long 로드맵_아이디 = 아이디를_반환한다(로드맵_생성_응답값);
 
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
@@ -459,7 +455,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final RoadmapSaveRequest 로드맵_생성_요청값 = 로드맵_저장_요청을_생성한다();
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
         final Long 로드맵_아이디 = 아이디를_반환한다(로드맵_생성_응답값);
 
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
@@ -491,7 +487,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final RoadmapSaveRequest 로드맵_생성_요청값 = 로드맵_저장_요청을_생성한다();
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
         final Long 로드맵_아이디 = 아이디를_반환한다(로드맵_생성_응답값);
 
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
@@ -524,7 +520,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
         final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
         final RoadmapSaveRequest 로드맵_생성_요청값 = 로드맵_저장_요청을_생성한다();
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 크리에이터_토큰_정보);
         final Long 로드맵_아이디 = 아이디를_반환한다(로드맵_생성_응답값);
 
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
@@ -556,7 +552,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -577,7 +573,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -597,7 +593,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(카테고리.getId(), "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 이미지가_포함된_로드맵_생성_요청(로드맵_생성_요청값, 로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -646,7 +642,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         return String.format(BEARER_TOKEN_FORMAT, 토큰_응답.accessToken());
     }
 
-    private ExtractableResponse<Response> 로드맵_생성_요청(final RoadmapSaveRequest 로드맵_생성_요청값, final String accessToken)
+    private ExtractableResponse<Response> 이미지가_포함된_로드맵_생성_요청(final RoadmapSaveRequest 로드맵_생성_요청값, final String accessToken)
             throws IOException {
         final String jsonRequest = objectMapper.writeValueAsString(로드맵_생성_요청값);
 

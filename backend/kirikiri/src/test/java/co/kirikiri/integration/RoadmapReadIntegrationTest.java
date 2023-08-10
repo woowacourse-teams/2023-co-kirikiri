@@ -354,7 +354,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("roadmap 1st week", "roadmap 1st week content", null)),
                 List.of(new RoadmapTagSaveRequest("tag")));
 
-        final String 생성된_로드맵_아이디 = 로드맵_생성(로드맵_저장_요청, 로그인_토큰_정보)
+        final String 생성된_로드맵_아이디 = 이미지가_포함된_로드맵_생성_요청(로드맵_저장_요청, 로그인_토큰_정보)
                 .response()
                 .getHeader(LOCATION)
                 .replace("/api/roadmaps/", "");
@@ -362,7 +362,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         return Long.valueOf(생성된_로드맵_아이디);
     }
 
-    private ExtractableResponse<Response> 로드맵_생성(final RoadmapSaveRequest 로드맵_저장_요청, final String 로그인_토큰_정보)
+    private ExtractableResponse<Response> 이미지가_포함된_로드맵_생성_요청(final RoadmapSaveRequest 로드맵_저장_요청, final String 로그인_토큰_정보)
             throws IOException {
         final String jsonRequest = objectMapper.writeValueAsString(로드맵_저장_요청);
 
