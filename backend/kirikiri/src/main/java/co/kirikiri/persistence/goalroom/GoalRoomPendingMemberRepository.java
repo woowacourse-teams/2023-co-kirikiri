@@ -12,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomPendingMember, Long> {
 
     @Query("select gp from GoalRoomPendingMember gp "
-            + "inner join gp.goalRoom g "
-            + "inner join gp.member m "
+            + "inner join fetch gp.goalRoom g "
+            + "inner join fetch gp.member m "
             + "where g=:goalRoom "
             + "and m.identifier =:identifier")
     Optional<GoalRoomPendingMember> findByGoalRoomAndMemberIdentifier(

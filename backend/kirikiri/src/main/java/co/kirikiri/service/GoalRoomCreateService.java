@@ -146,11 +146,11 @@ public class GoalRoomCreateService {
                                                        final String identifier) {
         final Identifier memberIdentifier = new Identifier(identifier);
         final GoalRoom goalRoom = findGoalRoomWithTodos(goalRoomId);
-        final GoalRoomToDo goalRoomToDo = goalRoom.getGoalRoomToDos().findById(todoId);
+        final GoalRoomToDo goalRoomToDo = findGoalRoomTodoById(todoId, goalRoom);
         final GoalRoomMember goalRoomMember = findGoalRoomMember(memberIdentifier, goalRoom);
 
-        final boolean isAlreadyChecked = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoIdAndMemberIdentifier(
-                goalRoomId, todoId, memberIdentifier).isPresent();
+        final boolean isAlreadyChecked = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoAndMemberIdentifier(
+                goalRoomId, goalRoomToDo, memberIdentifier).isPresent();
         if (isAlreadyChecked) {
             goalRoomToDoCheckRepository.deleteByGoalRoomMemberAndToDoId(goalRoomMember, todoId);
             return new GoalRoomToDoCheckResponse(false);
@@ -165,11 +165,16 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("골룸이 존재하지 않습니다. goalRoomId = " + goalRoomId));
     }
 
+    private GoalRoomToDo findGoalRoomTodoById(final Long todoId, final GoalRoom goalRoom) {
+        return goalRoom.findGoalRoomTodoByTodoId(todoId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 투두입니다. todoId = " + todoId));
+    }
+
     private GoalRoomMember findGoalRoomMember(final Identifier memberIdentifier, final GoalRoom goalRoom) {
-        return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom,
-                memberIdentifier).orElseThrow(() -> new NotFoundException(
-                "골룸에 사용자가 존재하지 않습니다. goalRoomId = " + goalRoom.getId() + " memberIdentifier = "
-                        + memberIdentifier.getValue()));
+        return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, memberIdentifier)
+                .orElseThrow(() -> new NotFoundException(
+                        "골룸에 사용자가 존재하지 않습니다. goalRoomId = " + goalRoom.getId() + " memberIdentifier = "
+                                + memberIdentifier.getValue()));
     }
 
     @Transactional

@@ -10,6 +10,7 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,5 +49,24 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
                 .where(goalRoomMember.goalRoom.id.eq(goalRoomId))
                 .orderBy(goalRoomMember.accomplishmentRate.desc())
                 .fetch();
+    }
+
+    @Override
+    public Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier) {
+        return Optional.ofNullable(selectFrom(goalRoomMember)
+                .innerJoin(goalRoomMember.goalRoom, goalRoom)
+                .where(
+                        goalRoomIdCond(goalRoomId),
+                        memberIdentifierCond(memberIdentifier))
+                .fetchJoin()
+                .fetchFirst());
+    }
+
+    private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
+        return goalRoom.id.eq(goalRoomId);
+    }
+
+    private BooleanExpression memberIdentifierCond(final Identifier memberIdentifier) {
+        return goalRoomMember.member.identifier.eq(memberIdentifier);
     }
 }

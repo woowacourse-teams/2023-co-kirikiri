@@ -11,10 +11,8 @@ import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
@@ -26,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter implements GoalRoomQueryRepository {
+
+    private static final int LIMIT_OFFSET = 1;
 
     public GoalRoomQueryRepositoryImpl() {
         super(GoalRoom.class);
@@ -56,7 +56,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchJoin()
                 .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastValue(lastValue))
                 .orderBy(sortCond(filterType))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .fetch();
     }
 
@@ -74,17 +74,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .leftJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
                 .fetchJoin()
                 .where(goalRoomIdCond(goalRoomId))
-                .fetchFirst());
-    }
-
-    @Override
-    public Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier) {
-        return Optional.ofNullable(selectFrom(goalRoomMember)
-                .innerJoin(goalRoomMember.goalRoom, goalRoom)
-                .where(
-                        goalRoomIdCond(goalRoomId),
-                        memberIdentifierCond(memberIdentifier))
-                .fetchJoin()
                 .fetchFirst());
     }
 
@@ -110,10 +99,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
-    }
-
-    private BooleanExpression memberIdentifierCond(final Identifier memberIdentifier) {
-        return goalRoomMember.member.identifier.eq(memberIdentifier);
     }
 
     private BooleanExpression statusCond(final GoalRoomStatus status) {

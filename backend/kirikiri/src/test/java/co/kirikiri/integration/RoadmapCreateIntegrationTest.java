@@ -69,18 +69,15 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
 
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final RoadmapNodeRepository roadmapNodeRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
     public RoadmapCreateIntegrationTest(final RoadmapRepository roadmapRepository,
                                         final GoalRoomRepository goalRoomRepository,
-                                        final RoadmapNodeRepository roadmapNodeRepository,
                                         final GoalRoomMemberRepository goalRoomMemberRepository,
                                         final RoadmapCategoryRepository roadmapCategoryRepository) {
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
-        this.roadmapNodeRepository = roadmapNodeRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
     }

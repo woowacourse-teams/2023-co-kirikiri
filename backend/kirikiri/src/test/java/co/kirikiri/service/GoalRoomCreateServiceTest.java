@@ -740,7 +740,7 @@ class GoalRoomCreateServiceTest {
         when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .thenReturn(Optional.of(goalRoomMember));
 
-        when(goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoIdAndMemberIdentifier(any(), any(), any()))
+        when(goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoAndMemberIdentifier(any(), any(), any()))
                 .thenReturn(Optional.empty());
 
         // when
@@ -774,7 +774,7 @@ class GoalRoomCreateServiceTest {
         when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .thenReturn(Optional.of(goalRoomMember));
 
-        when(goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoIdAndMemberIdentifier(any(), any(), any()))
+        when(goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoAndMemberIdentifier(any(), any(), any()))
                 .thenReturn(Optional.of(goalRoomToDoCheck));
 
         // when
