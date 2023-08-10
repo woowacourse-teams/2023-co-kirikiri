@@ -62,7 +62,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     void 단일_로드맵_정보를_조회한다() throws Exception {
         //given
         final RoadmapResponse expectedResponse = 단일_로드맵_조회에_대한_응답();
-        when(roadmapReadService.findRoadmap(anyLong())).thenReturn(expectedResponse);
+        when(roadmapReadService.findRoadmap(anyLong()))
+                .thenReturn(expectedResponse);
 
         //when
         final MvcResult response = mockMvc.perform(get(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
@@ -91,7 +92,10 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                 fieldWithPath("content.nodes[0].description").description("로드맵 노드 본문"),
                                 fieldWithPath("content.nodes[0].imageUrls[0]").description("로드맵 노드 이미지 파일 경로"),
                                 fieldWithPath("tags[0].id").description("로드맵 태그 아이디"),
-                                fieldWithPath("tags[0].name").description("로드맵 태그 이름"))))
+                                fieldWithPath("tags[0].name").description("로드맵 태그 이름"),
+                                fieldWithPath("recruitedGoalRoomNumber").description("해당 로드맵에서 모집 중인 골룸 개수"),
+                                fieldWithPath("runningGoalRoomNumber").description("해당 로드맵에서 진행 중인 골룸 개수"),
+                                fieldWithPath("completedGoalRoomNumber").description("해당 로드맵에서 완료된 골룸 개수"))))
                 .andReturn();
 
         //then
@@ -642,7 +646,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
 
     private RoadmapResponse 단일_로드맵_조회에_대한_응답() {
         final RoadmapCategoryResponse category = new RoadmapCategoryResponse(1, "운동");
-        final MemberResponse creator = new MemberResponse(1, "닉네임", "image-file-path");
+        final MemberResponse creator = new MemberResponse(1, "닉네임", "profile-image-filepath");
         final List<RoadmapNodeResponse> nodes = List.of(
                 new RoadmapNodeResponse(1L, "1번 노드", "1번 노드 설명", List.of("image1-filepath", "image2-filepath")),
                 new RoadmapNodeResponse(2L, "2번 노드", "2번 노드 설명", Collections.emptyList())
@@ -652,7 +656,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 new RoadmapTagResponse(2L, "태그2")
         );
         return new RoadmapResponse(1L, category, "제목", "소개글", creator,
-                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100, 오늘, tags);
+                new RoadmapContentResponse(1L, "본문", nodes), "EASY", 100,
+                오늘, tags, 10L, 10L, 10L);
     }
 
     private List<RoadmapForListResponse> 로드맵_리스트_응답을_생성한다() {
@@ -662,9 +667,10 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         );
 
         final RoadmapForListResponse roadmapResponse1 = new RoadmapForListResponse(1L, "로드맵 제목1", "로드맵 소개글1", "NORMAL",
-                10, 오늘, new MemberResponse(1L, "코끼리", "image-file-path"), new RoadmapCategoryResponse(1L, "여행"), tags);
+                10, 오늘, new MemberResponse(1L, "코끼리", "default-member-image"), new RoadmapCategoryResponse(1L, "여행"),
+                tags);
         final RoadmapForListResponse roadmapResponse2 = new RoadmapForListResponse(2L, "로드맵 제목2", "로드맵 소개글2",
-                "DIFFICULT", 7, 오늘, new MemberResponse(2L, "끼리코", "image-file-path"),
+                "DIFFICULT", 7, 오늘, new MemberResponse(2L, "끼리코", "default-member-image"),
                 new RoadmapCategoryResponse(2L, "IT"), tags);
         return List.of(roadmapResponse1, roadmapResponse2);
     }
@@ -697,11 +703,11 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final RoadmapGoalRoomResponse roadmapGoalRoomResponse1 = new RoadmapGoalRoomResponse(1L, "골룸 이름1", 3, 6,
                 LocalDateTime.of(2023, 7, 20, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(1L, "황시진", "image-file-path"));
+                new MemberResponse(1L, "황시진", "default-member-image"));
         final RoadmapGoalRoomResponse roadmapGoalRoomResponse2 = new RoadmapGoalRoomResponse(2L, "골룸 이름2", 4, 10,
                 LocalDateTime.of(2023, 7, 10, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(2L, "시진이", "image-file-path"));
+                new MemberResponse(2L, "시진이", "default-member-image"));
         return List.of(roadmapGoalRoomResponse1, roadmapGoalRoomResponse2);
     }
 }

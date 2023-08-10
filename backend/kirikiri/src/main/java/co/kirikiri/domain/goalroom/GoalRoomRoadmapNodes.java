@@ -94,6 +94,15 @@ public class GoalRoomRoadmapNodes {
         return values.indexOf(node) != (size() - 1);
     }
 
+    public Optional<GoalRoomRoadmapNode> nextNode(final GoalRoomRoadmapNode roadmapNode) {
+        sortByStartDateAsc(values);
+
+        if (hasBackNode(roadmapNode)) {
+            return Optional.of(values.get(values.indexOf(roadmapNode) + 1));
+        }
+        return Optional.empty();
+    }
+
     public int calculateAllCheckCount() {
         return values.stream()
                 .mapToInt(GoalRoomRoadmapNode::getCheckCount)

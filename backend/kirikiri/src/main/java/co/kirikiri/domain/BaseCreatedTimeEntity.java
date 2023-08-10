@@ -14,4 +14,8 @@ public class BaseCreatedTimeEntity extends BaseEntity {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     protected LocalDateTime createdAt;
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

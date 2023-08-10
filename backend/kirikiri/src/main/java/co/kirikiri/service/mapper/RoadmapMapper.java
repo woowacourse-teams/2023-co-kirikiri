@@ -55,7 +55,10 @@ public final class RoadmapMapper {
         return new RoadmapTagSaveDto(request.name());
     }
 
-    public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content) {
+    public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content,
+                                                           final long recruitedGoalRoomNumber,
+                                                           final long runningGoalRoomNumber,
+                                                           final long completedGoalRoomNumber) {
         final RoadmapCategory category = roadmap.getCategory();
         final Member creator = roadmap.getCreator();
         final RoadmapContentResponse roadmapContentResponse = new RoadmapContentResponse(
@@ -75,7 +78,10 @@ public final class RoadmapMapper {
                 roadmap.getDifficulty().name(),
                 roadmap.getRequiredPeriod(),
                 roadmap.getCreatedAt(),
-                roadmapTagResponses
+                roadmapTagResponses,
+                recruitedGoalRoomNumber,
+                runningGoalRoomNumber,
+                completedGoalRoomNumber
         );
     }
 

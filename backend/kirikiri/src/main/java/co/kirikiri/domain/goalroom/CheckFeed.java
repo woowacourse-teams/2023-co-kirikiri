@@ -55,4 +55,8 @@ public class CheckFeed extends BaseCreatedTimeEntity {
     public String getDescription() {
         return description;
     }
+
+    public GoalRoomMember getGoalRoomMember() {
+        return goalRoomMember;
+    }
 }

@@ -87,11 +87,12 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
 
     private static final LocalDate 오늘 = LocalDate.now();
     private static final LocalDate 십일_후 = 오늘.plusDays(10L);
+    private static final LocalDate 이십일_후 = 오늘.plusDays(20L);
+    private static final LocalDate 삼십일_후 = 오늘.plusDays(30L);
     private static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
     private static final int 정상적인_골룸_제한_인원 = 20;
     private static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
 
-    private static final String BEARER = "Bearer ";
     private static final String 카테고리_이름 = "여가";
 
     private static final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname",
@@ -138,13 +139,27 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final Member 크리에이터 = 사용자를_조회_응답으로부터_사용자를_생성한다(로그인_토큰_정보);
         final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("운동");
         final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보, 카테고리, "로드맵 제목");
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회한다(로드맵_아이디);
+
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), "골룸 이름", 20,
+                new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후),
+                List.of(
+                        new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 1, 오늘, 십일_후),
+                        new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(1).id(), 1, 이십일_후, 삼십일_후)));
+
+        골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
+        골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
+        골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
+        골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
+        골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
+        골룸_생성(골룸_생성_요청, 로그인_토큰_정보);
 
         //when
         final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get(API_PREFIX + "/roadmaps/{roadmapId}", 로드맵_아이디)
+                .get(API_PREFIX + "/roadmaps/{roadmapId}", 로드맵_응답.roadmapId())
                 .then()
                 .log().all()
                 .extract();
@@ -159,10 +174,9 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 new RoadmapContentResponse(1L, "로드맵 본문", List.of(
                         new RoadmapNodeResponse(1L, "로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList()),
                         new RoadmapNodeResponse(2L, "로드맵 2주차", "로드맵 2주차 내용", Collections.emptyList()))),
-                RoadmapDifficultyType.DIFFICULT.name(),
-                30,
-                단일_로드맵_응답.createdAt(),
-                List.of(new RoadmapTagResponse(1L, "태그")));
+                RoadmapDifficultyType.DIFFICULT.name(), 30, 단일_로드맵_응답.createdAt(),
+                List.of(new RoadmapTagResponse(1L, "태그")), 6L, 0L, 0L
+        );
 
         assertAll(
                 () -> assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode())
@@ -993,7 +1007,6 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     // TODO 카테고리 추가 ADMIN API 생성 시 제거
-
     private RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
         final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
         return roadmapCategoryRepository.save(로드맵_카테고리);
@@ -1167,12 +1180,12 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 .extract();
     }
 
-    private ExtractableResponse<Response> 골룸_목록을_조회한다(final Long roadmapId, final Long lastValue, final int size,
-                                                      final String filterCond) {
+    private ExtractableResponse<Response> 골룸_목록을_조회한다(final Long roadmapId, final LocalDateTime lastValue,
+                                                      final int size, final String filterCond) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .pathParam("roadmapId", roadmapId)
-                .param("lastGoalRoomId", lastValue)
+                .param("lastCreatedAt", lastValue)
                 .param("size", size)
                 .param("filterCond", filterCond)
                 .when()

@@ -1,6 +1,7 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
@@ -33,7 +34,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,18 +57,25 @@ public class RoadmapReadService {
     public RoadmapResponse findRoadmap(final Long id) {
         final Roadmap roadmap = findRoadmapById(id);
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
 
-        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent);
-    }
+        final Map<GoalRoomStatus, List<GoalRoom>> goalRoomsDividedByStatus = goalRooms.stream()
+                .collect(Collectors.groupingBy(GoalRoom::getStatus));
 
-    private RoadmapContent findRecentContent(final Roadmap roadmap) {
-        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
-                .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
+        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent,
+                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RECRUITING, Collections.emptyList()).size(),
+                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RUNNING, Collections.emptyList()).size(),
+                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.COMPLETED, Collections.emptyList()).size());
     }
 
     private Roadmap findRoadmapById(final Long id) {
         return roadmapRepository.findRoadmapById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
+    }
+
+    private RoadmapContent findRecentContent(final Roadmap roadmap) {
+        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
+                .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
     public List<RoadmapForListResponse> findRoadmapsByFilterType(final Long categoryId,

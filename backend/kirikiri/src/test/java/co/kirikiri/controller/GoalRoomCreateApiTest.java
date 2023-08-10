@@ -418,6 +418,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 .join(anyString(), anyLong());
 
         //when
+        //then
         mockMvc.perform(
                         post(API_PREFIX + "/goal-rooms/{goalRoomId}/join", goalRoomId)
                                 .header("Authorization", "Bearer <AccessToken>")
@@ -857,6 +858,172 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                                 responseFields(
                                         fieldWithPath("message").description("예외 메세지")
                                 )));
+    }
+
+    @Test
+    void 정상적으로_골룸을_나간다() throws Exception {
+        // given
+        final Long goalRoomId = 1L;
+        doNothing().when(goalRoomCreateService)
+                .leave(anyString(), anyLong());
+
+        // when
+        // then
+        mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/leave", goalRoomId)
+                        .header(AUTHORIZATION, "Bearer <AccessToken>")
+                        .contextPath(API_PREFIX))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        )))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void 골룸을_나갈때_존재하지_않는_회원이면_실패한다() throws Exception {
+        // given
+        final Long goalRoomId = 1L;
+        doThrow(new NotFoundException("존재하지 않는 회원입니다."))
+                .when(goalRoomCreateService)
+                .leave(anyString(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(
+                        post(API_PREFIX + "/goal-rooms/{goalRoomId}/leave", goalRoomId)
+                                .header("Authorization", "Bearer <AccessToken>")
+                                .content(MediaType.APPLICATION_JSON_VALUE)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("존재하지 않는 회원입니다."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )))
+                .andReturn();
+
+        // then
+        final ErrorResponse errorResponse = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        final ErrorResponse expected = new ErrorResponse("존재하지 않는 회원입니다.");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸을_나갈때_존재하지_않는_골룸이면_실패한다() throws Exception {
+        // given
+        final Long goalRoomId = 1L;
+        doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
+                .when(goalRoomCreateService)
+                .leave(anyString(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(
+                        post(API_PREFIX + "/goal-rooms/{goalRoomId}/leave", goalRoomId)
+                                .header("Authorization", "Bearer <AccessToken>")
+                                .content(MediaType.APPLICATION_JSON_VALUE)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("존재하지 않는 골룸입니다. goalRoomId = 1"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )))
+                .andReturn();
+
+        // then
+        final ErrorResponse errorResponse = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        final ErrorResponse expected = new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸을_나갈때_진행중인_골룸이면_실패한다() throws Exception {
+        // given
+        final Long goalRoomId = 1L;
+        doThrow(new BadRequestException("진행중인 골룸에서는 나갈 수 없습니다."))
+                .when(goalRoomCreateService)
+                .leave(anyString(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(
+                        post(API_PREFIX + "/goal-rooms/{goalRoomId}/leave", goalRoomId)
+                                .header("Authorization", "Bearer <AccessToken>")
+                                .content(MediaType.APPLICATION_JSON_VALUE)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("진행중인 골룸에서는 나갈 수 없습니다."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )))
+                .andReturn();
+
+        // then
+        final ErrorResponse errorResponse = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        final ErrorResponse expected = new ErrorResponse("진행중인 골룸에서는 나갈 수 없습니다.");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 골룸을_나갈때_참여하지_않은_골룸이면_실패한다() throws Exception {
+        // given
+        final Long goalRoomId = 1L;
+        doThrow(new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = 1"))
+                .when(goalRoomCreateService)
+                .leave(anyString(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(
+                        post(API_PREFIX + "/goal-rooms/{goalRoomId}/leave", goalRoomId)
+                                .header("Authorization", "Bearer <AccessToken>")
+                                .content(MediaType.APPLICATION_JSON_VALUE)
+                                .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("골룸에 참여한 사용자가 아닙니다. memberId = 1"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메세지")
+                        )))
+                .andReturn();
+
+        // then
+        final ErrorResponse errorResponse = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        final ErrorResponse expected = new ErrorResponse("골룸에 참여한 사용자가 아닙니다. memberId = 1");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
     }
 
     private ResultActions 골룸_생성(final String jsonRequest, final ResultMatcher result) throws Exception {

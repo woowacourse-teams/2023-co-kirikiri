@@ -194,7 +194,7 @@ operation::goal-room-create-api-test/골룸_투두리스트_체크시_골룸이_
 
 operation::goal-room-create-api-test/골룸_투두리스트_체크시_사용자가_없으면_예외가_발생한다[snippets='http-request,http-response']
 
-[[골룸투두리스트-API]]
+[[골룸투두리스트조회-API]]
 == *11. 골룸 투두 리스트 조회 API*
 
 === *11-1* 성공
@@ -209,3 +209,55 @@ operation::goal-room-read-api-test/골룸_투두리스트_조회시_존재하지
 
 operation::goal-room-read-api-test/골룸_투두리스트_조회시_참여하지_않은_사용자일_경우[snippets='http-request,http-response']
 
+[[골룸나가기-API]]
+== *12. 골룸 나가기 API*
+
+=== *12-1* 성공
+
+operation::goal-room-create-api-test/정상적으로_골룸을_나간다[snippets='http-request,http-response,request-headers,path-parameters']
+
+=== *12-2* 실패 - 존재하지 않는 회원인 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_회원이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *12-3* 실패 - 골룸의 아이디가 유효하지 않은 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *12-4* 실패 - 진행중인 골룸인 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_진행중인_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+
+=== *12-5* 실패 - 참여하지 않은 골룸인 경우
+
+operation::goal-room-create-api-test/골룸을_나갈때_참여하지_않은_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+
+[[골룸노드조회-API]]
+== *13. 골룸 노드 리스트 조회 API*
+
+=== *13-1* 성공
+
+operation::goal-room-read-api-test/골룸의_노드를_조회한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+
+=== *13-2* 실패 - 존재하지 않은 골룸일 경우
+
+operation::goal-room-read-api-test/골룸_노드_조회시_존재하지_않은_골룸일_경우[snippets='http-request,http-response']
+
+=== *13-3* 실패 - 참여하지 않은 사용자인 경우
+
+operation::goal-room-read-api-test/골룸_노드_조회시_참여하지_않은_사용자일_경우[snippets='http-request,http-response']
+
+[[골룸인증피드전체조회-API]]
+== *14. 골룸 인증 피드 전체 조회 API*
+
+=== *14-1* 성공
+
+operation::goal-room-read-api-test/골룸의_인증피드를_전체_조회한다[snippets='http-request,path-parameters,request-headers,http-response,response-fields']
+
+=== *14-2* 실패 - 골룸 인증 피드 전체 조회 시 존재하지 않는 골룸인 경우
+
+operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_존재하지_않는_골룸일_경우_예외가_발생한다[snippets='http-request,http-response,response-fields']
+
+=== *14-3* 실패 - 골룸 인증 피드 전체 조회 시 해당 골룸에 참여하지 않은 사용자인 경우
+
+operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_골룸에_참여하지_않은_사용자일_경우_예외가_발생한다[snippets='http-request,http-response,response-fields']

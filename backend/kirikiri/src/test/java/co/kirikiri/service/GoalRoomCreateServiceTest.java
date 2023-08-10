@@ -83,6 +83,11 @@ class GoalRoomCreateServiceTest {
     private static final RoadmapContent ROADMAP_CONTENT = new RoadmapContent(1L, "content");
     private static final RoadmapNodes ROADMAP_CONTENTS = new RoadmapNodes(new ArrayList<>(List.of(ROADMAP_NODE)));
 
+    private static final Member GOAL_ROOM_MEMBER1 = new Member(new Identifier("identifier2"),
+            new EncryptedPassword(new Password("password!2")),
+            new Nickname("name2"),
+            new MemberProfile(Gender.FEMALE, LocalDate.now(), "010-1111-2222"));
+
     private static Member member;
 
     @Mock
@@ -477,7 +482,7 @@ class GoalRoomCreateServiceTest {
         final Member follower2 = 사용자를_생성한다(2L, "identifier2", "password3!", "name2", "010-1111-1112");
         final Member follower3 = 사용자를_생성한다(3L, "identifier3", "password4!", "name3", "010-1111-1113");
 
-        final GoalRoomPendingMember goalRoomPendingMember = 골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.LEADER);
+        final GoalRoomPendingMember goalRoomPendingMember = 골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
         final GoalRoomPendingMember goalRoomPendingMember1 = 골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
         final GoalRoomPendingMember goalRoomPendingMember2 = 골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
 
@@ -884,6 +889,86 @@ class GoalRoomCreateServiceTest {
     private GoalRoomPendingMember 골룸_대기자를_생성한다(final GoalRoom goalRoom, final Member follower,
                                                final GoalRoomRole role) {
         return new GoalRoomPendingMember(role, LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, follower);
+    }
+
+    @Test
+    void 골룸을_나간다() {
+        // given
+        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
+                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(GOAL_ROOM_MEMBER1));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        // when
+        // then
+        assertDoesNotThrow(() -> goalRoomCreateService.leave("identifier2", 1L));
+
+    }
+
+    @Test
+    void 골룸을_나갈때_존재하지_않는_회원일_경우_예외가_발생한다() {
+        // given
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> goalRoomCreateService.leave("identifier2", 1L))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸을_나갈때_존재하지_않는_골룸일_경우_예외가_발생한다() {
+        // given
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> goalRoomCreateService.leave("identifier2", 1L))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 골룸을_나갈때_골룸이_진행중이면_예외가_발생한다() {
+        // given
+        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
+                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        // when
+        goalRoom.start();
+
+        // then
+        assertThatThrownBy(() -> goalRoomCreateService.leave("identifier2", 1L))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void 골룸을_나갈때_골룸에_남아있는_사용자가_없으면_골룸이_삭제된다() {
+        // given
+        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
+                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        // when
+        goalRoomCreateService.leave("identifier2", 1L);
+
+        // then
+        verify(goalRoomRepository, times(1)).delete(goalRoom);
     }
 
     private Member 사용자를_생성한다(final Long memberId, final String identifier, final String nickname) {

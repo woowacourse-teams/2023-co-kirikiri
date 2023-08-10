@@ -16,6 +16,7 @@ import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
@@ -228,11 +229,71 @@ class CheckFeedRepositoryTest {
         assertThat(checkFeeds).isEmpty();
     }
 
+    @Test
+    void 골룸의_특정_노드_동안_등록된_인증_피드들을_등록한_사용자의_정보와_함께_조회한다() {
+        //given
+        final Member creator = 사용자를_저장한다("cokiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                member);
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
+
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, leader);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, leader);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, leader);
+
+        //when
+        final List<CheckFeed> checkFeeds1 = checkFeedRepository.findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(
+                goalRoomRoadmapNode1);
+        final List<CheckFeed> checkFeeds2 = checkFeedRepository.findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(
+                goalRoomRoadmapNode2);
+
+        //then
+        final CheckFeed expected1 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
+                "originalFileName", "인증 피드 본문", goalRoomRoadmapNode1, joinedMember);
+        final CheckFeed expected2 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
+                "originalFileName", "인증 피드 본문", goalRoomRoadmapNode2, leader);
+
+        assertAll(
+                () -> assertThat(checkFeeds1).hasSize(3)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt")
+                        .isEqualTo(List.of(expected1, expected1, expected1)),
+                () -> assertThat(checkFeeds1.get(0).getGoalRoomMember().getMember().getNickname().getValue())
+                        .isEqualTo("참여자"),
+                () -> assertThat(checkFeeds1.get(0).getGoalRoomMember().getMember().getImage().getServerFilePath())
+                        .isEqualTo("serverFilePath"),
+                () -> assertThat(checkFeeds2).hasSize(3)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt")
+                        .isEqualTo(List.of(expected2, expected2, expected2)),
+                () -> assertThat(checkFeeds2.get(0).getGoalRoomMember().getMember().getNickname().getValue())
+                        .isEqualTo("코끼리"),
+                () -> assertThat(checkFeeds2.get(0).getGoalRoomMember().getMember().getImage().getServerFilePath())
+                        .isEqualTo("serverFilePath")
+        );
+    }
+
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
+        final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(nickname), memberProfile);
+                new Nickname(nickname), memberImage, memberProfile);
         return memberRepository.save(creator);
     }
 

@@ -279,4 +279,20 @@ public class GoalRoomCreateService {
                 goalRoomPendingMember.getJoinedAt(), goalRoomPendingMember.getGoalRoom(),
                 goalRoomPendingMember.getMember());
     }
+
+    public void leave(final String identifier, final Long goalRoomId) {
+        final Member member = findMemberByIdentifier(identifier);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        validateStatus(goalRoom);
+        goalRoom.leave(member);
+        if (goalRoom.isEmptyGoalRoom()) {
+            goalRoomRepository.delete(goalRoom);
+        }
+    }
+
+    private void validateStatus(final GoalRoom goalRoom) {
+        if (goalRoom.isRunning()) {
+            throw new BadRequestException("진행중인 골룸에서는 나갈 수 없습니다.");
+        }
+    }
 }
