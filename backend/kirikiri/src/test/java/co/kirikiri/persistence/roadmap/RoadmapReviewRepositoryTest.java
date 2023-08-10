@@ -84,7 +84,7 @@ class RoadmapReviewRepositoryTest {
     private Member 사용자를_저장한다(final String name, final String identifier) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(name), memberProfile);
+                new Nickname(name), null, memberProfile);
         return memberRepository.save(creator);
     }
 

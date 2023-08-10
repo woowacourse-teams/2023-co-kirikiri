@@ -42,7 +42,7 @@ class GoalRoomMemberTest {
         // given
         final Member member = new Member(new Identifier("identifier"),
                 new EncryptedPassword(new Password("password1!")),
-                new Nickname("name"), null);
+                new Nickname("name"), null, null);
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), null,
                 member);
 
@@ -58,10 +58,10 @@ class GoalRoomMemberTest {
         // given
         final Member member1 = new Member(1L, new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1!")),
-                new Nickname("name1"), null);
+                new Nickname("name1"), null, null);
         final Member member2 = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password2!")),
-                new Nickname("name2"), null);
+                new Nickname("name2"), null, null);
 
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), null,
                 member1);

@@ -85,7 +85,7 @@ class GoalRoomCreateServiceTest {
 
     private static final Member GOAL_ROOM_MEMBER1 = new Member(new Identifier("identifier2"),
             new EncryptedPassword(new Password("password!2")),
-            new Nickname("name2"),
+            new Nickname("name2"), null,
             new MemberProfile(Gender.FEMALE, LocalDate.now(), "010-1111-2222"));
 
     private static Member member;
@@ -126,7 +126,7 @@ class GoalRoomCreateServiceTest {
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, TODAY, phoneNumber);
-        member = new Member(identifier, encryptedPassword, nickname, memberProfile);
+        member = new Member(identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
     @Test
@@ -824,7 +824,7 @@ class GoalRoomCreateServiceTest {
     private Member 크리에이터를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), null, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long memberId, final String identifier, final String password, final String nickname,
@@ -833,7 +833,7 @@ class GoalRoomCreateServiceTest {
                 LocalDate.of(1995, 9, 30), phoneNumber);
 
         return new Member(memberId, new Identifier(identifier), new EncryptedPassword(new Password(password)),
-                new Nickname(nickname), memberProfile);
+                new Nickname(nickname), null, memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {
@@ -976,7 +976,7 @@ class GoalRoomCreateServiceTest {
                 LocalDate.of(1995, 9, 30), "010-1234-5678");
 
         return new Member(memberId, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(nickname), memberProfile);
+                new Nickname(nickname), null, memberProfile);
     }
 
     private GoalRoom 골룸을_생성한다(final Member creator, final RoadmapContent roadmapContent,

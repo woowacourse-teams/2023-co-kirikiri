@@ -58,7 +58,7 @@ class MemberServiceTest {
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
         given(memberRepository.save(any()))
-                .willReturn(new Member(1L, null, null, null, null));
+                .willReturn(new Member(1L, null, null, null, null, null));
         given(environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY))
                 .willReturn("default-member-image");
         given(environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY))
@@ -84,7 +84,7 @@ class MemberServiceTest {
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
 
-        final Member member = new Member(identifier, new EncryptedPassword(password), nickname,
+        final Member member = new Member(identifier, new EncryptedPassword(password), nickname, null,
                 new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -102,7 +102,7 @@ class MemberServiceTest {
                 "010-1234-5678", GenderType.MALE, LocalDate.now());
 
         given(memberRepository.findByNickname(any()))
-                .willReturn(Optional.of(new Member(null, null, null, null)));
+                .willReturn(Optional.of(new Member(null, null, null, null, null, null)));
 
         //when
         //then

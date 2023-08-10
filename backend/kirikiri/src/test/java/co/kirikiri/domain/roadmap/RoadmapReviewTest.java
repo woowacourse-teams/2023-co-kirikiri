@@ -26,7 +26,7 @@ class RoadmapReviewTest {
         final String content = "a".repeat(1000);
         final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
         final Member member = new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")),
-                new Nickname("nickname"), profile);
+                new Nickname("nickname"), null, profile);
 
         // expected
         final RoadmapReview roadmapReview =
@@ -41,7 +41,7 @@ class RoadmapReviewTest {
         final String content = "a".repeat(1001);
         final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
         final Member member = new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")),
-                new Nickname("nickname"), profile);
+                new Nickname("nickname"), null, profile);
 
         // expected
         assertThatThrownBy(() -> new RoadmapReview(content, null, member))
@@ -54,7 +54,7 @@ class RoadmapReviewTest {
         // given
         final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
         final Member member = new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")),
-                new Nickname("nickname"), profile);
+                new Nickname("nickname"), null, profile);
 
         // expected
         assertThatThrownBy(() -> new RoadmapReview("리뷰", rate, member))

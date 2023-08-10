@@ -141,7 +141,7 @@ class GoalRoomServiceIntegrationTest extends IntegrationTest {
                              final String 전화번호) {
         final MemberProfile 사용자_프로필 = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), 전화번호);
         final Member 사용자 = new Member(new Identifier(아이디),
-                new EncryptedPassword(new Password(비밀번호)), new Nickname(닉네임), 사용자_프로필);
+                new EncryptedPassword(new Password(비밀번호)), new Nickname(닉네임), null, 사용자_프로필);
         return memberRepository.save(사용자);
     }
 

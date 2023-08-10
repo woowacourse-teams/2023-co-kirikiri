@@ -475,8 +475,8 @@ class RoadmapReadServiceTest {
     private Member 사용자를_생성한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
 
-        return new Member(1L, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), memberProfile);
+        return new Member(1L, new Identifier("identifier1"), new EncryptedPassword(new Password("password1!")),
+                new Nickname("썬샷"), null, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id) {
