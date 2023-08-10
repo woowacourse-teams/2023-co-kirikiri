@@ -785,7 +785,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸의_인증피드를_전체_조회시_골룸에_참여하지_않은_사용자이면_예외가_발생한다() throws IOException {
+    void 골룸의_인증피드를_전체_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() throws IOException {
         // given
         회원가입을_한다("identifier1", "password1!", "name1", "010-1111-2222", GenderType.MALE,
                 LocalDate.of(2023, Month.JULY, 12));

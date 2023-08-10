@@ -1070,7 +1070,6 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final RoadmapResponse 로드맵 = 로드맵을_아이디로_조회한다(로드맵_아이디);
         골룸_목록_조회할_로드맵_아이디 = 로드맵_아이디;
 
-
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
                 new GoalRoomRoadmapNodeRequest(로드맵.content().nodes().get(0).id(), 1, 오늘, 십일_후));

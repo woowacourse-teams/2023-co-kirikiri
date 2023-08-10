@@ -1,6 +1,5 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;

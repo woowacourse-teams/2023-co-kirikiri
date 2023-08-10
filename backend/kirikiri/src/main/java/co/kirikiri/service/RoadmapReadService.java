@@ -1,7 +1,6 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
@@ -30,10 +29,7 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,8 +83,8 @@ public class RoadmapReadService {
     }
 
     public RoadmapForListResponses search(final RoadmapFilterTypeRequest filterTypeRequest,
-                                               final RoadmapSearchRequest searchRequest,
-                                               final CustomScrollRequest scrollRequest) {
+                                          final RoadmapSearchRequest searchRequest,
+                                          final CustomScrollRequest scrollRequest) {
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterTypeRequest);
         final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(
                 searchRequest.creatorId(), searchRequest.roadmapTitle(), searchRequest.tagName());

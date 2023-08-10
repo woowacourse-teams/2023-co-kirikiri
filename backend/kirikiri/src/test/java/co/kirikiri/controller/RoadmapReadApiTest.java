@@ -179,7 +179,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("responses[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("responses[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("responses[0].creator.name").description("로드맵 크리에이터 이름"),
-                                        fieldWithPath("responses[0].creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
+                                        fieldWithPath("responses[0].creator.imageUrl").description(
+                                                "로드맵 크리에이터 프로필 이미지 경로"),
                                         fieldWithPath("responses[0].category.id").description("로드맵 카테고리 아이디"),
                                         fieldWithPath("responses[0].category.name").description("로드맵 카테고리 이름"),
                                         fieldWithPath("responses[0].tags[0].id").description("로드맵 태그 아이디"),
@@ -348,7 +349,8 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("responses[0].createdAt").description("로드맵 생성 시간"),
                                         fieldWithPath("responses[0].creator.id").description("로드맵 크리에이터 아이디"),
                                         fieldWithPath("responses[0].creator.name").description("로드맵 크리에이터 이름"),
-                                        fieldWithPath("responses[0].creator.imageUrl").description("로드맵 크리에이터 프로필 이미지 경로"),
+                                        fieldWithPath("responses[0].creator.imageUrl").description(
+                                                "로드맵 크리에이터 프로필 이미지 경로"),
                                         fieldWithPath("responses[0].category.id").description("로드맵 카테고리 아이디"),
                                         fieldWithPath("responses[0].category.name").description("로드맵 카테고리 이름"),
                                         fieldWithPath("responses[0].tags[0].id").description("로드맵 태그 아이디"),
@@ -499,13 +501,15 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("responses[0].goalRoomId").description("골룸 아이디"),
                                         fieldWithPath("responses[0].name").description("골룸 이름"),
                                         fieldWithPath("responses[0].currentMemberCount").description("현재 골룸에 참여한 인원 수"),
-                                        fieldWithPath("responses[0].limitedMemberCount").description("골룸에 참여할 수 있는 제한 인원 수"),
+                                        fieldWithPath("responses[0].limitedMemberCount").description(
+                                                "골룸에 참여할 수 있는 제한 인원 수"),
                                         fieldWithPath("responses[0].createdAt").description("골룸 생성 날짜와 시간"),
                                         fieldWithPath("responses[0].startDate").description("골룸의 시작 날짜"),
                                         fieldWithPath("responses[0].endDate").description("골룸의 종료 날짜"),
                                         fieldWithPath("responses[0].goalRoomLeader.id").description("골룸 리더의 아이디"),
                                         fieldWithPath("responses[0].goalRoomLeader.name").description("골룸 리더의 닉네임"),
-                                        fieldWithPath("responses[0].goalRoomLeader.imageUrl").description("골룸 리더의 프로필 이미지 경로"),
+                                        fieldWithPath("responses[0].goalRoomLeader.imageUrl").description(
+                                                "골룸 리더의 프로필 이미지 경로"),
                                         fieldWithPath("hasNext").description("다음 요소의 존재 여부")
                                 )
                         )
