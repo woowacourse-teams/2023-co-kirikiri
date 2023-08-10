@@ -63,6 +63,7 @@ import io.restassured.response.Response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -836,8 +837,8 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 });
 
         final LocalDateTime localDateTime = 첫번째_로드맵_리뷰_조회_응답값.get(1).createdAt();
-        final CustomReviewScrollRequest 두번째_스크롤_요청 = new CustomReviewScrollRequest(첫번째_로드맵_리뷰_조회_응답값.get(1).createdAt()
-                , null, 2);
+        final CustomReviewScrollRequest 두번째_스크롤_요청 = new CustomReviewScrollRequest(첫번째_로드맵_리뷰_조회_응답값.get(1).createdAt(),
+                null, 2);
         final ExtractableResponse<Response> 두번째_로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(저장된_로드맵.getId(), 두번째_스크롤_요청);
         final List<RoadmapReviewResponse> 두번째_로드맵_리뷰_조회_응답값 = jsonToClass(두번째_로드맵_리뷰_조회_응답.asString(),
                 new TypeReference<>() {
@@ -1257,13 +1258,26 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     private ExtractableResponse<Response> 로드맵_리뷰를_조회한다(final Long 로드맵_아이디, final CustomReviewScrollRequest 스크롤_요청) {
+        final String 시간_데이터_문자열 = LocalDateTime을_지정된_문자열_형식으로_변환한다(스크롤_요청.lastCreatedAt());
+
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .body(스크롤_요청)
+                .param("lastCreatedAt", 시간_데이터_문자열)
+                .param("lastReviewRate", 스크롤_요청.lastReviewRate())
+                .param("size", 스크롤_요청.size())
                 .get("/api/roadmaps/{roadmapId}/reviews", 로드맵_아이디)
                 .then()
                 .log().all()
                 .extract();
+    }
+
+    private String LocalDateTime을_지정된_문자열_형식으로_변환한다(final LocalDateTime 시간_데이터) {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        String 시간_데이터_문자열 = null;
+        if (시간_데이터 != null) {
+            시간_데이터_문자열 = 시간_데이터.format(formatter);
+        }
+        return 시간_데이터_문자열;
     }
 }

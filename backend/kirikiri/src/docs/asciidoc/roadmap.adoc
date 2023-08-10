@@ -199,8 +199,8 @@ operation::roadmap-read-api-test/로드맵의_골룸_목록을_조건에_따라_
 
 === *9-1* 성공
 
-operation::roadmap-read-api-test/로드맵의_리뷰들을_조회한다[snippets='http-request,http-response,request-fields,query-parameters,response-fields']
+operation::roadmap-read-api-test/로드맵의_리뷰들을_조회한다[snippets='http-request,http-response,path-parameters,query-parameters,response-fields']
 
 === *9-1* 실패 - 존재하지 않는 로드맵인 경우
 
-operation::roadmap-read-api-test/로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디일_경우_예외를_반환한다[snippets='http-request,http-response,path-parameters,request-fields,response-fields']
+operation::roadmap-read-api-test/로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디일_경우_예외를_반환한다[snippets='http-request,http-response,path-parameters,query-parameters,response-fields']

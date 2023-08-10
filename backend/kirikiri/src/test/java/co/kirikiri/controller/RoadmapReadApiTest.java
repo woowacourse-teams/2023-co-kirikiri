@@ -9,7 +9,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -22,7 +21,6 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
-import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -553,8 +551,6 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 로드맵의_리뷰들을_조회한다() throws Exception {
         // given
-        final String reviewScrollRequest = objectMapper.writeValueAsString(
-                new CustomReviewScrollRequest(null, null, 10));
         final List<RoadmapReviewResponse> expected = List.of(
                 new RoadmapReviewResponse(1L, new MemberResponse(1L, "작성자1", "image1-file-path"),
                         LocalDateTime.of(2023, 8, 15, 12, 30, 0, 123456), "리뷰 내용", 4.5),
@@ -568,7 +564,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         // when
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
-                                .content(reviewScrollRequest)
+                                .param("size", "10")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
@@ -576,12 +572,12 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                         pathParameters(
                                 parameterWithName("roadmapId").description("로드맵 아이디")
                         ),
-                        requestFields(
-                                fieldWithPath("lastCreatedAt").optional()
+                        queryParameters(
+                                parameterWithName("lastCreatedAt").optional()
                                         .description("이전 요청에서 받았던 리뷰 중 가장 옛날 날짜(첫 요청에는 없어도 상관없음)"),
-                                fieldWithPath("lastReviewRate").optional()
-                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음"),
-                                fieldWithPath("size").description("한 번에 조회할 리뷰갯수")
+                                parameterWithName("lastReviewRate").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
                         ),
                         responseFields(
                                 fieldWithPath("[0].id").description("리뷰 아이디"),
@@ -609,15 +605,13 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디일_경우_예외를_반환한다() throws Exception {
         // given
-        final String reviewScrollRequest = objectMapper.writeValueAsString(
-                new CustomReviewScrollRequest(null, null, 10));
         when(roadmapReadService.findRoadmapReviews(anyLong(), any()))
                 .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
         // when
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/reviews", 1L)
-                                .content(reviewScrollRequest)
+                                .param("size", "10")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
@@ -625,12 +619,12 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                         pathParameters(
                                 parameterWithName("roadmapId").description("로드맵 아이디")
                         ),
-                        requestFields(
-                                fieldWithPath("lastCreatedAt").optional()
+                        queryParameters(
+                                parameterWithName("lastCreatedAt").optional()
                                         .description("이전에 가장 마지막으로 조회한 리뷰의 생성일자(첫 요청에는 없어도 상관없음)"),
-                                fieldWithPath("lastReviewRate").optional()
-                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음"),
-                                fieldWithPath("size").description("한 번에 조회할 리뷰갯수")
+                                parameterWithName("lastReviewRate").optional()
+                                        .description("이전에 가장 마지막으로 조회한 리뷰의 별점(첫 요청에는 없어도 상관없음)"),
+                                parameterWithName("size").description("한 번에 조회할 리뷰갯수")
                         ),
                         responseFields(
                                 fieldWithPath("message").description("예외 메시지")
