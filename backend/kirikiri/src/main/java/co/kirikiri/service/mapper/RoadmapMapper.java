@@ -10,6 +10,7 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
@@ -56,9 +57,7 @@ public final class RoadmapMapper {
     }
 
     public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content,
-                                                           final long recruitedGoalRoomNumber,
-                                                           final long runningGoalRoomNumber,
-                                                           final long completedGoalRoomNumber) {
+                                                           final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto) {
         final RoadmapCategory category = roadmap.getCategory();
         final Member creator = roadmap.getCreator();
         final RoadmapContentResponse roadmapContentResponse = new RoadmapContentResponse(
@@ -79,9 +78,9 @@ public final class RoadmapMapper {
                 roadmap.getRequiredPeriod(),
                 roadmap.getCreatedAt(),
                 roadmapTagResponses,
-                recruitedGoalRoomNumber,
-                runningGoalRoomNumber,
-                completedGoalRoomNumber
+                roadmapGoalRoomNumberDto.recruitedGoalRoomNumber(),
+                roadmapGoalRoomNumberDto.runningGoalRoomNumber(),
+                roadmapGoalRoomNumberDto.completedGoalRoomNumber()
         );
     }
 

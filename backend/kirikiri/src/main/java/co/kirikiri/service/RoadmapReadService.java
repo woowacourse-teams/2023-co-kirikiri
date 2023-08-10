@@ -19,6 +19,7 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
@@ -52,14 +53,8 @@ public class RoadmapReadService {
         final Roadmap roadmap = findRoadmapById(id);
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
         final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
-
-        final Map<GoalRoomStatus, List<GoalRoom>> goalRoomsDividedByStatus = goalRooms.stream()
-                .collect(Collectors.groupingBy(GoalRoom::getStatus));
-
-        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent,
-                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RECRUITING, Collections.emptyList()).size(),
-                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RUNNING, Collections.emptyList()).size(),
-                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.COMPLETED, Collections.emptyList()).size());
+        final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto = GoalRoomMapper.convertRoadmapGoalRoomDto(goalRooms);
+        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent, roadmapGoalRoomNumberDto);
     }
 
     private Roadmap findRoadmapById(final Long id) {

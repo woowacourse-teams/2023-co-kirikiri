@@ -4,7 +4,7 @@
     <springProperty name="LOG_PATTERN" source="logging.custom-pattern"/>
     <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-url"/>
 
-    <timestamp key="ToDay" datePattern="yyyy-MM-dd"/>
+    <timestamp key="DateFormat" datePattern="yyyy-MM-dd"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -21,7 +21,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
 
-        <file>${LOG_PATH}/${ToDay}/${LOG_FILE_NAME}.log</file>
+        <file>${LOG_PATH}/${DateFormat}/${LOG_FILE_NAME}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>
                 ${LOG_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}_%i.log
