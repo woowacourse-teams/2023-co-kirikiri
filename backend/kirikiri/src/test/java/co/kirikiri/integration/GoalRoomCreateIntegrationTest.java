@@ -727,6 +727,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
 
         final Long 골룸_아이디 = 정상적인_골룸_생성(로그인_토큰_정보, 로드맵_아이디, 로드맵_응답.content().nodes().get(0).id());
+        ;
         goalRoomCreateService.startGoalRooms();
         final Long 투두_아이디 = 골룸_투두리스트_추가후_아이디를_반환한다(로그인_토큰_정보, 골룸_아이디);
 

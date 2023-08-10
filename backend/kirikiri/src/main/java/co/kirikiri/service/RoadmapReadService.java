@@ -62,10 +62,9 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent,
-                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RECRUITING, Collections.emptyList()).size(),
-                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RUNNING, Collections.emptyList()).size(),
-                goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.COMPLETED, Collections.emptyList()).size());
+    private RoadmapContent findRecentContent(final Roadmap roadmap) {
+        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
+                .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
     public RoadmapForListResponses findRoadmapsByFilterType(final Long categoryId,

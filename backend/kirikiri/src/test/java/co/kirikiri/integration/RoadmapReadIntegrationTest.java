@@ -5,17 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -1175,38 +1167,5 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 .get(API_PREFIX + "/roadmaps/{roadmapId}/goal-rooms", roadmapId)
                 .then().log().all()
                 .extract();
-    }
-
-    private Roadmap 로드맵_응답으로부터_로드맵_본문을_생성한다(final Member 크리에이터, final RoadmapCategory 카테고리,
-                                            final RoadmapResponse 로드맵_응답) {
-        final Roadmap 로드맵 = new Roadmap(로드맵_응답.roadmapId(), 로드맵_응답.roadmapTitle(), 로드맵_응답.introduction(),
-                로드맵_응답.recommendedRoadmapPeriod(), RoadmapDifficulty.valueOf(로드맵_응답.difficulty()), 크리에이터, 카테고리);
-        final RoadmapContentResponse 로드맵_본문_응답 = 로드맵_응답.content();
-        final RoadmapContent 로드맵_본문 = new RoadmapContent(로드맵_본문_응답.content());
-        final List<RoadmapNodeResponse> 로드맵_본문_노드_응답 = 로드맵_본문_응답.nodes();
-        final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문_노드_응답.stream()
-                .map(response -> new RoadmapNode(response.title(), response.description()))
-                .toList();
-
-        로드맵_본문.addNodes(new RoadmapNodes(로드맵_노드_리스트));
-        로드맵.addContent(로드맵_본문);
-
-        return roadmapRepository.save(로드맵);
-    }
-
-    private GoalRoom 상태별_골룸을_생성한다(final List<RoadmapContent> 로드맵_본문_리스트, final Member 리더, final GoalRoomStatus 골룸_상태) {
-        final RoadmapContent 로드맵_본문 = 로드맵_본문_리스트.get(0);
-        final GoalRoom 골룸 = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), 로드맵_본문, 리더);
-        final List<RoadmapNode> 로드맵_노드_리스트 = 로드맵_본문.getNodes().getValues();
-
-        final RoadmapNode 첫번째_로드맵_노드 = 로드맵_노드_리스트.get(0);
-        final GoalRoomRoadmapNode 첫번째_골룸_노드 = new GoalRoomRoadmapNode(
-                new Period(LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(5)), 3, 첫번째_로드맵_노드);
-
-        final GoalRoomRoadmapNodes 골룸_노드들 = new GoalRoomRoadmapNodes(List.of(첫번째_골룸_노드));
-        골룸.addAllGoalRoomRoadmapNodes(골룸_노드들);
-        골룸.updateStatus(골룸_상태);
-        return goalRoomRepository.save(골룸);
     }
 }
