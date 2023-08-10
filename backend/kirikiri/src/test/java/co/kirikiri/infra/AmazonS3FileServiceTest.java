@@ -1,12 +1,15 @@
 package co.kirikiri.infra;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.exception.ServerException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.Protocol;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import org.junit.jupiter.api.Test;
@@ -14,9 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @ExtendWith(MockitoExtension.class)
 class AmazonS3FileServiceTest {
@@ -25,6 +32,9 @@ class AmazonS3FileServiceTest {
 
     @Mock
     private AmazonS3 amazonS3;
+
+    @Mock
+    private Environment environment;
 
     @Mock
     private MultipartFile multipartFile;
@@ -41,6 +51,12 @@ class AmazonS3FileServiceTest {
                 .thenReturn((long) "test-content".length());
         when(multipartFile.getContentType())
                 .thenReturn("image/png");
+        when(environment.getProperty("cloud.aws.s3.root-directory"))
+                .thenReturn("rootDirectory");
+        when(environment.getProperty("cloud.aws.s3.sub-directory"))
+                .thenReturn("subDirectory");
+        when(environment.getProperty("cloud.aws.s3.bucket"))
+                .thenReturn("bucket");
         when(amazonS3.putObject(any(), any(), any(), any()))
                 .thenReturn(null);
 
@@ -95,5 +111,23 @@ class AmazonS3FileServiceTest {
         //then
         assertThatThrownBy(() -> amazonS3FileService.save(PATH, multipartFile))
                 .isInstanceOf(ServerException.class);
+    }
+
+    @Test
+    void 정상적으로_파일_URL을_생성한다() throws MalformedURLException {
+        //given
+        final URL url = new URL(Protocol.HTTP.toString(), "host", 80, "file");
+        when(environment.getProperty(anyString()))
+                .thenReturn("bucket");
+        when(environment.getProperty(anyString()))
+                .thenReturn("60000");
+        when(amazonS3.generatePresignedUrl(any()))
+                .thenReturn(url);
+
+        //when
+        final URL result = amazonS3FileService.generateUrl("path", HttpMethod.GET);
+
+        //then
+        assertThat(result).isEqualTo(url);
     }
 }
