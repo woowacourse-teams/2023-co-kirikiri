@@ -243,6 +243,11 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomPendingMembers.isEmpty() && goalRoomMembers.isEmpty();
     }
 
+    public boolean isCompletedAfterMonths(final long numberOfMonth) {
+        final LocalDate currentDate = LocalDate.now();
+        return currentDate.isAfter(endDate.plusMonths(numberOfMonth));
+    }
+
     public GoalRoomName getName() {
         return name;
     }

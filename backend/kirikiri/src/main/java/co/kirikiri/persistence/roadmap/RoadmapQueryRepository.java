@@ -6,6 +6,7 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
+import co.kirikiri.persistence.dto.RoadmapStatusType;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,6 @@ public interface RoadmapQueryRepository {
                                                                 final int pageSize);
 
     Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier);
+
+    List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatusType status);
 }

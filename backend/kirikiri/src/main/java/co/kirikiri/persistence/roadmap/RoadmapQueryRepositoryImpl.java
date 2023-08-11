@@ -3,6 +3,7 @@ package co.kirikiri.persistence.roadmap;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
+import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
 
 import co.kirikiri.domain.member.Member;
@@ -15,6 +16,7 @@ import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.dto.RoadmapSearchTagName;
 import co.kirikiri.persistence.dto.RoadmapSearchTitle;
+import co.kirikiri.persistence.dto.RoadmapStatusType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -99,6 +101,15 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .where(memberIdentifierCond(identifier),
                         roadmap.id.eq(roadmapId))
                 .fetchOne());
+    }
+
+    @Override
+    public List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatusType status) {
+        return selectFrom(roadmap)
+                .innerJoin(roadmap.contents.values, roadmapContent)
+                .fetchJoin()
+                .where(statusCond(RoadmapStatus.valueOf(status.name())))
+                .fetch();
     }
 
     private BooleanExpression categoryCond(final RoadmapCategory category) {
