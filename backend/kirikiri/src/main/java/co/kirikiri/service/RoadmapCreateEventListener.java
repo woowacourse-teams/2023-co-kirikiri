@@ -76,7 +76,7 @@ public class RoadmapCreateEventListener {
     private String findOriginalFileName(final MultipartFile image) {
         final String originalFilename = image.getOriginalFilename();
         if (originalFilename == null) {
-            throw new BadRequestException("원본 파일의 이름이 존재하지 않습나다.");
+            throw new BadRequestException("원본 파일의 이름이 존재하지 않습니다.");
         }
         return originalFilename;
     }
