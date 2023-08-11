@@ -208,7 +208,7 @@ public class GoalRoomMapper {
     private static List<CheckFeedResponse> convertToCheckFeedResponses(final List<CheckFeed> checkFeeds) {
         return checkFeeds.stream()
                 .map(checkFeed -> new CheckFeedResponse(checkFeed.getId(), checkFeed.getServerFilePath(),
-                        checkFeed.getDescription(), checkFeed.getCreatedAt()))
+                        checkFeed.getDescription(), checkFeed.getCreatedAt().toLocalDate()))
                 .limit(MAX_MEMBER_GOAL_ROOM_CHECK_FEED_NUMBER)
                 .toList();
     }
@@ -243,7 +243,7 @@ public class GoalRoomMapper {
                             new MemberNameAndImageResponse(member.getId(), member.getNickname().getValue(),
                                     memberImage.getServerFilePath()),
                             new CheckFeedResponse(checkFeed.getId(), checkFeed.getServerFilePath(),
-                                    checkFeed.getDescription(), checkFeed.getCreatedAt()));
+                                    checkFeed.getDescription(), checkFeed.getCreatedAt().toLocalDate()));
                 })
                 .toList();
     }

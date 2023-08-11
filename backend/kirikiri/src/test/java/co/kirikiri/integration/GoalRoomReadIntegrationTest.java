@@ -285,8 +285,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 List.of(new GoalRoomTodoResponse(1L, 정상적인_골룸_투두_컨텐츠, 오늘, 십일_후,
                         new GoalRoomToDoCheckResponse(false))),
                 List.of(
-                        new CheckFeedResponse(1L, "filePath1", "image description", LocalDateTime.now()),
-                        new CheckFeedResponse(2L, "filePath1", "image description", LocalDateTime.now())
+                        new CheckFeedResponse(1L, "filePath1", "image description", LocalDate.now()),
+                        new CheckFeedResponse(2L, "filePath1", "image description", LocalDate.now())
                 ));
 
         final MemberGoalRoomResponse 요청_응답값 = objectMapper.readValue(사용자_단일_골룸_조회_응답.asString(), new TypeReference<>() {
@@ -677,12 +677,12 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 new MemberNameAndImageResponse(1L, "name1", "serverFilePath"),
                 new CheckFeedResponse(1L, serverPathPrefix + filePathGenerator.makeFilePath(1L, ImageDirType.CHECK_FEED)
                         + "originalFileName.jpeg", "image description1",
-                        LocalDateTime.now()));
+                        LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberNameAndImageResponse(2L, "name2", "serverFilePath"),
                 new CheckFeedResponse(2L, serverPathPrefix + filePathGenerator.makeFilePath(1L, ImageDirType.CHECK_FEED)
                         + "originalFileName.jpeg", "image description2",
-                        LocalDateTime.now()));
+                        LocalDate.now()));
 
         final List<GoalRoomCheckFeedResponse> 예상하는_응답값 = List.of(goalRoomCheckFeedResponse2,
                 goalRoomCheckFeedResponse1);

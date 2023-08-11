@@ -357,10 +357,10 @@ class GoalRoomReadServiceTest {
                                 goalRoomRoadmapNode2.getEndDate(), goalRoomRoadmapNode2.getCheckCount())
                 )), null,
                 List.of(
-                        new CheckFeedResponse(1L, "filePath1", "인증 피드 설명", LocalDateTime.now()),
-                        new CheckFeedResponse(2L, "filePath2", "인증 피드 설명", LocalDateTime.now()),
-                        new CheckFeedResponse(3L, "filePath3", "인증 피드 설명", LocalDateTime.now()),
-                        new CheckFeedResponse(4L, "filePath4", "인증 피드 설명", LocalDateTime.now())
+                        new CheckFeedResponse(1L, "filePath1", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(2L, "filePath2", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(3L, "filePath3", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(4L, "filePath4", "인증 피드 설명", LocalDate.now())
                 ));
 
         //when
@@ -727,13 +727,13 @@ class GoalRoomReadServiceTest {
         // then
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
                 new MemberNameAndImageResponse(1L, "name1", "serverFilePath"),
-                new CheckFeedResponse(1L, "serverFilePath1", "description1", LocalDateTime.now()));
+                new CheckFeedResponse(1L, "serverFilePath1", "description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberNameAndImageResponse(1L, "name1", "serverFilePath"),
-                new CheckFeedResponse(2L, "serverFilePath2", "description2", LocalDateTime.now()));
+                new CheckFeedResponse(2L, "serverFilePath2", "description2", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse3 = new GoalRoomCheckFeedResponse(
                 new MemberNameAndImageResponse(2L, "name1", "serverFilePath"),
-                new CheckFeedResponse(3L, "serverFilePath3", "description3", LocalDateTime.now()));
+                new CheckFeedResponse(3L, "serverFilePath3", "description3", LocalDate.now()));
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse3,
                 goalRoomCheckFeedResponse2, goalRoomCheckFeedResponse1);
 
@@ -904,22 +904,27 @@ class GoalRoomReadServiceTest {
     private CheckFeed 인증피드를_생성한다(final String serverFilePath, final String description,
                                  final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember goalRoomMember) {
         return new CheckFeed(serverFilePath, ImageContentType.PNG, "fileName", description, goalRoomRoadmapNode,
-                goalRoomMember);
+                goalRoomMember, LocalDateTime.now());
     }
 
     private List<CheckFeed> 인증_피드_목록을_생성한다(final GoalRoomRoadmapNode node, final Member member,
                                            final GoalRoom goalRoom) {
         return List.of(
                 new CheckFeed("filePath1", ImageContentType.JPEG, "originalFileName1", "인증 피드 설명", node,
-                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member)),
+                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member),
+                        LocalDateTime.now()),
                 new CheckFeed("filePath2", ImageContentType.JPEG, "originalFileName2", "인증 피드 설명", node,
-                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member)),
+                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member),
+                        LocalDateTime.now()),
                 new CheckFeed("filePath3", ImageContentType.JPEG, "originalFileName3", "인증 피드 설명", node,
-                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member)),
+                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member),
+                        LocalDateTime.now()),
                 new CheckFeed("filePath4", ImageContentType.JPEG, "originalFileName4", "인증 피드 설명", node,
-                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member)),
+                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member),
+                        LocalDateTime.now()),
                 new CheckFeed("filePath5", ImageContentType.JPEG, "originalFileName5", "인증 피드 설명", node,
-                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member))
+                        new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member),
+                        LocalDateTime.now())
         );
     }
 }
