@@ -1,120 +1,115 @@
-import { FormEvent } from 'react';
 import { useCreateGoalRoom } from '@hooks/queries/goalRoom';
 import useFormInput from '@hooks/_common/useFormInput';
 import { CreateGoalRoomRequest } from '@myTypes/goalRoom/remote';
-import InputField from '../inputField/InputField';
 import PageSection from '../pageSection/PageSection';
 import * as S from './CreateGoalRoomForm.styles';
 import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
 import { NodeType } from '@myTypes/roadmap/internal';
+import InputField from '@components/_common/InputField/InputField';
+import TodoListSection from '../todoListSection/TodoListSection';
+import NodeSection from '../nodeSection/NodeSection';
+import { transformDateStringsIn } from '@utils/_common/transformDateStringsIn';
 
 type CreateGoalRoomFormProps = {
   roadmapContentId: number;
   nodes: NodeType[];
 };
 
+const createGoalRoomValidation = {
+  name: [
+    {
+      validate: (inputValue: string) => inputValue.length > 0,
+      message: '이름은 필수 항목입니다',
+      updateOnFail: true,
+    },
+  ],
+  limitedMemberCount: [
+    {
+      validate: (inputValue: string) => inputValue.length > 0,
+      message: '최대 인원수는 필수 항목입니다',
+      updateOnFail: true,
+    },
+  ],
+  'goalRoomTodo[content]': [
+    {
+      validate: (inputValue: string) => inputValue.length > 0,
+      message: '투두 리스트는 필수 항목입니다',
+      updateOnFail: true,
+    },
+    {
+      validate: (inputValue: string) => inputValue.length <= 10,
+      message: '최대 250글자까지 작성할 수 있습니다',
+      updateOnFail: false,
+    },
+  ],
+};
+
 const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps) => {
   const { createGoalRoom } = useCreateGoalRoom(roadmapContentId);
-  const { formState, handleInputChange } = useFormInput<CreateGoalRoomRequest>({
-    roadmapContentId: Number(roadmapContentId),
-    name: '',
-    limitedMemberCount: 10,
-    goalRoomTodo: {
-      content: '',
-      startDate: '',
-      endDate: '',
-    },
-    goalRoomRoadmapNodeRequests: nodes.map(({ id }) => ({
-      roadmapNodeId: id,
-      checkCount: 5,
-      startDate: '',
-      endDate: '',
-    })),
-  });
+  const { formState, handleInputChange, handleSubmit, error } =
+    useFormInput<CreateGoalRoomRequest>(
+      {
+        roadmapContentId: Number(roadmapContentId),
+        name: '',
+        limitedMemberCount: 10,
+        goalRoomTodo: {
+          content: '',
+          startDate: '',
+          endDate: '',
+        },
+        goalRoomRoadmapNodeRequests: nodes.map(({ id }) => ({
+          roadmapNodeId: id,
+          checkCount: 1,
+          startDate: '',
+          endDate: '',
+        })),
+      },
+      createGoalRoomValidation
+    );
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const transformedFormState = convertFieldsToNumber(formState, [
+  const onSubmit = () => {
+    const numericalFormState = convertFieldsToNumber(formState, [
       'limitedMemberCount',
       'checkCount',
     ]);
+    const dateFormattedFormState = transformDateStringsIn(numericalFormState);
 
-    createGoalRoom(transformedFormState as CreateGoalRoomRequest);
+    createGoalRoom(dateFormattedFormState as CreateGoalRoomRequest);
   };
 
   return (
-    <S.Form onSubmit={handleSubmit}>
-      <InputField label='골룸명' isRequired>
-        <S.Input id='name' name='name' onChange={handleInputChange} />
-      </InputField>
+    <S.Form onSubmit={handleSubmit(onSubmit)}>
+      <InputField
+        label='골룸 이름'
+        isRequired
+        placeholder='골룸의 이름을 작성해주세요'
+        name='name'
+        value={formState.name}
+        onChange={handleInputChange}
+        errorMessage={error?.name}
+      />
       <PageSection
         isRequired
         title='로드맵 일정 지정'
         description='단계별 로드맵의 수행 일정과 일증 횟수를 지정해주세요'
       >
-        <S.NodeSectionWrapper>
-          <S.NodeList nodeCount={nodes.length}>
-            {nodes.map(({ id, title }, index) => (
-              <S.NodeWrapper key={id}>
-                <S.NodeInfo>{title}</S.NodeInfo>
-                <S.NodeConfigs>
-                  <>
-                    <InputField label='수행 시작 일자' isRequired type='small'>
-                      <S.DateInput
-                        id='수행 시작 일자'
-                        name={`goalRoomRoadmapNodeRequests[${index}][startDate]`}
-                        onChange={handleInputChange}
-                        placeholder='2023-08-12'
-                      />
-                    </InputField>
-                    <InputField label='수행 종료 일자' isRequired type='small'>
-                      <S.DateInput
-                        id='수행 종료 일자'
-                        name={`goalRoomRoadmapNodeRequests[${index}][endDate]`}
-                        onChange={handleInputChange}
-                        placeholder='2023-08-13'
-                      />
-                    </InputField>
-                  </>
-                  <InputField label='인증 횟수' isRequired type='small'>
-                    <S.Input
-                      name={`goalRoomRoadmapNodeRequests[${index}][checkCount]`}
-                      onChange={handleInputChange}
-                    />
-                  </InputField>
-                </S.NodeConfigs>
-              </S.NodeWrapper>
-            ))}
-          </S.NodeList>
-        </S.NodeSectionWrapper>
-      </PageSection>
-      <InputField label='투두리스트 생성'>
-        <div>
-          <InputField label='수행 시작 일자' isRequired type='small'>
-            <S.DateInput
-              id='수행 시작 일자'
-              placeholder='2023-08-12'
-              name='goalRoomTodo[startDate]'
-              onChange={handleInputChange}
-            />
-          </InputField>
-          <InputField label='수행 종료 일자' isRequired type='small'>
-            <S.DateInput
-              id='수행 종료 일자'
-              placeholder='2023-08-13'
-              name='goalRoomTodo[endDate]'
-              onChange={handleInputChange}
-            />
-          </InputField>
-        </div>
-        <S.Textarea
-          id='투두리스트 생성'
-          name='goalRoomTodo[content]'
-          onChange={handleInputChange}
+        <NodeSection
+          nodes={nodes}
+          formState={formState}
+          error={error}
+          handleInputChange={handleInputChange}
         />
-      </InputField>
-      <button>생성하기</button>
+      </PageSection>
+      <PageSection isRequired title='투두리스트 생성'>
+        <TodoListSection
+          formState={formState}
+          error={error}
+          handleInputChange={handleInputChange}
+        />
+      </PageSection>
+      <S.SubmitButtonWrapper>
+        <button>생성하기</button>
+      </S.SubmitButtonWrapper>
     </S.Form>
   );
 };
