@@ -20,6 +20,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
@@ -29,6 +30,7 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
@@ -41,7 +43,6 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,7 +50,6 @@ import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -72,18 +72,15 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private static final int 오늘부터_십일까지_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
     private static final int 이십일부터_삼십일까지_인증_횟수 = (int) ChronoUnit.DAYS.between(이십일_후, 삼십일_후);
 
-    private final String storageLocation;
     private final String serverPathPrefix;
     private final FilePathGenerator filePathGenerator;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final GoalRoomCreateService goalRoomCreateService;
 
-    public GoalRoomReadIntegrationTest(@Value("${file.upload-dir}") final String storageLocation,
-                                       @Value("${file.server-path}") final String serverPathPrefix,
+    public GoalRoomReadIntegrationTest(@Value("${file.server-path}") final String serverPathPrefix,
                                        final FilePathGenerator filePathGenerator,
                                        final RoadmapCategoryRepository roadmapCategoryRepository,
                                        final GoalRoomCreateService goalRoomCreateService) {
-        this.storageLocation = storageLocation;
         this.serverPathPrefix = serverPathPrefix;
         this.filePathGenerator = filePathGenerator;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
@@ -723,8 +720,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                         십일_후.plusDays(20)));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
-        final Long 골룸_id = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보1);
-        goalRoomCreateService.join("identifier2", 골룸_id);
+        final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보1);
+        골룸_참가_요청(골룸_아이디, 로그인_토큰_정보2);
         goalRoomCreateService.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
@@ -732,11 +729,11 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final CheckFeedRequest 인증_피드_등록_요청1 = new CheckFeedRequest(가짜_이미지_객체, "image description1");
         final CheckFeedRequest 인증_피드_등록_요청2 = new CheckFeedRequest(가짜_이미지_객체, "image description2");
 
-        인증_피드_등록_요청(로그인_토큰_정보1, 골룸_id, 인증_피드_등록_요청1);
-        인증_피드_등록_요청(로그인_토큰_정보2, 골룸_id, 인증_피드_등록_요청2);
+        인증_피드_등록_요청(로그인_토큰_정보1, 골룸_아이디, 인증_피드_등록_요청1);
+        인증_피드_등록_요청(로그인_토큰_정보2, 골룸_아이디, 인증_피드_등록_요청2);
 
         //when
-        final ExtractableResponse<Response> 인증_피드_전체_조회_요청에_대한_응답 = 인증_피드_전체_조회_요청(로그인_토큰_정보2, 골룸_id);
+        final ExtractableResponse<Response> 인증_피드_전체_조회_요청에_대한_응답 = 인증_피드_전체_조회_요청(로그인_토큰_정보2, 골룸_아이디);
 
         // then
         final List<GoalRoomCheckFeedResponse> 인증_피드_전체_조회_응답_바디 = jsonToClass(인증_피드_전체_조회_요청에_대한_응답.asString(),
@@ -824,6 +821,93 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         });
         assertThat(인증_피드_전체_조회_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(인증_피드_전체_조회_응답_바디).isEqualTo(new ErrorResponse("골룸에 참여하지 않은 회원입니다."));
+    }
+
+    @Test
+    void 골룸의_사용자_정보를_달성률순으로_전체_조회한다() throws IOException {
+        // given
+        회원가입을_한다("identifier1", "password1!", "name1", "010-1111-2222", GenderType.MALE,
+                LocalDate.of(2023, Month.JULY, 12));
+        회원가입을_한다("identifier2", "password2!", "name2", "010-1111-3333", GenderType.MALE,
+                LocalDate.of(2023, Month.JULY, 12));
+        회원가입을_한다("identifier3", "password3!", "name3", "010-1111-4444", GenderType.MALE,
+                LocalDate.of(2023, Month.JULY, 12));
+
+        final String 로그인_토큰_정보1 = 로그인을_한다("identifier1", "password1!");
+        final String 로그인_토큰_정보2 = 로그인을_한다("identifier2", "password2!");
+        final String 로그인_토큰_정보3 = 로그인을_한다("identifier3", "password3!");
+
+        final RoadmapCategory 여행_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final Long 로드맵_아이디 = 제목별로_로드맵을_생성한다(로그인_토큰_정보1, 여행_카테고리, "첫 번째 로드맵");
+
+        final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
+        final Long 로드맵_첫번째_노드_아이디 = 로드맵_응답.content().nodes().get(0).id();
+        final Long 로드맵_두번째_노드_아이디 = 로드맵_응답.content().nodes().get(1).id();
+
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, 오늘부터_십일까지_인증_횟수, 오늘, 십일_후),
+                new GoalRoomRoadmapNodeRequest(로드맵_두번째_노드_아이디, 오늘부터_십일까지_인증_횟수, 십일_후.plusDays(1), 십일_후.plusDays(20)));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
+                골룸_노드_별_기간_요청);
+        final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보1);
+
+        final MemberInformationResponse 사용자_정보1 = 사용자의_정보를_조회한다(로그인_토큰_정보1);
+        final MemberInformationResponse 사용자_정보2 = 사용자의_정보를_조회한다(로그인_토큰_정보2);
+        final MemberInformationResponse 사용자_정보3 = 사용자의_정보를_조회한다(로그인_토큰_정보3);
+
+        골룸_참가_요청(골룸_아이디, 로그인_토큰_정보2);
+        골룸_참가_요청(골룸_아이디, 로그인_토큰_정보3);
+        goalRoomCreateService.startGoalRooms();
+
+        인증_피드_등록을_요청한다(로그인_토큰_정보2, 골룸_아이디);
+
+        //when
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = given().log().all()
+                .header(AUTHORIZATION, 로그인_토큰_정보1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond=ACCOMPLISHMENT_RATE", 골룸_아이디)
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        final GoalRoomMemberResponse 골룸_사용자_정보1 = new GoalRoomMemberResponse(
+                사용자_정보1.id(), 사용자_정보1.nickname(), 사용자_정보1.profileImageUrl(), 0.0);
+        final GoalRoomMemberResponse 골룸_사용자_정보2 = new GoalRoomMemberResponse(
+                사용자_정보2.id(), 사용자_정보2.nickname(), 사용자_정보2.profileImageUrl(), 5.0);
+        final GoalRoomMemberResponse 골룸_사용자_정보3 = new GoalRoomMemberResponse(
+                사용자_정보3.id(), 사용자_정보3.nickname(), 사용자_정보3.profileImageUrl(), 0.0);
+
+        assertThat(골룸_사용자_응답)
+                .isEqualTo(List.of(골룸_사용자_정보2, 골룸_사용자_정보1, 골룸_사용자_정보3));
+    }
+
+    @Test
+    void 골룸의_사용자_정보_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
+        // given
+        회원가입을_한다("identifier1", "password1!", "name1", "010-1111-2222", GenderType.MALE,
+                LocalDate.of(2023, Month.JULY, 12));
+        final String 로그인_토큰_정보 = 로그인을_한다(IDENTIFIER, PASSWORD);
+
+        //when
+        final ErrorResponse 예외_응답 = given().log().all()
+                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond=ACCOMPLISHMENT_RATE", 1L)
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        assertThat(예외_응답)
+                .isEqualTo(new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1"));
     }
 
     private void 회원가입을_한다(final String 아이디, final String 비밀번호, final String 닉네임, final String 전화번호, final GenderType 성별,
@@ -1064,14 +1148,34 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .extract();
     }
 
-    private void 테스트용으로_생성된_파일을_제거한다() {
-        final String rootPath = storageLocation;
+    private MemberInformationResponse 사용자의_정보를_조회한다(final String 액세스_토큰) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .header(HttpHeaders.AUTHORIZATION, 액세스_토큰)
+                .get(API_PREFIX + "/members/me")
+                .then()
+                .log().all()
+                .extract()
+                .as(new TypeRef<>() {
+                });
+    }
 
-        try {
-            final File rootDir = new File(rootPath);
-            FileUtils.deleteDirectory(rootDir);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
+    private ExtractableResponse<Response> 인증_피드_등록을_요청한다(final String 액세스_토큰, final Long 골룸_아이디) throws IOException {
+        final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
+                "image/webp", "tempImage".getBytes());
+        final CheckFeedRequest 인증_피드_등록_요청 = new CheckFeedRequest(가짜_이미지_객체, "image description");
+
+        return given().log().all()
+                .multiPart(가짜_이미지_객체.getName(), 가짜_이미지_객체.getOriginalFilename(),
+                        가짜_이미지_객체.getBytes(), 가짜_이미지_객체.getContentType())
+                .formParam("description", 인증_피드_등록_요청.description())
+                .header(AUTHORIZATION, 액세스_토큰)
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .when()
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 골룸_아이디)
+                .then()
+                .log().all()
+                .extract();
     }
 }

@@ -19,7 +19,7 @@ endif::[]
 
 === *1-1* 성공
 
-operation::goal-room-create-api-test/정상적으로_골룸을_생성한다[snippets='http-request,http-response,request-fields,response-headers']
+operation::goal-room-create-api-test/정상적으로_골룸을_생성한다[snippets='http-request,request-fields,request-headers,http-response,response-headers']
 
 === *1-2* 실패 - 골룸 생성 시 요청에 빈값이 있을 경우
 
@@ -65,22 +65,23 @@ operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_인증_�
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_인증_횟수가_기간보다_클_경우[snippets='http-request,http-response']
 
-[[골룸단일조회-API]]
+[[골룸단일조회-비로그인-API]]
 == *2. 골룸 단일 조회 API (비로그인)*
 
 === *2-1* 성공
 
-operation::goal-room-read-api-test/골룸_아이디로_골룸을_조회한다[snippets='http-request,http-response,response-fields']
+operation::goal-room-read-api-test/골룸_아이디로_골룸을_조회한다[snippets='http-request,path-parameters,http-response,response-fields']
 
 === *2-2* 실패
 
 operation::goal-room-read-api-test/골룸_아이디로_골룸_조회시_아이디가_유효하지_않으면_예외가_발생한다[snippets='http-request,http-response,response-fields']
 
+[[골룸단일조회-로그인-API]]
 == *3. 골룸 단일 조회 API (로그인)*
 
 === *3-1* 성공
 
-operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸을_조회한다[snippets='http-request,request-headers,http-response,response-fields']
+operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_골룸을_조회한다[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === *3-2* 실패
 
@@ -91,7 +92,7 @@ operation::goal-room-read-api-test/골룸_아이디와_사용자_아이디로_�
 
 === *4-1* 성공
 
-operation::goal-room-create-api-test/골룸_참가_요청을_성공한다[snippets='http-request,http-response,request-headers,path-parameters']
+operation::goal-room-create-api-test/골룸_참가_요청을_성공한다[snippets='http-request,request-headers,path-parameters,http-response']
 
 === *4-2* 실패 - 골룸의 아이디가 유효하지 않음
 
@@ -110,7 +111,7 @@ operation::goal-room-create-api-test/제한_인원이_가득_찬_골룸에_대�
 
 === *5-1* 성공
 
-operation::goal-room-read-api-test/정상적으로_골룸_멤버를_조회한다[snippets='http-request,http-response,path-parameters']
+operation::goal-room-read-api-test/정상적으로_골룸_멤버를_조회한다[snippets='http-request,request-headers,path-parameters,query-parameters,http-response']
 
 === *5-2* 실패 - 골룸 멤버 조회 시 존재하지 않는 골룸일 경우
 
@@ -121,7 +122,7 @@ operation::goal-room-read-api-test/골룸_멤버_조회_시_존재하지_않는_
 
 === *6-1* 성공
 
-operation::goal-room-create-api-test/정상적으로_골룸에_투두리스트를_추가한다[snippets='http-request,http-response,request-fields,request-headers,path-parameters,response-headers']
+operation::goal-room-create-api-test/정상적으로_골룸에_투두리스트를_추가한다[snippets='http-request,request-fields,request-headers,path-parameters,http-response,response-headers']
 
 === *6-2* 실패 - 골룸 투두 추가시 존재하지 않는 회원일 경우
 
@@ -143,6 +144,7 @@ operation::goal-room-create-api-test/골룸_투두_추가시_리더가_아닌_�
 
 operation::goal-room-create-api-test/골룸_투두_추가시_컨텐츠가_250글자가_넘을_경우[snippets='http-request,http-response']
 
+[[골룸인증피드추가-API]]
 == *7. 인증 피드 추가 API*
 
 === *7-1* 성공
@@ -151,40 +153,40 @@ operation::goal-room-create-api-test/인증_피드_등록_요청을_보낸다[sn
 
 === *7-2* 실패 - 인증 피드 요청 시 존재하지 않는 사용자 아이디일 경우
 
-operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,request-parts,response-fields']
+operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response']
 
 === *7-3* 실패 - 인증 피드 요청 시 존재하지 않는 골룸일 경우
 
-operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response,request-headers,path-parameters,request-parts,response-fields']
+operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response']
 
 [[사용자골룸단일조회-API]]
 == *8. 사용자 골룸 단일 조회*
 
 === *8-1* 성공
 
-operation::goal-room-read-api-test/사용자_단일_골룸을_조회한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-read-api-test/사용자_단일_골룸을_조회한다[snippets='http-request,request-headers,path-parameters,response-fields,http-response']
 
 === *8-2* 실패 - 조회 요청 시 유효하지 않은 골룸 아이디가 들어올 때
 
-operation::goal-room-read-api-test/사용자_골룸_조회_시_유효하지_않은_골룸_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-read-api-test/사용자_골룸_조회_시_유효하지_않은_골룸_아이디를_보내면_예외가_발생한다[snippets='http-request,http-response']
 
 [[사용자골룸목록조회-API]]
 == *9. 사용자 골룸 목록 조회*
 
 === *9-1* 성공
 
-operation::goal-room-read-api-test/사용자_참가_골룸_목록을_조회한다[snippets='http-request,http-response,request-headers,query-parameters,response-fields']
+operation::goal-room-read-api-test/사용자_참가_골룸_목록을_조회한다[snippets='http-request,request-headers,query-parameters,http-response,response-fields']
 
 [[골룸투두체크-API]]
 == *10. 골룸 투두 체크 API*
 
 === *10-1* 성공 - 체크
 
-operation::goal-room-create-api-test/골룸_투두리스트에_대해_체크한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/골룸_투두리스트에_대해_체크한다[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === *10-2* 성공 - 체크 해제 (기존에 체크한 이력이 있는 경우)
 
-operation::goal-room-create-api-test/골룸_투두리스트_체크시_체크_이력이_있으면_제거한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-create-api-test/골룸_투두리스트_체크시_체크_이력이_있으면_제거한다[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === *10-3* 실패 - 골룸이 존재하지 않는 경우
 
@@ -199,7 +201,7 @@ operation::goal-room-create-api-test/골룸_투두리스트_체크시_사용자�
 
 === *11-1* 성공
 
-operation::goal-room-read-api-test/골룸의_투두리스트를_조회한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-read-api-test/골룸의_투두리스트를_조회한다[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === *11-2* 실패 - 존재하지 않은 골룸일 경우
 
@@ -214,30 +216,30 @@ operation::goal-room-read-api-test/골룸_투두리스트_조회시_참여하지
 
 === *12-1* 성공
 
-operation::goal-room-create-api-test/정상적으로_골룸을_나간다[snippets='http-request,http-response,request-headers,path-parameters']
+operation::goal-room-create-api-test/정상적으로_골룸을_나간다[snippets='http-request,request-headers,path-parameters,http-response']
 
 === *12-2* 실패 - 존재하지 않는 회원인 경우
 
-operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_회원이면_실패한다[snippets='http-request,http-response,response-fields']
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_회원이면_실패한다[snippets='http-request,http-response']
 
 === *12-3* 실패 - 골룸의 아이디가 유효하지 않은 경우
 
-operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+operation::goal-room-create-api-test/골룸을_나갈때_존재하지_않는_골룸이면_실패한다[snippets='http-request,http-response']
 
 === *12-4* 실패 - 진행중인 골룸인 경우
 
-operation::goal-room-create-api-test/골룸을_나갈때_진행중인_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+operation::goal-room-create-api-test/골룸을_나갈때_진행중인_골룸이면_실패한다[snippets='http-request,http-response']
 
 === *12-5* 실패 - 참여하지 않은 골룸인 경우
 
-operation::goal-room-create-api-test/골룸을_나갈때_참여하지_않은_골룸이면_실패한다[snippets='http-request,http-response,response-fields']
+operation::goal-room-create-api-test/골룸을_나갈때_참여하지_않은_골룸이면_실패한다[snippets='http-request,http-response']
 
 [[골룸노드조회-API]]
 == *13. 골룸 노드 리스트 조회 API*
 
 === *13-1* 성공
 
-operation::goal-room-read-api-test/골룸의_노드를_조회한다[snippets='http-request,http-response,request-headers,path-parameters,response-fields']
+operation::goal-room-read-api-test/골룸의_노드를_조회한다[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === *13-2* 실패 - 존재하지 않은 골룸일 경우
 
@@ -256,8 +258,8 @@ operation::goal-room-read-api-test/골룸의_인증피드를_전체_조회한다
 
 === *14-2* 실패 - 골룸 인증 피드 전체 조회 시 존재하지 않는 골룸인 경우
 
-operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_존재하지_않는_골룸일_경우_예외가_발생한다[snippets='http-request,http-response,response-fields']
+operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_존재하지_않는_골룸일_경우_예외가_발생한다[snippets='http-request,http-response']
 
 === *14-3* 실패 - 골룸 인증 피드 전체 조회 시 해당 골룸에 참여하지 않은 사용자인 경우
 
-operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_골룸에_참여하지_않은_사용자일_경우_예외가_발생한다[snippets='http-request,http-response,response-fields']
+operation::goal-room-read-api-test/골룸_인증피드_전체_조회_시_골룸에_참여하지_않은_사용자일_경우_예외가_발생한다[snippets='http-request,http-response']

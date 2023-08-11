@@ -47,7 +47,7 @@ class GoalRoomTest {
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
-        member = new Member(1L, identifier, encryptedPassword, nickname, memberProfile);
+        member = new Member(1L, identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
     @Test
@@ -75,9 +75,11 @@ class GoalRoomTest {
                 new RoadmapContent("content"), member);
         final Member member1 = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
+                null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
         final Member member2 = new Member(3L, new Identifier("identifier3"),
                 new EncryptedPassword(new Password("password1")), new Nickname("닉네임3"),
+                null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
 
         // when
@@ -217,7 +219,7 @@ class GoalRoomTest {
 
         final Member notJoinMember = new Member(new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password2!")),
-                new Nickname("name2"), null);
+                new Nickname("name2"), null, null);
 
         // when
         // then
@@ -229,7 +231,7 @@ class GoalRoomTest {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 "010-1234-5678");
         return new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), null, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
@@ -237,7 +239,7 @@ class GoalRoomTest {
                 LocalDate.of(1995, 9, 30), "010-1234-5678");
 
         return new Member(id, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(nickname), memberProfile);
+                new Nickname(nickname), null, memberProfile);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {

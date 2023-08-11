@@ -40,23 +40,19 @@ class GoalRoomRepositoryTest {
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
     private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
-    private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
     public GoalRoomRepositoryTest(final MemberRepository memberRepository,
                                   final RoadmapRepository roadmapRepository,
                                   final GoalRoomRepository goalRoomRepository,
-                                  final GoalRoomMemberRepository goalRoomMemberRepository,
                                   final RoadmapCategoryRepository roadmapCategoryRepository) {
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
-        this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
     }
 
@@ -462,7 +458,7 @@ class GoalRoomRepositoryTest {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), null, memberProfile);
         return memberRepository.save(creator);
     }
 
@@ -471,7 +467,7 @@ class GoalRoomRepositoryTest {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 phoneNumber);
         final Member creator = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password(password)), new Nickname(nickname), memberProfile);
+                new EncryptedPassword(new Password(password)), new Nickname(nickname), null, memberProfile);
         return memberRepository.save(creator);
     }
 

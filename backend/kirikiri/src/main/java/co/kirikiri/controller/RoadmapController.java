@@ -4,7 +4,6 @@ import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
-import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
@@ -113,10 +112,9 @@ public class RoadmapController {
     @GetMapping("/{roadmapId}/reviews")
     public ResponseEntity<List<RoadmapReviewResponse>> findRoadmapReviews(
             @PathVariable final Long roadmapId,
-            @ModelAttribute final CustomReviewScrollRequest reviewScrollRequest
+            @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
-        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId,
-                reviewScrollRequest);
+        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId, scrollRequest);
         return ResponseEntity.ok(responses);
     }
 }

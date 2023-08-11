@@ -18,7 +18,9 @@ import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
+import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
@@ -71,9 +73,11 @@ public class GoalRoomReadService {
         return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, identifier).isPresent();
     }
 
-    public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId) {
-        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(
-                goalRoomId);
+    public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId,
+                                                            final GoalRoomMemberSortTypeDto sortType) {
+
+        final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
+                goalRoomId, GoalRoomMemberSortType.valueOf(sortType.name()));
         checkGoalRoomEmpty(goalRoomId, goalRoomMembers);
         return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMembers);
     }

@@ -6,7 +6,6 @@ import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.persistence.dto.RoadmapReviewLastValueDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.time.LocalDateTime;
@@ -21,12 +20,12 @@ public class RoadmapReviewQueryRepositoryImpl extends QuerydslRepositorySupporte
 
     @Override
     public List<RoadmapReview> findRoadmapReviewWithMemberByRoadmapOrderByLatest(final Roadmap roadmap,
-                                                                                 final RoadmapReviewLastValueDto lastValue,
+                                                                                 final Long lastId,
                                                                                  final int pageSize) {
         return selectFrom(roadmapReview)
                 .innerJoin(roadmapReview.member, member)
                 .fetchJoin()
-                .where(roadmapCond(roadmap), lessThanLastValue(lastValue))
+                .where(roadmapCond(roadmap), lessThanLastId(lastId))
                 .limit(pageSize)
                 .orderBy(orderByCreatedAtDesc())
                 .fetch();
@@ -36,11 +35,13 @@ public class RoadmapReviewQueryRepositoryImpl extends QuerydslRepositorySupporte
         return roadmapReview.roadmap.eq(roadmap);
     }
 
-    private BooleanExpression lessThanLastValue(final RoadmapReviewLastValueDto lastValue) {
-        if (lastValue == null) {
+    private BooleanExpression lessThanLastId(final Long lastId) {
+        if (lastId == null) {
             return null;
         }
-        return roadmapReview.createdAt.lt(lastValue.getLastCreatedAt());
+        return roadmapReview.createdAt.lt(
+                select(roadmapReview.createdAt).from(roadmapReview).where(roadmapReview.id.eq(lastId))
+        );
     }
 
     private OrderSpecifier<LocalDateTime> orderByCreatedAtDesc() {

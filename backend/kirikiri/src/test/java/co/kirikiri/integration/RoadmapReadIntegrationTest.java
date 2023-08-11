@@ -33,7 +33,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import co.kirikiri.service.dto.CustomReviewScrollRequest;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
@@ -72,7 +72,6 @@ import io.restassured.response.Response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -370,7 +369,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final RoadmapForListResponses 로드맵_리스트_응답 = given()
                 .log().all()
                 .when()
-                .get("/api/roadmaps?lastCreatedAt=" + 세번째_로드맵.createdAt() + "&size=10&filterType=LATEST")
+                .get("/api/roadmaps?lastId=" + 세번째_로드맵.roadmapId() + "&size=10&filterType=LATEST")
                 .then().log().all()
                 .extract()
                 .response()
@@ -703,7 +702,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
                 .log().all()
                 .when()
                 .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
-                .get("/api/roadmaps/me?lastCreatedAt=" + 두번째_로드맵.createdAt() + "&size=10")
+                .get("/api/roadmaps/me?lastId=" + 두번째_로드맵.roadmapId() + "&size=10")
                 .then().log().all()
                 .extract()
                 .response()
@@ -857,14 +856,13 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         리뷰를_생성한다(팔로워2_로그인_토큰_정보, 저장된_로드맵.getId(), 팔로워2_로드맵_리뷰_생성_요청);
 
         // when
-        final CustomReviewScrollRequest 첫번째_스크롤_요청 = new CustomReviewScrollRequest(null, null, 2);
+        final CustomScrollRequest 첫번째_스크롤_요청 = new CustomScrollRequest(null, 2);
         final ExtractableResponse<Response> 첫번째_로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(저장된_로드맵.getId(), 첫번째_스크롤_요청);
         final List<RoadmapReviewResponse> 첫번째_로드맵_리뷰_조회_응답값 = jsonToClass(첫번째_로드맵_리뷰_조회_응답.asString(),
                 new TypeReference<>() {
                 });
 
-        final CustomReviewScrollRequest 두번째_스크롤_요청 = new CustomReviewScrollRequest(첫번째_로드맵_리뷰_조회_응답값.get(1).createdAt(),
-                null, 2);
+        final CustomScrollRequest 두번째_스크롤_요청 = new CustomScrollRequest(첫번째_로드맵_리뷰_조회_응답값.get(1).id(), 2);
         final ExtractableResponse<Response> 두번째_로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(저장된_로드맵.getId(), 두번째_스크롤_요청);
         final List<RoadmapReviewResponse> 두번째_로드맵_리뷰_조회_응답값 = jsonToClass(두번째_로드맵_리뷰_조회_응답.asString(),
                 new TypeReference<>() {
@@ -916,7 +914,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         final GoalRoom 골룸 = 완료한_골룸을_생성한다(로드맵_본문_리스트, 리더);
         골룸에_대한_참여자_리스트를_생성한다(리더, List.of(팔로워), 골룸);
 
-        final CustomReviewScrollRequest 스크롤_요청 = new CustomReviewScrollRequest(null, null, 10);
+        final CustomScrollRequest 스크롤_요청 = new CustomScrollRequest(null, 10);
 
         // when
         final ExtractableResponse<Response> 로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(저장된_로드맵.getId(), 스크롤_요청);
@@ -932,7 +930,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     @Test
     void 로드맵_리뷰_조회_요청_시_유효하지_않은_로드맵_아이디로_요청_시_예외를_반환한다() throws JsonProcessingException {
         //when
-        final CustomReviewScrollRequest 스크롤_요청 = new CustomReviewScrollRequest(null, null, 10);
+        final CustomScrollRequest 스크롤_요청 = new CustomScrollRequest(null, 10);
 
         // when
         final ExtractableResponse<Response> 로드맵_리뷰_조회_응답 = 로드맵_리뷰를_조회한다(1L, 스크롤_요청);
@@ -1342,26 +1340,15 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
         return 리뷰_생성_요청_결과;
     }
 
-    private ExtractableResponse<Response> 로드맵_리뷰를_조회한다(final Long 로드맵_아이디, final CustomReviewScrollRequest 스크롤_요청) {
-        final String 시간_데이터_문자열 = LocalDateTime을_지정된_문자열_형식으로_변환한다(스크롤_요청.lastCreatedAt());
-
+    private ExtractableResponse<Response> 로드맵_리뷰를_조회한다(final Long 로드맵_아이디, final CustomScrollRequest 스크롤_요청) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .param("lastCreatedAt", 시간_데이터_문자열)
-                .param("lastReviewRate", 스크롤_요청.lastReviewRate())
+                .param("lastId", 스크롤_요청.lastId())
                 .param("size", 스크롤_요청.size())
                 .get("/api/roadmaps/{roadmapId}/reviews", 로드맵_아이디)
                 .then()
                 .log().all()
                 .extract();
-    }
-
-    private String LocalDateTime을_지정된_문자열_형식으로_변환한다(final LocalDateTime 시간_데이터) {
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-        if (시간_데이터 == null) {
-            return null;
-        }
-        return 시간_데이터.format(formatter);
     }
 }

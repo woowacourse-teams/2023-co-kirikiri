@@ -8,10 +8,7 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
-import co.kirikiri.persistence.dto.RoadmapLastValueDto;
-import co.kirikiri.persistence.dto.RoadmapReviewLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
@@ -20,7 +17,6 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
-import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
@@ -74,9 +70,8 @@ public class RoadmapReadService {
                                                             final CustomScrollRequest scrollRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
-        final RoadmapLastValueDto roadmapLastValueDto = RoadmapLastValueDto.create(scrollRequest);
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCategory(category, orderType,
-                roadmapLastValueDto, scrollRequest.size());
+                scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmaps, scrollRequest.size());
     }
 
@@ -94,9 +89,8 @@ public class RoadmapReadService {
         final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterTypeRequest);
         final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(
                 searchRequest.creatorId(), searchRequest.roadmapTitle(), searchRequest.tagName());
-        final RoadmapLastValueDto roadmapLastValueDto = RoadmapLastValueDto.create(scrollRequest);
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType,
-                roadmapLastValueDto, scrollRequest.size());
+                scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmaps, scrollRequest.size());
     }
 
@@ -108,9 +102,8 @@ public class RoadmapReadService {
     public MemberRoadmapResponses findAllMemberRoadmaps(final String identifier,
                                                         final CustomScrollRequest scrollRequest) {
         final Member member = findMemberByIdentifier(identifier);
-        final RoadmapLastValueDto roadmapLastValueDto = RoadmapLastValueDto.create(scrollRequest);
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(member,
-                roadmapLastValueDto, scrollRequest.size());
+                scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertMemberRoadmapResponses(roadmaps, scrollRequest.size());
     }
 
@@ -124,19 +117,16 @@ public class RoadmapReadService {
                                                                      final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         final RoadmapGoalRoomsFilterType filterType = GoalRoomMapper.convertToGoalRoomFilterType(filterTypeDto);
-        final GoalRoomLastValueDto goalRoomLastValueDto = GoalRoomLastValueDto.create(scrollRequest);
         final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
-                roadmap, filterType, goalRoomLastValueDto, scrollRequest.size());
+                roadmap, filterType, scrollRequest.lastId(), scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(goalRoomsWithPendingMembers, scrollRequest.size());
     }
 
     public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId,
-                                                          final CustomReviewScrollRequest reviewScrollRequest) {
+                                                          final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final RoadmapReviewLastValueDto roadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
-                reviewScrollRequest);
         final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
-                roadmap, roadmapReviewLastValueDto, reviewScrollRequest.size());
+                roadmap, scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertToRoadmapReviewResponses(roadmapReviews);
     }
 }

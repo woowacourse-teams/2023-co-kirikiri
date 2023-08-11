@@ -50,6 +50,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -216,11 +217,12 @@ class GoalRoomReadServiceTest {
         final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
                 goalRoom, follower);
 
-        given(goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(anyLong()))
+        given(goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
                 .willReturn(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
 
         //when
-        final List<GoalRoomMemberResponse> result = goalRoomReadService.findGoalRoomMembers(1L);
+        final List<GoalRoomMemberResponse> result = goalRoomReadService.findGoalRoomMembers(1L,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE);
 
         //then
         final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "name1",
@@ -234,12 +236,13 @@ class GoalRoomReadServiceTest {
     @Test
     void 존재하지_않는_골룸일_경우_예외를_던진다() {
         //given
-        given(goalRoomMemberRepository.findByGoalRoomIdOrderByAccomplishmentRateDesc(anyLong()))
+        given(goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
                 .willReturn(Collections.emptyList());
 
         //when
         //then
-        assertThatThrownBy(() -> goalRoomReadService.findGoalRoomMembers(1L))
+        assertThatThrownBy(() -> goalRoomReadService.findGoalRoomMembers(1L,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE))
                 .isInstanceOf(NotFoundException.class);
     }
 

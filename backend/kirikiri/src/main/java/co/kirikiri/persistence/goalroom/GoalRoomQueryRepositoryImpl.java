@@ -15,7 +15,6 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -43,7 +42,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     @Override
     public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
                                                                           final RoadmapGoalRoomsFilterType filterType,
-                                                                          final GoalRoomLastValueDto lastValue,
+                                                                          final Long lastId,
                                                                           final int pageSize) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
@@ -54,7 +53,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchJoin()
                 .innerJoin(member.memberProfile, memberProfile)
                 .fetchJoin()
-                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastValue(lastValue))
+                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastId(lastId))
                 .orderBy(sortCond(filterType))
                 .limit(pageSize + LIMIT_OFFSET)
                 .fetch();
@@ -105,11 +104,13 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return goalRoom.status.eq(status);
     }
 
-    private BooleanExpression lessThanLastValue(final GoalRoomLastValueDto lastValue) {
-        if (lastValue == null) {
+    private BooleanExpression lessThanLastId(final Long lastId) {
+        if (lastId == null) {
             return null;
         }
-        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+        return roadmap.createdAt.lt(
+                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+        );
     }
 
     private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsFilterType filterType) {

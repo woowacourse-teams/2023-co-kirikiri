@@ -20,10 +20,10 @@ class GoalRoomPendingMembersTest {
 
     private static final Member MEMBER1 = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")),
-            new Nickname("name1"), null);
+            new Nickname("name1"), null, null);
     private static final Member MEMBER2 = new Member(2L, new Identifier("identifier2"),
             new EncryptedPassword(new Password("password2!")),
-            new Nickname("name2"), null);
+            new Nickname("name2"), null, null);
 
     @Test
     void 골룸의_리더를_찾는다() {

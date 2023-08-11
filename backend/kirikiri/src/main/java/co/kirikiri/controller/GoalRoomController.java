@@ -4,6 +4,7 @@ import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
@@ -109,8 +110,11 @@ public class GoalRoomController {
 
     @Authenticated
     @GetMapping("/{goalRoomId}/members")
-    public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(@PathVariable final Long goalRoomId) {
-        final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId);
+    public ResponseEntity<List<GoalRoomMemberResponse>> findGoalRoomMembers(
+            @PathVariable final Long goalRoomId,
+            @RequestParam(value = "sortCond", required = false) final GoalRoomMemberSortTypeDto sortType) {
+        final List<GoalRoomMemberResponse> goalRoomMembers = goalRoomReadService.findGoalRoomMembers(goalRoomId,
+                sortType);
         return ResponseEntity.ok(goalRoomMembers);
     }
 

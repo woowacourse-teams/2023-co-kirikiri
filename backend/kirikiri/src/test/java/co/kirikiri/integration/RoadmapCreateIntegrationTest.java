@@ -618,6 +618,7 @@ class RoadmapCreateIntegrationTest extends IntegrationTest {
         return new Member(Long.valueOf(저장된_크리에이터_아이디), new Identifier(아이디),
                 new EncryptedPassword(new Password(PASSWORD)),
                 new Nickname(닉네임),
+                null,
                 new MemberProfile(Gender.MALE, 생년월일, 전화번호));
     }
 

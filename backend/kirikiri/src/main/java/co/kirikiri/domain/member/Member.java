@@ -38,19 +38,9 @@ public class Member extends BaseUpdatedTimeEntity {
     @JoinColumn(name = "member_profile_id", nullable = false, unique = true)
     private MemberProfile memberProfile;
 
-    public Member(final Identifier identifier, final EncryptedPassword encryptedPassword,
-                  final Nickname nickname, final MemberProfile memberProfile) {
-        this(null, identifier, encryptedPassword, nickname, memberProfile);
-    }
-
     public Member(final Identifier identifier, final EncryptedPassword encryptedPassword, final Nickname nickname,
                   final MemberImage image, final MemberProfile memberProfile) {
         this(null, identifier, encryptedPassword, nickname, image, memberProfile);
-    }
-
-    public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
-                  final Nickname nickname, final MemberProfile memberProfile) {
-        this(id, identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
     public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,

@@ -35,7 +35,6 @@ import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -43,7 +42,6 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
-import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
@@ -163,7 +161,7 @@ class RoadmapReadServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // expected
         assertThatThrownBy(() -> roadmapService.findRoadmapsByFilterType(categoryId, filterType, scrollRequest))
@@ -185,7 +183,7 @@ class RoadmapReadServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = null;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when
         final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
@@ -232,7 +230,7 @@ class RoadmapReadServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = null;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 1);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 1);
 
         // when
         final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
@@ -267,7 +265,7 @@ class RoadmapReadServiceTest {
 
         final Long categoryId = null;
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when
         final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
@@ -312,7 +310,7 @@ class RoadmapReadServiceTest {
 
         final Long categoryId = 1L;
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when
         final RoadmapForListResponses roadmapResponses = roadmapService.findRoadmapsByFilterType(
@@ -364,7 +362,7 @@ class RoadmapReadServiceTest {
 
         final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", null, null);
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
-        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, null, null, null, 10);
+        final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when
         final RoadmapForListResponses roadmapResponses = roadmapService.search(
@@ -412,7 +410,7 @@ class RoadmapReadServiceTest {
 
         // when
         final MemberRoadmapResponses memberRoadmapResponse = roadmapService.findAllMemberRoadmaps(
-                "identifier1", new CustomScrollRequest(null, null, null, null, 10));
+                "identifier1", new CustomScrollRequest(null, 10));
 
         // then
         final MemberRoadmapResponses expected = new MemberRoadmapResponses(List.of(
@@ -436,7 +434,7 @@ class RoadmapReadServiceTest {
         // when
         // then
         assertThatThrownBy(() -> roadmapService.findAllMemberRoadmaps("identifier1",
-                new CustomScrollRequest(null, null, null, null, 10))).isInstanceOf(NotFoundException.class)
+                new CustomScrollRequest(null, 10))).isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }
 
@@ -477,13 +475,12 @@ class RoadmapReadServiceTest {
         given(roadmapRepository.findRoadmapById(anyLong()))
                 .willReturn(Optional.of(roadmap));
         given(goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
-                RoadmapGoalRoomsFilterType.LATEST,
-                GoalRoomLastValueDto.create(new CustomScrollRequest(null, null, null, null, 10)), 10))
+                RoadmapGoalRoomsFilterType.LATEST, null, 10))
                 .willReturn(goalRooms);
 
         // when
         final RoadmapGoalRoomResponses result = roadmapService.findRoadmapGoalRoomsByFilterType(1L,
-                RoadmapGoalRoomsFilterTypeDto.LATEST, new CustomScrollRequest(null, null, null, null, 10));
+                RoadmapGoalRoomsFilterTypeDto.LATEST, new CustomScrollRequest(null, 10));
 
         final RoadmapGoalRoomResponses expected =
                 new RoadmapGoalRoomResponses(List.of(
@@ -512,7 +509,7 @@ class RoadmapReadServiceTest {
         // then
         assertThatThrownBy(
                 () -> roadmapService.findRoadmapGoalRoomsByFilterType(1L,
-                        RoadmapGoalRoomsFilterTypeDto.LATEST, new CustomScrollRequest(null, null, null, null, 10)))
+                        RoadmapGoalRoomsFilterTypeDto.LATEST, new CustomScrollRequest(null, 10)))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 로드맵입니다. roadmapId = 1");
     }
@@ -535,14 +532,13 @@ class RoadmapReadServiceTest {
         roadmapReview1.updateRoadmap(roadmap);
         roadmapReview2.updateRoadmap(roadmap);
 
-        final CustomReviewScrollRequest reviewScrollRequest = new CustomReviewScrollRequest(null, null, 50);
-
         when(roadmapRepository.findRoadmapById(anyLong())).thenReturn(Optional.of(roadmap));
         when(roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(any(), any(), anyInt()))
                 .thenReturn(List.of(roadmapReview2, roadmapReview1));
 
         // when
-        final List<RoadmapReviewResponse> response = roadmapService.findRoadmapReviews(1L, reviewScrollRequest);
+        final List<RoadmapReviewResponse> response = roadmapService.findRoadmapReviews(1L,
+                new CustomScrollRequest(null, 10));
 
         final List<RoadmapReviewResponse> expect = List.of(
                 new RoadmapReviewResponse(2L, new MemberResponse(2L, "리뷰어2", "default-member-image"),
@@ -560,13 +556,11 @@ class RoadmapReadServiceTest {
     @Test
     void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디라면_예외를_반환한다() {
         // given
-        final CustomReviewScrollRequest reviewScrollRequest = new CustomReviewScrollRequest(null, null, 2);
-
         when(roadmapRepository.findRoadmapById(anyLong()))
                 .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
         // when, then
-        assertThatThrownBy(() -> roadmapService.findRoadmapReviews(1L, reviewScrollRequest))
+        assertThatThrownBy(() -> roadmapService.findRoadmapReviews(1L, new CustomScrollRequest(null, 2)))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 로드맵입니다. roadmapId = 1");
     }

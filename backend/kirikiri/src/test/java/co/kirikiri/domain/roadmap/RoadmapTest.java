@@ -80,7 +80,7 @@ class RoadmapTest {
         final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
 
         return new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")),
-                new Nickname("nickname"), profile);
+                new Nickname("nickname"), null, profile);
     }
 
     private RoadmapCategory 카테고리를_생성한다() {
