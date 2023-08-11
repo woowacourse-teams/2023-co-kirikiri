@@ -1,7 +1,8 @@
+/* eslint-disable react/no-unused-prop-types */
 import { useSelect } from '@/hooks/_common/useSelect';
 import { useEffect } from 'react';
 import { Select, SelectBox } from '../selector/SelectBox';
-import { S } from './difficulty.styles';
+import * as S from './difficulty.styles';
 
 // 임시 더미데이터
 export type DummyDifficultyType = {
@@ -40,7 +41,17 @@ const Difficulty = ({ getSelectedDifficulty }: DifficultyType) => {
         </S.DifficultyDescription>
       </Select.Description>
       <Select.Trigger asChild>
-        <S.TriggerButton />
+        <S.TriggerButton>
+          <Select.Value asChild>
+            {({ selectedId }: { selectedId: number | null }) => {
+              return (
+                <S.DifficultyValue>
+                  {selectedId === null ? '선택안함' : DummyDifficulty[selectedId]}
+                </S.DifficultyValue>
+              );
+            }}
+          </Select.Value>
+        </S.TriggerButton>
       </Select.Trigger>
       <Select.OptionGroup asChild>
         <S.Wrapper>

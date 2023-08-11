@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { cloneElement, PropsWithChildren, ReactElement } from 'react';
 import { useContextScope } from '@/hooks/_common/useContextScope';
 import { combineStates, getCustomElement } from '@/hooks/_common/compound';
 import {
@@ -11,6 +11,7 @@ import {
   SelectBoxProps,
   SelectContextType,
   TriggerProps,
+  ValueProps,
 } from '@/myTypes/_common/select';
 import { useSelect } from '@/hooks/_common/useSelect';
 import { SelectContext } from '@/context/selectContext';
@@ -84,6 +85,13 @@ export const Trigger = (props: PropsWithChildren<TriggerProps>) => {
   );
 };
 
+export const Value = (props: ValueProps) => {
+  const { asChild = false, children, ...restProps } = props;
+  console.log(restProps);
+  const { selectedId } = useContextScope(SelectContext);
+  return cloneElement(children({ selectedId }));
+};
+
 // Option들을 담는 컨테이너 컴포넌트
 export const OptionGroup = (props: PropsWithChildren<OptionGroupProps>) => {
   const { asChild = false, children, ...restProps } = props;
@@ -142,6 +150,7 @@ export const Select = Object.assign(SelectBox, {
   Label,
   Description,
   Trigger,
+  Value,
   OptionGroup,
   Indicator,
   Option,
