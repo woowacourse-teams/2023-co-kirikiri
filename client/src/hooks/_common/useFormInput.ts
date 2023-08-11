@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 export type FormErrorType = {
   [key: string]: string;
@@ -25,8 +25,24 @@ const getParts = (path: string) => {
 };
 
 const getNestedValue = (obj: any, path: string) => {
+  if (obj == null || typeof obj !== 'object') return obj;
+
   const parts = getParts(path);
   return parts.reduce((curr, part) => curr[part], obj);
+};
+
+const setNestedValue = (obj: any, path: string, value: any) => {
+  const parts = getParts(path);
+  const lastKey = parts.pop();
+
+  if (!lastKey) {
+    return obj;
+  }
+
+  const lastObj = parts.reduce((curr, part) => curr[part], obj);
+  lastObj[lastKey] = value;
+
+  return obj;
 };
 
 const useFormInput = <T extends object>(
@@ -57,89 +73,47 @@ const useFormInput = <T extends object>(
     setError((prev) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [name]: _, ...rest } = prev;
-
       return rest;
     });
   };
 
-  const handleSubmit = (callback: () => void) => (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validations) {
-      callback();
-      return;
+  const updateFormState = (name: string, value: any) => {
+    setFormState((prev) => setNestedValue({ ...prev }, name, value));
+  };
+
+  const handleInputChange = ({
+    target: { name, value },
+  }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    cleanError(name);
+
+    if (validateInputValue(name, value)) {
+      updateFormState(name, value);
     }
+  };
 
-    let isFormValid = true;
+  const isFormValid = () => {
+    let isValid = true;
+    if (!validations) return isValid;
 
-    Object.entries(validations).forEach(([key, fieldValidation]) => {
-      const fieldValue = getNestedValue(formState, key);
-
-      const result = fieldValidation(String(fieldValue));
+    Object.keys(validations).forEach((key) => {
+      const result = validations[key](String(getNestedValue(formState, key)));
 
       if (!result.ok) {
         setError((prev) => ({
           ...prev,
           [key]: result.message || '',
         }));
-
-        isFormValid = false;
+        isValid = false;
       }
     });
 
-    if (isFormValid) {
-      callback();
-    }
+    return isValid;
   };
 
-  const handleInputChange = ({
-    target: { name, value },
-  }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    cleanError(name);
+  const handleSubmit = (callback: () => void) => (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    const shouldUpdateValue = validateInputValue(name, value);
-    if (!shouldUpdateValue) return;
-
-    const parts = getParts(name);
-    const isArray = parts.length > 2;
-
-    if (isArray) {
-      const [baseName, arrayIndex, arrayPropName] = parts;
-
-      setFormState((prevState: any) => {
-        if (Array.isArray(prevState[baseName])) {
-          return {
-            ...prevState,
-            [baseName]: prevState[baseName].map((item: any, index: number) => {
-              if (index === Number(arrayIndex)) {
-                return {
-                  ...item,
-                  [arrayPropName]: value,
-                };
-              }
-              return item;
-            }),
-          };
-        }
-        return prevState;
-      });
-    } else {
-      const [propName, nestedPropName] = parts;
-      setFormState((prevState: any) => {
-        if (nestedPropName) {
-          return {
-            ...prevState,
-            [propName]: {
-              ...prevState[propName],
-              [nestedPropName]: value,
-            },
-          };
-        }
-        return {
-          ...prevState,
-          [propName]: value,
-        };
-      });
-    }
+    if (isFormValid()) callback();
   };
 
   const resetFormState = () => {
