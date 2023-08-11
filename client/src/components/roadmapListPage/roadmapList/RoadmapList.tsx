@@ -9,7 +9,7 @@ type RoadmapListProps = {
 };
 
 const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
-  const roadmapList = useRoadmapList(selectedCategoryId);
+  const { data: roadmapList } = useRoadmapList({ categoryId: selectedCategoryId });
   const navigate = useNavigate();
 
   const moveRoadmapCreatePage = () => {
@@ -18,9 +18,10 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
 
   return (
     <S.RoadmapList aria-label='로드맵 목록'>
-      {roadmapList?.map((item) => (
-        <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
-      ))}
+      {roadmapList &&
+        roadmapList.responses.map((item) => (
+          <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
+        ))}
       <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>
         로드맵 생성하러가기
       </S.CreateRoadmapButton>
