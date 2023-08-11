@@ -1,22 +1,43 @@
-import { SelectedCategoryId } from '@myTypes/roadmap/internal';
-import { RoadmapValueType } from '@/myTypes/roadmap/remote';
+import {
+  RoadmapListRequest,
+  RoadmapListResponse,
+  RoadmapValueType,
+} from '@/myTypes/roadmap/remote';
 import { getRoadmapDetail, getRoadmapList, postCreateRoadmap } from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
-import { useMutation } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import { RoadmapItemType } from '@myTypes/roadmap/internal';
 
-export const useRoadmapList = (
-  categoryId?: SelectedCategoryId,
-  page = 1,
-  size = 10,
-  filterCond = 'LATEST'
-) => {
-  const { data } = useSuspendedQuery(
-    ['roadmapList', categoryId, page, size, filterCond],
-    () => getRoadmapList(categoryId, page, size, filterCond)
+export const useRoadmapList = ({
+  categoryId,
+  size = 4,
+  filterCond = 'LATEST',
+  lastId,
+}: RoadmapListRequest) => {
+  const { data, fetchNextPage } = useInfiniteQuery<RoadmapListResponse>(
+    ['roadmapList', categoryId, size, filterCond, lastId],
+    () => getRoadmapList({ categoryId, size, filterCond, lastId }),
+    {
+      getNextPageParam: (lastPage) => {
+        const { roadmapId: lastRoadmapId } =
+          lastPage.responses[lastPage.responses.length - 1];
+        return lastPage.hasNext ? lastRoadmapId : undefined;
+      },
+    }
   );
 
-  return data;
+  const responses =
+    data?.pages.reduce((allResponses, page) => {
+      return [...allResponses, ...page.responses];
+    }, [] as RoadmapItemType[]) || [];
+
+  const hasNextPage = Boolean(data?.pages[data.pages.length - 1]?.hasNext);
+
+  return {
+    roadmapListResponse: { responses, hasNext: hasNextPage },
+    fetchNextPage,
+  };
 };
 
 export const useRoadmapDetail = (id: number) => {
