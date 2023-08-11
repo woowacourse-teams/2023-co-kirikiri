@@ -1,17 +1,32 @@
 import { FormEvent, useState } from 'react';
 
-type FormErrorType = {
+export type FormErrorType = {
   [key: string]: string;
 };
 
-type ValidationType = {
-  validate: (inputValue: string) => boolean;
-  message: string;
-  updateOnFail: boolean;
+export type ValidationReturnType = {
+  ok: boolean;
+  message?: string;
+  updateOnFail?: boolean;
 };
 
-type ValidationsType = {
-  [key: string]: ValidationType[];
+export type ValidationFunctionType = (inputValue: string) => ValidationReturnType;
+
+export type ValidationsType = {
+  [key: string]: ValidationFunctionType;
+};
+
+export type HandleInputChangeType = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+) => void;
+
+const getParts = (path: string) => {
+  return path.split('[').map((part) => part.replace(']', ''));
+};
+
+const getNestedValue = (obj: any, path: string) => {
+  const parts = getParts(path);
+  return parts.reduce((curr, part) => curr[part], obj);
 };
 
 const useFormInput = <T extends object>(
@@ -19,35 +34,29 @@ const useFormInput = <T extends object>(
   validations?: ValidationsType
 ) => {
   const [formState, setFormState] = useState<T>(initialState);
-  const [error, setError] = useState<FormErrorType>();
+  const [error, setError] = useState<FormErrorType>({});
 
   const validateInputValue = (name: string, inputValue: string) => {
-    if (!validations || !validations?.[name]) return true;
+    if (typeof validations?.[name] !== 'function') return true;
 
-    const shouldUpdateValue = validations[name].every(
-      ({ validate, message, updateOnFail }) => {
-        if (!validate(inputValue)) {
-          setError((prev) => ({
-            ...prev,
-            [name]: message,
-          }));
+    const result = validations[name](inputValue);
 
-          return updateOnFail;
-        }
+    if (!result.ok) {
+      setError((prev) => ({
+        ...prev,
+        [name]: result.message || '',
+      }));
+    }
 
-        return true;
-      }
-    );
-
-    return shouldUpdateValue;
+    return result.ok || result.updateOnFail;
   };
 
   const cleanError = (name: string) => {
-    if (!error || !error[name]) return;
+    if (!error[name]) return;
 
     setError((prev) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { [name]: _, ...rest } = prev as FormErrorType;
+      const { [name]: _, ...rest } = prev;
 
       return rest;
     });
@@ -60,30 +69,22 @@ const useFormInput = <T extends object>(
       return;
     }
 
-    const isFormValid = Object.entries(validations).every(([key, fieldValidations]) =>
-      fieldValidations.every(({ validate, message }) => {
-        // key 문자열을 구문 분석하여 'parts' 배열 생성
-        // ex) "user[details][name]" => ["user", "details", "name"]
-        const parts = key.split('[').map((part) => part.replace(']', ''));
+    let isFormValid = true;
 
-        // 중첩된 객체에서 필드 값을 검색
-        // "user[details][name]" ex에서 fieldValue는 "name"
-        const fieldValue = parts.reduce((currentValue, part) => {
-          return (currentValue as any)[part];
-        }, formState);
+    Object.entries(validations).forEach(([key, fieldValidation]) => {
+      const fieldValue = getNestedValue(formState, key);
 
-        const isValid = validate(String(fieldValue));
+      const result = fieldValidation(String(fieldValue));
 
-        if (!isValid) {
-          setError((prev) => ({
-            ...prev,
-            [key]: message,
-          }));
-        }
+      if (!result.ok) {
+        setError((prev) => ({
+          ...prev,
+          [key]: result.message || '',
+        }));
 
-        return isValid;
-      })
-    );
+        isFormValid = false;
+      }
+    });
 
     if (isFormValid) {
       callback();
@@ -98,7 +99,7 @@ const useFormInput = <T extends object>(
     const shouldUpdateValue = validateInputValue(name, value);
     if (!shouldUpdateValue) return;
 
-    const parts = name.split('[').map((part) => part.replace(']', ''));
+    const parts = getParts(name);
     const isArray = parts.length > 2;
 
     if (isArray) {

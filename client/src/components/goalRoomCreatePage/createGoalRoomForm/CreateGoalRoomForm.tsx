@@ -9,39 +9,11 @@ import InputField from '@components/_common/InputField/InputField';
 import TodoListSection from '../todoListSection/TodoListSection';
 import NodeSection from '../nodeSection/NodeSection';
 import { transformDateStringsIn } from '@utils/_common/transformDateStringsIn';
+import { generateNodesValidations, staticValidations } from './createGoalRoomValidations';
 
 type CreateGoalRoomFormProps = {
   roadmapContentId: number;
   nodes: NodeType[];
-};
-
-const createGoalRoomValidation = {
-  name: [
-    {
-      validate: (inputValue: string) => inputValue.length > 0,
-      message: '이름은 필수 항목입니다',
-      updateOnFail: true,
-    },
-  ],
-  limitedMemberCount: [
-    {
-      validate: (inputValue: string) => inputValue.length > 0,
-      message: '최대 인원수는 필수 항목입니다',
-      updateOnFail: true,
-    },
-  ],
-  'goalRoomTodo[content]': [
-    {
-      validate: (inputValue: string) => inputValue.length > 0,
-      message: '투두 리스트는 필수 항목입니다',
-      updateOnFail: true,
-    },
-    {
-      validate: (inputValue: string) => inputValue.length <= 10,
-      message: '최대 250글자까지 작성할 수 있습니다',
-      updateOnFail: false,
-    },
-  ],
 };
 
 const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps) => {
@@ -64,7 +36,7 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
           endDate: '',
         })),
       },
-      createGoalRoomValidation
+      { ...generateNodesValidations(nodes), ...staticValidations }
     );
 
   const onSubmit = () => {
