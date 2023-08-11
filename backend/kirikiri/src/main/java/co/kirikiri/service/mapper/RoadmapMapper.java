@@ -3,16 +3,16 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.persistence.roadmap.dto.RoadmapFilterType;
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.dto.roadmap.RoadmapContentDto;
+import co.kirikiri.service.dto.roadmap.RoadmapDto;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
+import co.kirikiri.service.dto.roadmap.RoadmapTagDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
@@ -51,42 +51,32 @@ public final class RoadmapMapper {
         return new RoadmapTagSaveDto(request.name());
     }
 
-    public static RoadmapResponse convertToRoadmapResponse(final Roadmap roadmap, final RoadmapContent content) {
-        final RoadmapCategory category = roadmap.getCategory();
-        final Member creator = roadmap.getCreator();
-        final RoadmapContentResponse roadmapContentResponse = new RoadmapContentResponse(
-                content.getId(),
-                content.getContent(),
-                convertRoadmapNodeResponse(content.getNodes()));
-        final List<RoadmapTagResponse> roadmapTagResponses = convertRoadmapTagResponses(roadmap.getTags());
-
+    public static RoadmapResponse convertToRoadmapResponse(final RoadmapDto roadmapDto) {
         return new RoadmapResponse(
-                roadmap.getId(),
-                new RoadmapCategoryResponse(category.getId(), category.getName()),
-                roadmap.getTitle(),
-                roadmap.getIntroduction(),
-                new MemberResponse(creator.getId(), creator.getNickname().getValue()),
-                roadmapContentResponse,
-                roadmap.getDifficulty().name(),
-                roadmap.getRequiredPeriod(),
-                roadmapTagResponses
+                roadmapDto.roadmapId(),
+                new RoadmapCategoryResponse(roadmapDto.category().id(), roadmapDto.category().name()),
+                roadmapDto.roadmapTitle(),
+                roadmapDto.introduction(),
+                new MemberResponse(roadmapDto.creator().id(), roadmapDto.creator().name()),
+                convertToRoadmapContentResponse(roadmapDto.content()),
+                roadmapDto.difficulty(),
+                roadmapDto.recommendedRoadmapPeriod(),
+                convertRoadmapTagResponses(roadmapDto.tags())
         );
     }
 
-    private static List<RoadmapNodeResponse> convertRoadmapNodeResponse(final RoadmapNodes nodes) {
-        return nodes.getValues()
-                .stream()
-                .map(RoadmapMapper::convertNode)
-                .toList();
+    private static RoadmapContentResponse convertToRoadmapContentResponse(final RoadmapContentDto roadmapContentDto) {
+        return new RoadmapContentResponse(
+                roadmapContentDto.id(),
+                roadmapContentDto.content(),
+                convertRoadmapNodeResponse(roadmapContentDto.nodes())
+        );
     }
 
-    private static RoadmapNodeResponse convertNode(final RoadmapNode node) {
-        final List<String> images = node.getRoadmapNodeImages().getValues()
-                .stream()
-                .map(RoadmapNodeImage::getServerFilePath)
+    private static List<RoadmapNodeResponse> convertRoadmapNodeResponse(final List<RoadmapNodeDto> roadmapNodeDtos) {
+        return roadmapNodeDtos.stream()
+                .map(it -> new RoadmapNodeResponse(it.id(), it.title(), it.description(), it.imageUrls()))
                 .toList();
-
-        return new RoadmapNodeResponse(node.getId(), node.getTitle(), node.getContent(), images);
     }
 
     public static RoadmapFilterType convertRoadmapOrderType(final RoadmapFilterTypeRequest filterType) {
@@ -96,10 +86,9 @@ public final class RoadmapMapper {
         return RoadmapFilterType.valueOf(filterType.name());
     }
 
-    private static List<RoadmapTagResponse> convertRoadmapTagResponses(final RoadmapTags roadmapTags) {
-        return roadmapTags.getValues()
-                .stream()
-                .map(tag -> new RoadmapTagResponse(tag.getId(), tag.getName().getValue()))
+    private static List<RoadmapTagResponse> convertRoadmapTagResponses(final List<RoadmapTagDto> roadmapTagDtos) {
+        return roadmapTagDtos.stream()
+                .map(tag -> new RoadmapTagResponse(tag.id(), tag.name()))
                 .toList();
     }
 
@@ -127,6 +116,13 @@ public final class RoadmapMapper {
                 categoryResponse,
                 roadmapTagResponses
         );
+    }
+
+    private static List<RoadmapTagResponse> convertRoadmapTagResponses(final RoadmapTags roadmapTags) {
+        return roadmapTags.getValues()
+                .stream()
+                .map(tag -> new RoadmapTagResponse(tag.getId(), tag.getName().getValue()))
+                .toList();
     }
 
     public static List<RoadmapCategoryResponse> convertRoadmapCategoryResponses(
