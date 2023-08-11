@@ -720,8 +720,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                         십일_후.plusDays(20)));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
-        final Long 골룸_id = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보1);
-        goalRoomCreateService.join("identifier2", 골룸_id);
+        final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보1);
+        골룸_참가_요청(골룸_아이디, 로그인_토큰_정보2);
         goalRoomCreateService.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
@@ -729,11 +729,11 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final CheckFeedRequest 인증_피드_등록_요청1 = new CheckFeedRequest(가짜_이미지_객체, "image description1");
         final CheckFeedRequest 인증_피드_등록_요청2 = new CheckFeedRequest(가짜_이미지_객체, "image description2");
 
-        인증_피드_등록_요청(로그인_토큰_정보1, 골룸_id, 인증_피드_등록_요청1);
-        인증_피드_등록_요청(로그인_토큰_정보2, 골룸_id, 인증_피드_등록_요청2);
+        인증_피드_등록_요청(로그인_토큰_정보1, 골룸_아이디, 인증_피드_등록_요청1);
+        인증_피드_등록_요청(로그인_토큰_정보2, 골룸_아이디, 인증_피드_등록_요청2);
 
         //when
-        final ExtractableResponse<Response> 인증_피드_전체_조회_요청에_대한_응답 = 인증_피드_전체_조회_요청(로그인_토큰_정보2, 골룸_id);
+        final ExtractableResponse<Response> 인증_피드_전체_조회_요청에_대한_응답 = 인증_피드_전체_조회_요청(로그인_토큰_정보2, 골룸_아이디);
 
         // then
         final List<GoalRoomCheckFeedResponse> 인증_피드_전체_조회_응답_바디 = jsonToClass(인증_피드_전체_조회_요청에_대한_응답.asString(),
@@ -782,7 +782,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸의_인증피드를_전체_조회시_골룸에_참여하지_않은_사용자이면_예외가_발생한다() throws IOException {
+    void 골룸의_인증피드를_전체_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() throws IOException {
         // given
         회원가입을_한다("identifier1", "password1!", "name1", "010-1111-2222", GenderType.MALE,
                 LocalDate.of(2023, Month.JULY, 12));
@@ -856,8 +856,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final MemberInformationResponse 사용자_정보2 = 사용자의_정보를_조회한다(로그인_토큰_정보2);
         final MemberInformationResponse 사용자_정보3 = 사용자의_정보를_조회한다(로그인_토큰_정보3);
 
-        goalRoomCreateService.join(사용자_정보2.identifier(), 골룸_아이디);
-        goalRoomCreateService.join(사용자_정보3.identifier(), 골룸_아이디);
+        골룸_참가_요청(골룸_아이디, 로그인_토큰_정보2);
+        골룸_참가_요청(골룸_아이디, 로그인_토큰_정보3);
         goalRoomCreateService.startGoalRooms();
 
         인증_피드_등록을_요청한다(로그인_토큰_정보2, 골룸_아이디);

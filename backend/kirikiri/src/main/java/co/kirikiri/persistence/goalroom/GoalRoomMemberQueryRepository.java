@@ -17,4 +17,6 @@ public interface GoalRoomMemberQueryRepository {
 
     List<GoalRoomMember> findByGoalRoomIdOrderedBySortType(final Long goalRoomId,
                                                            final GoalRoomMemberSortType sortType);
+
+    Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier);
 }

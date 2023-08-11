@@ -262,7 +262,7 @@ class GoalRoomReadServiceTest {
 
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
                 creator);
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithTodos(1L))
                 .thenReturn(Optional.of(goalRoom));
@@ -284,6 +284,17 @@ class GoalRoomReadServiceTest {
     }
 
     @Test
+    void 골룸의_투두리스트_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
+        // given
+        when(goalRoomRepository.findByIdWithTodos(1L))
+                .thenReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
     void 골룸의_투두리스트_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
         // given
         final Member creator = 사용자를_생성한다(1L);
@@ -299,23 +310,12 @@ class GoalRoomReadServiceTest {
 
         when(goalRoomRepository.findByIdWithTodos(1L))
                 .thenReturn(Optional.of(goalRoom));
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.empty());
 
         // expected
         assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
                 .isInstanceOf(ForbiddenException.class);
-    }
-
-    @Test
-    void 골룸의_투두리스트_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
-        // given
-        when(goalRoomRepository.findByIdWithTodos(1L))
-                .thenReturn(Optional.empty());
-
-        // expected
-        assertThatThrownBy(() -> goalRoomReadService.findAllGoalRoomTodo(1L, "identifier"))
-                .isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -462,11 +462,12 @@ class GoalRoomReadServiceTest {
 
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2, 10, LocalDateTime.now(), TODAY,
-                        THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
+                        THIRTY_DAY_LATER, new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                        creator.getImage().getServerFilePath())),
                 new MemberGoalRoomForListResponse(2L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                                creator.getImage().getServerFilePath()))
         );
 
         //when
@@ -525,10 +526,12 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                                creator.getImage().getServerFilePath())),
                 new MemberGoalRoomForListResponse(2L, "골룸", "RECRUITING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                                creator.getImage().getServerFilePath()))
         );
 
         //when
@@ -578,10 +581,12 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(3L, "골룸", "RUNNING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                                creator.getImage().getServerFilePath())),
                 new MemberGoalRoomForListResponse(4L, "골룸", "RUNNING", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                                creator.getImage().getServerFilePath()))
         );
 
         //when
@@ -631,10 +636,12 @@ class GoalRoomReadServiceTest {
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(3L, "골룸", "COMPLETED", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image")),
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                                creator.getImage().getServerFilePath())),
                 new MemberGoalRoomForListResponse(4L, "골룸", "COMPLETED", 2,
                         10, LocalDateTime.now(), TODAY, THIRTY_DAY_LATER,
-                        new MemberResponse(creator.getId(), creator.getNickname().getValue(), "default-member-image"))
+                        new MemberResponse(creator.getId(), creator.getNickname().getValue(),
+                                creator.getImage().getServerFilePath()))
         );
 
         //when
@@ -657,7 +664,7 @@ class GoalRoomReadServiceTest {
 
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
                 creator);
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithNodes(1L))
                 .thenReturn(Optional.of(goalRoom));
@@ -683,7 +690,7 @@ class GoalRoomReadServiceTest {
 
         when(goalRoomRepository.findByIdWithNodes(1L))
                 .thenReturn(Optional.of(goalRoom));
-        when(goalRoomRepository.findGoalRoomMember(anyLong(), any()))
+        when(goalRoomMemberRepository.findGoalRoomMember(anyLong(), any()))
                 .thenReturn(Optional.empty());
 
         // expected
@@ -817,9 +824,9 @@ class GoalRoomReadServiceTest {
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final MemberImage memberImage = new MemberImage("originalFileName", "default-member-image",
                 ImageContentType.JPG);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         return new Member(1L, new Identifier("cokirikiri"), new EncryptedPassword(new Password("password1!")),
                 new Nickname("코끼리"), memberImage, memberProfile);
     }

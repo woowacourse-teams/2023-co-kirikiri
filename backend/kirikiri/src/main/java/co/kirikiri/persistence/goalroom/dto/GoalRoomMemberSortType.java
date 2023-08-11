@@ -11,12 +11,4 @@ public enum GoalRoomMemberSortType {
     GoalRoomMemberSortType(final String description) {
         this.description = description;
     }
-
-    public boolean isJoinedASC() {
-        return this == JOINED_ASC;
-    }
-
-    public boolean isAccomplishmentRate() {
-        return this == ACCOMPLISHMENT_RATE;
-    }
 }

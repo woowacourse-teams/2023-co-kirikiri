@@ -11,13 +11,10 @@ import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -26,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter implements GoalRoomQueryRepository {
+
+    private static final int LIMIT_OFFSET = 1;
 
     public GoalRoomQueryRepositoryImpl() {
         super(GoalRoom.class);
@@ -43,7 +42,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     @Override
     public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
                                                                           final RoadmapGoalRoomsFilterType filterType,
-                                                                          final GoalRoomLastValueDto lastValue,
+                                                                          final Long lastId,
                                                                           final int pageSize) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
@@ -54,9 +53,9 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchJoin()
                 .innerJoin(member.memberProfile, memberProfile)
                 .fetchJoin()
-                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastValue(lastValue))
+                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastId(lastId))
                 .orderBy(sortCond(filterType))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .fetch();
     }
 
@@ -74,17 +73,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .leftJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
                 .fetchJoin()
                 .where(goalRoomIdCond(goalRoomId))
-                .fetchFirst());
-    }
-
-    @Override
-    public Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier) {
-        return Optional.ofNullable(selectFrom(goalRoomMember)
-                .innerJoin(goalRoomMember.goalRoom, goalRoom)
-                .where(
-                        goalRoomIdCond(goalRoomId),
-                        memberIdentifierCond(memberIdentifier))
-                .fetchJoin()
                 .fetchFirst());
     }
 
@@ -112,19 +100,17 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return goalRoom.id.eq(goalRoomId);
     }
 
-    private BooleanExpression memberIdentifierCond(final Identifier memberIdentifier) {
-        return goalRoomMember.member.identifier.eq(memberIdentifier);
-    }
-
     private BooleanExpression statusCond(final GoalRoomStatus status) {
         return goalRoom.status.eq(status);
     }
 
-    private BooleanExpression lessThanLastValue(final GoalRoomLastValueDto lastValue) {
-        if (lastValue == null) {
+    private BooleanExpression lessThanLastId(final Long lastId) {
+        if (lastId == null) {
             return null;
         }
-        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+        return roadmap.createdAt.lt(
+                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+        );
     }
 
     private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsFilterType filterType) {

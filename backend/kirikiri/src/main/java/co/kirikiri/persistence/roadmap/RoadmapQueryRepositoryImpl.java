@@ -11,7 +11,6 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
-import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.dto.RoadmapSearchTagName;
 import co.kirikiri.persistence.dto.RoadmapSearchTitle;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter implements RoadmapQueryRepository {
+
+    private static final int LIMIT_OFFSET = 1;
 
     public RoadmapQueryRepositoryImpl() {
         super(Roadmap.class);
@@ -42,7 +43,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
 
     @Override
     public List<Roadmap> findRoadmapsByCategory(final RoadmapCategory category, final RoadmapFilterType orderType,
-                                                final RoadmapLastValueDto lastValue, final int pageSize) {
+                                                final Long lastId, final int pageSize) {
 
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
@@ -51,17 +52,17 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
                 .where(
-                        lessThanLastValue(lastValue, orderType),
+                        lessThanLastId(lastId, orderType),
                         statusCond(RoadmapStatus.CREATED),
                         categoryCond(category))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
                 .fetch();
     }
 
     @Override
     public List<Roadmap> findRoadmapsByCond(final RoadmapSearchDto searchRequest, final RoadmapFilterType orderType,
-                                            final RoadmapLastValueDto lastValue, final int pageSize) {
+                                            final Long lastId, final int pageSize) {
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
@@ -69,12 +70,12 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
                 .where(
-                        lessThanLastValue(lastValue, orderType),
+                        lessThanLastId(lastId, orderType),
                         statusCond(RoadmapStatus.CREATED),
                         titleCond(searchRequest.getTitle()),
                         creatorCond(searchRequest.getCreatorId()),
                         tagCond(searchRequest.getTagName()))
-                .limit(pageSize)
+                .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
                 .fetch();
     }
@@ -82,13 +83,13 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     // TODO 최신순에서만 no-offset 적용이 되는 코드, 정렬 조건에 따라서 조건 추가 필요
     @Override
     public List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
-                                                                       final RoadmapLastValueDto lastValue,
+                                                                       final Long lastId,
                                                                        final int pageSize) {
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
-                .where(memberCond(member), lessThanLastValue(lastValue))
-                .limit(pageSize)
+                .where(memberCond(member), lessThanLastId(lastId))
+                .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(orderByIdDesc())
                 .fetch();
     }
@@ -138,22 +139,28 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         return roadmap.createdAt.desc();
     }
 
-    private BooleanExpression lessThanLastValue(final RoadmapLastValueDto lastValue,
-                                                final RoadmapFilterType orderType) {
-        if (lastValue == null) {
+    private BooleanExpression lessThanLastId(final Long lastId,
+                                             final RoadmapFilterType orderType) {
+        if (lastId == null) {
             return null;
         }
         if (orderType == RoadmapFilterType.LATEST) {
-            return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+            return roadmap.createdAt.lt(
+                    select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+            );
         }
-        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+        return roadmap.createdAt.lt(
+                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+        );
     }
 
-    private BooleanExpression lessThanLastValue(final RoadmapLastValueDto lastValue) {
-        if (lastValue == null) {
+    private BooleanExpression lessThanLastId(final Long lastId) {
+        if (lastId == null) {
             return null;
         }
-        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
+        return roadmap.createdAt.lt(
+                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+        );
     }
 
     private BooleanExpression memberCond(final Member member) {

@@ -1,5 +1,6 @@
 package co.kirikiri.controller;
 
+import static co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -25,6 +26,7 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -325,7 +327,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].endDate").description("골룸 종료 날짜"),
                                         fieldWithPath("[0].goalRoomLeader.id").description("골룸 생성 사용자 아이디"),
                                         fieldWithPath("[0].goalRoomLeader.name").description("골룸 생성 사용자 닉네임"),
-                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 생성 사용자 프포필 이미지 경로")
+                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 생성 사용자 프로필 이미지 경로")
                                 )))
                 .andReturn().getResponse()
                 .getContentAsString();
@@ -352,7 +354,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // when
         final MvcResult mvcResult = mockMvc.perform(
                         get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
-                                .param("sortCond", "ACCOMPLISHMENT_RATE")
+                                .param("sortCond", ACCOMPLISHMENT_RATE.name())
                                 .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
@@ -397,7 +399,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         //when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
-                        .param("sortCond", "ACCOMPLISHMENT_RATE")
+                        .param("sortCond", ACCOMPLISHMENT_RATE.name())
                         .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
                 .andDo(

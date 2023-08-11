@@ -6,6 +6,7 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -90,12 +91,12 @@ public class GoalRoomReadService {
     public List<GoalRoomTodoResponse> findAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
         final GoalRoomToDos goalRoomToDos = findGoalRoomTodosByGoalRoomId(goalRoomId);
         validateGoalRoomMember(goalRoomId, identifier);
-        final List<Long> checkedTodoIds = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
-        return GoalRoomMapper.convertGoalRoomTodoResponses(goalRoomToDos, checkedTodoIds);
+        final List<GoalRoomToDoCheck> checkedTodos = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
+        return GoalRoomMapper.convertGoalRoomTodoResponses(goalRoomToDos, checkedTodos);
     }
 
     private void validateGoalRoomMember(final Long goalRoomId, final String identifier) {
-        if (goalRoomRepository.findGoalRoomMember(goalRoomId, new Identifier(identifier)).isEmpty()) {
+        if (goalRoomMemberRepository.findGoalRoomMember(goalRoomId, new Identifier(identifier)).isEmpty()) {
             throw new ForbiddenException(
                     "골룸에 참여하지 않은 사용자입니다. goalRoomId = " + goalRoomId + " memberIdentifier = " + identifier);
         }
@@ -107,11 +108,8 @@ public class GoalRoomReadService {
                 .getGoalRoomToDos();
     }
 
-    private List<Long> findMemberCheckedGoalRoomToDoIds(final Long goalRoomId, final String identifier) {
-        return goalRoomToDoCheckRepository.findByGoalRoomIdAndMemberIdentifier(
-                        goalRoomId, new Identifier(identifier)).stream()
-                .map(goalRoomToDoCheck -> goalRoomToDoCheck.getGoalRoomToDo().getId())
-                .toList();
+    private List<GoalRoomToDoCheck> findMemberCheckedGoalRoomToDoIds(final Long goalRoomId, final String identifier) {
+        return goalRoomToDoCheckRepository.findByGoalRoomIdAndMemberIdentifier(goalRoomId, new Identifier(identifier));
     }
 
     public MemberGoalRoomResponse findMemberGoalRoom(final String identifier, final Long goalRoomId) {
@@ -121,8 +119,8 @@ public class GoalRoomReadService {
 
         final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(currentGoalRoomRoadmapNode);
-        final List<Long> checkedTodoIds = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
-        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds, checkedTodoIds);
+        final List<GoalRoomToDoCheck> checkedTodos = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
+        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds, checkedTodos);
     }
 
     private GoalRoom findMemberGoalRoomById(final Long goalRoomId) {
@@ -182,7 +180,7 @@ public class GoalRoomReadService {
         final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = goalRoom.getNodeByDate(LocalDate.now()).get();
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(
                 currentGoalRoomRoadmapNode);
-        return GoalRoomMapper.convertToGoalRoomCheckFeedResponse(checkFeeds);
+        return GoalRoomMapper.convertToGoalRoomCheckFeedResponses(checkFeeds);
     }
 
     private GoalRoom findGoalRoomWithNodesById(final Long goalRoomId) {
