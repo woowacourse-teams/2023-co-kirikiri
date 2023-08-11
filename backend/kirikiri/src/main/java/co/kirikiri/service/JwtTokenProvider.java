@@ -7,17 +7,20 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.SecretKey;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider implements TokenProvider {
+
+    private static final String TYPE_CLAIM_KEY = "type";
 
     private final String secretKey;
     private final Long accessTokenValidityInSeconds;
@@ -33,12 +36,16 @@ public class JwtTokenProvider implements TokenProvider {
 
     @Override
     public String createAccessToken(final String subject, final Map<String, Object> claims) {
-        return createToken(accessTokenValidityInSeconds, subject, claims);
+        final Map<String, Object> copiedClaims = new HashMap<>(claims);
+        copiedClaims.put(TYPE_CLAIM_KEY, "Access");
+        return createToken(accessTokenValidityInSeconds, subject, copiedClaims);
     }
 
     @Override
     public String createRefreshToken(final String subject, final Map<String, Object> claims) {
-        return createToken(refreshTokenValidityInSeconds, subject, claims);
+        final Map<String, Object> copiedClaims = new HashMap<>(claims);
+        copiedClaims.put(TYPE_CLAIM_KEY, "Refresh");
+        return createToken(refreshTokenValidityInSeconds, subject, copiedClaims);
     }
 
     private String createToken(final Long tokenValidityInSeconds, final String subject,
