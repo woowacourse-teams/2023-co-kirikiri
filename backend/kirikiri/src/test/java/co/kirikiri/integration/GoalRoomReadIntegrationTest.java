@@ -4,19 +4,8 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.ImageDirType;
-import co.kirikiri.domain.goalroom.CheckFeed;
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
@@ -356,8 +345,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 List.of(new GoalRoomTodoResponse(1L, 정상적인_골룸_투두_컨텐츠, 오늘, 십일_후,
                         new GoalRoomToDoCheckResponse(false))),
                 List.of(
-                        new CheckFeedResponse(1L, "filePath1", "image description", LocalDateTime.now()),
-                        new CheckFeedResponse(2L, "filePath1", "image description", LocalDateTime.now())
+                        new CheckFeedResponse(2L, "filePath1", "image description", LocalDateTime.now()),
+                        new CheckFeedResponse(1L, "filePath1", "image description", LocalDateTime.now())
                 ));
 
         assertThat(요청_응답값)

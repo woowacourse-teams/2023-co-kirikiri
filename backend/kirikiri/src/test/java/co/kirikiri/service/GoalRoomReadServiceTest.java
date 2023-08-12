@@ -732,7 +732,7 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .willReturn(Optional.of(goalRoomMember1));
-        given(checkFeedRepository.findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(any()))
+        given(checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(any(), any()))
                 .willReturn(List.of(checkFeed3, checkFeed2, checkFeed1));
 
         // when
@@ -779,13 +779,14 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .willReturn(Optional.of(goalRoomMember1));
+        given(checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(any(), any()))
+                .willReturn(Collections.emptyList());
 
         // when
         final List<GoalRoomCheckFeedResponse> responses = goalRoomReadService.findGoalRoomCheckFeeds("cokirikiri", 1L);
 
         // then
-        verify(checkFeedRepository, never()).findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(any());
-        assertThat(responses).isEqualTo(Collections.emptyList());
+        assertThat(responses).isEmpty();
     }
 
     @Test

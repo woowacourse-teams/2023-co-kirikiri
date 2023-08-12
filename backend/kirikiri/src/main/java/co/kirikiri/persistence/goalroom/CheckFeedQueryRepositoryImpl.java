@@ -20,8 +20,8 @@ public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter im
     }
 
     @Override
-    public List<CheckFeed> findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(
-            final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+    public List<CheckFeed> findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
+            final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomStatus status) {
         return selectFrom(checkFeed)
                 .innerJoin(checkFeed.goalRoomMember, goalRoomMember)
                 .fetchJoin()
@@ -29,7 +29,7 @@ public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter im
                 .fetchJoin()
                 .innerJoin(member.image, memberImage)
                 .fetchJoin()
-                .where(checkFeed.goalRoomRoadmapNode.eq(goalRoomRoadmapNode))
+                .where(nodeAndStatusCond(goalRoomRoadmapNode, status))
                 .orderBy(checkFeed.createdAt.desc())
                 .fetch();
     }
@@ -43,7 +43,7 @@ public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter im
                 .innerJoin(goalRoomMember.goalRoom, goalRoom)
                 .fetchJoin()
                 .where(nodeAndStatusCond(currentGoalRoomRoadmapNode, status))
-                .orderBy(checkFeed.createdAt.asc())
+                .orderBy(checkFeed.createdAt.desc())
                 .fetch();
     }
 

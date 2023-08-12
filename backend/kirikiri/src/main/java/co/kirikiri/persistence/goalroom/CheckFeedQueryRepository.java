@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface CheckFeedQueryRepository {
 
-    List<CheckFeed> findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(
-            final GoalRoomRoadmapNode goalRoomRoadmapNode);
+    List<CheckFeed> findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
+            final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomStatus status);
 
     List<CheckFeed> findByGoalRoomRoadmapNodeAndGoalRoomStatus(
             final GoalRoomRoadmapNode currentGoalRoomRoadmapNode, final GoalRoomStatus status);
