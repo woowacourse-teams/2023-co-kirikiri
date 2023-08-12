@@ -19,7 +19,6 @@ import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,14 +56,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastValue(lastValue))
                 .orderBy(sortCond(filterType))
                 .limit(pageSize + LIMIT_OFFSET)
-                .fetch();
-    }
-
-    @Override
-    public List<GoalRoom> findAllByStartDateNow() {
-        return selectFrom(goalRoom)
-                .join(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
-                .where(startDateEqualsToNow())
                 .fetch();
     }
 
@@ -117,10 +108,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
             return goalRoom.id.desc();
         }
         return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
-    }
-
-    private BooleanExpression startDateEqualsToNow() {
-        return goalRoomRoadmapNode.period.startDate.eq(LocalDate.now());
     }
 
     @Override

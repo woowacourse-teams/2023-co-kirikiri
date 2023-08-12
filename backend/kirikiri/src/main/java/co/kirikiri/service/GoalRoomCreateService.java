@@ -5,7 +5,6 @@ import co.kirikiri.domain.ImageDirType;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
@@ -37,7 +36,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -258,31 +256,6 @@ public class GoalRoomCreateService {
         final int memberCheckCount = pastCheckCount + 1;
         final Double accomplishmentRate = 100 * memberCheckCount / (double) wholeCheckCount;
         goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
-    }
-
-    @Scheduled(cron = "0 0 0 * * *")
-    public void startGoalRooms() {
-        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDateNow();
-        for (final GoalRoom goalRoom : goalRoomsToStart) {
-            final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
-                    goalRoom);
-            final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
-            goalRoomMemberRepository.saveAll(goalRoomMembers);
-            goalRoomPendingMemberRepository.deleteAll(goalRoomPendingMembers);
-            goalRoom.start();
-        }
-    }
-
-    private List<GoalRoomMember> makeGoalRoomMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
-        return goalRoomPendingMembers.stream()
-                .map(this::makeGoalRoomMember)
-                .toList();
-    }
-
-    private GoalRoomMember makeGoalRoomMember(final GoalRoomPendingMember goalRoomPendingMember) {
-        return new GoalRoomMember(goalRoomPendingMember.getRole(),
-                goalRoomPendingMember.getJoinedAt(), goalRoomPendingMember.getGoalRoom(),
-                goalRoomPendingMember.getMember());
     }
 
     public void leave(final String identifier, final Long goalRoomId) {

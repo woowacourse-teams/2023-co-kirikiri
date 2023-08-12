@@ -3,7 +3,10 @@ package co.kirikiri.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
@@ -26,6 +29,7 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -37,32 +41,35 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class GoalRoomServiceIntegrationTest extends IntegrationTest {
+class GoalRoomSchedulerIntegrationTest extends IntegrationTest {
 
     private static final LocalDate TODAY = LocalDate.now();
 
-    private final GoalRoomCreateService goalRoomService;
+    private final GoalRoomScheduler goalRoomScheduler;
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final CheckFeedRepository checkFeedRepository;
 
-    public GoalRoomServiceIntegrationTest(final GoalRoomCreateService goalRoomService,
-                                          final GoalRoomRepository goalRoomRepository,
-                                          final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
-                                          final GoalRoomMemberRepository goalRoomMemberRepository,
-                                          final MemberRepository memberRepository,
-                                          final RoadmapRepository roadmapRepository,
-                                          final RoadmapCategoryRepository roadmapCategoryRepository) {
-        this.goalRoomService = goalRoomService;
+    public GoalRoomSchedulerIntegrationTest(final GoalRoomScheduler goalRoomScheduler,
+                                            final GoalRoomRepository goalRoomRepository,
+                                            final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
+                                            final GoalRoomMemberRepository goalRoomMemberRepository,
+                                            final MemberRepository memberRepository,
+                                            final RoadmapRepository roadmapRepository,
+                                            final RoadmapCategoryRepository roadmapCategoryRepository,
+                                            final CheckFeedRepository checkFeedRepository) {
+        this.goalRoomScheduler = goalRoomScheduler;
         this.goalRoomRepository = goalRoomRepository;
         this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.checkFeedRepository = checkFeedRepository;
     }
 
     @Test
@@ -90,7 +97,7 @@ class GoalRoomServiceIntegrationTest extends IntegrationTest {
         goalRoom2.join(follower3);
 
         // when
-        goalRoomService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // then
         assertAll(
@@ -126,7 +133,7 @@ class GoalRoomServiceIntegrationTest extends IntegrationTest {
         goalRoom2.join(follower3);
 
         // when
-        goalRoomService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // then
         assertAll(
@@ -189,10 +196,15 @@ class GoalRoomServiceIntegrationTest extends IntegrationTest {
         return goalRoomRepository.save(골룸);
     }
 
-    private GoalRoomPendingMember 골룸_대기자를_생성한다(final GoalRoom 골룸, final Member 골룸_참여자,
-                                               final GoalRoomRole 골룸_역할) {
+    private GoalRoomPendingMember 골룸_대기자를_생성한다(final GoalRoom 골룸, final Member 골룸_참여자, final GoalRoomRole 골룸_역할) {
         final GoalRoomPendingMember 골룸_대기_사용자 = new GoalRoomPendingMember(골룸_역할,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), 골룸, 골룸_참여자);
         return goalRoomPendingMemberRepository.save(골룸_대기_사용자);
+    }
+
+    private CheckFeed 골룸_노드에_대해_인증_피드를_생성한다(final GoalRoomRoadmapNode 골룸_노드, final GoalRoomMember 참여자) {
+        final CheckFeed 인증_피드 = new CheckFeed("default-file-path", ImageContentType.JPG,
+                "originalFileName", "인증 피드 본문", 골룸_노드, 참여자);
+        return checkFeedRepository.save(인증_피드);
     }
 }

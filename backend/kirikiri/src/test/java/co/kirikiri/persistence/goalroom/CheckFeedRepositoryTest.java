@@ -10,6 +10,7 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -171,7 +172,7 @@ class CheckFeedRepositoryTest {
     }
 
     @Test
-    void 골룸의_특정_노드_동안_등록된_인증_피드들을_조회한다() {
+    void 골룸이_진행중일_때_특정_노드_동안_등록된_인증_피드들을_조회한다() {
         //given
         final Member creator = 사용자를_저장한다("cokiri", "코끼리");
         final RoadmapCategory category = 카테고리를_저장한다("여가");
@@ -181,6 +182,7 @@ class CheckFeedRepositoryTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final Member member = 사용자를_저장한다("participant", "참여자");
         final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+        goalRoom.updateStatus(GoalRoomStatus.RUNNING);
 
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
@@ -198,8 +200,10 @@ class CheckFeedRepositoryTest {
         인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
 
         //when
-        final List<CheckFeed> checkFeeds1 = checkFeedRepository.findByGoalRoomRoadmapNode(goalRoomRoadmapNode1);
-        final List<CheckFeed> checkFeeds2 = checkFeedRepository.findByGoalRoomRoadmapNode(goalRoomRoadmapNode2);
+        final List<CheckFeed> checkFeeds1 = checkFeedRepository
+                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(goalRoomRoadmapNode1, goalRoom.getStatus());
+        final List<CheckFeed> checkFeeds2 = checkFeedRepository
+                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(goalRoomRoadmapNode2, goalRoom.getStatus());
 
         //then
         final CheckFeed expected1 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
@@ -217,6 +221,50 @@ class CheckFeedRepositoryTest {
                         .ignoringFields("id", "createdAt")
                         .isEqualTo(List.of(expected2, expected2, expected2))
         );
+    }
+
+    @Test
+    void 골룸이_완료됐을_때는_특정한_노드_동안이_아닌_모든_기간_동안_등록된_인증_피드들을_조회한다() {
+        //given
+        final Member creator = 사용자를_저장한다("cokiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                member);
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoom.updateStatus(GoalRoomStatus.COMPLETED);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
+
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+
+        //when
+        final List<CheckFeed> checkFeeds = checkFeedRepository
+                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(goalRoomRoadmapNode1, goalRoom.getStatus());
+
+        //then
+        final CheckFeed expected1 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
+                "originalFileName", "인증 피드 본문", goalRoomRoadmapNode1, joinedMember);
+        final CheckFeed expected2 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
+                "originalFileName", "인증 피드 본문", goalRoomRoadmapNode2, joinedMember);
+
+        assertThat(checkFeeds)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "createdAt")
+                .isEqualTo(List.of(expected1, expected1, expected1, expected2, expected2, expected2));
     }
 
     @Test

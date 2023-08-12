@@ -347,7 +347,7 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoom));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
-        given(checkFeedRepository.findByGoalRoomRoadmapNode(any()))
+        given(checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatus(any(), any()))
                 .willReturn(checkFeeds);
 
         final MemberGoalRoomResponse expected = new MemberGoalRoomResponse(goalRoom.getName().getValue(),

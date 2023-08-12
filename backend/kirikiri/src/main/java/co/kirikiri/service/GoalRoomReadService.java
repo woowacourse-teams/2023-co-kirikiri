@@ -114,7 +114,7 @@ public class GoalRoomReadService {
         validateMemberInGoalRoom(goalRoom, member);
 
         final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
-        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(currentGoalRoomRoadmapNode);
+        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatus(currentGoalRoomRoadmapNode, goalRoom.getStatus());
         final List<GoalRoomToDoCheck> checkedTodos = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
         return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds, checkedTodos);
     }

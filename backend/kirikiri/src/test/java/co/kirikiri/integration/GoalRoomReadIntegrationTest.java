@@ -4,12 +4,25 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.ImageDirType;
+import co.kirikiri.domain.goalroom.CheckFeed;
+import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
+import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.vo.GoalRoomName;
+import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
+import co.kirikiri.domain.goalroom.vo.Period;
+import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.GoalRoomCreateService;
+import co.kirikiri.service.GoalRoomScheduler;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
@@ -76,18 +89,24 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private final String serverPathPrefix;
     private final FilePathGenerator filePathGenerator;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomCreateService goalRoomCreateService;
+    private final GoalRoomScheduler goalRoomScheduler;
 
     public GoalRoomReadIntegrationTest(@Value("${file.upload-dir}") final String storageLocation,
                                        @Value("${file.server-path}") final String serverPathPrefix,
                                        final FilePathGenerator filePathGenerator,
                                        final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final GoalRoomCreateService goalRoomCreateService) {
+                                       final GoalRoomRepository goalRoomRepository,
+                                       final GoalRoomCreateService goalRoomCreateService,
+                                       final GoalRoomScheduler goalRoomScheduler) {
         this.storageLocation = storageLocation;
         this.serverPathPrefix = serverPathPrefix;
         this.filePathGenerator = filePathGenerator;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
+        this.goalRoomRepository = goalRoomRepository;
         this.goalRoomCreateService = goalRoomCreateService;
+        this.goalRoomScheduler = goalRoomScheduler;
     }
 
     @Test
@@ -288,7 +307,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 사용자_단일_골룸을_조회한다() throws IOException {
+    void 진행_중인_사용자_단일_골룸을_조회한다() throws IOException {
         // given
         회원가입을_한다(IDENTIFIER, PASSWORD, "코끼리", "010-1234-5678", GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
         final String 로그인_토큰_정보 = 로그인을_한다(IDENTIFIER, PASSWORD);
@@ -348,7 +367,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 골룸_시작_전에_사용자_단일_골룸_조회_시_인증_피드가_빈_응답을_반환한다() {
+    void 모집_중인_사용자_단일_골룸_조회_시_인증_피드가_빈_응답을_반환한다() {
         // given
         회원가입을_한다(IDENTIFIER, PASSWORD, "코끼리", "010-1234-5678", GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
         final String 로그인_토큰_정보 = 로그인을_한다(IDENTIFIER, PASSWORD);
@@ -725,7 +744,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 골룸_노드_별_기간_요청);
         final Long 골룸_id = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보1);
         goalRoomCreateService.join("identifier2", 골룸_id);
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/jpeg", "tempImage".getBytes());
@@ -808,7 +827,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
         final Long 골룸_id = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보1);
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/jpeg", "tempImage".getBytes());
@@ -1014,7 +1033,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     }
 
     private void 골룸을_시작한다() {
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
     }
 
     private Long 골룸을_생성하고_아이디를_알아낸다(final GoalRoomCreateRequest 골룸_생성_요청, final String 액세스_토큰) {
@@ -1040,7 +1059,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                                                       final CheckFeedRequest 인증_피드_등록_요청) throws IOException {
         final MultipartFile 인증피드_가짜_이미지_객체 = 인증_피드_등록_요청.image();
 
-        return given().log().all()
+        final ExtractableResponse<Response> 인증_피드_등록_응답 = given().log().all()
                 .multiPart(인증피드_가짜_이미지_객체.getName(), 인증피드_가짜_이미지_객체.getOriginalFilename(),
                         인증피드_가짜_이미지_객체.getBytes(), 인증피드_가짜_이미지_객체.getContentType())
                 .formParam("description", 인증_피드_등록_요청.description())
@@ -1051,6 +1070,9 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
+
+        테스트용으로_생성된_파일을_제거한다();
+        return 인증_피드_등록_응답;
     }
 
     private ExtractableResponse<Response> 인증_피드_전체_조회_요청(final String 액세스_토큰, final Long 골룸_아이디) {

@@ -12,6 +12,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.GoalRoomCreateService;
+import co.kirikiri.service.GoalRoomScheduler;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
@@ -35,12 +36,14 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -81,19 +84,22 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final GoalRoomCreateService goalRoomCreateService;
+    private final GoalRoomScheduler goalRoomScheduler;
 
     public GoalRoomCreateIntegrationTest(@Value("${file.upload-dir}") final String storageLocation,
                                          @Value("${file.server-path}") final String serverPathPrefix,
                                          final GoalRoomRepository goalRoomRepository,
                                          final GoalRoomMemberRepository goalRoomMemberRepository,
                                          final RoadmapCategoryRepository roadmapCategoryRepository,
-                                         final GoalRoomCreateService goalRoomCreateService) {
+                                         final GoalRoomCreateService goalRoomCreateService,
+                                         final GoalRoomScheduler goalRoomScheduler) {
         this.storageLocation = storageLocation;
         this.serverPathPrefix = serverPathPrefix;
         this.goalRoomRepository = goalRoomRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.goalRoomCreateService = goalRoomCreateService;
+        this.goalRoomScheduler = goalRoomScheduler;
     }
 
     @Test
@@ -399,7 +405,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 액세스_토큰);
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/jpeg", "tempImage".getBytes());
@@ -439,7 +445,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 액세스_토큰);
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final MockMultipartFile 빈_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/jpeg", "".getBytes());
@@ -480,7 +486,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 액세스_토큰);
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/gif", "tempImage".getBytes());
@@ -521,7 +527,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 액세스_토큰);
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/webp", "tempImage".getBytes());
@@ -569,7 +575,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원, 골룸_투두_요청,
                 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 액세스_토큰);
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/webp", "tempImage".getBytes());
@@ -706,7 +712,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
 
         final Long 골룸_아이디 = 정상적인_골룸_생성(로그인_토큰_정보, 로드맵_아이디, 로드맵_응답.content().nodes().get(0).id());
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
         final Long 투두_아이디 = 골룸_투두리스트_추가후_아이디를_반환한다(로그인_토큰_정보, 골룸_아이디);
 
         // when
@@ -728,7 +734,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
 
         final Long 골룸_아이디 = 정상적인_골룸_생성(로그인_토큰_정보, 로드맵_아이디, 로드맵_응답.content().nodes().get(0).id());
         ;
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
         final Long 투두_아이디 = 골룸_투두리스트_추가후_아이디를_반환한다(로그인_토큰_정보, 골룸_아이디);
 
         골룸_투두리스트를_체크한다(로그인_토큰_정보, 골룸_아이디, 투두_아이디);
@@ -776,7 +782,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
 
         final Long 골룸_아이디 = 정상적인_골룸_생성(로그인_토큰_정보, 로드맵_아이디, 로드맵_응답.content().nodes().get(0).id());
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
         final Long 투두_아이디 = 골룸_투두리스트_추가후_아이디를_반환한다(로그인_토큰_정보, 골룸_아이디);
 
         // when
@@ -839,7 +845,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         골룸_참가_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // TODO: 골룸 종료 기능 추가 시 수정
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
@@ -901,7 +907,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 골룸_리더_액세스_토큰);
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // TODO: 골룸 종료 기능 추가 시 수정
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
@@ -930,7 +936,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         골룸_참가_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
@@ -985,7 +991,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         골룸_참가_요청(골룸_아이디, 골룸_팔로워2_액세스_토큰);
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // TODO: 골룸 종료 기능 추가 시 수정
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
@@ -1040,7 +1046,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         골룸_참가_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // TODO: 골룸 종료 기능 추가 시 수정
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
@@ -1086,7 +1092,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 골룸_리더_액세스_토큰);
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // TODO: 골룸 종료 기능 추가 시 수정
         final GoalRoom 골룸 = goalRoomRepository.findById(골룸_아이디).get();
@@ -1319,6 +1325,19 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
+
+        테스트용으로_생성된_파일을_제거한다();
         return 인증_피드_등록_응답;
+    }
+
+    private void 테스트용으로_생성된_파일을_제거한다() {
+        final String rootPath = storageLocation;
+
+        try {
+            final File rootDir = new File(rootPath);
+            FileUtils.deleteDirectory(rootDir);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
     }
 }

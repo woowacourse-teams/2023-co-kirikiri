@@ -15,6 +15,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.formParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -754,7 +755,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                         RestDocumentationRequestBuilders
                                 .multipart(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
                                 .file(imageFile)
-                                .param("text", description)
+                                .file("text", description.getBytes())
                                 .header("Authorization", "Bearer accessToken")
                                 .contextPath(API_PREFIX)
                                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
@@ -769,7 +770,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                                         parameterWithName("goalRoomId").description("골룸 아이디")
                                 ),
                                 requestParts(
-                                        partWithName("image").description("업로드한 이미지")
+                                        partWithName("image").description("업로드한 이미지"),
+                                        partWithName("text").description("인증 피드 본문")
                                 ),
                                 responseHeaders(
                                         headerWithName("Location").description("저장된 이미지 경로")
@@ -796,7 +798,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                         RestDocumentationRequestBuilders
                                 .multipart(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
                                 .file(imageFile)
-                                .param("description", description)
+                                .file("text", description.getBytes())
                                 .header("Authorization", "Bearer accessToken")
                                 .contextPath(API_PREFIX)
                                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
@@ -811,7 +813,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                                         parameterWithName("goalRoomId").description("골룸 아이디")
                                 ),
                                 requestParts(
-                                        partWithName("image").description("업로드한 이미지")
+                                        partWithName("image").description("업로드한 이미지"),
+                                        partWithName("text").description("인증 피드 본문")
                                 ),
                                 responseFields(
                                         fieldWithPath("message").description("예외 메세지")
@@ -838,7 +841,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                         RestDocumentationRequestBuilders
                                 .multipart(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 1L)
                                 .file(imageFile)
-                                .param("description", description)
+                                .file("text", description.getBytes())
                                 .header("Authorization", "Bearer accessToken")
                                 .contextPath(API_PREFIX)
                                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
@@ -853,7 +856,8 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                                         parameterWithName("goalRoomId").description("골룸 아이디")
                                 ),
                                 requestParts(
-                                        partWithName("image").description("업로드한 이미지")
+                                        partWithName("image").description("업로드한 이미지"),
+                                        partWithName("text").description("인증 피드 본문")
                                 ),
                                 responseFields(
                                         fieldWithPath("message").description("예외 메세지")
