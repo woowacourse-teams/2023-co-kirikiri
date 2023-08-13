@@ -27,7 +27,7 @@ export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList', params.roadmapId], () =>
     getGoalRoomList(params)
   );
-  return { goalRoomList: data };
+  return { goalRoomList: data.responses };
 };
 
 export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => {
