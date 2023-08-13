@@ -1,10 +1,16 @@
+
+
 package co.kirikiri.persistence.roadmap;
 
+import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
+import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
+import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
 import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
 
+import co.kirikiri.domain.goalroom.QGoalRoomMember;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
@@ -14,10 +20,13 @@ import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.dto.RoadmapSearchTagName;
 import co.kirikiri.persistence.dto.RoadmapSearchTitle;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,17 +89,19 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .fetch();
     }
 
-    // TODO 최신순에서만 no-offset 적용이 되는 코드, 정렬 조건에 따라서 조건 추가 필요
     @Override
     public List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
                                                                        final Long lastId,
                                                                        final int pageSize) {
+        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
-                .where(memberCond(member), lessThanLastId(lastId))
+                .where(
+                        creatorCond(member.getId()),
+                        lessThanLastId(lastId, orderType))
                 .limit(pageSize + LIMIT_OFFSET)
-                .orderBy(orderByIdDesc())
+                .orderBy(sortCond(orderType))
                 .fetch();
     }
 
@@ -127,47 +138,75 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (tagName == null) {
             return null;
         }
-
         return roadmap.tags.values
                 .any()
                 .name.value
                 .equalsIgnoreCase(tagName.value());
     }
 
-    // TODO 정렬 조건 추가 필요
     private OrderSpecifier<?> sortCond(final RoadmapFilterType orderType) {
+        if (orderType == RoadmapFilterType.GOAL_ROOM_COUNT) {
+            return new OrderSpecifier<>(
+                    Order.DESC,
+                    goalRoomCountCond(goalRoom.roadmapContent.roadmap.id.eq(roadmap.id))
+            );
+        }
+        if (orderType == RoadmapFilterType.PARTICIPANT_COUNT) {
+            return new OrderSpecifier<>(
+                    Order.DESC,
+                    participantCountCond(goalRoomMember.goalRoom.roadmapContent.roadmap.id.eq(roadmap.id))
+            );
+        }
+        if (orderType == RoadmapFilterType.REVIEW_RATE) {
+            return new OrderSpecifier<>(
+                    Order.DESC,
+                    reviewRateCond(roadmapReview.roadmap.id.eq(roadmap.id))
+            );
+        }
         return roadmap.createdAt.desc();
     }
 
-    private BooleanExpression lessThanLastId(final Long lastId,
-                                             final RoadmapFilterType orderType) {
+    private JPAQuery<Long> goalRoomCountCond(final BooleanExpression id) {
+        return select(goalRoom.count())
+                .from(goalRoom)
+                .where(id);
+    }
+
+    private JPAQuery<Long> participantCountCond(final BooleanExpression id) {
+        return select(goalRoomMember.count())
+                .from(goalRoomMember)
+                .where(id);
+    }
+
+    private JPAQuery<Double> reviewRateCond(final BooleanExpression id) {
+        return select(roadmapReview.rate.avg())
+                .from(roadmapReview)
+                .where(id);
+    }
+
+    private BooleanExpression lessThanLastId(final Long lastId, final RoadmapFilterType orderType) {
         if (lastId == null) {
             return null;
         }
-        if (orderType == RoadmapFilterType.LATEST) {
-            return roadmap.createdAt.lt(
-                    select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
-            );
+        if (orderType == RoadmapFilterType.GOAL_ROOM_COUNT) {
+            final NumberPath<Long> goalRoomRoadmapId = goalRoom.roadmapContent.roadmap.id;
+            return goalRoomCountCond(goalRoomRoadmapId.eq(roadmap.id))
+                    .lt(goalRoomCountCond(goalRoomRoadmapId.eq(lastId)));
+        }
+        if (orderType == RoadmapFilterType.PARTICIPANT_COUNT) {
+            final NumberPath<Long> goalRoomMemberRoadmapId = goalRoomMember.goalRoom.roadmapContent.roadmap.id;
+            return participantCountCond(goalRoomMemberRoadmapId.eq(roadmap.id))
+                    .lt(participantCountCond(goalRoomMemberRoadmapId.eq(lastId)));
+        }
+        if (orderType == RoadmapFilterType.REVIEW_RATE) {
+            final NumberPath<Long> roadmapReviewRoadmapId = roadmapReview.roadmap.id;
+            return reviewRateCond(roadmapReviewRoadmapId.eq(roadmap.id))
+                    .lt(reviewRateCond(roadmapReviewRoadmapId.eq(lastId)));
         }
         return roadmap.createdAt.lt(
-                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+                select(roadmap.createdAt)
+                        .from(roadmap)
+                        .where(roadmap.id.eq(lastId))
         );
-    }
-
-    private BooleanExpression lessThanLastId(final Long lastId) {
-        if (lastId == null) {
-            return null;
-        }
-        return roadmap.createdAt.lt(
-                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
-        );
-    }
-
-    private BooleanExpression memberCond(final Member member) {
-        return roadmap.creator.eq(member);
-    }
-
-    private OrderSpecifier<Long> orderByIdDesc() {
-        return roadmap.id.desc();
     }
 }

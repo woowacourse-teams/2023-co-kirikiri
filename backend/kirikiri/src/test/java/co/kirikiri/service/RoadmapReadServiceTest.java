@@ -360,7 +360,7 @@ class RoadmapReadServiceTest {
         when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
-        final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", null, null);
+        final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", 1L, "태그");
         final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
@@ -599,15 +599,6 @@ class RoadmapReadServiceTest {
         return new RoadmapContent(id, content);
     }
 
-    private Roadmap 제목별로_로드맵을_생성한다(final String roadmapTitle) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 내용1");
-        final RoadmapCategory category = new RoadmapCategory(1L, "여행");
-        final Roadmap roadmap = new Roadmap(1L, roadmapTitle, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, member,
-                category);
-        roadmap.addContent(roadmapContent);
-        return roadmap;
-    }
-
     private List<RoadmapCategory> 로드맵_카테고리_리스트를_반환한다() {
         final RoadmapCategory category1 = new RoadmapCategory(1L, "어학");
         final RoadmapCategory category2 = new RoadmapCategory(2L, "IT");
@@ -651,10 +642,10 @@ class RoadmapReadServiceTest {
         final GoalRoom completedGoalRoom2 = new GoalRoom(new GoalRoomName("완료된 골룸 2"),
                 new LimitedMemberCount(20), roadmapContent, member);
 
-        runningGoalRoom1.updateStatus(GoalRoomStatus.RUNNING);
-        runningGoalRoom2.updateStatus(GoalRoomStatus.RUNNING);
-        completedGoalRoom1.updateStatus(GoalRoomStatus.COMPLETED);
-        completedGoalRoom2.updateStatus(GoalRoomStatus.COMPLETED);
+        runningGoalRoom1.start();
+        runningGoalRoom2.start();
+        completedGoalRoom1.complete();
+        completedGoalRoom2.complete();
 
         return List.of(recruitedGoalRoom1, recruitedGoalRoom2, runningGoalRoom1, runningGoalRoom2,
                 completedGoalRoom1, completedGoalRoom2);
