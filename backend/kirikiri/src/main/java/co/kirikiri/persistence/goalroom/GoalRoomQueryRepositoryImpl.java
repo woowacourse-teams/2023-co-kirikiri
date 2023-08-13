@@ -1,3 +1,5 @@
+
+
 package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
@@ -7,7 +9,6 @@ import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNo
 import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
-import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
@@ -18,6 +19,7 @@ import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     @Override
     public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
-                                                                          final RoadmapGoalRoomsFilterType filterType,
+                                                                          final RoadmapGoalRoomsFilterType orderType,
                                                                           final Long lastId,
                                                                           final int pageSize) {
         return selectFrom(goalRoom)
@@ -53,8 +55,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchJoin()
                 .innerJoin(member.memberProfile, memberProfile)
                 .fetchJoin()
-                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastId(lastId))
-                .orderBy(sortCond(filterType))
+                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastId(lastId, orderType))
+                .orderBy(sortCond(orderType))
                 .limit(pageSize + LIMIT_OFFSET)
                 .fetch();
     }
@@ -104,20 +106,23 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return goalRoom.status.eq(status);
     }
 
-    private BooleanExpression lessThanLastId(final Long lastId) {
+    private BooleanExpression lessThanLastId(final Long lastId, final RoadmapGoalRoomsFilterType filterType) {
         if (lastId == null) {
             return null;
         }
-        return roadmap.createdAt.lt(
-                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+        // TODO 참여율 순으로 조회 시 조건 추가해야 함
+        return goalRoom.createdAt.lt(
+                select(goalRoom.createdAt)
+                        .from(goalRoom)
+                        .where(goalRoom.id.eq(lastId))
         );
     }
 
-    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsFilterType filterType) {
-        if (filterType == RoadmapGoalRoomsFilterType.LATEST) {
-            return goalRoom.id.desc();
+    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsFilterType orderType) {
+        if (orderType == RoadmapGoalRoomsFilterType.PARTICIPATION_RATE) {
+            return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
         }
-        return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
+        return goalRoom.createdAt.desc();
     }
 
     private BooleanExpression startDateEqualsToNow() {

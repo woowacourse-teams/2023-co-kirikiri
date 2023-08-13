@@ -27,14 +27,14 @@ public class FileService {
     }
 
     public String uploadFileAndReturnPath(final MultipartFile multiPartFile, final ImageDirType dirType,
-                                          final Long goalRoomId) throws IOException {
+                                          final Long goalRoomId) {
         final String originalName = multiPartFile.getOriginalFilename();
         final String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
         final String filePath = filePathGenerator.makeFilePath(goalRoomId, dirType);
         final String saveFileName = storageLocation + filePath + fileName;
         final Path savePath = Path.of(saveFileName);
         makePathDirectories(savePath);
-        multiPartFile.transferTo(savePath);
+        saveFile(multiPartFile, savePath);
         return imagePathPrefix + filePath + fileName;
     }
 
@@ -43,11 +43,18 @@ public class FileService {
         if (Files.exists(parentDir)) {
             return;
         }
-
         try {
             Files.createDirectories(parentDir);
         } catch (final IOException e) {
             throw new ServerException("파일 저장 중에 문제가 생겼습니다. (파일 경로)");
+        }
+    }
+
+    private void saveFile(final MultipartFile multiPartFile, final Path savePath) {
+        try {
+            multiPartFile.transferTo(savePath);
+        } catch (final IOException e) {
+            throw new ServerException("이미지 업로드에 실패하였습니다.");
         }
     }
 }

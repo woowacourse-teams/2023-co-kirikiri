@@ -192,15 +192,11 @@ public class GoalRoomCreateService {
         validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
         updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
-        try {
-            final String imageUrl = fileService.uploadFileAndReturnPath(checkFeedImage, ImageDirType.CHECK_FEED,
-                    goalRoomId);
-            checkFeedRepository.save(new CheckFeed(imageUrl, imageType, checkFeedImage.getOriginalFilename(),
-                    checkFeedRequest.description(), currentNode, goalRoomMember));
-            return imageUrl;
-        } catch (final IOException e) {
-            throw new ServerException("이미지 업로드에 실패했습니다.");
-        }
+        final String imageUrl = fileService.uploadFileAndReturnPath(checkFeedImage, ImageDirType.CHECK_FEED,
+                goalRoomId);
+        checkFeedRepository.save(new CheckFeed(imageUrl, imageType, checkFeedImage.getOriginalFilename(),
+                checkFeedRequest.description(), currentNode, goalRoomMember));
+        return imageUrl;
     }
 
     private void validateEmptyImage(final MultipartFile image) {
@@ -227,12 +223,11 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
     }
 
-    private int validateCheckCount(final int memberCheckCount, final GoalRoomMember member,
-                                   final GoalRoomRoadmapNode goalRoomRoadmapNode) {
+    private void validateCheckCount(final int memberCheckCount, final GoalRoomMember member,
+                                    final GoalRoomRoadmapNode goalRoomRoadmapNode) {
 
         validateNodeCheckCount(memberCheckCount, goalRoomRoadmapNode);
         validateTodayCheckCount(member);
-        return memberCheckCount;
     }
 
     private void validateNodeCheckCount(final int memberCheckCount,

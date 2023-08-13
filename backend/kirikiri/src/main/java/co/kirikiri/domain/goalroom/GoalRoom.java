@@ -80,10 +80,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomPendingMembers.add(leader);
     }
 
-    public void updateStatus(final GoalRoomStatus status) {
-        this.status = status;
-    }
-
     public void join(final Member member) {
         final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
         newMember.updateGoalRoom(this);
@@ -183,18 +179,19 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     }
 
     public Integer getCurrentMemberCount() {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.size();
         }
         return goalRoomMembers.size();
     }
 
+    // FIXME 테스트용 메서드
     public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
         this.goalRoomMembers.addAll(new ArrayList<>(members));
     }
 
     public boolean isGoalRoomMember(final Member member) {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.isMember(member);
         }
         return goalRoomMembers.isMember(member);
@@ -285,9 +282,5 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public GoalRoomToDos getGoalRoomToDos() {
         return goalRoomToDos;
-    }
-
-    public GoalRoomPendingMembers getGoalRoomPendingMembers() {
-        return goalRoomPendingMembers;
     }
 }
