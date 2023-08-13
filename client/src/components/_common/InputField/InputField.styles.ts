@@ -41,9 +41,9 @@ export const InputBox = styled.div<{
   }
 `;
 
-export const ErrorMessage = styled.p`
+export const ErrorMessage = styled.p<{ size?: 'small' | 'normal' }>`
   ${({ theme }) => theme.fonts.button1};
   position: absolute;
-  top: 2.8rem;
+  top: ${({ size }) => (size === 'small' ? '2.3rem' : '2.55rem')};
   color: ${({ theme }) => theme.colors.red};
 `;

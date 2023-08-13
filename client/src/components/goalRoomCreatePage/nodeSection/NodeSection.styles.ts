@@ -14,8 +14,8 @@ export const Node = styled.div`
 `;
 
 export const NodeInfo = styled.div`
-  width: 18rem;
-  height: 18rem;
+  width: 20rem;
+  height: 20rem;
   margin-right: 2rem;
   padding: 2rem;
 

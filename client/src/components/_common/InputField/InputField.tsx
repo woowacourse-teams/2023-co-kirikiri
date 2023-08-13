@@ -33,7 +33,9 @@ const InputField = ({ ...props }: InputFieldProps) => {
           type={props.type === 'number' ? 'text' : props.type || 'text'}
           onChange={props.onChange}
         />
-        {props.errorMessage && <S.ErrorMessage>{props.errorMessage}</S.ErrorMessage>}
+        {props.errorMessage && (
+          <S.ErrorMessage size={props.size}>{props.errorMessage}</S.ErrorMessage>
+        )}
       </S.InputBox>
     </S.InputField>
   );
