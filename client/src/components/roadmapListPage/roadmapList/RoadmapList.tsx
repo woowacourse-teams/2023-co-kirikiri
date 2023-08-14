@@ -3,7 +3,7 @@ import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
 import * as S from './RoadmapList.styles';
 import { SelectedCategoryId } from '@myTypes/roadmap/internal';
 import { useNavigate } from 'react-router-dom';
-import { useInfiniteScroll } from '@hooks/queries/useInfiniteScroll';
+import { useInfiniteScroll } from '@hooks/_common/useInfiniteScroll';
 
 type RoadmapListProps = {
   selectedCategoryId: SelectedCategoryId;
@@ -13,8 +13,9 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   const { roadmapListResponse, fetchNextPage } = useRoadmapList({
     categoryId: selectedCategoryId,
   });
+
   const loadMoreRef = useInfiniteScroll({
-    hasNextPage: roadmapListResponse.hasNext,
+    hasNextPage: roadmapListResponse?.hasNext,
     fetchNextPage,
   });
 
@@ -29,7 +30,14 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
       {roadmapListResponse.responses.map((item) => (
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}
-      <div ref={loadMoreRef}>Loading more roadmaps...</div>
+      {/* <div ref={loadMoreRef}>Loading more roadmaps...</div> */}
+      {roadmapListResponse?.hasNext && (
+        <S.WavyLoading ref={loadMoreRef}>
+          <div />
+          <div />
+          <div />
+        </S.WavyLoading>
+      )}
       <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>
         로드맵 생성하러가기
       </S.CreateRoadmapButton>
