@@ -5,16 +5,18 @@ import { isNumeric } from '@utils/_common/isNumeric';
 import { isValidMaxValue } from '@utils/_common/isValidMaxValue';
 import { ValidationsType } from '@hooks/_common/useFormInput';
 
+import { GOALROOM, ERROR_MESSAGE } from '@constants/goalRoom/goalRoomValidation';
+
 export const staticValidations: ValidationsType = {
   name: (inputValue) => {
     if (isEmptyString(inputValue)) {
-      return { ok: false, message: '골룸 이름은 필수 항목입니다', updateOnFail: true };
+      return { ok: false, message: ERROR_MESSAGE.NAME_REQUIRED, updateOnFail: true };
     }
 
-    if (!isValidMaxLength(inputValue, 40)) {
+    if (!isValidMaxLength(inputValue, GOALROOM.MAX_NAME_LENGTH)) {
       return {
         ok: false,
-        message: `최대 ${40}글자까지 작성할 수 있습니다`,
+        message: ERROR_MESSAGE.NAME_MAX_LENGTH,
         updateOnFail: false,
       };
     }
@@ -24,15 +26,23 @@ export const staticValidations: ValidationsType = {
 
   limitedMemberCount: (inputValue) => {
     if (isEmptyString(inputValue)) {
-      return { ok: false, message: '최대 인원수는 필수 항목입니다', updateOnFail: true };
+      return {
+        ok: false,
+        message: ERROR_MESSAGE.MEMBER_COUNT_REQUIRED,
+        updateOnFail: true,
+      };
     }
 
     if (!isNumeric(inputValue)) {
-      return { ok: false, message: '숫자를 입력해주세요', updateOnFail: false };
+      return { ok: false, message: ERROR_MESSAGE.NUMERIC, updateOnFail: false };
     }
 
-    if (!isValidMaxValue(inputValue, 20)) {
-      return { ok: false, message: '최대 인원수는 20입니다', updateOnFail: false };
+    if (!isValidMaxValue(inputValue, GOALROOM.MEMBER_COUNT_MAX_VALUE)) {
+      return {
+        ok: false,
+        message: ERROR_MESSAGE.MEMBER_COUNT_MAX_VALUE,
+        updateOnFail: false,
+      };
     }
 
     return { ok: true };
@@ -40,13 +50,17 @@ export const staticValidations: ValidationsType = {
 
   'goalRoomTodo[content]': (inputValue) => {
     if (isEmptyString(inputValue)) {
-      return { ok: false, message: '투두 리스트는 필수 항목입니다', updateOnFail: true };
-    }
-
-    if (!isValidMaxLength(inputValue, 40)) {
       return {
         ok: false,
-        message: `최대 ${40}글자까지 작성할 수 있습니다`,
+        message: ERROR_MESSAGE.TODO_CONTENT_REQUIRED,
+        updateOnFail: true,
+      };
+    }
+
+    if (!isValidMaxLength(inputValue, GOALROOM.TODO_CONTENT_MAX_LENGTH)) {
+      return {
+        ok: false,
+        message: ERROR_MESSAGE.TODO_CONTENT_MAX_LENGTH,
         updateOnFail: false,
       };
     }
@@ -56,13 +70,17 @@ export const staticValidations: ValidationsType = {
 
   'goalRoomTodo[startDate]': (inputValue) => {
     if (isEmptyString(inputValue)) {
-      return { ok: false, message: '시작일은 필수 항목입니다', updateOnFail: true };
+      return {
+        ok: false,
+        message: ERROR_MESSAGE.START_DATE_REQUIRED,
+        updateOnFail: true,
+      };
     }
 
     if (!isCurrentOrFutureDate(inputValue)) {
       return {
         ok: false,
-        message: '이전 날짜를 입력할 수 없습니다',
+        message: ERROR_MESSAGE.INVALID_DATE,
         updateOnFail: false,
       };
     }
@@ -72,13 +90,13 @@ export const staticValidations: ValidationsType = {
 
   'goalRoomTodo[endDate]': (inputValue) => {
     if (isEmptyString(inputValue)) {
-      return { ok: false, message: '종료일은 필수 항목입니다', updateOnFail: true };
+      return { ok: false, message: ERROR_MESSAGE.END_DATE_REQUIRED, updateOnFail: true };
     }
 
     if (!isCurrentOrFutureDate(inputValue)) {
       return {
         ok: false,
-        message: '이전 날짜를 입력할 수 없습니다',
+        message: ERROR_MESSAGE.INVALID_DATE,
         updateOnFail: false,
       };
     }
@@ -99,13 +117,13 @@ export const generateNodesValidations = (nodes: any[]) => {
       if (isEmptyString(inputValue)) {
         return {
           ok: false,
-          message: '인증 횟수는 필수 항목입니다',
+          message: ERROR_MESSAGE.CHECK_COUNT_REQUIRED,
           updateOnFail: true,
         };
       }
 
       if (!isNumeric(inputValue)) {
-        return { ok: false, message: '숫자를 입력해주세요', updateOnFail: false };
+        return { ok: false, message: ERROR_MESSAGE.NUMERIC, updateOnFail: false };
       }
 
       return { ok: true };
@@ -113,13 +131,17 @@ export const generateNodesValidations = (nodes: any[]) => {
 
     validations[startDateKey] = (inputValue) => {
       if (isEmptyString(inputValue)) {
-        return { ok: false, message: '시작일은 필수 항목입니다', updateOnFail: true };
+        return {
+          ok: false,
+          message: ERROR_MESSAGE.START_DATE_REQUIRED,
+          updateOnFail: true,
+        };
       }
 
       if (!isCurrentOrFutureDate(inputValue)) {
         return {
           ok: false,
-          message: '이전 날짜를 입력할 수 없습니다',
+          message: ERROR_MESSAGE.INVALID_DATE,
           updateOnFail: false,
         };
       }
@@ -129,13 +151,17 @@ export const generateNodesValidations = (nodes: any[]) => {
 
     validations[endDateKey] = (inputValue) => {
       if (isEmptyString(inputValue)) {
-        return { ok: false, message: '종료일은 필수 항목입니다', updateOnFail: true };
+        return {
+          ok: false,
+          message: ERROR_MESSAGE.END_DATE_REQUIRED,
+          updateOnFail: true,
+        };
       }
 
       if (!isCurrentOrFutureDate(inputValue)) {
         return {
           ok: false,
-          message: '이전 날짜를 입력할 수 없습니다',
+          message: ERROR_MESSAGE.INVALID_DATE,
           updateOnFail: false,
         };
       }
