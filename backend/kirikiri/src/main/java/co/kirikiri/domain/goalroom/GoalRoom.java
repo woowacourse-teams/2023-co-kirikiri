@@ -183,7 +183,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     }
 
     public Integer getCurrentMemberCount() {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.size();
         }
         return goalRoomMembers.size();
@@ -194,7 +194,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     }
 
     public boolean isGoalRoomMember(final Member member) {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.isMember(member);
         }
         return goalRoomMembers.isMember(member);

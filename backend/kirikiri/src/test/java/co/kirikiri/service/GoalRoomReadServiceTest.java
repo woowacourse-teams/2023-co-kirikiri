@@ -779,8 +779,6 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .willReturn(Optional.of(goalRoomMember1));
-        given(checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(any(), any()))
-                .willReturn(Collections.emptyList());
 
         // when
         final List<GoalRoomCheckFeedResponse> responses = goalRoomReadService.findGoalRoomCheckFeeds("cokirikiri", 1L);

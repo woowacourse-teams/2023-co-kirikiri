@@ -30,7 +30,9 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,9 +114,8 @@ public class GoalRoomReadService {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         validateMemberInGoalRoom(goalRoom, member);
 
-        final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
-        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatus(
-                currentGoalRoomRoadmapNode, goalRoom.getStatus());
+        final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
+        final List<CheckFeed> checkFeeds = findCheckFeedsByNodeAndGoalRoomStatus(goalRoom, currentGoalRoomRoadmapNode);
         final List<GoalRoomToDoCheck> checkedTodos = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
         return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds, checkedTodos);
     }
@@ -135,9 +136,16 @@ public class GoalRoomReadService {
         }
     }
 
-    private GoalRoomRoadmapNode findCurrentGoalRoomNode(final GoalRoom goalRoom) {
-        return goalRoom.getNodeByDate(LocalDate.now())
-                .orElse(null);
+    private Optional<GoalRoomRoadmapNode> findCurrentGoalRoomNode(final GoalRoom goalRoom) {
+        return goalRoom.getNodeByDate(LocalDate.now());
+    }
+
+    private List<CheckFeed> findCheckFeedsByNodeAndGoalRoomStatus(final GoalRoom goalRoom,
+                                                                  final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
+        if (goalRoom.isRecruiting() && currentGoalRoomRoadmapNode.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatus(currentGoalRoomRoadmapNode.get(), goalRoom.getStatus());
     }
 
     public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
@@ -169,9 +177,8 @@ public class GoalRoomReadService {
     public List<GoalRoomCheckFeedResponse> findGoalRoomCheckFeeds(final String identifier, final Long goalRoomId) {
         final GoalRoom goalRoom = findGoalRoomWithNodesById(goalRoomId);
         validateJoinedMemberInRunningGoalRoom(goalRoom, identifier);
-        final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
-        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
-                currentGoalRoomRoadmapNode, goalRoom.getStatus());
+        final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
+        final List<CheckFeed> checkFeeds = findCheckFeedsByNodeAndGoalRoomStatusWithMember(goalRoom, currentGoalRoomRoadmapNode);
         return GoalRoomMapper.convertToGoalRoomCheckFeedResponses(checkFeeds);
     }
 
@@ -183,5 +190,14 @@ public class GoalRoomReadService {
     private void validateJoinedMemberInRunningGoalRoom(final GoalRoom goalRoom, final String identifier) {
         goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
                 .orElseThrow(() -> new BadRequestException("골룸에 참여하지 않은 회원입니다."));
+    }
+
+    private List<CheckFeed> findCheckFeedsByNodeAndGoalRoomStatusWithMember(final GoalRoom goalRoom,
+                                                                  final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
+        if (goalRoom.isRecruiting() && currentGoalRoomRoadmapNode.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
+                currentGoalRoomRoadmapNode.get(), goalRoom.getStatus());
     }
 }

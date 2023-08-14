@@ -51,6 +51,9 @@ public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter im
         if (status != GoalRoomStatus.RUNNING) {
             return null;
         }
+        if (node == null) {
+            return checkFeed.id.eq(-1L);
+        }
         return checkFeed.goalRoomRoadmapNode.eq(node);
     }
 }

@@ -1,6 +1,7 @@
-package co.kirikiri.service;
+package co.kirikiri.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COMPLETABLE_FUTURE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.ImageContentType;
@@ -11,6 +12,7 @@ import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -29,6 +31,7 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.integration.helper.IntegrationTestHelper;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
@@ -36,6 +39,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.service.GoalRoomScheduler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +49,7 @@ class GoalRoomSchedulerIntegrationTest extends IntegrationTest {
 
     private static final LocalDate TODAY = LocalDate.now();
 
+    private final IntegrationTestHelper testHelper;
     private final GoalRoomScheduler goalRoomScheduler;
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
@@ -54,7 +59,8 @@ class GoalRoomSchedulerIntegrationTest extends IntegrationTest {
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final CheckFeedRepository checkFeedRepository;
 
-    public GoalRoomSchedulerIntegrationTest(final GoalRoomScheduler goalRoomScheduler,
+    public GoalRoomSchedulerIntegrationTest(final IntegrationTestHelper testHelper,
+                                            final GoalRoomScheduler goalRoomScheduler,
                                             final GoalRoomRepository goalRoomRepository,
                                             final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
                                             final GoalRoomMemberRepository goalRoomMemberRepository,
@@ -62,6 +68,7 @@ class GoalRoomSchedulerIntegrationTest extends IntegrationTest {
                                             final RoadmapRepository roadmapRepository,
                                             final RoadmapCategoryRepository roadmapCategoryRepository,
                                             final CheckFeedRepository checkFeedRepository) {
+        this.testHelper = testHelper;
         this.goalRoomScheduler = goalRoomScheduler;
         this.goalRoomRepository = goalRoomRepository;
         this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
@@ -142,6 +149,36 @@ class GoalRoomSchedulerIntegrationTest extends IntegrationTest {
                 () -> assertThat(goalRoomPendingMemberRepository.findAllByGoalRoom(goalRoom2)).hasSize(2),
                 () -> assertThat(goalRoomMemberRepository.findAllByGoalRoom(goalRoom2)).hasSize(0)
         );
+    }
+
+    @Test
+    void 골룸_종료시_골룸의_상태가_COMPLETED로_변경된다() {
+        // given
+        final Member 크리에이터 = 사용자를_생성한다("creator1", "password1!", "creator", "010-1111-1000");
+        final RoadmapCategory 로드맵_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        final Roadmap 로드맵 = 로드맵을_생성한다(크리에이터, 로드맵_카테고리);
+
+        final RoadmapContents roadmapContents = 로드맵.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(크리에이터, targetRoadmapContent, TODAY);
+
+        final Member follower1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member follower2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+
+        골룸_대기자를_생성한다(goalRoom, follower1, GoalRoomRole.FOLLOWER);
+        골룸_대기자를_생성한다(goalRoom, follower2, GoalRoomRole.FOLLOWER);
+
+        goalRoom.join(follower1);
+        goalRoom.join(follower2);
+        goalRoomScheduler.startGoalRooms();
+
+        // when
+        testHelper.골룸의_종료날짜를_변경한다(goalRoom.getId(), TODAY.minusDays(1));
+        goalRoomScheduler.endGoalRooms();
+
+        // then
+        final GoalRoom resultGoalRoom = goalRoomRepository.findById(goalRoom.getId()).get();
+        assertThat(resultGoalRoom.getStatus()).isEqualTo(GoalRoomStatus.COMPLETED);
     }
 
     private Member 사용자를_생성한다(final String 아이디, final String 비밀번호, final String 닉네임,
