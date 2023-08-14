@@ -36,6 +36,9 @@ export const RoadmapTitle = styled.div`
 export const Description = styled.div`
   ${({ theme }) => theme.fonts.description5}
   margin: 1.6rem 0 3rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const ItemExtraInfos = styled.div`

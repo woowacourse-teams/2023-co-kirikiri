@@ -30,7 +30,6 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
       {roadmapListResponse.responses.map((item) => (
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}
-      {/* <div ref={loadMoreRef}>Loading more roadmaps...</div> */}
       {roadmapListResponse?.hasNext && (
         <S.WavyLoading ref={loadMoreRef}>
           <div />

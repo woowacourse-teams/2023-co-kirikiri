@@ -22,7 +22,9 @@ const Description = () => {
           name='introduction'
           data-valid={validateInput}
         />
-        <TextCount maxCount={150} currentCount={value.length} />
+        <S.TextCountWrapper>
+          <TextCount maxCount={150} currentCount={value.length} />
+        </S.TextCountWrapper>
       </S.FieldWrapper>
       <S.ErrorMessage>{errorMessage}</S.ErrorMessage>
     </S.Container>
