@@ -17,21 +17,25 @@ export type ValidationsType = {
 };
 
 export type HandleInputChangeType = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
 ) => void;
+
+export type ObjectType = Record<string, any>;
 
 const getParts = (path: string) => {
   return path.split('[').map((part) => part.replace(']', ''));
 };
 
-const getNestedValue = (obj: any, path: string) => {
-  if (obj == null || typeof obj !== 'object') return obj;
+const getNestedValue = (obj: ObjectType, path: string) => {
+  if (obj === null) return obj;
 
   const parts = getParts(path);
   return parts.reduce((curr, part) => curr[part], obj);
 };
 
-const setNestedValue = (obj: any, path: string, value: any) => {
+const setNestedValue = <T extends ObjectType>(obj: T, path: string, value: unknown) => {
+  if (obj === null) return obj;
+
   const parts = getParts(path);
   const lastKey = parts.pop();
 
@@ -40,7 +44,7 @@ const setNestedValue = (obj: any, path: string, value: any) => {
   }
 
   const lastObj = parts.reduce((curr, part) => curr[part], obj);
-  lastObj[lastKey] = value;
+  (lastObj as ObjectType)[lastKey] = value;
 
   return obj;
 };
@@ -77,7 +81,7 @@ const useFormInput = <T extends object>(
     });
   };
 
-  const updateFormState = (name: string, value: any) => {
+  const updateFormState = (name: string, value: unknown) => {
     setFormState((prev) => setNestedValue({ ...prev }, name, value));
   };
 
