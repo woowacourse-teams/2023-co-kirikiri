@@ -15,7 +15,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -212,6 +211,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomMembers.remove(goalRoomMember);
     }
 
+    public boolean cannotStart() {
+        return startDate.isAfter(LocalDate.now());
+    }
+
     private GoalRoomPendingMember findGoalRoomPendingMemberByMember(final Member member) {
         return goalRoomPendingMembers.findByMember(member)
                 .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
@@ -222,7 +225,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         if (goalRoomPendingMember.isLeader()) {
             goalRoomPendingMembers.findNextLeader()
                     .ifPresent(GoalRoomPendingMember::becomeLeader);
-
         }
     }
 
@@ -277,10 +279,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public GoalRoomMembers getGoalRoomMembers() {
         return goalRoomMembers;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 
     public GoalRoomToDos getGoalRoomToDos() {

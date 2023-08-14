@@ -669,7 +669,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ErrorResponse 골룸_투두리스트_추가_바디 = jsonToClass(골룸_투두리스트_추가.asString(), new TypeReference<>() {
         });
         assertThat(골룸_투두리스트_추가.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(골룸_투두리스트_추가_바디).isEqualTo(new ErrorResponse("골룸의 리더만 투드리스트를 추가할 수 있습니다."));
+        assertThat(골룸_투두리스트_추가_바디).isEqualTo(new ErrorResponse("골룸의 리더만 투두리스트를 추가할 수 있습니다."));
     }
 
     @Test
@@ -823,7 +823,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
@@ -849,7 +849,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         // TODO: 사용자 골룸 목록 조회 API 추가 시 내부 값 비교
     }
@@ -959,7 +959,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 2,
                 GoalRoomFilterTypeDto.LATEST.name());
@@ -995,7 +995,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         // TODO: 사용자 골룸 목록 조회 API 추가 시 내부 값 비교
     }
@@ -1016,7 +1016,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 1,
                 GoalRoomFilterTypeDto.LATEST.name());
@@ -1050,7 +1050,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_팔로워_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         // TODO: 사용자 골룸 목록 조회 API 추가 시 내부 값 비교
     }
@@ -1067,7 +1067,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 1,
                 GoalRoomFilterTypeDto.LATEST.name());
@@ -1096,7 +1096,7 @@ class GoalRoomCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 골룸_리더_액세스_토큰);
 
         // then
-        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         final ExtractableResponse<Response> 골룸_목록_조회_요청에_대한_응답 = 골룸_목록_조회_요청(1L, null, 1,
                 GoalRoomFilterTypeDto.LATEST.name());
