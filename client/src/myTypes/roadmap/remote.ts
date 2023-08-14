@@ -33,7 +33,7 @@ export type RoadmapListRequest = {
   categoryId?: SelectedCategoryId;
   size?: number;
   filterCond?: RoadmapFilterCondition;
-  lastId?: number;
+  lastId?: number | null;
 };
 
 export type RoadmapListResponse = {
