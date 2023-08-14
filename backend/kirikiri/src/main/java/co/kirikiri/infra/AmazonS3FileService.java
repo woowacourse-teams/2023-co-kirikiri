@@ -41,12 +41,13 @@ public class AmazonS3FileService implements FileService {
     public void save(final String path, final MultipartFile multiPartFile) {
         final String key = findProperty(ROOT_DIRECTORY_PROPERTY) + DIRECTORY_SEPARATOR
                 + findProperty(SUB_DIRECTORY_PROPERTY) + path;
-        final InputStream inputStream = compressFile(multiPartFile);
-        final ObjectMetadata objectMetadata = makeObjectMetadata(multiPartFile);
-        putObjectToS3(key, inputStream, objectMetadata);
+        final byte[] compressedBytes = compressFile(multiPartFile);
+        final InputStream compressedInputStream = new ByteArrayInputStream(compressedBytes);
+        final ObjectMetadata objectMetadata = makeObjectMetadata(compressedBytes);
+        putObjectToS3(key, compressedInputStream, objectMetadata);
     }
 
-    private InputStream compressFile(final MultipartFile multiPartFile) {
+    private byte[] compressFile(final MultipartFile multiPartFile) {
         try {
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
@@ -58,7 +59,7 @@ public class AmazonS3FileService implements FileService {
             zipOutputStream.closeEntry();
             zipOutputStream.close();
 
-            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            return byteArrayOutputStream.toByteArray();
         } catch (final IOException exception) {
             throw new ServerException(exception.getMessage());
         }
@@ -76,10 +77,10 @@ public class AmazonS3FileService implements FileService {
         return environment.getProperty(property);
     }
 
-    private ObjectMetadata makeObjectMetadata(final MultipartFile multiPartFile) {
+    private ObjectMetadata makeObjectMetadata(final byte[] compressedBytes) {
         final ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(multiPartFile.getSize());
-        objectMetadata.setContentType(multiPartFile.getContentType());
+        objectMetadata.setContentLength(compressedBytes.length);
+        objectMetadata.setContentType("application/zip");
         return objectMetadata;
     }
 

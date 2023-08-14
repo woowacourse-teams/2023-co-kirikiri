@@ -47,10 +47,6 @@ class AmazonS3FileServiceTest {
         //given
         when(multipartFile.getInputStream())
                 .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
-        when(multipartFile.getSize())
-                .thenReturn((long) "test-content".length());
-        when(multipartFile.getContentType())
-                .thenReturn("image/png");
         when(multipartFile.getOriginalFilename())
                 .thenReturn("originalFilename.png");
         when(environment.getProperty("cloud.aws.s3.root-directory"))
@@ -98,10 +94,6 @@ class AmazonS3FileServiceTest {
         //given
         when(multipartFile.getInputStream())
                 .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
-        when(multipartFile.getSize())
-                .thenReturn((long) "test-content".length());
-        when(multipartFile.getContentType())
-                .thenReturn("image/png");
         when(multipartFile.getOriginalFilename())
                 .thenReturn("originalFilename.png");
         when(amazonS3.putObject(any(), any(), any(), any()))
@@ -118,10 +110,6 @@ class AmazonS3FileServiceTest {
         //given
         when(multipartFile.getInputStream())
                 .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
-        when(multipartFile.getSize())
-                .thenReturn((long) "test-content".length());
-        when(multipartFile.getContentType())
-                .thenReturn("image/png");
         when(multipartFile.getOriginalFilename())
                 .thenReturn("originalFilename.png");
         when(amazonS3.putObject(any(), any(), any(), any()))
