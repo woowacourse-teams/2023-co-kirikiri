@@ -4,7 +4,7 @@ import Categories from '../categories/Categories';
 import * as S from './RoadmapListView.styles';
 import { useSelectCategory } from '@/hooks/roadmap/useSelectCategory';
 import RoadmapList from '../roadmapList/RoadmapList';
-import Fallback from '@components/_common/fallback/Fallback';
+import Spinner from '@components/_common/spinner/Spinner';
 
 const RoadmapListView = () => {
   const [selectedCategoryId, selectCategory] = useSelectCategory();
@@ -16,7 +16,7 @@ const RoadmapListView = () => {
         selectCategory={selectCategory}
         aria-label='카테고리 선택'
       />
-      <Suspense fallback={<Fallback />}>
+      <Suspense fallback={<Spinner />}>
         <RoadmapList selectedCategoryId={selectedCategoryId} aria-label='로드맵 리스트' />
       </Suspense>
     </S.RoadmapListView>

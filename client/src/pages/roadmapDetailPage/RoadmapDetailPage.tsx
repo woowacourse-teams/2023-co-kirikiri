@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetail from '@components/roadmapDetailPage/roadmapDetail/RoadmapDetail';
+import Spinner from '@components/_common/spinner/Spinner';
 
 const RoadmapDetailPage = () => {
   return (
-    <Suspense fallback={<Fallback />}>
+    <Suspense fallback={<Spinner />}>
       <RoadmapDetail />
     </Suspense>
   );
