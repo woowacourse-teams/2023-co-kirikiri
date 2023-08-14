@@ -8,10 +8,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.Optional;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -74,6 +74,10 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
 
     public Optional<RoadmapNode> findRoadmapNodeById(final Long id) {
         return nodes.findById(id);
+    }
+
+    public Optional<RoadmapNode> findRoadmapNodeByTitle(final String title) {
+        return nodes.findByTitle(title);
     }
 
     public String getContent() {

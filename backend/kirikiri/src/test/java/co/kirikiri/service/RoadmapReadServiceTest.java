@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -59,16 +60,19 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import com.amazonaws.Protocol;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapReadServiceTest {
@@ -99,11 +103,14 @@ class RoadmapReadServiceTest {
     @Mock
     private RoadmapReviewRepository roadmapReviewRepository;
 
+    @Mock
+    private FileService fileService;
+
     @InjectMocks
     private RoadmapReadService roadmapService;
 
     @Test
-    void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() {
+    void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() throws MalformedURLException {
         //given
         final Member member = 사용자를_생성한다(1L, "identifier1", "코끼리");
         final RoadmapCategory category = 로드맵_카테고리를_생성한다(1L, "운동");
@@ -120,6 +127,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(roadmap.getContents().getValues().get(0)));
         when(goalRoomRepository.findByRoadmap(any()))
                 .thenReturn(goalRooms);
+        when(fileService.generateUrl(anyString(), any()))
+                .thenReturn(new URL(Protocol.HTTP.toString(), "host", 80, "file"));
 
         //when
         final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
@@ -127,7 +136,7 @@ class RoadmapReadServiceTest {
         //then
         final RoadmapResponse expectedResponse = new RoadmapResponse(
                 roadmapId, new RoadmapCategoryResponse(1L, "운동"), "로드맵 제목", "로드맵 소개글",
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "file"),
                 new RoadmapContentResponse(1L, "로드맵 본문", List.of(
                         new RoadmapNodeResponse(1L, "로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList())
                 )), "DIFFICULT", 30, now,

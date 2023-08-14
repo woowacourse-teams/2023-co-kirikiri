@@ -6,7 +6,10 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
+import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
@@ -18,8 +21,14 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
+import co.kirikiri.service.dto.member.MemberDto;
+import co.kirikiri.service.dto.roadmap.RoadmapCategoryDto;
+import co.kirikiri.service.dto.roadmap.RoadmapContentDto;
+import co.kirikiri.service.dto.roadmap.RoadmapDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapNodeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapTagDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
@@ -30,10 +39,12 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.net.URL;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -46,13 +57,56 @@ public class RoadmapReadService {
     private final RoadmapReviewRepository roadmapReviewRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final MemberRepository memberRepository;
+    private final FileService fileService;
 
     public RoadmapResponse findRoadmap(final Long id) {
         final Roadmap roadmap = findRoadmapById(id);
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
         final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
         final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto = GoalRoomMapper.convertRoadmapGoalRoomDto(goalRooms);
-        return RoadmapMapper.convertToRoadmapResponse(roadmap, recentRoadmapContent, roadmapGoalRoomNumberDto);
+        final RoadmapDto roadmapDto = makeRoadmapDto(roadmap, recentRoadmapContent);
+        return RoadmapMapper.convertToRoadmapResponse(roadmapDto, roadmapGoalRoomNumberDto);
+    }
+
+    private RoadmapDto makeRoadmapDto(final Roadmap roadmap, final RoadmapContent roadmapContent) {
+        final RoadmapCategory category = roadmap.getCategory();
+        final Member creator = roadmap.getCreator();
+        final RoadmapContentDto roadmapContentDto = new RoadmapContentDto(
+                roadmapContent.getId(),
+                roadmapContent.getContent(),
+                makeRoadmapNodeDtos(roadmapContent.getNodes()));
+        return new RoadmapDto(roadmap.getId(), new RoadmapCategoryDto(category.getId(), category.getName()),
+                roadmap.getTitle(), roadmap.getIntroduction(), makeMemberDto(creator),
+                roadmapContentDto, roadmap.getDifficulty().name(), roadmap.getRequiredPeriod(),
+                roadmap.getCreatedAt(), makeRoadmapTagDtos(roadmap.getTags()));
+    }
+
+    private MemberDto makeMemberDto(final Member creator) {
+        final URL url = fileService.generateUrl(creator.getImage().getServerFilePath(), HttpMethod.GET);
+        return new MemberDto(creator.getId(), creator.getNickname().getValue(), url.getPath());
+    }
+
+    private List<RoadmapNodeDto> makeRoadmapNodeDtos(final RoadmapNodes nodes) {
+        return nodes.getValues()
+                .stream()
+                .map(this::makeRoadmapNodeDto)
+                .toList();
+    }
+
+    private RoadmapNodeDto makeRoadmapNodeDto(final RoadmapNode roadmapNode) {
+        final List<String> imageUrls = roadmapNode.getRoadmapNodeImages()
+                .getValues()
+                .stream()
+                .map(it -> fileService.generateUrl(it.getServerFilePath(), HttpMethod.GET).toExternalForm())
+                .toList();
+        return new RoadmapNodeDto(roadmapNode.getId(), roadmapNode.getTitle(), roadmapNode.getContent(), imageUrls);
+    }
+
+    private List<RoadmapTagDto> makeRoadmapTagDtos(final RoadmapTags roadmapTags) {
+        return roadmapTags.getValues()
+                .stream()
+                .map(it -> new RoadmapTagDto(it.getId(), it.getName().getValue()))
+                .toList();
     }
 
     private Roadmap findRoadmapById(final Long id) {

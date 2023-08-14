@@ -28,11 +28,13 @@ import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.service.event.RoadmapCreateEvent;
 import co.kirikiri.service.mapper.RoadmapMapper;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -44,14 +46,18 @@ public class RoadmapCreateService {
     private final RoadmapReviewRepository roadmapReviewRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public Long create(final RoadmapSaveRequest request, final String identifier) {
         final Member member = findMemberByIdentifier(identifier);
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
         final RoadmapSaveDto roadmapSaveDto = RoadmapMapper.convertToRoadmapSaveDto(request);
         final Roadmap roadmap = createRoadmap(member, roadmapSaveDto, roadmapCategory);
+        roadmapRepository.save(roadmap);
 
-        return roadmapRepository.save(roadmap).getId();
+        applicationEventPublisher.publishEvent(new RoadmapCreateEvent(roadmap, roadmapSaveDto));
+
+        return roadmap.getId();
     }
 
     private Member findMemberByIdentifier(final String identifier) {
@@ -104,7 +110,6 @@ public class RoadmapCreateService {
                 roadmapCategory);
     }
 
-    @Transactional
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         final GoalRoomMember goalRoomMember = findCompletedGoalRoomMember(roadmapId, identifier);
