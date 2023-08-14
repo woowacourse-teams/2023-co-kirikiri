@@ -76,17 +76,17 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
     }
 
     private String getJsonData(final MultipartHttpServletRequest multipartRequest) {
-        try {
-            return multipartRequest.getParameter("jsonData");
-        } catch (final NullPointerException exception) {
+        final String jsonData = multipartRequest.getParameter("jsonData");
+        if (jsonData == null) {
             throw new BadRequestException("로드맵 생성 시 jsonData는 필수입니다.");
         }
+        return multipartRequest.getParameter("jsonData");
     }
 
     private RoadmapSaveRequest bindRoadmapSaveRequest(final String jsonData) {
         try {
             return objectMapper.readValue(jsonData, RoadmapSaveRequest.class);
-        } catch (final JsonProcessingException e) {
+        } catch (final JsonProcessingException exception) {
             throw new BadRequestException("로드맵 생성 요청 형식이 틀렸습니다.");
         }
     }
