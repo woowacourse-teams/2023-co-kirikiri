@@ -65,3 +65,14 @@ export type GoalRoomTodoChangeStatusRequest = {
 export type JoinGoalRoomRequest = {
   goalRoomId: string;
 };
+
+export type GoalRoomParticipant = {
+  memberId: number;
+  nickname: string;
+  imagePath: string;
+  accomplishmentRate: number;
+};
+
+export type GoalRoomParticipantsResponse = GoalRoomParticipant[];
+
+export type ParticipantsSortOrder = 'ACCOMPLISHMENT_RATE' | 'JOINED_ASC' | 'JOINED_DESC';
