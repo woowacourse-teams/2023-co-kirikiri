@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const InputField = styled.div``;
+export const InputField = styled.div`
+  width: 100%;
+`;
 
 export const FieldHeader = styled.div<{ size?: 'small' | 'normal' }>`
   margin-bottom: ${({ size }) => (size === 'small' ? '0.8rem' : '1.8rem')};

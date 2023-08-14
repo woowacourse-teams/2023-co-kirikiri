@@ -52,6 +52,18 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
   return (
     <S.Form onSubmit={handleSubmit(onSubmit)}>
       <InputField
+        label='인원수'
+        description='입장 가능은 최대 인원수를 입력해주세요'
+        isRequired
+        type='number'
+        size='small'
+        name='limitedMemberCount'
+        value={String(formState.limitedMemberCount)}
+        onChange={handleInputChange}
+        errorMessage={error?.limitedMemberCount}
+        style={{ marginBottom: '2rem' }}
+      />
+      <InputField
         label='골룸 이름'
         isRequired
         placeholder='골룸의 이름을 작성해주세요'

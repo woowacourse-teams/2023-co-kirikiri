@@ -12,11 +12,12 @@ type InputFieldProps = {
   description?: string;
   placeholder?: string;
   errorMessage?: string;
+  style?: { [key: string]: string };
 };
 
 const InputField = ({ ...props }: InputFieldProps) => {
   return (
-    <S.InputField>
+    <S.InputField style={props.style}>
       <S.FieldHeader size={props.size}>
         <S.Label htmlFor={props.name} size={props.size}>
           {props.label}
