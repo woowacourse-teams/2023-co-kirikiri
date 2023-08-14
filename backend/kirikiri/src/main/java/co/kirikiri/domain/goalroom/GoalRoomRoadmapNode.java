@@ -29,7 +29,13 @@ public class GoalRoomRoadmapNode extends BaseEntity {
     private RoadmapNode roadmapNode;
 
     public GoalRoomRoadmapNode(final Period period, final Integer checkCount, final RoadmapNode roadmapNode) {
+        this(null, period, checkCount, roadmapNode);
+    }
+
+    public GoalRoomRoadmapNode(final Long id, final Period period, final Integer checkCount,
+                               final RoadmapNode roadmapNode) {
         validate(period, checkCount);
+        this.id = id;
         this.period = period;
         this.checkCount = checkCount;
         this.roadmapNode = roadmapNode;
@@ -54,6 +60,10 @@ public class GoalRoomRoadmapNode extends BaseEntity {
 
     public boolean isEndDateEqualOrAfterOtherStartDate(final GoalRoomRoadmapNode other) {
         return this.period.isEndDateEqualOrAfterOtherStartDate(other.period);
+    }
+
+    public boolean isDayOfNode(final LocalDate date) {
+        return period.contains(date);
     }
 
     public LocalDate getStartDate() {

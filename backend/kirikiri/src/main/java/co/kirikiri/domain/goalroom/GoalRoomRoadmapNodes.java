@@ -8,9 +8,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomRoadmapNodes {
+
+    private static final int DATE_OFFSET = 1;
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
@@ -64,8 +68,45 @@ public class GoalRoomRoadmapNodes {
                 .getEndDate();
     }
 
+    public int addTotalPeriod() {
+        return (int) ChronoUnit.DAYS.between(getGoalRoomStartDate(), getGoalRoomEndDate()) + DATE_OFFSET;
+    }
+
+    public Optional<GoalRoomRoadmapNode> getNodeByDate(final LocalDate date) {
+        sortByStartDateAsc(values);
+
+        return values.stream()
+                .filter(node -> node.isDayOfNode(date))
+                .findFirst();
+    }
+
     public int size() {
         return values.size();
+    }
+
+    public boolean hasFrontNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != 0;
+    }
+
+    public boolean hasBackNode(final GoalRoomRoadmapNode node) {
+        sortByStartDateAsc(values);
+        return values.indexOf(node) != (size() - 1);
+    }
+
+    public Optional<GoalRoomRoadmapNode> nextNode(final GoalRoomRoadmapNode roadmapNode) {
+        sortByStartDateAsc(values);
+
+        if (hasBackNode(roadmapNode)) {
+            return Optional.of(values.get(values.indexOf(roadmapNode) + 1));
+        }
+        return Optional.empty();
+    }
+
+    public int calculateAllCheckCount() {
+        return values.stream()
+                .mapToInt(GoalRoomRoadmapNode::getCheckCount)
+                .sum();
     }
 
     public List<GoalRoomRoadmapNode> getValues() {

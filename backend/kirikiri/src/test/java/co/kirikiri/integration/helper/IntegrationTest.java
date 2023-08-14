@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
@@ -17,8 +18,9 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestConstructor(autowireMode = AutowireMode.ALL)
+@Import(TestConfig.class)
 public class IntegrationTest {
-    
+
     protected final String AUTHORIZATION = "Authorization";
     protected final String LOCATION = "Location";
     protected final String BEARER_TOKEN_FORMAT = "Bearer %s";

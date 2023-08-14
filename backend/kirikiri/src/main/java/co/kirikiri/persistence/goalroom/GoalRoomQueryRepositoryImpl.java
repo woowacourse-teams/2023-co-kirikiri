@@ -1,27 +1,30 @@
 package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
+import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
+import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
+import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.persistence.goalroom.dto.GoalRoomFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 
 public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter implements GoalRoomQueryRepository {
+
+    private static final int LIMIT_OFFSET = 1;
 
     public GoalRoomQueryRepositoryImpl() {
         super(GoalRoom.class);
@@ -31,35 +34,29 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     public Optional<GoalRoom> findByIdWithRoadmapContent(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .where(goalRoomIdCond(goalRoomId))
                 .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
                 .fetchFirst());
     }
 
     @Override
-    public Page<GoalRoom> findGoalRoomsWithPendingMembersPageByCond(final GoalRoomFilterType filterType,
-                                                                    final Pageable pageable) {
-        final List<GoalRoom> goalRooms = selectFrom(goalRoom)
-                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+    public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
+                                                                          final RoadmapGoalRoomsFilterType filterType,
+                                                                          final Long lastId,
+                                                                          final int pageSize) {
+        return selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .on(roadmapContent.roadmap.eq(roadmap))
+                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
                 .fetchJoin()
-                .leftJoin(goalRoomPendingMember.member, member)
+                .innerJoin(goalRoomPendingMember.member, member)
                 .fetchJoin()
-                .leftJoin(member.memberProfile, memberProfile)
+                .innerJoin(member.memberProfile, memberProfile)
                 .fetchJoin()
-                .where(statusCond(GoalRoomStatus.RECRUITING))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastId(lastId))
                 .orderBy(sortCond(filterType))
+                .limit(pageSize + LIMIT_OFFSET)
                 .fetch();
-
-        final JPAQuery<Long> countQuery = select(goalRoom.count())
-                .from(goalRoom)
-                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .leftJoin(goalRoomPendingMember.member, member)
-                .leftJoin(member.memberProfile, memberProfile)
-                .where(statusCond(GoalRoomStatus.RECRUITING));
-
-        return PageableExecutionUtils.getPage(goalRooms, pageable, countQuery::fetchOne);
     }
 
     @Override
@@ -70,22 +67,89 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetch();
     }
 
-    private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
-        return goalRoom.id.eq(goalRoomId);
+    @Override
+    public Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchFirst());
     }
 
-    private OrderSpecifier<?> sortCond(final GoalRoomFilterType filterType) {
-        if (filterType == GoalRoomFilterType.LATEST) {
-            return goalRoom.id.desc();
-        }
-        return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
+    @Override
+    public Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .fetchJoin()
+                .innerJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
+    }
+
+    @Override
+    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
+    }
+
+    private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
+        return goalRoom.id.eq(goalRoomId);
     }
 
     private BooleanExpression statusCond(final GoalRoomStatus status) {
         return goalRoom.status.eq(status);
     }
 
+    private BooleanExpression lessThanLastId(final Long lastId) {
+        if (lastId == null) {
+            return null;
+        }
+        return roadmap.createdAt.lt(
+                select(roadmap.createdAt).from(roadmap).where(roadmap.id.eq(lastId))
+        );
+    }
+
+    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsFilterType filterType) {
+        if (filterType == RoadmapGoalRoomsFilterType.LATEST) {
+            return goalRoom.id.desc();
+        }
+        return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
+    }
+
     private BooleanExpression startDateEqualsToNow() {
         return goalRoomRoadmapNode.period.startDate.eq(LocalDate.now());
+    }
+
+    @Override
+    public List<GoalRoom> findByMember(final Member member) {
+        return selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
+                .where(goalRoomPendingMember.member.eq(member)
+                        .or(goalRoomMember.member.eq(member)))
+                .fetch();
+    }
+
+    @Override
+    public List<GoalRoom> findByMemberAndStatus(final Member member, final GoalRoomStatus goalRoomStatus) {
+        return selectFrom(goalRoom)
+                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
+                .where(goalRoomPendingMember.member.eq(member)
+                        .or(goalRoomMember.member.eq(member)))
+                .where(statusCond(goalRoomStatus))
+                .fetch();
+    }
+
+    @Override
+    public List<GoalRoom> findByRoadmap(final Roadmap roadmap) {
+        return selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .on(roadmapContent.roadmap.eq(roadmap))
+                .fetch();
     }
 }

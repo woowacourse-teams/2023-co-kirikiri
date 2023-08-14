@@ -7,6 +7,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +31,15 @@ public class GoalRoomToDos {
 
     public GoalRoomToDo findLast() {
         return values.get(values.size() - 1);
+    }
+
+    public Optional<GoalRoomToDo> findById(final Long todoId) {
+        return values.stream()
+                .filter(goalRoomToDo -> goalRoomToDo.isSameId(todoId))
+                .findFirst();
+    }
+
+    public List<GoalRoomToDo> getValues() {
+        return new ArrayList<>(values);
     }
 }

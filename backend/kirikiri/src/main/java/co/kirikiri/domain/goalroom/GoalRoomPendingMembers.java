@@ -7,13 +7,17 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoalRoomPendingMembers {
+
+    private static final int MIN_SIZE_TO_FIND_NEXT_LEADER = 1;
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
@@ -30,7 +34,12 @@ public class GoalRoomPendingMembers {
 
     public boolean containGoalRoomPendingMember(final GoalRoomPendingMember goalRoomPendingMember) {
         return values.stream()
-                .anyMatch(value -> value.equals(goalRoomPendingMember));
+                .anyMatch(value -> value.isSameMember(goalRoomPendingMember.getMember()));
+    }
+
+    public boolean isMember(final Member member) {
+        return values.stream()
+                .anyMatch(value -> value.isSameMember(member));
     }
 
     public int size() {
@@ -48,6 +57,28 @@ public class GoalRoomPendingMembers {
     public boolean isNotLeader(final Member member) {
         final Member goalRoomLeader = findGoalRoomLeader();
         return !goalRoomLeader.equals(member);
+    }
+
+    public Optional<GoalRoomPendingMember> findByMember(final Member member) {
+        return values.stream()
+                .filter(value -> value.isSameMember(member))
+                .findFirst();
+    }
+
+    public Optional<GoalRoomPendingMember> findNextLeader() {
+        if (size() <= MIN_SIZE_TO_FIND_NEXT_LEADER) {
+            return Optional.empty();
+        }
+        values.sort(Comparator.comparing(GoalRoomPendingMember::getJoinedAt));
+        return Optional.of(values.get(1));
+    }
+
+    public void remove(final GoalRoomPendingMember goalRoomPendingMember) {
+        values.remove(goalRoomPendingMember);
+    }
+
+    public boolean isEmpty() {
+        return values.isEmpty();
     }
 
     public List<GoalRoomPendingMember> getValues() {

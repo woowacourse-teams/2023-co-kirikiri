@@ -77,7 +77,7 @@ class RoadmapContentTest {
         final RoadmapContent content = new RoadmapContent("content");
         final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
         final Member creator = new Member(new Identifier("creator"),
-                new EncryptedPassword(new Password("password1")), new Nickname("nickname"), profile);
+                new EncryptedPassword(new Password("password1")), new Nickname("nickname"), null, profile);
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creator, category);
 

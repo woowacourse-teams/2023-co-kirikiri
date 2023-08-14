@@ -9,24 +9,39 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import java.time.LocalDate;
+import java.time.Month;
 
-class MemberIntegrationTest extends IntegrationTest {
+class MemberCreateIntegrationTest extends IntegrationTest {
+
+    protected static final String DEFAULT_IDENTIFIER = "identifier1";
+    protected static final String DEFAULT_PASSWORD = "password1!";
+    protected static final String DEFAULT_NICKNAME = "nickname";
+    protected static final String DEFAULT_PHONE_NUMBER = "010-1234-5678";
+    protected static final LocalDate DEFAULT_BIRTHDAY = LocalDate.of(2023, Month.JULY, 12);
+    protected static final GenderType DEFAULT_GENDER_TYPE = GenderType.MALE;
+
+    protected Long 기본_회원_아이디;
+
+    @BeforeEach
+    void init() {
+        기본_회원_아이디 = 기본_회원가입();
+    }
 
     @Test
     void 정상적으로_회원가입을_성공한다() {
         //given
-        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "nickname", "010-1234-5678",
+        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "hello", "010-1234-5678",
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         assertThat(회원가입_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -40,7 +55,7 @@ class MemberIntegrationTest extends IntegrationTest {
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -56,7 +71,7 @@ class MemberIntegrationTest extends IntegrationTest {
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -67,12 +82,12 @@ class MemberIntegrationTest extends IntegrationTest {
     @Test
     void 아이디가_중복된_경우_회원가입에_실패한다() {
         //given
-        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!", "nickname", "010-1234-5678",
+        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!", "hello", "010-1234-5678",
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
-        회원가입(회원가입_요청);
+        요청을_받는_회원가입(회원가입_요청);
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -88,7 +103,7 @@ class MemberIntegrationTest extends IntegrationTest {
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -104,7 +119,7 @@ class MemberIntegrationTest extends IntegrationTest {
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -120,7 +135,7 @@ class MemberIntegrationTest extends IntegrationTest {
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -136,7 +151,7 @@ class MemberIntegrationTest extends IntegrationTest {
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -152,7 +167,7 @@ class MemberIntegrationTest extends IntegrationTest {
                 GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
 
         //when
-        final ExtractableResponse<Response> 회원가입_응답 = 회원가입(회원가입_요청);
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
@@ -160,7 +175,7 @@ class MemberIntegrationTest extends IntegrationTest {
         assertThat(에러_메세지.message()).isEqualTo("제약 조건에 맞지 않는 닉네임입니다.");
     }
 
-    private ExtractableResponse<Response> 회원가입(final MemberJoinRequest 회원가입_요청) {
+    protected ExtractableResponse<Response> 요청을_받는_회원가입(final MemberJoinRequest 회원가입_요청) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
@@ -169,5 +184,17 @@ class MemberIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
+    }
+
+    protected Long 회원가입(final MemberJoinRequest 회원가입_요청) {
+        final Response 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청).response();
+        final String Location_헤더 = 회원가입_응답.header("Location");
+        return Long.parseLong(Location_헤더.substring(13));
+    }
+
+    protected Long 기본_회원가입() {
+        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(DEFAULT_IDENTIFIER, DEFAULT_PASSWORD, DEFAULT_NICKNAME,
+                DEFAULT_PHONE_NUMBER, DEFAULT_GENDER_TYPE, DEFAULT_BIRTHDAY);
+        return 회원가입(회원가입_요청);
     }
 }

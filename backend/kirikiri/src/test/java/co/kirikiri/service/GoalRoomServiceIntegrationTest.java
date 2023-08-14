@@ -81,7 +81,7 @@ class GoalRoomServiceIntegrationTest extends IntegrationTest {
         final Member follower2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
         final Member follower3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
 
-        골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.LEADER);
+        골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
         골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
         골룸_대기자를_생성한다(goalRoom2, follower3, GoalRoomRole.FOLLOWER);
 
@@ -117,7 +117,7 @@ class GoalRoomServiceIntegrationTest extends IntegrationTest {
         final Member follower2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
         final Member follower3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
 
-        골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.LEADER);
+        골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
         골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
         골룸_대기자를_생성한다(goalRoom2, follower3, GoalRoomRole.FOLLOWER);
 
@@ -141,7 +141,7 @@ class GoalRoomServiceIntegrationTest extends IntegrationTest {
                              final String 전화번호) {
         final MemberProfile 사용자_프로필 = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), 전화번호);
         final Member 사용자 = new Member(new Identifier(아이디),
-                new EncryptedPassword(new Password(비밀번호)), new Nickname(닉네임), 사용자_프로필);
+                new EncryptedPassword(new Password(비밀번호)), new Nickname(닉네임), null, 사용자_프로필);
         return memberRepository.save(사용자);
     }
 

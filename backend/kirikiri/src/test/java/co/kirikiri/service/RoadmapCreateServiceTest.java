@@ -55,6 +55,7 @@ class RoadmapCreateServiceTest {
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null,
             new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
     @Mock
@@ -145,6 +146,7 @@ class RoadmapCreateServiceTest {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
@@ -207,6 +209,7 @@ class RoadmapCreateServiceTest {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");

@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'jacoco'
 }
 
 group = 'co'
@@ -49,6 +50,84 @@ build {
     dependsOn copyDocument
 }
 
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+jacocoTestReport {
+    reports {
+        html.required = true
+        xml.required = true
+    }
+
+    // exclude QueryDSL QDomain Class
+    def QDomains = []
+
+    for (qPattern in '**/QA'..'**/QZ') {
+        QDomains.add(qPattern + '*')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            "co/kirikiri/persistence/QuerydslRepositorySupporter",
+                            "co/kirikiri/domain/**",
+                            "co/kirikiri/persistence/goalroom/dto/**",
+                            "**/*Application*",
+                            "**/*Config*",
+                            "**/*Dto*",
+                            "**/*Request*",
+                            "**/*Response*",
+                            "**/*Interceptor*",
+                            "**/*Exception*"
+                    ] + QDomains)
+                })
+        )
+    }
+
+    // check test coverage after generating report
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    // exclude QueryDSL QDomain Class
+    def QDomains = []
+
+    for (qPattern in '*.QA'..'*.QZ') {
+        QDomains.add(qPattern + '*')
+    }
+
+    violationRules {
+        rule {
+            enabled = true
+
+            // check rules by class
+            element = 'CLASS'
+
+            // line coverage at least 80%
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = [
+                    "co.kirikiri.persistence.QuerydslRepositorySupporter",
+                    "co.kirikiri.domain.**.**",
+                    "co.kirikiri.persistence.goalroom.dto.**",
+                    "**.*Application*",
+                    "**.*Config*",
+                    "**.*Dto*",
+                    "**.*Request*",
+                    "**.*Response*",
+                    "**.*Interceptor*",
+                    "**.*Exception*"
+            ] + QDomains
+        }
+    }
+}
+
 dependencies {
     // spring data jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -83,6 +162,9 @@ dependencies {
     // restdocs
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
+    // slack log
+    implementation 'com.github.maricn:logback-slack-appender:1.3.0'
+
     // test
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -106,6 +188,7 @@ clean {
 tasks.named('test') {
     outputs.dir snippetsDir
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 tasks.named('asciidoctor') {
