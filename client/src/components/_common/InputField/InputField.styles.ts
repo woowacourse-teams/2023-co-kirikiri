@@ -25,8 +25,6 @@ export const InputBox = styled.div<{
   size?: 'small' | 'normal';
   type?: 'text' | 'date' | 'textarea' | 'number';
 }>`
-  position: relative;
-
   & > input {
     ${({ theme, size }) => (size === 'small' ? theme.fonts.button1 : theme.fonts.h2)};
     width: ${({ size, type }) =>
@@ -41,11 +39,20 @@ export const InputBox = styled.div<{
     border-bottom: ${({ theme }) => `0.1rem solid ${theme.colors.black}`};
     border-radius: ${({ type }) => (type === 'number' ? '4px' : '')};
   }
+
+  & > textarea {
+    ${({ theme, size }) => (size === 'small' ? theme.fonts.button1 : theme.fonts.h2)};
+    width: 100%;
+    height: 15rem;
+    padding: 1.5rem 1rem;
+
+    border: ${({ theme }) => `3px solid ${theme.colors.main_dark}`};
+    border-radius: 8px;
+  }
 `;
 
 export const ErrorMessage = styled.p<{ size?: 'small' | 'normal' }>`
   ${({ theme }) => theme.fonts.button1};
   position: absolute;
-  top: ${({ size }) => (size === 'small' ? '2.3rem' : '2.55rem')};
   color: ${({ theme }) => theme.colors.red};
 `;

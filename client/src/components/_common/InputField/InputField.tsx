@@ -26,14 +26,24 @@ const InputField = ({ ...props }: InputFieldProps) => {
         {props.description && <S.Description>{props.description}</S.Description>}
       </S.FieldHeader>
       <S.InputBox size={props.size} type={props.type}>
-        <input
-          id={props.name}
-          name={props.name}
-          placeholder={props.placeholder}
-          value={props.value}
-          type={props.type === 'number' ? 'text' : props.type || 'text'}
-          onChange={props.onChange}
-        />
+        {props.type === 'textarea' ? (
+          <textarea
+            id={props.name}
+            name={props.name}
+            placeholder={props.placeholder}
+            value={props.value}
+            onChange={props.onChange}
+          />
+        ) : (
+          <input
+            id={props.name}
+            name={props.name}
+            placeholder={props.placeholder}
+            value={props.value}
+            type={props.type === 'number' ? 'text' : props.type || 'text'}
+            onChange={props.onChange}
+          />
+        )}
         {props.errorMessage && (
           <S.ErrorMessage size={props.size}>{props.errorMessage}</S.ErrorMessage>
         )}
