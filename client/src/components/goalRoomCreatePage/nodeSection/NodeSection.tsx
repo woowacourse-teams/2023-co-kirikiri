@@ -16,9 +16,12 @@ const NodeSection = (props: NodeSectionProps) => {
 
   return (
     <S.NodeList>
-      {nodes.map(({ id, title }, index) => (
+      {nodes.map(({ id, title, description }, index) => (
         <S.Node key={id}>
-          <S.NodeInfo>{title}</S.NodeInfo>
+          <S.NodeInfo>
+            <S.NodeTitle>{title}</S.NodeTitle>
+            <S.NodeDescription>{description}</S.NodeDescription>
+          </S.NodeInfo>
           <S.NodeConfigs>
             <S.DateConfig>
               <InputField

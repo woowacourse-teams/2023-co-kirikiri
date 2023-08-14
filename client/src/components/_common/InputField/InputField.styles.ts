@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const InputField = styled.div`
-  width: 100%;
+  box-sizing: content-box;
 `;
 
 export const FieldHeader = styled.div<{ size?: 'small' | 'normal' }>`

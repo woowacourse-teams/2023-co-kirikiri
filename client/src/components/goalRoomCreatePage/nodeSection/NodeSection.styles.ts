@@ -14,17 +14,26 @@ export const Node = styled.div`
 `;
 
 export const NodeInfo = styled.div`
-  width: 20rem;
+  width: 100%;
   height: 20rem;
-  margin-right: 2rem;
   padding: 2rem;
 
   background-color: ${({ theme }) => theme.colors.gray100};
   border-radius: 8px;
 `;
 
+export const NodeTitle = styled.div`
+  ${({ theme }) => theme.fonts.h2}
+  margin-bottom: 1rem;
+`;
+
+export const NodeDescription = styled.div`
+  ${({ theme }) => theme.fonts.nav_text}
+`;
+
 export const NodeConfigs = styled.div`
   display: flex;
+  padding: 1.5rem;
 
   & > *:not(:last-child) {
     margin-right: 2rem;
