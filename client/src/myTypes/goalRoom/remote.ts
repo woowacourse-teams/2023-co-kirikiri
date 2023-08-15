@@ -69,7 +69,6 @@ export type JoinGoalRoomRequest = {
   goalRoomId: string;
 };
 
-
 export type GoalRoomParticipant = {
   memberId: number;
   nickname: string;
