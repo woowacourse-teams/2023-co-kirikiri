@@ -283,11 +283,9 @@ class GoalRoomReadServiceTest {
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
 
         final GoalRoomPendingMember goalRoomMemberCreator = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                LocalDateTime.now(),
-                goalRoom, creator);
+                LocalDateTime.now(), goalRoom, creator);
         final GoalRoomPendingMember goalRoomMemberFollower = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                LocalDateTime.now(),
-                goalRoom, follower);
+                LocalDateTime.now(), goalRoom, follower);
 
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));

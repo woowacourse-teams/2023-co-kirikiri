@@ -77,13 +77,14 @@ public class GoalRoomReadService {
     public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId,
                                                             final GoalRoomMemberSortTypeDto sortType) {
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        final GoalRoomMemberSortType goalRoomMemberSortType = GoalRoomMapper.convertGoalRoomMemberSortType(sortType);
         if (goalRoom.isRecruiting()) {
             final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
-                    goalRoomId, GoalRoomMemberSortType.valueOf(sortType.name()));
+                    goalRoomId, goalRoomMemberSortType);
             return GoalRoomMapper.convertToGoalRoomPendingMemberResponses(goalRoomPendingMembers);
         }
         final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
-                goalRoomId, GoalRoomMemberSortType.valueOf(sortType.name()));
+                goalRoomId, goalRoomMemberSortType);
         return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMembers);
     }
 

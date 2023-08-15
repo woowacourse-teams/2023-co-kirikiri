@@ -16,8 +16,10 @@ import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberImage;
+import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
@@ -139,6 +141,13 @@ public class GoalRoomMapper {
         final Member goalRoomLeader = goalRoom.findGoalRoomLeader();
         return new MemberResponse(goalRoomLeader.getId(), goalRoomLeader.getNickname().getValue(),
                 goalRoomLeader.getImage().getServerFilePath());
+    }
+
+    public static GoalRoomMemberSortType convertGoalRoomMemberSortType(final GoalRoomMemberSortTypeDto sortType) {
+        if (sortType == null) {
+            return null;
+        }
+        return GoalRoomMemberSortType.valueOf(sortType.name());
     }
 
     public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(

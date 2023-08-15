@@ -522,6 +522,41 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     }
 
     @Test
+    void 모집중인_골룸의_사용자_정보_조회시_정렬기준을_입력하지_않으면_참여한지_오래된순으로_정렬한다() throws IOException {
+        // given
+        final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
+                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+        final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
+                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+        final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
+        final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
+
+        final LoginRequest 팔로워1_로그인_요청 = new LoginRequest(팔로워1_회원_가입_요청.identifier(), 팔로워1_회원_가입_요청.password());
+        final LoginRequest 팔로워2_로그인_요청 = new LoginRequest(팔로워2_회원_가입_요청.identifier(), 팔로워2_회원_가입_요청.password());
+
+        final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
+        final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
+
+        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
+
+        final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
+
+        골룸_참가_요청(기본_골룸_아이디, 팔로워1_액세스_토큰);
+        골룸_참가_요청(기본_골룸_아이디, 팔로워2_액세스_토큰);
+
+        //when
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_정렬기준없이_조회(기본_골룸_아이디, 기본_로그인_토큰)
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        assertThat(골룸_사용자_응답.get(0).memberId()).isEqualTo(기본_회원_아이디);
+        assertThat(골룸_사용자_응답.get(1).memberId()).isEqualTo(팔로워1_아이디);
+        assertThat(골룸_사용자_응답.get(2).memberId()).isEqualTo(팔로워2_아이디);
+    }
+
+    @Test
     void 골룸의_사용자_정보_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
         // given
         // when
@@ -635,6 +670,17 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond=ACCOMPLISHMENT_RATE", 기본_골룸_아이디)
+                .then()
+                .log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> 골룸의_사용자_정보를_정렬기준없이_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
+        return given().log().all()
+                .header(AUTHORIZATION, 로그인_토큰)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 기본_골룸_아이디)
                 .then()
                 .log().all()
                 .extract();
