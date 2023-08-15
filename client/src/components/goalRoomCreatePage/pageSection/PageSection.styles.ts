@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const PageSection = styled.div`
-  margin-bottom: 6rem;
+  margin-top: 6rem;
 `;
 
 export const SectionTitle = styled.div<{ isRequired: boolean }>`

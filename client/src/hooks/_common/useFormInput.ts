@@ -1,57 +1,123 @@
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
-const useFormInput = <T extends object>(initialState: T) => {
+export type FormErrorType = {
+  [key: string]: string;
+};
+
+export type ValidationReturnType = {
+  ok: boolean;
+  message?: string;
+  updateOnFail?: boolean;
+};
+
+export type ValidationFunctionType = (inputValue: string) => ValidationReturnType;
+
+export type ValidationsType = {
+  [key: string]: ValidationFunctionType;
+};
+
+export type HandleInputChangeType = (
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+) => void;
+
+export type ObjectType = Record<string, any>;
+
+const getParts = (path: string) => {
+  return path.split('[').map((part) => part.replace(']', ''));
+};
+
+const getNestedValue = (obj: ObjectType, path: string) => {
+  if (obj === null) return obj;
+
+  const parts = getParts(path);
+  return parts.reduce((curr, part) => curr[part], obj);
+};
+
+const setNestedValue = <T extends ObjectType>(obj: T, path: string, value: unknown) => {
+  if (obj === null) return obj;
+
+  const parts = getParts(path);
+  const lastKey = parts.pop();
+
+  if (!lastKey) {
+    return obj;
+  }
+
+  const lastObj = parts.reduce((curr, part) => curr[part], obj);
+  (lastObj as ObjectType)[lastKey] = value;
+
+  return obj;
+};
+
+const useFormInput = <T extends object>(
+  initialState: T,
+  validations?: ValidationsType
+) => {
   const [formState, setFormState] = useState<T>(initialState);
+  const [error, setError] = useState<FormErrorType>({});
+
+  const validateInputValue = (name: string, inputValue: string) => {
+    if (typeof validations?.[name] !== 'function') return true;
+
+    const result = validations[name](inputValue);
+
+    if (!result.ok) {
+      setError((prev) => ({
+        ...prev,
+        [name]: result.message || '',
+      }));
+    }
+
+    return result.ok || result.updateOnFail;
+  };
+
+  const cleanError = (name: string) => {
+    if (!error[name]) return;
+
+    setError((prev) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [name]: _, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  const updateFormState = (name: string, value: unknown) => {
+    setFormState((prev) => setNestedValue({ ...prev }, name, value));
+  };
 
   const handleInputChange = ({
     target: { name, value },
-  }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    // 이름을 '['를 기준으로 분리하고, ']'를 제거
-    const parts = name.split('[').map((part) => part.replace(']', ''));
-    // 배열 요소인지 확인하기 위해 첫 번째 요소가 'goalRoomRoadmapNodeRequests'인지 확인
-    const isArray = parts.length > 2;
+  }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    cleanError(name);
 
-    // 배열 요소일 때. 즉, NodeList 내부의 값이 변했을 때
-    if (isArray) {
-      const [baseName, arrayIndex, arrayPropName] = parts;
-      setFormState((prevState: any) => {
-        if (Array.isArray(prevState[baseName])) {
-          return {
-            ...prevState,
-            [baseName]: prevState[baseName].map((item: any, index: number) => {
-              if (index === Number(arrayIndex)) {
-                return {
-                  ...item,
-                  [arrayPropName]: value,
-                };
-              }
-              return item;
-            }),
-          };
-        }
-        return prevState;
-      });
-    } else {
-      // 배열 요소가 아닐 때
-      const [propName, nestedPropName] = parts;
-      setFormState((prevState: any) => {
-        // 객체 내부의 객체를 업데이트 하기 위함 (2 Depth)
-        if (nestedPropName) {
-          return {
-            ...prevState,
-            [propName]: {
-              ...prevState[propName],
-              [nestedPropName]: value,
-            },
-          };
-        }
-        // 속성을 업데이트 (1 Depth)
-        return {
-          ...prevState,
-          [propName]: value,
-        };
-      });
+    if (validateInputValue(name, value)) {
+      updateFormState(name, value);
     }
+  };
+
+  const isFormValid = () => {
+    let isValid = true;
+    if (!validations) return isValid;
+
+    Object.keys(validations).forEach((key) => {
+      const result = validations[key](String(getNestedValue(formState, key)));
+
+      if (!result.ok) {
+        setError((prev) => ({
+          ...prev,
+          [key]: result.message || '',
+        }));
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  };
+
+  const handleSubmit = (callback: () => void) => (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (isFormValid()) callback();
   };
 
   const resetFormState = () => {
@@ -62,6 +128,8 @@ const useFormInput = <T extends object>(initialState: T) => {
     formState,
     handleInputChange,
     resetFormState,
+    error,
+    handleSubmit,
   };
 };
 
