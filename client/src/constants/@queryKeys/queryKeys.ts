@@ -8,6 +8,7 @@ const QUERY_KEYS = {
   },
   goalRoom: {
     participants: 'participants',
+    certificationFeeds: 'certificationFeeds',
   },
 } as const;
 

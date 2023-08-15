@@ -18,6 +18,7 @@ import {
   postJoinGoalRoom,
   getMyGoalRoomList,
   getGoalRoomParticipants,
+  getCertificationFeeds,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -175,5 +176,14 @@ export const useFetchGoalRoomParticipants = (
 
   return {
     goalRoomParticipants: data,
+
+export const useCertificationFeeds = (goalRoomId: string) => {
+  const { data } = useSuspendedQuery(
+    [QUERY_KEYS.goalRoom.certificationFeeds, goalRoomId],
+    () => getCertificationFeeds(goalRoomId)
+  );
+
+  return {
+    certificationFeeds: data,
   };
 };

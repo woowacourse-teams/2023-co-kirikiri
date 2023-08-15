@@ -98,6 +98,10 @@ export const getGoalRoomParticipants = async (
         sortCond: participantsSortOrder,
       },
     }
+    
+export const getCertificationFeeds = async (goalRoomId: string) => {
+  const { data } = await client.get<GoalRoomCertificationFeedsResponse>(
+    `/goal-rooms/${goalRoomId}/checkFeeds`
   );
 
   return data;
