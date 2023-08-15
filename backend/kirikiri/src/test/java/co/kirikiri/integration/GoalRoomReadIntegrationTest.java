@@ -3,7 +3,6 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -48,9 +47,8 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     private static final LocalDate 삼십일_후 = 오늘.plusDays(30);
 
     public GoalRoomReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final GoalRoomRepository goalRoomRepository,
-                                       final GoalRoomMemberRepository goalRoomMemberRepository) {
-        super(roadmapCategoryRepository, goalRoomRepository, goalRoomMemberRepository);
+                                       final GoalRoomRepository goalRoomRepository) {
+        super(roadmapCategoryRepository, goalRoomRepository);
     }
 
     @Override
@@ -546,7 +544,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸_참가_요청(기본_골룸_아이디, 팔로워2_액세스_토큰);
 
         //when
-        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_정렬기준없이_조회(기본_골룸_아이디, 기본_로그인_토큰)
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_정렬_기준없이_조회(기본_골룸_아이디, 기본_로그인_토큰)
                 .as(new TypeRef<>() {
                 });
 
@@ -667,17 +665,6 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond={sortType}", 기본_골룸_아이디, 정렬조건)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 골룸의_사용자_정보를_정렬기준없이_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
-        return given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 기본_골룸_아이디)
                 .then()
                 .log().all()
                 .extract();

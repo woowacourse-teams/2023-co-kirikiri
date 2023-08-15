@@ -40,6 +40,7 @@ import org.springframework.http.MediaType;
 
 class RoadmapReviewCreateIntegrationTest extends GoalRoomReadIntegrationTest {
 
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
     protected final MemberRepository memberRepository;
     protected final TestTransactionService testTransactionService;
 
@@ -48,8 +49,9 @@ class RoadmapReviewCreateIntegrationTest extends GoalRoomReadIntegrationTest {
                                               final GoalRoomMemberRepository goalRoomMemberRepository,
                                               final MemberRepository memberRepository,
                                               final TestTransactionService testTransactionService) {
-        super(roadmapCategoryRepository, goalRoomRepository, goalRoomMemberRepository);
+        super(roadmapCategoryRepository, goalRoomRepository);
         this.memberRepository = memberRepository;
+        this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.testTransactionService = testTransactionService;
     }
 

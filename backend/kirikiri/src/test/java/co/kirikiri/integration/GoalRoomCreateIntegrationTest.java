@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -16,9 +14,11 @@ import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -53,14 +53,11 @@ class GoalRoomCreateIntegrationTest extends RoadmapReadIntegrationTest {
     private static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
 
     protected final GoalRoomRepository goalRoomRepository;
-    protected final GoalRoomMemberRepository goalRoomMemberRepository;
 
     public GoalRoomCreateIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                         final GoalRoomRepository goalRoomRepository,
-                                         final GoalRoomMemberRepository goalRoomMemberRepository) {
+                                         final GoalRoomRepository goalRoomRepository) {
         super(roadmapCategoryRepository);
         this.goalRoomRepository = goalRoomRepository;
-        this.goalRoomMemberRepository = goalRoomMemberRepository;
     }
 
     @Override
@@ -450,14 +447,14 @@ class GoalRoomCreateIntegrationTest extends RoadmapReadIntegrationTest {
         final ErrorResponse 예외_메세지 = 인증_피드_등록_응답.as(ErrorResponse.class);
 
         //then
-        // TODO : 달성률 업데이트 확인 테스트는 사용자 골룸 기능 구현 때 옮기기
-        final GoalRoomMember joinedMember = goalRoomMemberRepository.findById(1L).get();
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_정렬_기준없이_조회(골룸_아이디, 기본_로그인_토큰).as(new TypeRef<>() {
+        });
 
         assertAll(
                 () -> assertThat(인증_피드_등록_응답.statusCode())
                         .isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(예외_메세지.message()).isEqualTo("이미 오늘 인증 피드를 등록하였습니다."),
-                () -> assertThat(joinedMember.getAccomplishmentRate())
+                () -> assertThat(골룸_사용자_응답.get(0).accomplishmentRate())
                         .isEqualTo(100 / (double) 정상적인_골룸_노드_인증_횟수)
         );
     }
@@ -732,9 +729,15 @@ class GoalRoomCreateIntegrationTest extends RoadmapReadIntegrationTest {
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 기본_로그인_토큰);
 
         // then
+        // TODO 사용자 골룸 조회 시 리더인지 팔로워인지 정보가 필요하지 않을까?
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_정렬_기준없이_조회(골룸_아이디, 기본_로그인_토큰).as(new TypeRef<>() {
+        });
+        final MemberInformationResponse 팔로워_사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
+        });
+        final GoalRoomMemberResponse 예상하는_골룸_사용자_정보 = new GoalRoomMemberResponse(팔로워_사용자_정보.id(),
+                팔로워_사용자_정보.nickname(), 팔로워_사용자_정보.profileImageUrl(), 0D);
         assertThat(골룸_나가기_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-
-        // TODO: 사용자 골룸 목록 조회 API 추가 시 내부 값 비교
+        assertThat(골룸_사용자_응답).isEqualTo(List.of(예상하는_골룸_사용자_정보));
     }
 
     @Test
@@ -927,7 +930,6 @@ class GoalRoomCreateIntegrationTest extends RoadmapReadIntegrationTest {
         goalRoomRepository.save(골룸);
 
         // when
-
         final ExtractableResponse<Response> 골룸_나가기_요청에_대한_응답 = 골룸_나가기_요청(골룸_아이디, 기본_로그인_토큰);
 
         // then
@@ -1294,5 +1296,16 @@ class GoalRoomCreateIntegrationTest extends RoadmapReadIntegrationTest {
                 .log().all()
                 .extract();
         return 골룸_시작_요청_응답;
+    }
+
+    protected ExtractableResponse<Response> 골룸의_사용자_정보를_정렬_기준없이_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
+        return given().log().all()
+                .header(AUTHORIZATION, 로그인_토큰)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 기본_골룸_아이디)
+                .then()
+                .log().all()
+                .extract();
     }
 }
