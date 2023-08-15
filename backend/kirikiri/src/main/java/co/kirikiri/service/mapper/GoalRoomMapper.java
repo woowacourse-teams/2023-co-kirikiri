@@ -3,6 +3,7 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
+import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -14,10 +15,12 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
@@ -40,13 +43,13 @@ import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -141,6 +144,13 @@ public class GoalRoomMapper {
                 goalRoomLeader.getImage().getServerFilePath());
     }
 
+    public static GoalRoomMemberSortType convertGoalRoomMemberSortType(final GoalRoomMemberSortTypeDto sortType) {
+        if (sortType == null) {
+            return null;
+        }
+        return GoalRoomMemberSortType.valueOf(sortType.name());
+    }
+
     public static List<GoalRoomMemberResponse> convertToGoalRoomMemberResponses(
             final List<GoalRoomMember> goalRoomMembers) {
         return goalRoomMembers.stream()
@@ -152,6 +162,20 @@ public class GoalRoomMapper {
         final Member member = goalRoomMember.getMember();
         return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
                 member.getImage().getServerFilePath(), goalRoomMember.getAccomplishmentRate());
+    }
+
+    public static List<GoalRoomMemberResponse> convertToGoalRoomPendingMemberResponses(
+            final List<GoalRoomPendingMember> goalRoomPendingMembers) {
+        return goalRoomPendingMembers.stream()
+                .map(GoalRoomMapper::convertToGoalRoomMemberResponse)
+                .toList();
+    }
+
+    private static GoalRoomMemberResponse convertToGoalRoomMemberResponse(
+            final GoalRoomPendingMember goalRoomPendingMember) {
+        final Member member = goalRoomPendingMember.getMember();
+        return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
+                member.getImage().getServerFilePath(), 0D);
     }
 
     public static List<GoalRoomTodoResponse> convertGoalRoomTodoResponses(final GoalRoomToDos goalRoomToDos,
@@ -249,18 +273,22 @@ public class GoalRoomMapper {
                         leader.getImage().getServerFilePath()));
     }
 
-    public static List<GoalRoomCheckFeedResponse> convertToGoalRoomCheckFeedResponses(final List<GoalRoomCheckFeedDto> checkFeeds) {
+    public static List<GoalRoomCheckFeedResponse> convertToGoalRoomCheckFeedResponses(
+            final List<GoalRoomCheckFeedDto> checkFeeds) {
         return checkFeeds.stream()
                 .map(GoalRoomMapper::convertToGoalRoomCheckFeedResponse)
                 .toList();
     }
 
-    private static GoalRoomCheckFeedResponse convertToGoalRoomCheckFeedResponse(final GoalRoomCheckFeedDto goalRoomCheckFeedDto) {
+    private static GoalRoomCheckFeedResponse convertToGoalRoomCheckFeedResponse(
+            final GoalRoomCheckFeedDto goalRoomCheckFeedDto) {
         final MemberDto memberDto = goalRoomCheckFeedDto.memberDto();
-        final MemberResponse memberResponse = new MemberResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl());
+        final MemberResponse memberResponse = new MemberResponse(memberDto.id(), memberDto.name(),
+                memberDto.imageUrl());
 
         final CheckFeedDto checkFeedDto = goalRoomCheckFeedDto.checkFeedDto();
-        final CheckFeedResponse checkFeedResponse = new CheckFeedResponse(checkFeedDto.id(), checkFeedDto.imageUrl(), checkFeedDto.description(), checkFeedDto.createdAt());
+        final CheckFeedResponse checkFeedResponse = new CheckFeedResponse(checkFeedDto.id(), checkFeedDto.imageUrl(),
+                checkFeedDto.description(), checkFeedDto.createdAt());
 
         return new GoalRoomCheckFeedResponse(memberResponse, checkFeedResponse);
     }

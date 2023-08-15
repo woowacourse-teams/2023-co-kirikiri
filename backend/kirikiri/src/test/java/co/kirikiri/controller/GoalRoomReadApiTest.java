@@ -40,13 +40,13 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomReadApiTest extends ControllerTestHelper {
@@ -366,10 +366,12 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 queryParameters(
                                         parameterWithName("sortCond")
-                                                .description("정렬 조건 (null일 경우 달성률순으로 기본 정렬) +" + "\n"
-                                                        + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
-                                                        + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
-                                                        + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .description(
+                                                        "정렬 조건 (null일 경우: 골룸 모집중 -> 골룸 입장 순(오래된순)/ 골룸 진행중, 완료됨 -> 달성률 순으로 기본 정렬) +"
+                                                                + "\n"
+                                                                + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                                + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                                + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
                                                 .optional()
                                 ),
                                 responseFields(
@@ -407,10 +409,12 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 queryParameters(
                                         parameterWithName("sortCond")
-                                                .description("정렬 조건 (null일 경우 달성률순으로 기본 정렬) +" + "\n"
-                                                        + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
-                                                        + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
-                                                        + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .description(
+                                                        "정렬 조건 (null일 경우: 골룸 모집중 -> 골룸 입장 순(오래된순)/ 골룸 진행중, 완료됨 -> 달성률 순으로 기본 정렬) +"
+                                                                + "\n"
+                                                                + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                                + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                                + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
                                                 .optional()
                                 ),
                                 responseFields(

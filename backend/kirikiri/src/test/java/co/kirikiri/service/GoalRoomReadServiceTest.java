@@ -65,11 +65,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -77,6 +72,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomReadServiceTest {
@@ -208,7 +208,7 @@ class GoalRoomReadServiceTest {
     }
 
     @Test
-    void 정상적으로_골룸에_참여자를_조회한다() {
+    void 정상적으로_진행중인_골룸의_참여자를_조회한다() {
         //given
         final Member creator = 사용자를_생성한다(1L);
         final Member follower = 사용자를_생성한다(2L);
@@ -216,12 +216,15 @@ class GoalRoomReadServiceTest {
         final Roadmap roadmap = 로드맵을_생성한다(creator);
 
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        goalRoom.start();
 
         final GoalRoomMember goalRoomMemberCreator = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
                 goalRoom, creator);
         final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
                 goalRoom, follower);
 
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
         given(goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
                 .willReturn(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
 
@@ -234,15 +237,85 @@ class GoalRoomReadServiceTest {
                 "serverFilePath", 0.0);
         final GoalRoomMemberResponse expectedGoalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "name1",
                 "serverFilePath", 0.0);
-        assertThat(result).usingRecursiveComparison()
+        assertThat(result)
                 .isEqualTo(List.of(expectedGoalRoomMemberResponse1, expectedGoalRoomMemberResponse2));
+        verify(goalRoomPendingMemberRepository, never()).findByGoalRoomIdOrderedBySortType(anyLong(), any());
+    }
+
+    @Test
+    void 정상적으로_완료된_골룸의_참여자를_조회한다() {
+        //given
+        final Member creator = 사용자를_생성한다(1L);
+        final Member follower = 사용자를_생성한다(2L);
+
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        goalRoom.complete();
+
+        final GoalRoomMember goalRoomMemberCreator = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
+                goalRoom, creator);
+        final GoalRoomMember goalRoomMemberFollower = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
+                goalRoom, follower);
+
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
+                .willReturn(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
+
+        //when
+        final List<GoalRoomMemberResponse> result = goalRoomReadService.findGoalRoomMembers(1L,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE);
+
+        //then
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "name1",
+                "serverFilePath", 0.0);
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "name1",
+                "serverFilePath", 0.0);
+        assertThat(result)
+                .isEqualTo(List.of(expectedGoalRoomMemberResponse1, expectedGoalRoomMemberResponse2));
+        verify(goalRoomPendingMemberRepository, never()).findByGoalRoomIdOrderedBySortType(anyLong(), any());
+    }
+
+    @Test
+    void 정상적으로_모집중인_골룸의_참여자를_조회한다() {
+        //given
+        final Member creator = 사용자를_생성한다(1L);
+        final Member follower = 사용자를_생성한다(2L);
+
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+
+        final GoalRoomPendingMember goalRoomMemberCreator = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.now(), goalRoom, creator);
+        final GoalRoomPendingMember goalRoomMemberFollower = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                LocalDateTime.now(), goalRoom, follower);
+        
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
+                .willReturn(List.of(goalRoomMemberCreator, goalRoomMemberFollower));
+
+        //when
+        final List<GoalRoomMemberResponse> result = goalRoomReadService.findGoalRoomMembers(1L,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE);
+
+        //then
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "name1",
+                "serverFilePath", 0.0);
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "name1",
+                "serverFilePath", 0.0);
+        assertThat(result)
+                .isEqualTo(List.of(expectedGoalRoomMemberResponse1, expectedGoalRoomMemberResponse2));
+        verify(goalRoomMemberRepository, never()).findByGoalRoomIdOrderedBySortType(anyLong(), any());
     }
 
     @Test
     void 존재하지_않는_골룸일_경우_예외를_던진다() {
         //given
-        given(goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
-                .willReturn(Collections.emptyList());
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
 
         //when
         //then
