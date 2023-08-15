@@ -9,6 +9,7 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
@@ -265,7 +266,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸을_시작한다();
 
         // when
-        final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자가_참여한_골룸_중_골룸_골룸_진행_상태에_따라_목록을_조회(기본_로그인_토큰, "RECRUITING")
+        final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자가_참여한_골룸_중_골룸_진행_상태에_따라_목록을_조회(기본_로그인_토큰, "RECRUITING")
                 .as(new TypeRef<>() {
                 });
 
@@ -295,7 +296,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸을_시작한다();
 
         // when
-        final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자가_참여한_골룸_중_골룸_골룸_진행_상태에_따라_목록을_조회(기본_로그인_토큰, "RUNNING")
+        final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자가_참여한_골룸_중_골룸_진행_상태에_따라_목록을_조회(기본_로그인_토큰, "RUNNING")
                 .as(new TypeRef<>() {
                 });
 
@@ -476,9 +477,9 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         인증_피드_등록(기본_골룸_아이디, 가짜_이미지_객체, 인증_피드_등록_요청1, 팔로워1_액세스_토큰);
 
         //when
-        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_달성률순으로_전체_조회(기본_골룸_아이디, 기본_로그인_토큰)
-                .as(new TypeRef<>() {
-                });
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_전체_조회(기본_골룸_아이디, 기본_로그인_토큰,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE.name()).as(new TypeRef<>() {
+        });
 
         // then
         assertThat(골룸_사용자_응답.get(0).memberId()).isEqualTo(팔로워1_아이디);
@@ -487,7 +488,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     }
 
     @Test
-    void 모집중인_골룸의_사용자_정보를_달성률순으로_전체_조회한다() throws IOException {
+    void 모집중인_골룸의_사용자_정보를_참가한_최신순으로_전체_조회한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
@@ -511,14 +512,14 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸_참가_요청(기본_골룸_아이디, 팔로워2_액세스_토큰);
 
         //when
-        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_달성률순으로_전체_조회(기본_골룸_아이디, 기본_로그인_토큰)
-                .as(new TypeRef<>() {
-                });
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_전체_조회(기본_골룸_아이디, 기본_로그인_토큰,
+                GoalRoomMemberSortTypeDto.JOINED_DESC.name()).as(new TypeRef<>() {
+        });
 
         // then
-        assertThat(골룸_사용자_응답.get(0).memberId()).isEqualTo(기본_회원_아이디);
+        assertThat(골룸_사용자_응답.get(0).memberId()).isEqualTo(팔로워2_아이디);
         assertThat(골룸_사용자_응답.get(1).memberId()).isEqualTo(팔로워1_아이디);
-        assertThat(골룸_사용자_응답.get(2).memberId()).isEqualTo(팔로워2_아이디);
+        assertThat(골룸_사용자_응답.get(2).memberId()).isEqualTo(기본_회원_아이디);
     }
 
     @Test
@@ -560,9 +561,9 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     void 골룸의_사용자_정보_조회시_존재하지_않는_골룸이면_예외가_발생한다() {
         // given
         // when
-        final ErrorResponse 예외_응답 = 골룸의_사용자_정보를_달성률순으로_전체_조회(1L, 기본_로그인_토큰)
-                .as(new TypeRef<>() {
-                });
+        final ErrorResponse 예외_응답 = 골룸의_사용자_정보를_전체_조회(1L, 기본_로그인_토큰,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE.name()).as(new TypeRef<>() {
+        });
 
         // then
         assertThat(예외_응답.message()).isEqualTo("존재하지 않는 골룸입니다. goalRoomId = 1");
@@ -640,8 +641,8 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
                 .extract();
     }
 
-    private ExtractableResponse<Response> 사용자가_참여한_골룸_중_골룸_골룸_진행_상태에_따라_목록을_조회(final String 로그인_토큰,
-                                                                               final String 골룸_진행_상태) {
+    private ExtractableResponse<Response> 사용자가_참여한_골룸_중_골룸_진행_상태에_따라_목록을_조회(final String 로그인_토큰,
+                                                                            final String 골룸_진행_상태) {
         return given().log().all()
                 .header(AUTHORIZATION, 로그인_토큰)
                 .queryParam("statusCond", 골룸_진행_상태)
@@ -664,12 +665,13 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
                 .extract();
     }
 
-    private ExtractableResponse<Response> 골룸의_사용자_정보를_달성률순으로_전체_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
+    private ExtractableResponse<Response> 골룸의_사용자_정보를_전체_조회(final Long 기본_골룸_아이디, final String 로그인_토큰,
+                                                            final String 정렬조건) {
         return given().log().all()
                 .header(AUTHORIZATION, 로그인_토큰)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond=ACCOMPLISHMENT_RATE", 기본_골룸_아이디)
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond={sortType}", 기본_골룸_아이디, 정렬조건)
                 .then()
                 .log().all()
                 .extract();

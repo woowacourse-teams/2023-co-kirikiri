@@ -268,7 +268,7 @@ class GoalRoomPendingMemberRepositoryTest {
     }
 
     @Test
-    void 골룸_아이디로_골룸_사용자를_조회하고_달성률이_높은_순대로_정렬한다() {
+    void 골룸_아이디로_골룸_사용자를_조회하고_정렬조건을_달성률순_또는_입력하지_않은경우_참여한순으로_정렬한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
         final RoadmapCategory category = 카테고리를_저장한다("게임");
