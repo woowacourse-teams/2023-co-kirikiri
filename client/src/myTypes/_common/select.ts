@@ -26,6 +26,11 @@ export type TriggerProps = {
   asChild: boolean;
 };
 
+export type ValueProps = {
+  children: any;
+  asChild?: boolean;
+};
+
 export type OptionGroupProps = {
   asChild: boolean;
 };
