@@ -675,6 +675,33 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
+    void 인증_피드_등록시_노드_기간에_해당하지_않으면_예외가_발생한다() {
+        // given
+        final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
+
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 시작_날짜가_미래인_골룸을_생성한다(1L, creator, targetRoadmapContent, 20);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        goalRoomMemberRepository.save(goalRoomLeader);
+
+        when(goalRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomLeader));
+
+        // expected
+        assertThatThrownBy(
+                () -> goalRoomCreateService.createCheckFeed("identifier", 1L, request))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("인증 피드는 노드 기간 내에만 작성할 수 있습니다.");
+    }
+
+    @Test
     void 하루에_두_번_이상_인증_피드_등록_요청_시_예외를_반환한다() {
         // given
         final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
@@ -890,6 +917,27 @@ class GoalRoomCreateServiceTest {
         assertThatThrownBy(() -> goalRoomCreateService.checkGoalRoomTodo(1L, 1L, "cokirikiri"))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage("골룸이 존재하지 않습니다. goalRoomId = 1");
+    }
+
+    @Test
+    void 투두리스트_체크시_해당_투두가_존재하지_않으면_예외가_발생한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
+        goalRoom.addGoalRoomTodo(new GoalRoomToDo(
+                1L, new GoalRoomTodoContent("투두 1"), new Period(TODAY, TODAY.plusDays(3))));
+
+        when(goalRoomRepository.findByIdWithTodos(anyLong()))
+                .thenReturn(Optional.of(goalRoom));
+
+        // expected
+        assertThatThrownBy(() -> goalRoomCreateService.checkGoalRoomTodo(1L, 2L, "cokirikiri"))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("존재하지 않는 투두입니다. todoId = 2");
     }
 
     @Test
