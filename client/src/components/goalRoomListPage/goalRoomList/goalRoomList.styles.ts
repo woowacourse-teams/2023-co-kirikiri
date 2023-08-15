@@ -7,6 +7,7 @@ export const ListContainer = styled.section`
 
 export const ItemContainer = styled.article`
   width: 40.7rem;
+  height: fit-content;
   padding: 1.7rem 4rem 3rem;
 
   background-color: ${({ theme }) => theme.colors.white};
