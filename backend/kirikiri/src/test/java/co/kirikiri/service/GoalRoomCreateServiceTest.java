@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -528,7 +529,7 @@ class GoalRoomCreateServiceTest {
         goalRoom2.join(follower3);
 
         when(goalRoomRepository.findAllByStartDateNow())
-                .thenReturn(List.of());
+                .thenReturn(Collections.emptyList());
 
         // when
         goalRoomCreateService.startGoalRooms();

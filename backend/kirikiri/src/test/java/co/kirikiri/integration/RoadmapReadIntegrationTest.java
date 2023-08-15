@@ -940,8 +940,7 @@ class RoadmapReadIntegrationTest extends IntegrationTest {
     }
 
     private ExtractableResponse<Response> 골룸_목록을_조회한다(final Long roadmapId, final LocalDateTime lastValue,
-                                                      final int size,
-                                                      final String filterCond) {
+                                                      final int size, final String filterCond) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .pathParam("roadmapId", roadmapId)

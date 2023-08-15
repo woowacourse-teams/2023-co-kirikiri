@@ -3,6 +3,8 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.integration.helper.IntegrationTestHelper;
@@ -16,15 +18,20 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -37,6 +44,7 @@ public class RoadmapSchedulerIntegrationTest extends IntegrationTest {
     private static final LocalDate 십일_후 = 오늘.plusDays(10);
     private static final LocalDate 이십일_후 = 오늘.plusDays(20);
     private static final LocalDate 삼십일_후 = 오늘.plusDays(30);
+    private static final LocalDate 현재부터_3개월_1일_전 = LocalDate.now().minusMonths(3).minusDays(1);
     private static final int 오늘부터_십일까지_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
     private static final int 이십일부터_삼십일까지_인증_횟수 = (int) ChronoUnit.DAYS.between(이십일_후, 삼십일_후);
 
@@ -56,7 +64,7 @@ public class RoadmapSchedulerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 삭제된_상태의_로드맵을_삭제한다() {
+    void 삭제된_상태의_로드맵을_삭제시_모든_골룸이_종료된지_3개월이_지났으면_정상적으로_삭제한다() {
         // given
         회원가입을_한다("creator1", "password1!", "creator", "010-1111-1000", GenderType.FEMALE, LocalDate.now());
         final String 로그인_토큰 = 로그인을_하고_토큰을_받는다("creator1", "password1!");
@@ -95,9 +103,9 @@ public class RoadmapSchedulerIntegrationTest extends IntegrationTest {
         로드맵을_삭제한다(로드맵_아이디1, 로그인_토큰);
         로드맵을_삭제한다(로드맵_아이디2, 로그인_토큰);
 
-        testHelper.골룸을_완료상태로_변경하고_종료날짜를_변경한다(골룸_아이디1, LocalDate.now().minusMonths(4));
-        testHelper.골룸을_완료상태로_변경하고_종료날짜를_변경한다(골룸_아이디2, LocalDate.now().minusMonths(4));
-        testHelper.골룸을_완료상태로_변경하고_종료날짜를_변경한다(골룸_아이디3, LocalDate.now().minusMonths(4));
+        testHelper.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
+        testHelper.골룸의_상태와_종료날짜를_변경한다(골룸_아이디2, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
+        testHelper.골룸의_상태와_종료날짜를_변경한다(골룸_아이디3, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
 
         // when
         roadmapScheduler.deleteRoadmaps();
@@ -108,7 +116,7 @@ public class RoadmapSchedulerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void 삭제된_상태의_로드맵_삭제시_종료되지_않은_골룸이_있으면_삭제되지_않는다() {
+    void 삭제된_상태의_로드맵_삭제시_종료되지_않은_골룸이_있으면_삭제되지_않는다() throws JsonProcessingException {
         // given
         회원가입을_한다("creator1", "password1!", "creator", "010-1111-1000", GenderType.FEMALE, LocalDate.now());
         final String 로그인_토큰 = 로그인을_하고_토큰을_받는다("creator1", "password1!");
@@ -130,17 +138,25 @@ public class RoadmapSchedulerIntegrationTest extends IntegrationTest {
                 로드맵1에_대한_골룸_노드_별_기간_요청);
 
         final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_알아낸다(로드맵1에_대한_골룸_생성_요청, 로그인_토큰);
-        골룸을_생성하고_아이디를_알아낸다(로드맵1에_대한_골룸_생성_요청, 로그인_토큰);
+        final Long 골룸_아이디2 = 골룸을_생성하고_아이디를_알아낸다(로드맵1에_대한_골룸_생성_요청, 로그인_토큰);
 
         로드맵을_삭제한다(로드맵_아이디1, 로그인_토큰);
 
-        testHelper.골룸을_완료상태로_변경하고_종료날짜를_변경한다(골룸_아이디1, LocalDate.now().minusMonths(4));
+        testHelper.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
 
         // when
         roadmapScheduler.deleteRoadmaps();
 
         // then
-        assertThat(roadmapRepository.findAll()).hasSize(1);
+        final List<Roadmap> 저장된_로드맵들 = roadmapRepository.findAll();
+        assertThat(저장된_로드맵들).hasSize(1);
+
+        final ExtractableResponse<Response> 골룸_목록_조회_응답 = 골룸_목록을_조회한다(저장된_로드맵들.get(0).getId(), null, 2,
+                RoadmapGoalRoomsFilterTypeDto.LATEST.name());
+        final List<RoadmapGoalRoomResponse> 골룸_목록_조회_응답값 = jsonToClass(골룸_목록_조회_응답.asString(), new TypeReference<>() {
+        });
+        assertThat(골룸_목록_조회_응답값.get(0).goalRoomId()).isEqualTo(골룸_아이디2);
+
     }
 
     @Test
@@ -166,11 +182,10 @@ public class RoadmapSchedulerIntegrationTest extends IntegrationTest {
                 로드맵1에_대한_골룸_노드_별_기간_요청);
 
         final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_알아낸다(로드맵1에_대한_골룸_생성_요청, 로그인_토큰);
-        골룸을_생성하고_아이디를_알아낸다(로드맵1에_대한_골룸_생성_요청, 로그인_토큰);
 
         로드맵을_삭제한다(로드맵_아이디1, 로그인_토큰);
 
-        testHelper.골룸을_완료상태로_변경하고_종료날짜를_변경한다(골룸_아이디1, LocalDate.now().minusMonths(0));
+        testHelper.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 오늘);
 
         // when
         roadmapScheduler.deleteRoadmaps();
@@ -277,6 +292,20 @@ public class RoadmapSchedulerIntegrationTest extends IntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, 로그인_토큰)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .delete(API_PREFIX + "/roadmaps/{roadmapId}", 삭제할_로드맵_아이디)
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> 골룸_목록을_조회한다(final Long roadmapId, final LocalDateTime lastValue,
+                                                      final int size, final String filterCond) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .pathParam("roadmapId", roadmapId)
+                .param("lastCreatedAt", lastValue)
+                .param("size", size)
+                .param("filterCond", filterCond)
+                .when()
+                .get(API_PREFIX + "/roadmaps/{roadmapId}/goal-rooms", roadmapId)
                 .then().log().all()
                 .extract();
     }

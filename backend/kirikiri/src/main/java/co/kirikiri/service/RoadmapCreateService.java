@@ -151,10 +151,11 @@ public class RoadmapCreateService {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         validateRoadmapCreator(roadmapId, identifier);
         final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
-        roadmap.delete();
         if (goalRooms.isEmpty()) {
             roadmapRepository.delete(roadmap);
+            return;
         }
+        roadmap.delete();
     }
 
     private void validateRoadmapCreator(final Long roadmapId, final String identifier) {

@@ -16,7 +16,6 @@ import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.dto.RoadmapSearchTagName;
 import co.kirikiri.persistence.dto.RoadmapSearchTitle;
-import co.kirikiri.persistence.dto.RoadmapStatusType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -98,17 +97,17 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     @Override
     public Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier) {
         return Optional.ofNullable(selectFrom(roadmap)
-                .where(memberIdentifierCond(identifier),
+                .where(creatorIdentifierCond(identifier),
                         roadmap.id.eq(roadmapId))
                 .fetchOne());
     }
 
     @Override
-    public List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatusType status) {
+    public List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatus status) {
         return selectFrom(roadmap)
                 .innerJoin(roadmap.contents.values, roadmapContent)
                 .fetchJoin()
-                .where(statusCond(RoadmapStatus.valueOf(status.name())))
+                .where(statusCond(status))
                 .fetch();
     }
 
@@ -183,7 +182,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         return roadmap.id.desc();
     }
 
-    private BooleanExpression memberIdentifierCond(final String identifier) {
+    private BooleanExpression creatorIdentifierCond(final String identifier) {
         return roadmap.creator.identifier.value.eq(identifier);
     }
 }

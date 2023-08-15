@@ -15,7 +15,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -278,11 +277,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public GoalRoomMembers getGoalRoomMembers() {
         return goalRoomMembers;
-    }
-
-    @Override
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 
     public GoalRoomToDos getGoalRoomToDos() {

@@ -3,10 +3,10 @@ package co.kirikiri.persistence.roadmap;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.persistence.dto.RoadmapFilterType;
 import co.kirikiri.persistence.dto.RoadmapLastValueDto;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
-import co.kirikiri.persistence.dto.RoadmapStatusType;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,5 +30,5 @@ public interface RoadmapQueryRepository {
 
     Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier);
 
-    List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatusType status);
+    List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatus status);
 }

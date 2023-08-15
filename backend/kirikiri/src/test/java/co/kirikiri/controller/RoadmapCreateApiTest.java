@@ -656,7 +656,7 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
                 .deleteRoadmap(anyString(), anyLong());
 
         // when
-        final String response = mockMvc.perform(delete(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
+        mockMvc.perform(delete(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .contextPath(API_PREFIX))
@@ -665,9 +665,8 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
                         requestHeaders(
                                 headerWithName(AUTHORIZATION).description("액세스 토큰")),
                         pathParameters(
-                                parameterWithName("roadmapId").description("로드맵 아이디").optional())))
-                .andReturn().getResponse()
-                .getContentAsString();
+                                parameterWithName("roadmapId").description("로드맵 아이디").optional()))
+                );
     }
 
     @Test

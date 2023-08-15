@@ -150,6 +150,10 @@ public class Roadmap extends BaseCreatedTimeEntity {
         this.status = RoadmapStatus.DELETED;
     }
 
+    public boolean isDeleted() {
+        return status == RoadmapStatus.DELETED;
+    }
+
     public Member getCreator() {
         return creator;
     }

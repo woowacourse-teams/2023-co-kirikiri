@@ -47,6 +47,7 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -248,7 +249,7 @@ class RoadmapCreateServiceTest {
         when(roadmapRepository.findByIdAndMemberIdentifier(anyLong(), anyString()))
                 .thenReturn(Optional.of(roadmap));
         when(goalRoomRepository.findByRoadmap(any()))
-                .thenReturn(List.of());
+                .thenReturn(Collections.emptyList());
 
         // when
         // then
@@ -280,6 +281,7 @@ class RoadmapCreateServiceTest {
         // when
         // then
         assertDoesNotThrow(() -> roadmapService.deleteRoadmap("identifier1", 1L));
+        assertThat(roadmap.isDeleted()).isTrue();
         verify(roadmapRepository, never()).delete(any());
     }
 

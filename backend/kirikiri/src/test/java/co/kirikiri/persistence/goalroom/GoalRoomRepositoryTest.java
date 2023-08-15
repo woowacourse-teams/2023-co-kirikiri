@@ -472,23 +472,38 @@ class GoalRoomRepositoryTest {
         final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
 
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
-        final Roadmap roadmap = 로드맵을_생성한다(creator, category, roadmapContent);
+        final RoadmapContent roadmapContent1 = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
+        final Roadmap roadmap1 = 로드맵을_생성한다(creator, category, roadmapContent1);
+
+        final RoadmapNode roadmapNode3 = 로드맵_노드를_생성한다("로드맵 1주차 입니다.", "로드맵 1주차 내용");
+        final RoadmapNode roadmapNode4 = 로드맵_노드를_생성한다("로드맵 2주차 입니다.", "로드맵 2주차 내용");
+
+        final RoadmapContent roadmapContent2 = 로드맵_본문을_생성한다(List.of(roadmapNode3, roadmapNode4));
+        로드맵을_생성한다(creator, category, roadmapContent2);
+
+        final Member member = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TEN_DAY_LATER, roadmapNode1);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TWENTY_DAY_LAYER, THIRTY_DAY_LATER,
                 roadmapNode2);
-
-        final Member member = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
-        final GoalRoom goalRoom = 골룸을_생성한다("goalroom1", 6, roadmapContent,
+        final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 6, roadmapContent1,
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)), member);
-        goalRoomRepository.save(goalRoom);
+        final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 6, roadmapContent1,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)), member);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY, TEN_DAY_LATER, roadmapNode3);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = 골룸_로드맵_노드를_생성한다(TWENTY_DAY_LAYER, THIRTY_DAY_LATER,
+                roadmapNode4);
+        final GoalRoom goalRoom3 = 골룸을_생성한다("goalroom3", 6, roadmapContent2,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)), member);
+
+        goalRoomRepository.saveAll(List.of(goalRoom1, goalRoom2, goalRoom3));
 
         // when
-        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap1);
 
         // then
-        assertThat(goalRooms).isEqualTo(List.of(goalRoom));
+        assertThat(goalRooms).isEqualTo(List.of(goalRoom1, goalRoom2));
     }
 
     private Member 크리에이터를_저장한다() {
