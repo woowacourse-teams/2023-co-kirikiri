@@ -25,6 +25,8 @@ import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.event.RoadmapCreateEvent;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,8 +34,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import java.time.LocalDate;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateEventListenerTest {
@@ -65,9 +65,11 @@ class RoadmapCreateEventListenerTest {
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
-        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto(roadmapNode.getTitle(), roadmapNode.getContent(), List.of(imageFile));
+        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto(roadmapNode.getTitle(),
+                roadmapNode.getContent(), List.of(imageFile));
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
-                roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto), List.of(new RoadmapTagSaveDto("tag")));
+                roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
+                List.of(new RoadmapTagSaveDto("tag")));
 
         roadmap.addContent(roadmapContent);
 
@@ -88,9 +90,11 @@ class RoadmapCreateEventListenerTest {
 
         final MultipartFile imageFile = new MockMultipartFile("roadmapNodeTitle",
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
-        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("roadmapNodeTitle", "roadmapNodeContent", List.of(imageFile));
+        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("roadmapNodeTitle", "roadmapNodeContent",
+                List.of(imageFile));
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
-                "roadmapNodeContent", RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto), List.of(new RoadmapTagSaveDto("tag")));
+                "roadmapNodeContent", RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
+                List.of(new RoadmapTagSaveDto("tag")));
 
         final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap, roadmapSaveDto);
 
@@ -112,9 +116,11 @@ class RoadmapCreateEventListenerTest {
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
-        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("Wrong Title", roadmapNode.getContent(), List.of(imageFile));
+        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("Wrong Title", roadmapNode.getContent(),
+                List.of(imageFile));
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
-                roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto), List.of(new RoadmapTagSaveDto("tag")));
+                roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
+                List.of(new RoadmapTagSaveDto("tag")));
 
         roadmap.addContent(roadmapContent);
 
@@ -138,9 +144,11 @@ class RoadmapCreateEventListenerTest {
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(), null,
                 "image/jpeg", "tempImage".getBytes());
-        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("Wrong Title", roadmapNode.getContent(), List.of(imageFile));
+        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("Wrong Title", roadmapNode.getContent(),
+                List.of(imageFile));
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
-                roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto), List.of(new RoadmapTagSaveDto("tag")));
+                roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
+                List.of(new RoadmapTagSaveDto("tag")));
 
         roadmap.addContent(roadmapContent);
 

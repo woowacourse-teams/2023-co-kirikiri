@@ -59,13 +59,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -73,6 +66,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
@@ -1048,7 +1048,7 @@ class GoalRoomCreateServiceTest {
     }
 
     private GoalRoom 시작_날짜가_미래인_골룸을_생성한다(final Long goalRoomId, final Member creator,
-                                        final RoadmapContent roadmapContent, final Integer limitedMemberCount) {
+                                         final RoadmapContent roadmapContent, final Integer limitedMemberCount) {
         final GoalRoom goalRoom = new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"),
                 new LimitedMemberCount(limitedMemberCount), roadmapContent, creator);
         final GoalRoomRoadmapNode goalRoomRoadmapNode = new GoalRoomRoadmapNode(

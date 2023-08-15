@@ -11,7 +11,8 @@ public class TestTransactionService {
     private final RoadmapContentRepository roadmapContentRepository;
     private final MemberRepository memberRepository;
 
-    public TestTransactionService(final RoadmapContentRepository roadmapContentRepository, final MemberRepository memberRepository) {
+    public TestTransactionService(final RoadmapContentRepository roadmapContentRepository,
+                                  final MemberRepository memberRepository) {
         this.roadmapContentRepository = roadmapContentRepository;
         this.memberRepository = memberRepository;
     }
