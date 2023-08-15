@@ -39,12 +39,16 @@ public class AmazonS3FileService implements FileService {
 
     @Override
     public void save(final String path, final MultipartFile multiPartFile) {
-        final String key = findProperty(ROOT_DIRECTORY_PROPERTY) + DIRECTORY_SEPARATOR
-                + findProperty(SUB_DIRECTORY_PROPERTY) + path;
+        final String key = makeKey(path);
         final byte[] compressedBytes = compressFile(multiPartFile);
         final InputStream compressedInputStream = new ByteArrayInputStream(compressedBytes);
         final ObjectMetadata objectMetadata = makeObjectMetadata(compressedBytes);
         putObjectToS3(key, compressedInputStream, objectMetadata);
+    }
+
+    private String makeKey(final String path) {
+        return findProperty(ROOT_DIRECTORY_PROPERTY) + DIRECTORY_SEPARATOR
+                + findProperty(SUB_DIRECTORY_PROPERTY) + path;
     }
 
     private byte[] compressFile(final MultipartFile multiPartFile) {
@@ -94,9 +98,10 @@ public class AmazonS3FileService implements FileService {
 
     @Override
     public URL generateUrl(final String path, final HttpMethod httpMethod) {
+        final String key = makeKey(path);
         final Date expiration = createExpiration(Long.parseLong(findProperty(EXPIRATION_PROPERTY)));
         final GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(findProperty(BUCKET_PROPERTY), path)
+                new GeneratePresignedUrlRequest(findProperty(BUCKET_PROPERTY), key)
                         .withMethod(com.amazonaws.HttpMethod.valueOf(httpMethod.name()))
                         .withExpiration(expiration);
         return amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
