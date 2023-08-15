@@ -31,6 +31,7 @@ export const useSignUp = () => {
 };
 
 export const useLogin = () => {
+  const navigate = useNavigate();
   const { triggerToast } = useToast();
   const { setUserInfo } = useUserInfoContext();
 
@@ -46,9 +47,8 @@ export const useLogin = () => {
         getUserInfo().then((response: AxiosResponse<UserInfoResponse>) => {
           setUserInfo(response.data);
         });
-      },
-      onError() {
-        // TODO: 로그인 실패 시 로직
+
+        navigate('/');
       },
     }
   );
