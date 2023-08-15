@@ -7,7 +7,7 @@ import {
   GoalRoomTodo,
 } from '@myTypes/goalRoom/internal';
 
-type FilterCondType = 'LATEST';
+type FilterCondType = 'LATEST' | 'PARTICIPATION_RATE';
 
 export type GoalRoomListRequest = {
   roadmapId: number;
@@ -45,7 +45,10 @@ export type CreateGoalRoomRequest = {
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };
 
-export type GoalRoomDetailResponse = GoalRoomDetailType;
+export type GoalRoomDetailResponse = {
+  responses: GoalRoomDetailType[];
+  hasNext: boolean;
+};
 
 export type GoalRoomInfoResponse = GoalRoomInfoType;
 

@@ -101,3 +101,36 @@ export const CreateGoalRoomButton = styled.button`
   background-color: ${({ theme }) => theme.colors.main_middle};
   border-radius: 20px;
 `;
+
+export const FilterWrapper = styled.div`
+  ${({ theme }) => theme.fonts.description4};
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  color: ${({ theme }) => theme.colors.gray200};
+`;
+
+export const FilterTrigger = styled.button`
+  ${({ theme }) => theme.fonts.description4};
+  width: 9rem;
+  height: 1.5rem;
+  color: ${({ theme }) => theme.colors.gray200};
+`;
+
+export const FilterOptionWrapper = styled.ul`
+  position: absolute;
+  top: 2rem;
+
+  width: 9rem;
+  /* height: 3rem; */
+
+  border: 0.2rem solid ${({ theme }) => theme.colors.main_middle};
+  border-radius: 4px;
+`;
+
+export const FilterOption = styled.li`
+  cursor: pointer;
+  width: 100%;
+  height: 50%;
+  padding: 1rem 1rem;
+`;
