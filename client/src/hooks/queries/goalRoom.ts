@@ -60,12 +60,15 @@ export const useFetchGoalRoom = (goalRoomId: string) => {
 };
 
 export const useCreateGoalRoom = (roadmapContentId: number) => {
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
   const { triggerToast } = useToast();
   const { mutate } = useMutation(
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
-      onSuccess() {
+      async onSuccess() {
+        await queryClient.invalidateQueries([['myGoalRoomList']]);
         navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
         triggerToast({ message: '골룸을 생성했습니다!' });
       },
