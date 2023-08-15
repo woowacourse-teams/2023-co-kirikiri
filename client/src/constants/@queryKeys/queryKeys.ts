@@ -6,6 +6,9 @@ const QUERY_KEYS = {
     list: 'roadmapList',
     detail: 'roadmapDetail',
   },
+  goalRoom: {
+    certificationFeeds: 'certificationFeeds',
+  },
 } as const;
 
 export default QUERY_KEYS;
