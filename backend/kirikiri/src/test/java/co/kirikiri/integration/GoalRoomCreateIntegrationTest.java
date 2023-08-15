@@ -1093,8 +1093,17 @@ class GoalRoomCreateIntegrationTest extends RoadmapReadIntegrationTest {
         final ExtractableResponse<Response> 골룸_시작_요청_응답 = 골룸을_시작한다(기본_로그인_토큰, 골룸_아이디);
 
         // then
+        final List<GoalRoomMemberResponse> 골룸_사용자_정보 = 골룸의_사용자_정보를_정렬_기준없이_조회(골룸_아이디, 기본_로그인_토큰).as(new TypeRef<>() {
+        });
+        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰).as(new TypeRef<>() {
+        });
+        final GoalRoomMemberResponse 예상하는_골룸_사용자_정보 = new GoalRoomMemberResponse(사용자_정보.id(),
+                사용자_정보.nickname(), 사용자_정보.profileImageUrl(), 0D);
+
         assertThat(골룸_시작_요청_응답.statusCode())
                 .isEqualTo(HttpStatus.NO_CONTENT.value());
+        assertThat(골룸_사용자_정보)
+                .isEqualTo(List.of(예상하는_골룸_사용자_정보));
     }
 
     @Test
@@ -1298,12 +1307,12 @@ class GoalRoomCreateIntegrationTest extends RoadmapReadIntegrationTest {
         return 골룸_시작_요청_응답;
     }
 
-    protected ExtractableResponse<Response> 골룸의_사용자_정보를_정렬_기준없이_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
+    protected ExtractableResponse<Response> 골룸의_사용자_정보를_정렬_기준없이_조회(final Long 골룸_아이디, final String 로그인_토큰) {
         return given().log().all()
                 .header(AUTHORIZATION, 로그인_토큰)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 기본_골룸_아이디)
+                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 골룸_아이디)
                 .then()
                 .log().all()
                 .extract();

@@ -261,7 +261,7 @@ public class GoalRoomCreateService {
         checkGoalRoomLeader(member, goalRoom, "골룸의 리더만 골룸을 시작할 수 있습니다.");
         validateGoalRoomStart(goalRoom);
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoom.getGoalRoomPendingMembers().getValues();
-        saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers);
+        saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers, goalRoom);
         goalRoom.start();
     }
 
@@ -271,10 +271,11 @@ public class GoalRoomCreateService {
         }
     }
 
-    private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
+    private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers,
+                                                      final GoalRoom goalRoom) {
         final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
-        goalRoomMemberRepository.saveAll(goalRoomMembers);
-        goalRoomPendingMemberRepository.deleteAll(goalRoomPendingMembers);
+        goalRoom.addAllGoalRoomMembers(goalRoomMembers);
+        goalRoom.deleteAllPendingMembers();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -283,7 +284,7 @@ public class GoalRoomCreateService {
         for (final GoalRoom goalRoom : goalRoomsToStart) {
             final List<GoalRoomPendingMember> pendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
                     goalRoom);
-            saveGoalRoomMemberFromPendingMembers(pendingMembers);
+            saveGoalRoomMemberFromPendingMembers(pendingMembers, goalRoom);
             goalRoom.start();
         }
     }

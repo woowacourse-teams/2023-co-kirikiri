@@ -488,8 +488,6 @@ class GoalRoomCreateServiceTest {
         goalRoomCreateService.startGoalRoom("cokirikiri", 1L);
 
         // then
-        verify(goalRoomMemberRepository, times(1)).saveAll(anyList());
-        verify(goalRoomPendingMemberRepository, times(1)).deleteAll(anyList());
         assertThat(goalRoom.getStatus()).isEqualTo(RUNNING);
     }
 
@@ -592,9 +590,6 @@ class GoalRoomCreateServiceTest {
         goalRoomCreateService.startGoalRooms();
 
         // then
-        verify(goalRoomMemberRepository, times(1)).saveAll(anyList());
-        verify(goalRoomPendingMemberRepository, times(1)).deleteAll(anyList());
-
         assertAll(
                 () -> assertThat(goalRoom1.getStatus()).isEqualTo(RUNNING),
                 () -> assertThat(goalRoom2.getStatus()).isEqualTo(RECRUITING)

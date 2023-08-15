@@ -249,6 +249,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomToDos.findById(todoId);
     }
 
+    public void deleteAllPendingMembers() {
+        goalRoomPendingMembers.deleteAll();
+    }
+
     public GoalRoomName getName() {
         return name;
     }
