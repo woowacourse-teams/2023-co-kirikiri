@@ -176,6 +176,8 @@ export const useFetchGoalRoomParticipants = (
 
   return {
     goalRoomParticipants: data,
+  };
+};
 
 export const useCertificationFeeds = (goalRoomId: string) => {
   const { data } = useSuspendedQuery(
