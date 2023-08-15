@@ -8,17 +8,19 @@ import { getUserInfo, login, signUp } from '@apis/user';
 import useToast from '@hooks/_common/useToast';
 import { useUserInfoContext } from '@/components/_providers/UserInfoProvider';
 import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { setCookie } from '@/utils/_common/cookies';
 
 export const useSignUp = () => {
+  const { triggerToast } = useToast();
+  const navigate = useNavigate();
+
   const { mutate } = useMutation(
     (memberJoinPayload: MemberJoinRequest) => signUp(memberJoinPayload),
     {
       onSuccess() {
-        // TODO: 회원가입 성공 시 로직
-      },
-      onError() {
-        // TODO: 회원가입 실패 시 로직
+        triggerToast({ message: '회원가입 성공!' });
+        navigate('/login');
       },
     }
   );
