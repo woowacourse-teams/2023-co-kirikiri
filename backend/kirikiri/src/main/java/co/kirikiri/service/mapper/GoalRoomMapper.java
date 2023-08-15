@@ -3,6 +3,7 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
+import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -151,6 +152,20 @@ public class GoalRoomMapper {
         final Member member = goalRoomMember.getMember();
         return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
                 member.getImage().getServerFilePath(), goalRoomMember.getAccomplishmentRate());
+    }
+
+    public static List<GoalRoomMemberResponse> convertToGoalRoomPendingMemberResponses(
+            final List<GoalRoomPendingMember> goalRoomPendingMembers) {
+        return goalRoomPendingMembers.stream()
+                .map(GoalRoomMapper::convertToGoalRoomMemberResponse)
+                .toList();
+    }
+
+    private static GoalRoomMemberResponse convertToGoalRoomMemberResponse(
+            final GoalRoomPendingMember goalRoomPendingMember) {
+        final Member member = goalRoomPendingMember.getMember();
+        return new GoalRoomMemberResponse(member.getId(), member.getNickname().getValue(),
+                member.getImage().getServerFilePath(), 0D);
     }
 
     public static List<GoalRoomTodoResponse> convertGoalRoomTodoResponses(final GoalRoomToDos goalRoomToDos,

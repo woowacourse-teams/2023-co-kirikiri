@@ -3,6 +3,7 @@ package co.kirikiri.service;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
+import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -51,17 +52,17 @@ public class GoalRoomReadService {
     private final CheckFeedRepository checkFeedRepository;
 
     public GoalRoomResponse findGoalRoom(final Long goalRoomId) {
-        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomWithRoadmapContentById(goalRoomId);
         return GoalRoomMapper.convertGoalRoomResponse(goalRoom);
     }
 
-    private GoalRoom findGoalRoomById(final Long goalRoomId) {
+    private GoalRoom findGoalRoomWithRoadmapContentById(final Long goalRoomId) {
         return goalRoomRepository.findByIdWithRoadmapContent(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId));
     }
 
     public GoalRoomCertifiedResponse findGoalRoom(final String identifier, final Long goalRoomId) {
-        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomWithRoadmapContentById(goalRoomId);
         final boolean isJoined = isMemberGoalRoomJoin(new Identifier(identifier), goalRoom);
         return GoalRoomMapper.convertGoalRoomCertifiedResponse(goalRoom, isJoined);
     }
@@ -75,17 +76,20 @@ public class GoalRoomReadService {
 
     public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId,
                                                             final GoalRoomMemberSortTypeDto sortType) {
-
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        if (goalRoom.isRecruiting()) {
+            final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
+                    goalRoomId, GoalRoomMemberSortType.valueOf(sortType.name()));
+            return GoalRoomMapper.convertToGoalRoomPendingMemberResponses(goalRoomPendingMembers);
+        }
         final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
                 goalRoomId, GoalRoomMemberSortType.valueOf(sortType.name()));
-        checkGoalRoomEmpty(goalRoomId, goalRoomMembers);
         return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMembers);
     }
 
-    private void checkGoalRoomEmpty(final Long goalRoomId, final List<GoalRoomMember> goalRoomMembers) {
-        if (goalRoomMembers.isEmpty()) {
-            throw new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId);
-        }
+    private GoalRoom findGoalRoomById(final Long goalRoomId) {
+        return goalRoomRepository.findById(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
     public List<GoalRoomTodoResponse> findAllGoalRoomTodo(final Long goalRoomId, final String identifier) {

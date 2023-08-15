@@ -26,7 +26,6 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
@@ -368,10 +367,12 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 queryParameters(
                                         parameterWithName("sortCond")
-                                                .description("정렬 조건 (null일 경우 달성률순으로 기본 정렬) +" + "\n"
-                                                        + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
-                                                        + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
-                                                        + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .description(
+                                                        "정렬 조건 (null일 경우: 골룸 모집중 -> 골룸 입장 순(오래된순)/ 골룸 진행중, 완료됨 -> 달성률 순으로 기본 정렬) +"
+                                                                + "\n"
+                                                                + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                                + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                                + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
                                                 .optional()
                                 ),
                                 responseFields(
@@ -409,10 +410,12 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 queryParameters(
                                         parameterWithName("sortCond")
-                                                .description("정렬 조건 (null일 경우 달성률순으로 기본 정렬) +" + "\n"
-                                                        + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
-                                                        + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
-                                                        + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .description(
+                                                        "정렬 조건 (null일 경우: 골룸 모집중 -> 골룸 입장 순(오래된순)/ 골룸 진행중, 완료됨 -> 달성률 순으로 기본 정렬) + "
+                                                                + "\n"
+                                                                + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                                + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                                + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
                                                 .optional()
                                 ),
                                 responseFields(
