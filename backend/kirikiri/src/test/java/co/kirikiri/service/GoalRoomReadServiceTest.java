@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -63,18 +64,19 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomReadServiceTest {
@@ -101,6 +103,9 @@ class GoalRoomReadServiceTest {
 
     @Mock
     private CheckFeedRepository checkFeedRepository;
+
+    @Mock
+    private FileService fileService;
 
     @InjectMocks
     private GoalRoomReadService goalRoomReadService;
@@ -783,7 +788,7 @@ class GoalRoomReadServiceTest {
     }
 
     @Test
-    void 골룸의_인증피드를_전체_조회한다() {
+    void 골룸의_인증피드를_전체_조회한다() throws MalformedURLException {
         // given
         final Member creator = 사용자를_생성한다(1L);
         final Member follower = 사용자를_생성한다(2L);
@@ -810,20 +815,22 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoomMember1));
         given(checkFeedRepository.findByGoalRoomRoadmapNodeWithGoalRoomMemberAndMemberImage(any()))
                 .willReturn(List.of(checkFeed3, checkFeed2, checkFeed1));
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         // when
         final List<GoalRoomCheckFeedResponse> responses = goalRoomReadService.findGoalRoomCheckFeeds("cokirikiri", 1L);
 
         // then
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
-                new MemberNameAndImageResponse(1L, "name1", "serverFilePath"),
-                new CheckFeedResponse(1L, "serverFilePath1", "description1", LocalDateTime.now()));
+                new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
+                new CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDateTime.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
-                new MemberNameAndImageResponse(1L, "name1", "serverFilePath"),
-                new CheckFeedResponse(2L, "serverFilePath2", "description2", LocalDateTime.now()));
+                new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
+                new CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDateTime.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse3 = new GoalRoomCheckFeedResponse(
-                new MemberNameAndImageResponse(2L, "name1", "serverFilePath"),
-                new CheckFeedResponse(3L, "serverFilePath3", "description3", LocalDateTime.now()));
+                new MemberResponse(2L, "name1", "http://example.com/serverFilePath"),
+                new CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDateTime.now()));
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse3,
                 goalRoomCheckFeedResponse2, goalRoomCheckFeedResponse1);
 

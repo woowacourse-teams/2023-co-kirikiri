@@ -210,7 +210,7 @@ public class GoalRoomCreateService {
     }
 
     private GoalRoomRoadmapNode getNodeByDate(final GoalRoom goalRoom) {
-        return goalRoom.getNodeByDate(LocalDate.now())
+        return goalRoom.findNodeByDate(LocalDate.now())
                 .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
     }
 

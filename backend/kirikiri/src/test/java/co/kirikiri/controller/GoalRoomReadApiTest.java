@@ -38,16 +38,15 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomReadApiTest extends ControllerTestHelper {
@@ -637,10 +636,10 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     void 골룸의_인증피드를_전체_조회한다() throws Exception {
         // given
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
-                new MemberNameAndImageResponse(1L, "name1", "imageUrl"),
+                new MemberResponse(1L, "name1", "imageUrl"),
                 new CheckFeedResponse(1L, "imageUrl", "image description1", LocalDateTime.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
-                new MemberNameAndImageResponse(2L, "name2", "imageUrl"),
+                new MemberResponse(2L, "name2", "imageUrl"),
                 new CheckFeedResponse(2L, "imageUrl", "image description2", LocalDateTime.now()));
 
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse2,
@@ -665,7 +664,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 responseFields(
                                         fieldWithPath("[0].member.id").description("사용자 ID"),
-                                        fieldWithPath("[0].member.nickname").description("사용자 닉네임"),
+                                        fieldWithPath("[0].member.name").description("사용자 닉네임"),
                                         fieldWithPath("[0].member.imageUrl").description("사용자 이미지 Url"),
                                         fieldWithPath("[0].checkFeed.id").description("인증 피드 ID"),
                                         fieldWithPath("[0].checkFeed.imageUrl").description("인증 피드 이미지 Url"),
