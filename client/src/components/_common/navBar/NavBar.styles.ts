@@ -8,8 +8,9 @@ export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   z-index: ${({ theme }) => theme.zIndex.navBar};
   top: 0;
 
-  width: ${({ isNavBarOpen }) => (isNavBarOpen ? '15rem' : '6rem')};
+  width: ${({ isNavBarOpen }) => (isNavBarOpen ? '20rem' : '8rem')};
   height: 100vh;
+  padding-left: 2rem;
 
   background-color: ${({ theme }) => theme.colors.gray100};
   border-radius: 10px;
@@ -18,7 +19,7 @@ export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   transition: width 0.2s;
 
   &:hover {
-    width: 15rem;
+    width: 20rem;
   }
 
   @media screen and (max-width: ${BREAK_POINTS.MOBILE}px) {
@@ -60,9 +61,8 @@ export const ItemIcon = styled.span`
 
 export const UserProfileImage = styled.img`
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  box-shadow: ${({ theme }) => theme.shadows.threeD};
+  max-width: 15rem;
+  height: auto;
 `;
 
 export const Text = styled.span`

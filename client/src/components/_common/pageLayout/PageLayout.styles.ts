@@ -20,7 +20,7 @@ export const NavBar = styled.nav`
 `;
 
 export const ChildrenLayout = styled.div`
-  margin-left: 6rem;
+  margin-left: 8rem;
   padding: 0 1.8rem;
 
   ${media.mobile`
