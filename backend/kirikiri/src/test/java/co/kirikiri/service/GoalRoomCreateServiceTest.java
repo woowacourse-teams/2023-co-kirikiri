@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -58,12 +59,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,6 +66,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
@@ -113,6 +115,9 @@ class GoalRoomCreateServiceTest {
 
     @Mock
     private FileService fileService;
+
+    @Mock
+    private FilePathGenerator filePathGenerator;
 
     @InjectMocks
     private GoalRoomCreateService goalRoomCreateService;
@@ -633,7 +638,7 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
-    void 인증_피드_등록을_요청한다() throws IOException {
+    void 인증_피드_등록을_요청한다() {
         // given
         final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
 
@@ -659,8 +664,10 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(0);
         when(checkFeedRepository.save(any()))
                 .thenReturn(checkFeed);
-        when(fileService.uploadFileAndReturnPath(any(), any(), anyLong()))
-                .thenReturn("originalFileName");
+        when(filePathGenerator.makeFilePath(any(), any()))
+                .thenReturn("originalFileName.jpeg");
+        when(fileService.generateUrl(anyString(), any()))
+                .thenReturn(makeUrl("originalFileName.jpeg"));
 
         // when
         final String response = goalRoomCreateService.createCheckFeed("identifier", 1L, request);
@@ -668,7 +675,7 @@ class GoalRoomCreateServiceTest {
         // then
         assertAll(
                 () -> assertThat(goalRoomLeader.getAccomplishmentRate()).isEqualTo(100 / (double) 10),
-                () -> assertThat(response).isEqualTo("originalFileName")
+                () -> assertThat(response).contains("originalFileName")
         );
     }
 
@@ -749,11 +756,16 @@ class GoalRoomCreateServiceTest {
         goalRoomMemberRepository.save(goalRoomLeader);
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
 
+        when(goalRoomRepository.findById(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomLeader));
+
         // when
         assertThatThrownBy(
                 () -> goalRoomCreateService.createCheckFeed("identifier", 1L, request))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage("image/gif는 요청할 수 없는 파일 확장자 형식입니다.");
+                .hasMessage("허용되지 않는 확장자입니다.");
     }
 
     @Test
@@ -1068,5 +1080,13 @@ class GoalRoomCreateServiceTest {
     private CheckFeed 인증_피드를_생성한다(final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember joinedMember) {
         return new CheckFeed("src/test/resources/testImage/originalFileName.jpeg", ImageContentType.JPEG,
                 "originalFileName.jpeg", "인증 피드 설명", goalRoomRoadmapNode, joinedMember);
+    }
+
+    private URL makeUrl(final String path) {
+        try {
+            return new URL("http://example.com/" + path);
+        } catch (final MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

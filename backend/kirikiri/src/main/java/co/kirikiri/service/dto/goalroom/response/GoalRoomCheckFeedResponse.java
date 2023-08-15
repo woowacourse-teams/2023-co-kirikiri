@@ -1,9 +1,9 @@
 package co.kirikiri.service.dto.goalroom.response;
 
-import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
+import co.kirikiri.service.dto.member.response.MemberResponse;
 
 public record GoalRoomCheckFeedResponse(
-        MemberNameAndImageResponse member,
+        MemberResponse member,
         CheckFeedResponse checkFeed
 ) {
 

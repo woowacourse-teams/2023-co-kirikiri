@@ -14,9 +14,9 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.BadRequestException;
+import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 class RoadmapContentTest {
 
@@ -45,8 +45,9 @@ class RoadmapContentTest {
         final RoadmapContent content = new RoadmapContent("content");
 
         // when
-        content.addNodes(new RoadmapNodes(
-                List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title1", "content1"))));
+        content.addNodes(
+                new RoadmapNodes(
+                        List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title2", "content1"))));
 
         // then
         final RoadmapNodes nodes = content.getNodes();
@@ -55,6 +56,19 @@ class RoadmapContentTest {
                 () -> assertThat(nodes.getValues().get(0).getRoadmapContent()).isEqualTo(content),
                 () -> assertThat(nodes.getValues().get(1).getRoadmapContent()).isEqualTo(content)
         );
+    }
+
+    @Test
+    void 로드맵_본문에_노드를_추가할때_이름이_겹치면_예외를_던진다() {
+        // given
+        final RoadmapContent content = new RoadmapContent("content");
+
+        // when
+        // then
+        final String title = "title";
+        assertThatThrownBy(() -> content.addNodes(
+                new RoadmapNodes(
+                        List.of(new RoadmapNode(title, "content1"), new RoadmapNode(title, "content1")))));
     }
 
     @Test
