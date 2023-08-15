@@ -4,6 +4,7 @@ import {
   GoalRoomListRequest,
   GoalRoomTodoChangeStatusRequest,
   JoinGoalRoomRequest,
+  ParticipantsSortOrder,
 } from '@myTypes/goalRoom/remote';
 import {
   postCreateGoalRoom,
@@ -16,6 +17,7 @@ import {
   postToChangeTodoCheckStatus,
   postJoinGoalRoom,
   getMyGoalRoomList,
+  getGoalRoomParticipants,
   getCertificationFeeds,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
@@ -163,6 +165,17 @@ export const useJoinGoalRoom = ({ goalRoomId }: JoinGoalRoomRequest) => {
     joinGoalRoom: mutate,
   };
 };
+
+export const useFetchGoalRoomParticipants = (
+  goalRoomId: string,
+  participantsSortOrder: ParticipantsSortOrder
+) => {
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.participants, goalRoomId], () =>
+    getGoalRoomParticipants(goalRoomId, participantsSortOrder)
+  );
+
+  return {
+    goalRoomParticipants: data,
 
 export const useCertificationFeeds = (goalRoomId: string) => {
   const { data } = useSuspendedQuery(

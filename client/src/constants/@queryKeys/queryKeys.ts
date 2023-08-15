@@ -7,6 +7,7 @@ const QUERY_KEYS = {
     detail: 'roadmapDetail',
   },
   goalRoom: {
+    participants: 'participants',
     certificationFeeds: 'certificationFeeds',
   },
 } as const;

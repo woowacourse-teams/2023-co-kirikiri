@@ -2,9 +2,8 @@ import GoalRoomDashboardHeader from '@components/goalRoomDahsboardPage/goalRoomD
 import GoalRoomDashboardChat from '@components/goalRoomDahsboardPage/goalRoomDashboardChat/GoalRoomDashboardChat';
 import GoalRoomDashboardTodo from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo';
 import GoalRoomDashboardRoadmap from '@components/goalRoomDahsboardPage/goalRoomDahsboardRoadmap/GoalRoomDashboardRoadmap';
-import GoalRoomDashboardCalender from '@components/goalRoomDahsboardPage/goalRoomDashboardCalender/GoalRoomDashboardCalender';
 import GoalRoomCertificationFeed from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/GoalRoomCertificationFeed';
-
+import GoalRoomUserRanking from '@components/goalRoomDahsboardPage/goalRoomUserRanking/GoalRoomUserRanking';
 import { useFetchGoalRoom } from '@hooks/queries/goalRoom';
 
 import * as S from './GoalRoomDashboardContent.styles';
@@ -29,7 +28,7 @@ const GoalRoomDashboardContent = () => {
           <GoalRoomDashboardChat />
           <GoalRoomDashboardTodo goalRoomData={goalRoom} />
           <GoalRoomDashboardRoadmap />
-          <GoalRoomDashboardCalender />
+          <GoalRoomUserRanking />
           <GoalRoomCertificationFeed goalRoomData={goalRoom} />
         </S.GoalRoomGridContainer>
       </div>
