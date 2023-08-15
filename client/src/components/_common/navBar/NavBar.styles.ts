@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 import BREAK_POINTS from '@constants/_common/breakPoints';
 
 export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
-  position: absolute;
+  position: fixed;
   z-index: ${({ theme }) => theme.zIndex.navBar};
   top: 0;
 
