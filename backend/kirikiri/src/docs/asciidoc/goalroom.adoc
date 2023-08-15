@@ -279,7 +279,7 @@ operation::goal-room-create-api-test/골룸_시작시_존재하지_않는_사용
 
 operation::goal-room-create-api-test/골룸_시작시_존재하지_않는_골룸이면_예외가_발생한다[snippets='http-request,http-response']
 
-=== *15-4* 실패 - 골룸의 리더가 요청을 보낸 사용자가 아닐 경우
+=== *15-4* 실패 - 요청을 보낸 사용자가 골룸의 리더가 아닌 경우
 
 operation::goal-room-create-api-test/골룸을_시작하는_사용자가_골룸의_리더가_아니면_예외가_발생한다[snippets='http-request,http-response']
 

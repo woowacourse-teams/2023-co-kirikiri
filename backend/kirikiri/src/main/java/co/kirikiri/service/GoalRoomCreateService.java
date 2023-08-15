@@ -136,9 +136,9 @@ public class GoalRoomCreateService {
         }
     }
 
-    private void checkGoalRoomLeader(final Member member, final GoalRoom goalRoom, final String message) {
+    private void checkGoalRoomLeader(final Member member, final GoalRoom goalRoom, final String errorMessage) {
         if (goalRoom.isNotLeader(member)) {
-            throw new BadRequestException(message);
+            throw new BadRequestException(errorMessage);
         }
     }
 
@@ -276,10 +276,10 @@ public class GoalRoomCreateService {
         }
     }
 
-    private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoom) {
-        final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoom);
+    private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
+        final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
         goalRoomMemberRepository.saveAll(goalRoomMembers);
-        goalRoomPendingMemberRepository.deleteAll(goalRoom);
+        goalRoomPendingMemberRepository.deleteAll(goalRoomPendingMembers);
     }
 
     @Scheduled(cron = "0 0 0 * * *")
