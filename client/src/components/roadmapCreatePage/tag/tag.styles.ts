@@ -18,7 +18,6 @@ export const AddedTagItem = styled.article`
   justify-content: center;
 
   height: 4.7rem;
-  margin-right: 2rem;
   padding: 0 1rem;
 
   border: 0.2rem solid ${({ theme }) => theme.colors.main_dark};
@@ -32,7 +31,6 @@ export const TagItem = styled.article<{ width: number }>`
 
   width: ${({ width }) => (width > 4 ? width * 2 : 10)}rem;
   height: 4.7rem;
-  margin-right: 2rem;
 
   border: 0.2rem solid ${({ theme }) => theme.colors.main_dark};
   border-radius: 100px;
@@ -48,4 +46,9 @@ export const AddButton = styled.button`
   ${({ theme }) => theme.fonts.nav_title}
   width: 5rem;
   height: 5rem;
+`;
+
+export const DeleteButton = styled.button`
+  margin-right: 2rem;
+  color: ${({ theme }) => theme.colors.main_dark};
 `;

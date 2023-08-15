@@ -5,11 +5,11 @@ import {
   UserLoginRequest,
 } from '@myTypes/user/remote';
 import { getUserInfo, login, signUp } from '@apis/user';
-import { setCookie } from '@utils/_common/cookies';
 import useToast from '@hooks/_common/useToast';
-import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
+import { useUserInfoContext } from '@/components/_providers/UserInfoProvider';
 import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { setCookie } from '@/utils/_common/cookies';
 
 export const useSignUp = () => {
   const { triggerToast } = useToast();

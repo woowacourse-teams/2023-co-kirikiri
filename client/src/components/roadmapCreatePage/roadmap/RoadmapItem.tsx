@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 import * as S from './roadmap.styles';
 
 type RoadmapItemProps = {
@@ -20,10 +20,13 @@ const RoadmapItem = ({
       <S.TitleWrapper>
         <S.RoadmapNumber>{roadmapNumber}</S.RoadmapNumber>
         <S.TitleFieldWrapper>
-          <input
-            onChange={(e) => getRoadmapItemTitle<HTMLInputElement>(e, itemId)}
+          <S.NodeTitleInputField
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              getRoadmapItemTitle<HTMLInputElement>(e, itemId)
+            }
             maxLength={40}
             name='title'
+            placeholder='로드맵의 제목을 입렵해주세요'
           />
         </S.TitleFieldWrapper>
       </S.TitleWrapper>
@@ -34,6 +37,7 @@ const RoadmapItem = ({
           }
           maxLength={2000}
           name='content'
+          placeholder='로드맵의 본문을 입렵해주세요'
         />
       </S.BodyFieldWrapper>
     </>

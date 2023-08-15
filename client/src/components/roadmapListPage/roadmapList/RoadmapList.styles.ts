@@ -1,12 +1,19 @@
+import media from '@/styles/media';
 import styled from 'styled-components';
 
 export const RoadmapList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 3rem;
-  justify-content: space-around;
+  display: grid;
+  grid-gap: 3rem;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
 
   margin-bottom: 8rem;
+  min-height: 100vh;
+
+  ${media.mobile`
+  grid-template-columns: 1fr;
+  
+  `}
 `;
 
 export const CreateRoadmapButton = styled.button`

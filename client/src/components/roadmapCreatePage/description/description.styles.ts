@@ -6,13 +6,20 @@ export const Container = styled.article`
 
 export const FieldWrapper = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
 
   width: 80%;
-  height: 3rem;
-  padding-left: 2rem;
+  height: 10rem;
+  padding: 2rem;
 
-  border-bottom: 0.2rem solid ${({ theme }) => theme.colors.gray300};
+  background-color: ${({ theme }) => theme.colors.gray100};
+  border-radius: 2rem;
+`;
+
+export const TextCountWrapper = styled.div`
+  height: 80%;
+  margin-right: 2rem;
 `;
 
 export const ErrorMessage = styled.div`
