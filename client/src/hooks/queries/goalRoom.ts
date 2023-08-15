@@ -4,6 +4,7 @@ import {
   GoalRoomListRequest,
   GoalRoomTodoChangeStatusRequest,
   JoinGoalRoomRequest,
+  ParticipantsSortOrder,
 } from '@myTypes/goalRoom/remote';
 import {
   postCreateGoalRoom,
@@ -16,18 +17,21 @@ import {
   postToChangeTodoCheckStatus,
   postJoinGoalRoom,
   getMyGoalRoomList,
+  getGoalRoomParticipants,
+  getCertificationFeeds,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useToast from '@hooks/_common/useToast';
 import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 import { useNavigate } from 'react-router-dom';
+import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { data } = useSuspendedQuery(['goalRoomList', params.roadmapId], () =>
     getGoalRoomList(params)
   );
-  return { goalRoomList: data };
+  return { goalRoomList: data.responses };
 };
 
 export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => {
@@ -159,5 +163,29 @@ export const useJoinGoalRoom = ({ goalRoomId }: JoinGoalRoomRequest) => {
 
   return {
     joinGoalRoom: mutate,
+  };
+};
+
+export const useFetchGoalRoomParticipants = (
+  goalRoomId: string,
+  participantsSortOrder: ParticipantsSortOrder
+) => {
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.participants, goalRoomId], () =>
+    getGoalRoomParticipants(goalRoomId, participantsSortOrder)
+  );
+
+  return {
+    goalRoomParticipants: data,
+  };
+};
+
+export const useCertificationFeeds = (goalRoomId: string) => {
+  const { data } = useSuspendedQuery(
+    [QUERY_KEYS.goalRoom.certificationFeeds, goalRoomId],
+    () => getCertificationFeeds(goalRoomId)
+  );
+
+  return {
+    certificationFeeds: data,
   };
 };
