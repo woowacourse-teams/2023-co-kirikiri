@@ -38,6 +38,7 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -201,9 +202,9 @@ class CheckFeedRepositoryTest {
 
         //when
         final List<CheckFeed> checkFeeds1 = checkFeedRepository
-                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(goalRoomRoadmapNode1, goalRoom.getStatus());
+                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(Optional.of(goalRoomRoadmapNode1), goalRoom.getStatus());
         final List<CheckFeed> checkFeeds2 = checkFeedRepository
-                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(goalRoomRoadmapNode2, goalRoom.getStatus());
+                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(Optional.of(goalRoomRoadmapNode2), goalRoom.getStatus());
 
         assertAll(
                 () -> assertThat(checkFeeds1)
@@ -236,16 +237,16 @@ class CheckFeedRepositoryTest {
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
 
-        final CheckFeed checkFeed1 = 인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
-        final CheckFeed checkFeed2 = 인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
-        final CheckFeed checkFeed3 = 인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
-        final CheckFeed checkFeed4 = 인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
-        final CheckFeed checkFeed5 = 인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
-        final CheckFeed checkFeed6 = 인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
 
         //when
         final List<CheckFeed> checkFeeds1 = checkFeedRepository
-                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(null, goalRoom.getStatus());
+                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(Optional.empty(), goalRoom.getStatus());
 
         assertThat(checkFeeds1).isEmpty();
     }
@@ -280,7 +281,7 @@ class CheckFeedRepositoryTest {
 
         //when
         final List<CheckFeed> checkFeeds = checkFeedRepository
-                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(goalRoomRoadmapNode1, goalRoom.getStatus());
+                .findByGoalRoomRoadmapNodeAndGoalRoomStatus(Optional.of(goalRoomRoadmapNode1), goalRoom.getStatus());
 
         //then
         assertThat(checkFeeds)
@@ -327,9 +328,9 @@ class CheckFeedRepositoryTest {
 
         //when
         final List<CheckFeed> checkFeeds1 = checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
-                goalRoomRoadmapNode1, goalRoom.getStatus());
+                Optional.of(goalRoomRoadmapNode1), goalRoom.getStatus());
         final List<CheckFeed> checkFeeds2 = checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
-                goalRoomRoadmapNode2, goalRoom.getStatus());
+                Optional.of(goalRoomRoadmapNode2), goalRoom.getStatus());
 
         //then
         final CheckFeed expected1 = new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,

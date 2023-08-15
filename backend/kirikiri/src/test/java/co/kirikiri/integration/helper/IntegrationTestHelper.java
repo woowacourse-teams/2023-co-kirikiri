@@ -27,4 +27,12 @@ public class IntegrationTestHelper {
                 .setParameter("endDate", 변경할_종료날짜)
                 .executeUpdate();
     }
+
+    @Transactional
+    public void 골룸의_시작날짜를_변경한다(final Long 골룸_아이디, final LocalDate 변경할_시작날짜) {
+        em.createQuery("update GoalRoom g set startDate = :startDate where id = :goalRoomId")
+                .setParameter("goalRoomId", 골룸_아이디)
+                .setParameter("startDate", 변경할_시작날짜)
+                .executeUpdate();
+    }
 }

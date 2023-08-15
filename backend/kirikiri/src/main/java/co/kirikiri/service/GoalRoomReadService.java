@@ -142,10 +142,10 @@ public class GoalRoomReadService {
 
     private List<CheckFeed> findCheckFeedsByNodeAndGoalRoomStatus(final GoalRoom goalRoom,
                                                                   final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
-        if (goalRoom.isRecruiting() && currentGoalRoomRoadmapNode.isEmpty()) {
+        if (goalRoom.isRunning() && currentGoalRoomRoadmapNode.isEmpty()) {
             return Collections.emptyList();
         }
-        return checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatus(currentGoalRoomRoadmapNode.get(), goalRoom.getStatus());
+        return checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatus(currentGoalRoomRoadmapNode, goalRoom.getStatus());
     }
 
     public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
@@ -194,10 +194,10 @@ public class GoalRoomReadService {
 
     private List<CheckFeed> findCheckFeedsByNodeAndGoalRoomStatusWithMember(final GoalRoom goalRoom,
                                                                   final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
-        if (goalRoom.isRecruiting() && currentGoalRoomRoadmapNode.isEmpty()) {
+        if (goalRoom.isRunning() && currentGoalRoomRoadmapNode.isEmpty()) {
             return Collections.emptyList();
         }
         return checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
-                currentGoalRoomRoadmapNode.get(), goalRoom.getStatus());
+                currentGoalRoomRoadmapNode, goalRoom.getStatus());
     }
 }

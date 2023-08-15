@@ -12,6 +12,7 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.List;
+import java.util.Optional;
 
 public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter implements CheckFeedQueryRepository {
 
@@ -21,7 +22,7 @@ public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter im
 
     @Override
     public List<CheckFeed> findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
-            final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomStatus status) {
+            final Optional<GoalRoomRoadmapNode> goalRoomRoadmapNode, final GoalRoomStatus status) {
         return selectFrom(checkFeed)
                 .innerJoin(checkFeed.goalRoomMember, goalRoomMember)
                 .fetchJoin()
@@ -36,7 +37,7 @@ public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter im
 
     @Override
     public List<CheckFeed> findByGoalRoomRoadmapNodeAndGoalRoomStatus(
-            final GoalRoomRoadmapNode currentGoalRoomRoadmapNode, final GoalRoomStatus status) {
+            final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode, final GoalRoomStatus status) {
         return selectFrom(checkFeed)
                 .innerJoin(checkFeed.goalRoomMember, goalRoomMember)
                 .fetchJoin()
@@ -47,13 +48,13 @@ public class CheckFeedQueryRepositoryImpl extends QuerydslRepositorySupporter im
                 .fetch();
     }
 
-    private BooleanExpression nodeAndStatusCond(final GoalRoomRoadmapNode node, final GoalRoomStatus status) {
+    private BooleanExpression nodeAndStatusCond(final Optional<GoalRoomRoadmapNode> node, final GoalRoomStatus status) {
         if (status != GoalRoomStatus.RUNNING) {
             return null;
         }
-        if (node == null) {
+        if (node.isEmpty()) {
             return checkFeed.id.eq(-1L);
         }
-        return checkFeed.goalRoomRoadmapNode.eq(node);
+        return checkFeed.goalRoomRoadmapNode.eq(node.get());
     }
 }

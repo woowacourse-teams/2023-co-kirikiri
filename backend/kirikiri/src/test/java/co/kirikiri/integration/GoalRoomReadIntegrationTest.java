@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import co.kirikiri.domain.ImageDirType;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.integration.helper.IntegrationTest;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.integration.helper.IntegrationTestHelper;
+import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.GoalRoomCreateService;
@@ -76,24 +77,27 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
 
     private final String storageLocation;
     private final String serverPathPrefix;
+    private final IntegrationTestHelper testHelper;
     private final FilePathGenerator filePathGenerator;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
-    private final GoalRoomRepository goalRoomRepository;
+    private final CheckFeedRepository checkFeedRepository;
     private final GoalRoomCreateService goalRoomCreateService;
     private final GoalRoomScheduler goalRoomScheduler;
 
     public GoalRoomReadIntegrationTest(@Value("${file.upload-dir}") final String storageLocation,
                                        @Value("${file.server-path}") final String serverPathPrefix,
+                                       final IntegrationTestHelper testHelper,
                                        final FilePathGenerator filePathGenerator,
                                        final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final GoalRoomRepository goalRoomRepository,
+                                       final CheckFeedRepository checkFeedRepository,
                                        final GoalRoomCreateService goalRoomCreateService,
                                        final GoalRoomScheduler goalRoomScheduler) {
         this.storageLocation = storageLocation;
         this.serverPathPrefix = serverPathPrefix;
+        this.testHelper = testHelper;
         this.filePathGenerator = filePathGenerator;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
-        this.goalRoomRepository = goalRoomRepository;
+        this.checkFeedRepository = checkFeedRepository;
         this.goalRoomCreateService = goalRoomCreateService;
         this.goalRoomScheduler = goalRoomScheduler;
     }
@@ -353,6 +357,56 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 .usingRecursiveComparison()
                 .ignoringFields("checkFeeds.imageUrl", "checkFeeds.createdAt")
                 .isEqualTo(예상되는_응답);
+    }
+
+    @Test
+    void 진행_중인_사용자_단일_골룸을_조회할_때_진행_중인_노드_기간이_아니면_빈_인증피드를_반환한다() {
+        // given
+        회원가입을_한다(IDENTIFIER, PASSWORD, "코끼리", "010-1234-5678", GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+        final String 로그인_토큰_정보 = 로그인을_한다(IDENTIFIER, PASSWORD);
+
+        final RoadmapCategory 카테고리 = 로드맵_카테고리를_저장한다("여가");
+        final Long 로드맵_아이디 = 로드맵을_생성한다(로그인_토큰_정보, 카테고리.getId(), "로드맵 제목", "로드맵 소개글",
+                "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용"),
+                        new RoadmapNodeSaveRequest("로드맵 2주차", "로드맵 2주차 내용")));
+
+        final RoadmapResponse 로드맵_응답 = 로드맵을_조회한다(로드맵_아이디);
+        final Long 로드맵_첫번째_노드_아이디 = 로드맵_응답.content().nodes().get(0).id();
+        final Long 로드맵_두번째_노드_아이디 = 로드맵_응답.content().nodes().get(1).id();
+
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 십일_후, 이십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, 오늘부터_십일까지_인증_횟수, 십일_후, 이십일_후),
+                new GoalRoomRoadmapNodeRequest(로드맵_두번째_노드_아이디, 오늘부터_십일까지_인증_횟수, 이십일_후.plusDays(1), 삼십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름,
+                정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보);
+
+        회원가입을_한다("identifier2", "password2@", "팔로워", "010-1234-5555", GenderType.FEMALE, LocalDate.of(2000, 1, 1));
+        final String 팔로워_액세스_토큰 = 로그인을_한다("identifier2", "password2@");
+        골룸_참가_요청(골룸_아이디, 팔로워_액세스_토큰);
+
+        testHelper.골룸의_시작날짜를_변경한다(골룸_아이디, 오늘);
+        골룸을_시작한다();
+
+        // when
+        final MemberGoalRoomResponse 요청_응답값 = 사용자의_특정_골룸_정보를_조회한다(로그인_토큰_정보, 골룸_아이디);
+
+        // then
+        final MemberGoalRoomResponse 예상되는_응답 = new MemberGoalRoomResponse(정상적인_골룸_이름, "RUNNING", 1L,
+                2, 정상적인_골룸_제한_인원, 오늘, 삼십일_후, 1L,
+                new GoalRoomRoadmapNodesResponse(false, false,
+                        List.of(
+                                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", 십일_후, 이십일_후, 오늘부터_십일까지_인증_횟수),
+                                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", 이십일_후.plusDays(1), 삼십일_후,
+                                        오늘부터_십일까지_인증_횟수))),
+                List.of(new GoalRoomTodoResponse(1L, 정상적인_골룸_투두_컨텐츠, 십일_후, 이십일_후,
+                        new GoalRoomToDoCheckResponse(false))),
+                Collections.emptyList()
+        );
+
+        assertThat(요청_응답값).isEqualTo(예상되는_응답);
     }
 
     @Test
