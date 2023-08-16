@@ -12,7 +12,6 @@ import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
-import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
@@ -26,24 +25,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 class RoadmapReviewReadIntegrationTest extends RoadmapReviewCreateIntegrationTest {
 
     public RoadmapReviewReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
                                             final GoalRoomRepository goalRoomRepository,
                                             final GoalRoomMemberRepository goalRoomMemberRepository,
-                                            final GoalRoomCreateService goalRoomCreateService,
                                             final MemberRepository memberRepository,
                                             final TestTransactionService testTransactionService) {
-        super(roadmapCategoryRepository, goalRoomRepository, goalRoomMemberRepository, goalRoomCreateService, memberRepository, testTransactionService);
+        super(roadmapCategoryRepository, goalRoomRepository, goalRoomMemberRepository, memberRepository,
+                testTransactionService);
     }
 
     @Override

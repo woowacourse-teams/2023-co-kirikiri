@@ -3,10 +3,8 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
-import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
@@ -49,10 +47,8 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     private static final LocalDate 삼십일_후 = 오늘.plusDays(30);
 
     public GoalRoomReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final GoalRoomRepository goalRoomRepository,
-                                       final GoalRoomMemberRepository goalRoomMemberRepository,
-                                       final GoalRoomCreateService goalRoomCreateService) {
-        super(roadmapCategoryRepository, goalRoomRepository, goalRoomMemberRepository, goalRoomCreateService);
+                                       final GoalRoomRepository goalRoomRepository) {
+        super(roadmapCategoryRepository, goalRoomRepository);
     }
 
     @Override
@@ -107,7 +103,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸_투두리스트_추가(기본_로그인_토큰, 기본_골룸_아이디, 골룸_투두_생성_요청);
 
         골룸_참가_요청(기본_골룸_아이디, 기본_로그인_토큰);
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
         final List<GoalRoomTodoResponse> 골룸_투두리스트_응답값 = 골룸_투두리스트_조회(기본_골룸_아이디, 기본_로그인_토큰)
@@ -151,7 +147,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         회원가입(다른_사용자_회원_가입_요청);
         final String 다른_사용자_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_사용자_로그인_요청).accessToken());
 
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
         final ErrorResponse 예외_응답 = 골룸_투두리스트_조회(기본_골룸_아이디, 다른_사용자_액세스_토큰)
@@ -182,7 +178,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final String 팔로워_액세스_토큰 = 로그인(팔로워_로그인_요청).accessToken();
 
         골룸_참가_요청(기본_골룸_아이디, 팔로워_액세스_토큰);
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/webp", "tempImage".getBytes());
@@ -230,9 +226,10 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
-        final Long 두번쨰_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 두번째_로드맵_응답);
+        final Long 두번째_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 두번째_로드맵_응답);
 
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
+        골룸을_시작한다(기본_로그인_토큰, 두번째_골룸_아이디);
 
         // when
         final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자의_모든_골룸_조회()
@@ -241,7 +238,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
 
         // then
         assertThat(요청_응답값.get(0).goalRoomId()).isEqualTo(기본_골룸_아이디);
-        assertThat(요청_응답값.get(1).goalRoomId()).isEqualTo(두번쨰_골룸_아이디);
+        assertThat(요청_응답값.get(1).goalRoomId()).isEqualTo(두번째_골룸_아이디);
     }
 
     @Test
@@ -250,7 +247,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final Long 첫번쨰_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
         final RoadmapResponse 첫번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(첫번쨰_로드맵_아이디);
 
-        기본_골룸_생성(기본_로그인_토큰, 첫번째_로드맵_응답);
+        final Long 첫번째_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 첫번째_로드맵_응답);
 
         final Long 두번째_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(두번째_로드맵_아이디);
@@ -263,7 +260,8 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
 
         final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(두번째_골룸_생성_요청, 기본_로그인_토큰);
 
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 첫번째_골룸_아이디);
+        골룸을_시작한다(기본_로그인_토큰, 두번째_골룸_아이디);
 
         // when
         final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자가_참여한_골룸_중_골룸_진행_상태에_따라_목록을_조회(기본_로그인_토큰, "RECRUITING")
@@ -291,15 +289,16 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_응답.content().id(), 정상적인_골룸_이름,
                 20, 골룸_투두_요청, 골룸_노드_별_기간_요청);
 
-        골룸을_생성하고_아이디를_알아낸다(두번째_골룸_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(두번째_골룸_생성_요청, 기본_로그인_토큰);
 
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 첫번째_골룸_아이디);
+        골룸을_시작한다(기본_로그인_토큰, 두번째_골룸_아이디);
 
         // when
         final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자가_참여한_골룸_중_골룸_진행_상태에_따라_목록을_조회(기본_로그인_토큰, "RUNNING")
                 .as(new TypeRef<>() {
                 });
-        
+
         // then
         assertThat(요청_응답값.get(0).goalRoomId()).isEqualTo(첫번째_골룸_아이디);
     }
@@ -313,7 +312,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         골룸_참가_요청(기본_골룸_아이디, 기본_로그인_토큰);
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
         final List<GoalRoomRoadmapNodeResponse> 골룸_노드_응답값 = 골룸_노드_조회(기본_골룸_아이디, 기본_로그인_토큰)
@@ -351,7 +350,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         회원가입(팔로워_회원_가입_요청);
         final String 다른_사용자_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
 
-        골룸을_시작한다();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
         final ErrorResponse 예외_응답값 = 골룸_노드_조회(기본_골룸_아이디, 다른_사용자_액세스_토큰)
@@ -378,7 +377,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         골룸_참가_요청(기본_골룸_아이디, 팔로워_액세스_토큰);
-        goalRoomCreateService.startGoalRooms();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/jpeg", "tempImage".getBytes());
@@ -425,8 +424,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
-
-        goalRoomCreateService.startGoalRooms();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/jpeg", "tempImage".getBytes());
@@ -467,8 +465,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
 
         골룸_참가_요청(기본_골룸_아이디, 팔로워1_액세스_토큰);
         골룸_참가_요청(기본_골룸_아이디, 팔로워2_액세스_토큰);
-
-        goalRoomCreateService.startGoalRooms();
+        골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
                 "image/jpeg", "tempImage".getBytes());
@@ -547,7 +544,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸_참가_요청(기본_골룸_아이디, 팔로워2_액세스_토큰);
 
         //when
-        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_정렬기준없이_조회(기본_골룸_아이디, 기본_로그인_토큰)
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_정렬_기준없이_조회(기본_골룸_아이디, 기본_로그인_토큰)
                 .as(new TypeRef<>() {
                 });
 
@@ -579,10 +576,6 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
                 .extract()
                 .as(new TypeRef<>() {
                 });
-    }
-
-    private void 골룸을_시작한다() {
-        goalRoomCreateService.startGoalRooms();
     }
 
     private ExtractableResponse<Response> 인증_피드_전체_조회_요청(final String 액세스_토큰, final Long 골룸_아이디) {
@@ -672,17 +665,6 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond={sortType}", 기본_골룸_아이디, 정렬조건)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 골룸의_사용자_정보를_정렬기준없이_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
-        return given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 기본_골룸_아이디)
                 .then()
                 .log().all()
                 .extract();

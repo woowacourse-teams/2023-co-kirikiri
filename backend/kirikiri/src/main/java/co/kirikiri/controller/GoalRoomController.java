@@ -91,7 +91,15 @@ public class GoalRoomController {
     public ResponseEntity<Void> leave(@MemberIdentifier final String identifier,
                                       @PathVariable("goalRoomId") final Long goalRoomId) {
         goalRoomCreateService.leave(identifier, goalRoomId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{goalRoomId}/start")
+    @Authenticated
+    public ResponseEntity<Void> start(@MemberIdentifier final String identifier,
+                                      @PathVariable("goalRoomId") final Long goalRoomId) {
+        goalRoomCreateService.startGoalRoom(identifier, goalRoomId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(value = "/{goalRoomId}", headers = "Authorization")

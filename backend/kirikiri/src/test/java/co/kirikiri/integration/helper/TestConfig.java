@@ -12,7 +12,8 @@ public class TestConfig {
     private final RoadmapContentRepository roadmapContentRepository;
     private final MemberRepository memberRepository;
 
-    public TestConfig(final RoadmapContentRepository roadmapContentRepository, final MemberRepository memberRepository) {
+    public TestConfig(final RoadmapContentRepository roadmapContentRepository,
+                      final MemberRepository memberRepository) {
         this.roadmapContentRepository = roadmapContentRepository;
         this.memberRepository = memberRepository;
     }

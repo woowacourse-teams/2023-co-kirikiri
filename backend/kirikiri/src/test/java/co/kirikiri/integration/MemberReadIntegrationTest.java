@@ -83,7 +83,7 @@ class MemberReadIntegrationTest extends AuthenticationIntegrationTest {
         assertThat(에러_메세지.message()).isEqualTo("존재하지 않는 회원입니다. memberId = 2");
     }
 
-    private ExtractableResponse<Response> 요청을_받는_사용자_자신의_정보_조회_요청(final String 액세스_토큰) {
+    protected ExtractableResponse<Response> 요청을_받는_사용자_자신의_정보_조회_요청(final String 액세스_토큰) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()

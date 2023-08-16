@@ -33,6 +33,8 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -46,8 +48,6 @@ import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.restdocs.snippet.Attributes.Attribute;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebMvcTest(RoadmapController.class)
 class RoadmapCreateApiTest extends ControllerTestHelper {
