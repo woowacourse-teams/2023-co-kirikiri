@@ -1,9 +1,9 @@
+import { RoadmapValueType } from '@/myTypes/roadmap/internal';
 import type {
   RoadmapDetailResponse,
   RoadmapListRequest,
   RoadmapListResponse,
   RoadmapValueRequest,
-  RoadmapValueType,
 } from '@myTypes/roadmap/remote';
 import client from './axios/client';
 
@@ -32,6 +32,10 @@ export const getRoadmapDetail = async (id: number): Promise<RoadmapDetailRespons
 };
 
 export const postCreateRoadmap = (roadmapValue: RoadmapValueType) => {
-  const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue);
+  const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue, {
+    headers: {
+      'Content-Type': 'multipart/form-data;charset=UTF-8',
+    },
+  });
   return resposne;
 };
