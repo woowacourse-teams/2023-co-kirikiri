@@ -10,6 +10,7 @@ import * as S from './GoalRoomDashboardContent.styles';
 import { Suspense } from 'react';
 import Spinner from '@components/_common/spinner/Spinner';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
+import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
 
 export type GoalRoomDashboardContentParams = {
   goalroomId: string;
@@ -20,13 +21,17 @@ const GoalRoomDashboardContent = () => {
 
   const { goalRoom } = useFetchGoalRoom(goalroomId);
 
+  const { userInfo } = useUserInfoContext();
+
+  const isLeader = userInfo.id === goalRoom.leaderId;
+
   return (
     <Suspense fallback={<Spinner />}>
       <div>
-        <GoalRoomDashboardHeader goalRoomData={goalRoom} />
+        <GoalRoomDashboardHeader goalRoomData={goalRoom} isLeader={isLeader} />
         <S.GoalRoomGridContainer>
           <GoalRoomDashboardChat />
-          <GoalRoomDashboardTodo goalRoomData={goalRoom} />
+          <GoalRoomDashboardTodo goalRoomData={goalRoom} isLeader={isLeader} />
           <GoalRoomDashboardRoadmap />
           <GoalRoomUserRanking />
           <GoalRoomCertificationFeed goalRoomData={goalRoom} />

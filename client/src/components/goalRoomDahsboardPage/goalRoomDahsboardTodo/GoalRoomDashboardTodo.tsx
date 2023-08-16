@@ -12,9 +12,13 @@ import TodoModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/t
 
 type GoalRoomDashboardTodoProps = {
   goalRoomData: GoalRoomBrowseResponse;
+  isLeader: boolean;
 };
 
-const GoalRoomDashboardTodo = ({ goalRoomData }: GoalRoomDashboardTodoProps) => {
+const GoalRoomDashboardTodo = ({
+  goalRoomData,
+  isLeader,
+}: GoalRoomDashboardTodoProps) => {
   const { goalRoomTodos } = goalRoomData;
 
   return (
@@ -48,7 +52,7 @@ const GoalRoomDashboardTodo = ({ goalRoomData }: GoalRoomDashboardTodoProps) => 
       </DialogBackdrop>
 
       <DialogContent>
-        <TodoModal />
+        <TodoModal isLeader={isLeader} />
       </DialogContent>
     </DialogBox>
   );
