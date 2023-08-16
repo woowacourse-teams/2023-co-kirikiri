@@ -86,7 +86,7 @@ export const useCollectRoadmapData = () => {
   useEffect(() => {
     if (isSumbited) {
       createRoadmap(roadmapValue);
-      navigate('/');
+      navigate('/roadmap-list');
     }
   }, [isSumbited]);
 

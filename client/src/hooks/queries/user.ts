@@ -48,7 +48,7 @@ export const useLogin = () => {
           setUserInfo(response.data);
         });
 
-        navigate('/');
+        navigate('/roadmap-list');
       },
     }
   );
