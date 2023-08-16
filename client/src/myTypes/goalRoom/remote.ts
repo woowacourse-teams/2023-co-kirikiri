@@ -7,7 +7,7 @@ import {
   GoalRoomTodo,
 } from '@myTypes/goalRoom/internal';
 
-type FilterCondType = 'LATEST';
+type FilterCondType = 'LATEST' | 'PARTICIPATION_RATE';
 
 export type GoalRoomListRequest = {
   roadmapId: number;
@@ -45,7 +45,10 @@ export type CreateGoalRoomRequest = {
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };
 
-export type GoalRoomDetailResponse = GoalRoomDetailType;
+export type GoalRoomDetailResponse = {
+  responses: GoalRoomDetailType[];
+  hasNext: boolean;
+};
 
 export type GoalRoomInfoResponse = GoalRoomInfoType;
 
@@ -65,3 +68,34 @@ export type GoalRoomTodoChangeStatusRequest = {
 export type JoinGoalRoomRequest = {
   goalRoomId: string;
 };
+
+export type GoalRoomParticipant = {
+  memberId: number;
+  nickname: string;
+  imagePath: string;
+  accomplishmentRate: number;
+};
+
+export type GoalRoomParticipantsResponse = GoalRoomParticipant[];
+
+export type ParticipantsSortOrder = 'ACCOMPLISHMENT_RATE' | 'JOINED_ASC' | 'JOINED_DESC';
+
+export type UserType = {
+  id: number;
+  nickname: string;
+  imageUrl: string;
+};
+
+export type CheckFeedType = {
+  id: number;
+  imageUrl: string;
+  description: string;
+  createdAt: string;
+};
+
+export type CertificationFeedType = {
+  member: UserType;
+  checkFeed: CheckFeedType;
+};
+
+export type GoalRoomCertificationFeedsResponse = CertificationFeedType[];
