@@ -37,6 +37,10 @@ export const useValidateInput = <
     setErrorMessage('');
   };
 
+  const resetValue = () => {
+    setValue('');
+  };
+
   return {
     handleInputChange,
     errorMessage,
@@ -45,5 +49,6 @@ export const useValidateInput = <
     controlInputChange,
     resetErrorMessage,
     setErrorMessage,
+    resetValue,
   };
 };

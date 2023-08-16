@@ -16,10 +16,25 @@ const CertificationFeedModal = () => {
 
   const [imagePreview, setImagePreview] = useState<string | null>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const { handleInputChange, validateInput, errorMessage, resetErrorMessage, value } =
-    useValidateInput(CERTIFICATION_FEED);
+  const {
+    handleInputChange,
+    validateInput,
+    errorMessage,
+    resetErrorMessage,
+    value,
+    resetValue,
+  } = useValidateInput(CERTIFICATION_FEED);
 
-  const { createCertificationFeed } = useCreateCertificationFeed(goalroomId);
+  const resetCertificationFeedInputs = () => {
+    setImagePreview(null);
+    setImageFile(null);
+    resetValue();
+  };
+
+  const { createCertificationFeed } = useCreateCertificationFeed(
+    goalroomId,
+    resetCertificationFeedInputs
+  );
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;

@@ -133,14 +133,24 @@ export const usePostChangeTodoCheckStatus = ({
   };
 };
 
-export const useCreateCertificationFeed = (goalRoomId: string) => {
+export const useCreateCertificationFeed = (
+  goalRoomId: string,
+  onSuccessCallbackFunc: () => void
+) => {
+  const { triggerToast } = useToast();
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(
     (formData: FormData) => postCreateNewCertificationFeed(goalRoomId, formData),
     {
       onSuccess() {
-        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
+        triggerToast({ message: '인증 피드가 등록되었습니다' });
+        queryClient.invalidateQueries([
+          QUERY_KEYS.goalRoom.certificationFeeds,
+          goalRoomId,
+        ]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
+        onSuccessCallbackFunc();
       },
     }
   );
@@ -199,7 +209,7 @@ export const useStartGoalRoom = (goalRoomId: string) => {
   const { mutate } = useMutation(() => postStartGoalRoom(goalRoomId), {
     onSuccess() {
       triggerToast({ message: '골룸이 시작되었습니다' });
-      queryClient.invalidateQueries(['goalRoom', goalRoomId]);
+      queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
     },
   });
 
