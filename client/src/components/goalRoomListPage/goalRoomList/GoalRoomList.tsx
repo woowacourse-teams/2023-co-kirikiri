@@ -2,13 +2,13 @@ import * as S from './goalRoomList.styles';
 import GoalRoomItem from './GoalRoomItem';
 import { useGoalRoomList } from '@/hooks/queries/goalRoom';
 import useValidParams from '@/hooks/_common/useValidParams';
-import { useNavigate } from 'react-router-dom';
 import GoalRoomFilter from './GoalRoomFilter';
 import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
 import { useState } from 'react';
 import { goalRoomFilter } from '@/constants/goalRoom/goalRoomFilter';
 import { useInfiniteScroll } from '@hooks/_common/useInfiniteScroll';
 import WavyLoading from '@components/_common/wavyLoading/WavyLoading';
+import { Link } from 'react-router-dom';
 
 const GoalRoomList = () => {
   const { id } = useValidParams<{ id: string }>();
@@ -26,12 +26,6 @@ const GoalRoomList = () => {
     hasNextPage: hasNext,
     fetchNextPage,
   });
-
-  const navigate = useNavigate();
-
-  const moveCreateGoalRoomPage = () => {
-    navigate(`/roadmap/${Number(id)}/goalroom-create`);
-  };
 
   return (
     <S.ListContainer role='main' aria-label='골룸 리스트'>
@@ -59,11 +53,11 @@ const GoalRoomList = () => {
         {goalRoomList.map((goalRoomInfo) => {
           return <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />;
         })}
-        {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
-        <S.CreateGoalRoomButton onClick={moveCreateGoalRoomPage}>
-          골룸 생성하러 가기
-        </S.CreateGoalRoomButton>
       </S.ListWrapper>
+      {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
+      <Link to={`/roadmap/${Number(id)}/goalroom-create`}>
+        <S.CreateGoalRoomButton>골룸 생성하러 가기</S.CreateGoalRoomButton>
+      </Link>
     </S.ListContainer>
   );
 };
