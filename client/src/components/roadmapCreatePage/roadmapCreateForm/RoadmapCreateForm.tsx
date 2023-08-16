@@ -29,6 +29,7 @@ const RoadmapCreateForm = () => {
     getSelectedCategoryId,
     getSelectedDifficulty,
     getRoadmapItemTitle,
+    getNodeImage,
     getTags,
     handleSubmit,
     addNode,
@@ -55,10 +56,11 @@ const RoadmapCreateForm = () => {
                   roadmapNumber={index + 1}
                   itemId={index}
                   getRoadmapItemTitle={getRoadmapItemTitle}
+                  getNodeImage={getNodeImage}
                 />
               );
             })}
-            <S.AddButton onClick={addNode}>로드맵 추가하기</S.AddButton>
+            <S.AddButton onClick={addNode}>+</S.AddButton>
           </>
         </Roadmap>
         <S.ButtonWrapper>
