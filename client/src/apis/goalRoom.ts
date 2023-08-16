@@ -111,3 +111,7 @@ export const getCertificationFeeds = async (goalRoomId: string) => {
 
   return data;
 };
+
+export const postStartGoalRoom = async (goalRoomId: string) => {
+  return client.post(`/goal-rooms/${goalRoomId}/start`);
+};

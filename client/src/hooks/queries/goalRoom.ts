@@ -19,6 +19,7 @@ import {
   getMyGoalRoomList,
   getGoalRoomParticipants,
   getCertificationFeeds,
+  postStartGoalRoom,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -187,5 +188,21 @@ export const useCertificationFeeds = (goalRoomId: string) => {
 
   return {
     certificationFeeds: data,
+  };
+};
+
+export const useStartGoalRoom = (goalRoomId: string) => {
+  const { triggerToast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(() => postStartGoalRoom(goalRoomId), {
+    onSuccess() {
+      triggerToast({ message: '골룸이 시작되었습니다' });
+      queryClient.invalidateQueries(['goalRoom', goalRoomId]);
+    },
+  });
+
+  return {
+    startGoalRoom: mutate,
   };
 };
