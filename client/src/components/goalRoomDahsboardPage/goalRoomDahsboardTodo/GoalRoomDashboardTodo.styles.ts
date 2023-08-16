@@ -2,7 +2,7 @@ import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDash
 import styled from 'styled-components';
 
 export const TodoWrapper = styled(DashBoardSection)`
-  grid-column: 1 /3 ;
+  grid-column: 1 /3;
 `;
 
 export const TitleWrapper = styled.div`
