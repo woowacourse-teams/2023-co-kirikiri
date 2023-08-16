@@ -39,7 +39,7 @@ export type RoadmapItemType = {
   recommendedRoadmapPeriod: number;
   creator: CreatorType;
   category: CategoryType;
-  createdAt: number[];
+  createdAt: string;
   tags: TagType[];
 };
 

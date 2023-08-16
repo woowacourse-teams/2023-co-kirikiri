@@ -35,3 +35,14 @@ export const postCreateRoadmap = (roadmapValue: RoadmapValueType) => {
   const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue);
   return resposne;
 };
+
+export const getMyRoadmapList = async (size: number, lastId?: number) => {
+  const { data } = await client.get<RoadmapListResponse>('/roadmaps/me', {
+    params: {
+      size,
+      ...(lastId && { lastId }),
+    },
+  });
+
+  return data;
+};
