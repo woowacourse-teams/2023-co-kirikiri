@@ -105,7 +105,7 @@ class MemberReadApiTest extends ControllerTestHelper {
                 "serverFilePath",
                 Gender.MALE.name());
 
-        given(memberService.findMemberInformationForPublic(any(), any()))
+        given(memberService.findMemberInformationForPublic(any()))
                 .willReturn(expected);
 
         // when
@@ -134,7 +134,7 @@ class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 특정_사용자의_정보를_조회할때_로그인한_사용자가_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
         // given
-        when(memberService.findMemberInformationForPublic(any(), any()))
+        when(memberService.findMemberInformationForPublic(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
 
         // when
@@ -163,7 +163,7 @@ class MemberReadApiTest extends ControllerTestHelper {
     @Test
     void 특정_사용자의_정보를_조회할때_조회할_사용자가_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
         // given
-        when(memberService.findMemberInformationForPublic(any(), any()))
+        when(memberService.findMemberInformationForPublic(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다. memberId = 2"));
 
         // when

@@ -4,10 +4,9 @@ import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
-import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import co.kirikiri.service.dto.CustomScrollRequest;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
+import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
@@ -22,6 +21,7 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,10 +40,9 @@ public class RoadmapController {
     private final RoadmapCreateService roadmapCreateService;
     private final RoadmapReadService roadmapReadService;
 
-    @PostMapping
     @Authenticated
-    public ResponseEntity<Void> create(@MemberIdentifier final String identifier,
-                                       @RequestBody @Valid final RoadmapSaveRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> create(final RoadmapSaveRequest request, @MemberIdentifier final String identifier) {
         final Long roadmapId = roadmapCreateService.create(request, identifier);
         return ResponseEntity.created(URI.create("/api/roadmaps/" + roadmapId)).build();
     }
@@ -64,24 +63,24 @@ public class RoadmapController {
     }
 
     @GetMapping
-    public ResponseEntity<RoadmapForListResponses> findRoadmapsByFilterType(
+    public ResponseEntity<RoadmapForListResponses> findRoadmapsByOrderType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
-            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest filterTypeRequest,
+            @RequestParam(value = "filterCond", required = false) final RoadmapOrderTypeRequest orderTypeRequest,
             @ModelAttribute @Valid final CustomScrollRequest scrollRequest
     ) {
-        final RoadmapForListResponses roadmapResponses = roadmapReadService.findRoadmapsByFilterType(
-                categoryId, filterTypeRequest, scrollRequest);
+        final RoadmapForListResponses roadmapResponses = roadmapReadService.findRoadmapsByOrderType(
+                categoryId, orderTypeRequest, scrollRequest);
         return ResponseEntity.ok(roadmapResponses);
     }
 
     @GetMapping("/search")
     public ResponseEntity<RoadmapForListResponses> search(
-            @RequestParam(value = "filterCond", required = false) final RoadmapFilterTypeRequest filterTypeRequest,
+            @RequestParam(value = "filterCond", required = false) final RoadmapOrderTypeRequest orderTypeRequest,
             @ModelAttribute final RoadmapSearchRequest searchRequest,
             @ModelAttribute @Valid final CustomScrollRequest scrollRequest
     ) {
         final RoadmapForListResponses roadmapResponses = roadmapReadService.search(
-                filterTypeRequest, searchRequest, scrollRequest);
+                orderTypeRequest, searchRequest, scrollRequest);
         return ResponseEntity.ok(roadmapResponses);
     }
 
@@ -102,21 +101,20 @@ public class RoadmapController {
     @GetMapping("/{roadmapId}/goal-rooms")
     public ResponseEntity<RoadmapGoalRoomResponses> findGoalRoomsByFilterType(
             @PathVariable final Long roadmapId,
-            @RequestParam(value = "filterCond", required = false) final RoadmapGoalRoomsFilterTypeDto roadmapGoalRoomsFilterTypeDto,
+            @RequestParam(value = "roadmapGoalRoomsOrderTypeDto", required = false) final RoadmapGoalRoomsOrderTypeDto roadmapGoalRoomsOrderTypeDto,
             @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
-        final RoadmapGoalRoomResponses responses = roadmapReadService.findRoadmapGoalRoomsByFilterType(
-                roadmapId, roadmapGoalRoomsFilterTypeDto, scrollRequest);
+        final RoadmapGoalRoomResponses responses = roadmapReadService.findRoadmapGoalRoomsByOrderType(
+                roadmapId, roadmapGoalRoomsOrderTypeDto, scrollRequest);
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{roadmapId}/reviews")
     public ResponseEntity<List<RoadmapReviewResponse>> findRoadmapReviews(
             @PathVariable final Long roadmapId,
-            @ModelAttribute final CustomReviewScrollRequest reviewScrollRequest
+            @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
-        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId,
-                reviewScrollRequest);
+        final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId, scrollRequest);
         return ResponseEntity.ok(responses);
     }
 }

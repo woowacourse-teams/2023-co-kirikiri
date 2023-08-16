@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,13 @@ public class RoadmapContents {
 
     public void add(final RoadmapContent content) {
         this.values.add(content);
+    }
+
+    public Optional<RoadmapContent> findLastRoadmapContent() {
+        if (values.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(values.get(values.size() - 1));
     }
 
     public List<RoadmapContent> getValues() {

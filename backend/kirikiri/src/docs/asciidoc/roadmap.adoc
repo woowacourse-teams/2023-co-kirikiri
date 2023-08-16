@@ -19,7 +19,7 @@ endif::[]
 
 === *1-1* 성공
 
-operation::roadmap-create-api-test/정상적으로_로드맵을_생성한다[snippets='http-request,request-headers,request-fields,http-response,response-headers']
+operation::roadmap-create-api-test/정상적으로_로드맵을_생성한다[snippets='http-request,request-headers,request-part-jsonData-fields,http-response,response-headers']
 
 === *1-2* 실패 - 카테고리 아이디가 유효하지 않음
 

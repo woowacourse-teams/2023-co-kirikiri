@@ -15,10 +15,10 @@ class GoalRoomMembersTest {
 
     private static final Member MEMBER1 = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")),
-            new Nickname("name1"), null);
+            new Nickname("name1"), null, null);
     private static final Member MEMBER2 = new Member(2L, new Identifier("identifier2"),
             new EncryptedPassword(new Password("password2!")),
-            new Nickname("name2"), null);
+            new Nickname("name2"), null, null);
 
     @Test
     void 입력받은_사용자를_골룸_사용자_중에서_찾는다() {

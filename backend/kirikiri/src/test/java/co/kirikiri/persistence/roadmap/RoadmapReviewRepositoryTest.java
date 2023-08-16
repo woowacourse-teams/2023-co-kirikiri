@@ -3,9 +3,11 @@ package co.kirikiri.persistence.roadmap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
@@ -17,10 +19,8 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
-import co.kirikiri.persistence.dto.RoadmapReviewLastValueDto;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.dto.CustomReviewScrollRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -104,15 +104,11 @@ class RoadmapReviewRepositoryTest {
         roadmapReviewRepository.save(roadmapReview3);
 
         // when
-        final RoadmapReviewLastValueDto firstRoadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
-                new CustomReviewScrollRequest(null, null, 2));
         final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
-                roadmap, firstRoadmapReviewLastValueDto, 2);
+                roadmap, null, 2);
 
-        final RoadmapReviewLastValueDto secondRoadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
-                new CustomReviewScrollRequest(roadmapReviewsFirstPage.get(1).getCreatedAt(), null, 2));
         final List<RoadmapReview> roadmapReviewsSecondPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
-                roadmap, secondRoadmapReviewLastValueDto, 2);
+                roadmap, roadmapReviewsFirstPage.get(1).getId(), 2);
 
         // then
         assertAll(
@@ -137,10 +133,8 @@ class RoadmapReviewRepositoryTest {
         roadmapReviewRepository.save(roadmapReview);
 
         // when
-        final RoadmapReviewLastValueDto firstRoadmapReviewLastValueDto = RoadmapReviewLastValueDto.create(
-                new CustomReviewScrollRequest(null, null, 1));
         final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
-                roadmap2, firstRoadmapReviewLastValueDto, 1);
+                roadmap2, null, 1);
 
         // then
         assertThat(roadmapReviewsFirstPage).isEmpty();
@@ -148,8 +142,9 @@ class RoadmapReviewRepositoryTest {
 
     private Member 사용자를_저장한다(final String name, final String identifier) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final MemberImage memberImage = new MemberImage("test-name", "test-path", ImageContentType.PNG);
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(name), memberProfile);
+                new Nickname(name), memberImage, memberProfile);
         return memberRepository.save(creator);
     }
 

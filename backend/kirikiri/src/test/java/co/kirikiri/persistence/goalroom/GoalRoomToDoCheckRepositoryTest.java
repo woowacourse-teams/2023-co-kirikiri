@@ -163,7 +163,7 @@ class GoalRoomToDoCheckRepositoryTest {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 phoneNumber);
         final Member creator = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password(password)), new Nickname(nickname), memberProfile);
+                new EncryptedPassword(new Password(password)), new Nickname(nickname), null, memberProfile);
         return memberRepository.save(creator);
     }
 

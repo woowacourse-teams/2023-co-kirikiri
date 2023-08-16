@@ -21,10 +21,8 @@ public class BaseCreatedTimeEntity extends BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        // 초를 6자리까지만 저장하기 위해 포맷을 적용합니다.
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
         final String formattedTime = createdAt.format(formatter);
-
         createdAt = LocalDateTime.parse(formattedTime, formatter);
     }
 

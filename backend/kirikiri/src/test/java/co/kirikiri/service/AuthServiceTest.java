@@ -56,7 +56,7 @@ class AuthServiceTest {
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
-        member = new Member(identifier, encryptedPassword, nickname, memberProfile);
+        member = new Member(identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
     @Test

@@ -4,8 +4,7 @@ import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +15,8 @@ public interface GoalRoomQueryRepository {
     Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId);
 
     List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
-                                                                   final RoadmapGoalRoomsFilterType filterType,
-                                                                   final GoalRoomLastValueDto lastValue,
+                                                                   final RoadmapGoalRoomsOrderType filterType,
+                                                                   final Long lastId,
                                                                    final int pageSize);
 
     Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId);

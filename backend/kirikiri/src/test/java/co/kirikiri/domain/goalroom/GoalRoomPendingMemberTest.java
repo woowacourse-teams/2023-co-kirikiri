@@ -22,7 +22,8 @@ class GoalRoomPendingMemberTest {
     void 골룸의_리더이면_True를_반환한다() {
         // given
         final Member member = new Member(new Identifier("identifier"), new EncryptedPassword(new Password("password1")),
-                new Nickname("nickname"), new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+                new Nickname("nickname"), null,
+                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
                 new RoadmapContent("content"), member);
 
@@ -38,7 +39,8 @@ class GoalRoomPendingMemberTest {
     void 골룸의_리더가_아니면_false를_반환한다() {
         // given
         final Member member = new Member(new Identifier("identifier"), new EncryptedPassword(new Password("password1")),
-                new Nickname("nickname"), new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+                new Nickname("nickname"), null,
+                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
                 new RoadmapContent("content"), member);
 
@@ -55,7 +57,7 @@ class GoalRoomPendingMemberTest {
         // given
         final Member member = new Member(new Identifier("identifier"),
                 new EncryptedPassword(new Password("password1!")),
-                new Nickname("name"), null);
+                new Nickname("name"), null, null);
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
                 LocalDateTime.now(), null,
                 member);
@@ -72,10 +74,10 @@ class GoalRoomPendingMemberTest {
         // given
         final Member member1 = new Member(1L, new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1!")),
-                new Nickname("name1"), null);
+                new Nickname("name1"), null, null);
         final Member member2 = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password2!")),
-                new Nickname("name2"), null);
+                new Nickname("name2"), null, null);
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
                 LocalDateTime.now(), null,

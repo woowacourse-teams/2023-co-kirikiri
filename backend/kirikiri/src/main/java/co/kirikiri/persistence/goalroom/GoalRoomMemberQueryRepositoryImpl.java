@@ -5,11 +5,15 @@ import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberImage.memberImage;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
+import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.ACCOMPLISHMENT_RATE;
+import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.JOINED_ASC;
 
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
+import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.List;
 import java.util.Optional;
@@ -40,15 +44,26 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
     }
 
     @Override
-    public List<GoalRoomMember> findByGoalRoomIdOrderByAccomplishmentRateDesc(final Long goalRoomId) {
+    public List<GoalRoomMember> findByGoalRoomIdOrderedBySortType(final Long goalRoomId,
+                                                                  final GoalRoomMemberSortType sortType) {
         return selectFrom(goalRoomMember)
                 .innerJoin(goalRoomMember.member, member)
                 .fetchJoin()
                 .innerJoin(member.image, memberImage)
                 .fetchJoin()
                 .where(goalRoomMember.goalRoom.id.eq(goalRoomId))
-                .orderBy(goalRoomMember.accomplishmentRate.desc())
+                .orderBy(sortCond(sortType))
                 .fetch();
+    }
+
+    private OrderSpecifier<?> sortCond(final GoalRoomMemberSortType sortType) {
+        if (sortType == null || sortType == ACCOMPLISHMENT_RATE) {
+            return goalRoomMember.accomplishmentRate.desc();
+        }
+        if (sortType == JOINED_ASC) {
+            return goalRoomMember.joinedAt.asc();
+        }
+        return goalRoomMember.joinedAt.desc();
     }
 
     @Override

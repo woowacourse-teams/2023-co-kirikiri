@@ -49,6 +49,9 @@
     </appender>
 
     <root level="INFO">
+        <springProfile name="test">
+            <appender-ref ref="CONSOLE"/>
+        </springProfile>
         <springProfile name="prod">
             <appender-ref ref="ASYNC_SLACK"/>
             <appender-ref ref="FILE"/>
