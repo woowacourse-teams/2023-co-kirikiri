@@ -14,6 +14,9 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,15 +25,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 class RoadmapCreateIntegrationTest extends MemberReadIntegrationTest {
 
     protected RoadmapCategory 기본_카테고리;
     protected RoadmapSaveRequest 기본_로드맵_생성_요청;
-
 
     protected final RoadmapCategoryRepository roadmapCategoryRepository;
 
@@ -141,7 +140,8 @@ class RoadmapCreateIntegrationTest extends MemberReadIntegrationTest {
         final String 로드맵_제목 = "a".repeat(41);
 
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(기본_카테고리.getId(), 로드맵_제목, "로드맵 소개글", "로드맵 본문",
-                RoadmapDifficultyType.DIFFICULT, 30, List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
+                RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest("로드맵 1주차", "로드맵 1주차 내용", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그")));
 
         // when
@@ -337,7 +337,8 @@ class RoadmapCreateIntegrationTest extends MemberReadIntegrationTest {
         assertThat(에러_메세지.message()).isEqualTo("태그 이름은 최소 1자부터 최대 10자까지 가능합니다.");
     }
 
-    private ExtractableResponse<Response> 요청을_받는_이미지가_포함된_로드맵_생성(final RoadmapSaveRequest 로드맵_생성_요청값, final String accessToken)
+    private ExtractableResponse<Response> 요청을_받는_이미지가_포함된_로드맵_생성(final RoadmapSaveRequest 로드맵_생성_요청값,
+                                                                 final String accessToken)
             throws IOException {
         final String jsonRequest = objectMapper.writeValueAsString(로드맵_생성_요청값);
 
@@ -355,7 +356,9 @@ class RoadmapCreateIntegrationTest extends MemberReadIntegrationTest {
                 .extract();
     }
 
-    private RequestSpecification makeRequestSpecification(final RoadmapSaveRequest 로드맵_생성_요청값, RequestSpecification requestSpecification) throws IOException {
+    private RequestSpecification makeRequestSpecification(final RoadmapSaveRequest 로드맵_생성_요청값,
+                                                          RequestSpecification requestSpecification)
+            throws IOException {
         if (로드맵_생성_요청값.roadmapNodes() == null) {
             return requestSpecification;
         }

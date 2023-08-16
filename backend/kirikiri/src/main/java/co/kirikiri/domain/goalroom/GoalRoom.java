@@ -17,7 +17,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -209,6 +208,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomMembers.remove(goalRoomMember);
     }
 
+    public boolean cannotStart() {
+        return startDate.isAfter(LocalDate.now());
+    }
+
     private GoalRoomPendingMember findGoalRoomPendingMemberByMember(final Member member) {
         return goalRoomPendingMembers.findByMember(member)
                 .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
@@ -219,7 +222,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         if (goalRoomPendingMember.isLeader()) {
             goalRoomPendingMembers.findNextLeader()
                     .ifPresent(GoalRoomPendingMember::becomeLeader);
-
         }
     }
 
@@ -242,6 +244,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public Optional<GoalRoomToDo> findGoalRoomTodoByTodoId(final Long todoId) {
         return goalRoomToDos.findById(todoId);
+    }
+
+    public void deleteAllPendingMembers() {
+        goalRoomPendingMembers.deleteAll();
     }
 
     public GoalRoomName getName() {
@@ -270,15 +276,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public GoalRoomRoadmapNodes getGoalRoomRoadmapNodes() {
         return goalRoomRoadmapNodes;
-    }
-
-    public GoalRoomMembers getGoalRoomMembers() {
-        return goalRoomMembers;
-    }
-
-    @Override
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 
     public GoalRoomToDos getGoalRoomToDos() {

@@ -30,21 +30,23 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class GoalRoomCreateService {
 
+    private final FileService fileService;
+    private final FilePathGenerator filePathGenerator;
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final RoadmapContentRepository roadmapContentRepository;
@@ -52,8 +54,6 @@ public class GoalRoomCreateService {
     private final GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final CheckFeedRepository checkFeedRepository;
-    private final FileService fileService;
-    private final FilePathGenerator filePathGenerator;
 
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
@@ -121,7 +121,7 @@ public class GoalRoomCreateService {
         final Member member = findMemberByIdentifier(identifier);
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         checkGoalRoomCompleted(goalRoom);
-        checkGoalRoomLeader(member, goalRoom);
+        checkGoalRoomLeader(member, goalRoom, "골룸의 리더만 투두리스트를 추가할 수 있습니다.");
         final GoalRoomToDo goalRoomToDo = GoalRoomMapper.convertToGoalRoomTodo(goalRoomTodoRequest);
         goalRoom.addGoalRoomTodo(goalRoomToDo);
         goalRoomRepository.save(goalRoom);
@@ -134,9 +134,9 @@ public class GoalRoomCreateService {
         }
     }
 
-    private void checkGoalRoomLeader(final Member member, final GoalRoom goalRoom) {
+    private void checkGoalRoomLeader(final Member member, final GoalRoom goalRoom, final String errorMessage) {
         if (goalRoom.isNotLeader(member)) {
-            throw new BadRequestException("골룸의 리더만 투드리스트를 추가할 수 있습니다.");
+            throw new BadRequestException(errorMessage);
         }
     }
 
@@ -188,7 +188,8 @@ public class GoalRoomCreateService {
         validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
         updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
-        final String path = filePathGenerator.makeFilePath(ImageDirType.CHECK_FEED, checkFeedImage.getOriginalFilename());
+        final String path = filePathGenerator.makeFilePath(ImageDirType.CHECK_FEED,
+                checkFeedImage.getOriginalFilename());
         saveCheckFeed(checkFeedRequest, checkFeedImage, goalRoomMember, currentNode, path);
         fileService.save(path, checkFeedImage);
         return fileService.generateUrl(path, HttpMethod.GET).toExternalForm();
@@ -245,20 +246,45 @@ public class GoalRoomCreateService {
         goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
     }
 
-    private void saveCheckFeed(final CheckFeedRequest checkFeedRequest, final MultipartFile checkFeedImage, final GoalRoomMember goalRoomMember, final GoalRoomRoadmapNode currentNode, final String path) {
-        checkFeedRepository.save(new CheckFeed(path, ImageContentType.findImageContentType(checkFeedImage.getContentType()), checkFeedImage.getOriginalFilename(),
-                checkFeedRequest.description(), currentNode, goalRoomMember));
+    private void saveCheckFeed(final CheckFeedRequest checkFeedRequest, final MultipartFile checkFeedImage,
+                               final GoalRoomMember goalRoomMember, final GoalRoomRoadmapNode currentNode,
+                               final String path) {
+        checkFeedRepository.save(
+                new CheckFeed(path, ImageContentType.findImageContentType(checkFeedImage.getContentType()),
+                        checkFeedImage.getOriginalFilename(),
+                        checkFeedRequest.description(), currentNode, goalRoomMember));
+    }
+
+    public void startGoalRoom(final String memberIdentifier, final Long goalRoomId) {
+        final Member member = findMemberByIdentifier(memberIdentifier);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        checkGoalRoomLeader(member, goalRoom, "골룸의 리더만 골룸을 시작할 수 있습니다.");
+        validateGoalRoomStart(goalRoom);
+        final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoom.getGoalRoomPendingMembers().getValues();
+        saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers, goalRoom);
+        goalRoom.start();
+    }
+
+    private void validateGoalRoomStart(final GoalRoom goalRoom) {
+        if (goalRoom.cannotStart()) {
+            throw new BadRequestException("골룸의 시작 날짜가 되지 않았습니다.");
+        }
+    }
+
+    private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers,
+                                                      final GoalRoom goalRoom) {
+        final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
+        goalRoom.addAllGoalRoomMembers(goalRoomMembers);
+        goalRoom.deleteAllPendingMembers();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void startGoalRooms() {
         final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDateNow();
         for (final GoalRoom goalRoom : goalRoomsToStart) {
-            final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
+            final List<GoalRoomPendingMember> pendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
                     goalRoom);
-            final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
-            goalRoomMemberRepository.saveAll(goalRoomMembers);
-            goalRoomPendingMemberRepository.deleteAll(goalRoomPendingMembers);
+            saveGoalRoomMemberFromPendingMembers(pendingMembers, goalRoom);
             goalRoom.start();
         }
     }

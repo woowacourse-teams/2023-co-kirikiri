@@ -345,7 +345,7 @@ class GoalRoomReadServiceTest {
                 LocalDateTime.now(), goalRoom, creator);
         final GoalRoomPendingMember goalRoomMemberFollower = new GoalRoomPendingMember(GoalRoomRole.LEADER,
                 LocalDateTime.now(), goalRoom, follower);
-        
+
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(anyLong(), any()))
