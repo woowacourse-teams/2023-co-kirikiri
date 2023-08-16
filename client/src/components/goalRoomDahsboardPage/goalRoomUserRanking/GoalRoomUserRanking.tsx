@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@components/_common/dialog/dialog';
 import SVGIcon from '@components/icons/SVGIcon';
-import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/certificationFeedModal/CertificationFeedModal';
+import GoalRoomRankingModal from '@components/goalRoomDahsboardPage/goalRoomUserRanking/goalRoomRankingModal/GoalRoomRankingModal';
 
 const GoalRoomUserRanking = () => {
   const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
@@ -79,7 +79,7 @@ const GoalRoomUserRanking = () => {
       </DialogBackdrop>
 
       <DialogContent>
-        <CertificationFeedModal />
+        <GoalRoomRankingModal userRanking={goalRoomParticipants} />
       </DialogContent>
     </DialogBox>
   );
