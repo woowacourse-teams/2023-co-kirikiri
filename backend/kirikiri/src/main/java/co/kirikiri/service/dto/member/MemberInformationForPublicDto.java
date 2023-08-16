@@ -5,4 +5,5 @@ public record MemberInformationForPublicDto(
         String profileImageUrl,
         String gender
 ) {
+
 }

@@ -3,7 +3,7 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.integration.helper.TestTransactionService;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
@@ -41,14 +41,9 @@ import org.springframework.mock.web.MockMultipartFile;
 
 class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
 
-    private static final LocalDate 오늘 = LocalDate.now();
-    private static final LocalDate 십일_후 = 오늘.plusDays(10L);
-    private static final LocalDate 이십일_후 = 오늘.plusDays(20);
-    private static final LocalDate 삼십일_후 = 오늘.plusDays(30);
-
     public GoalRoomReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final GoalRoomRepository goalRoomRepository) {
-        super(roadmapCategoryRepository, goalRoomRepository);
+                                       final TestTransactionService testTransactionService) {
+        super(roadmapCategoryRepository, testTransactionService);
     }
 
     @Override
@@ -258,7 +253,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_응답.content().id(), 정상적인_골룸_이름,
                 20, 골룸_투두_요청, 골룸_노드_별_기간_요청);
 
-        final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(두번째_골룸_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(두번째_골룸_생성_요청, 기본_로그인_토큰);
 
         골룸을_시작한다(기본_로그인_토큰, 첫번째_골룸_아이디);
         골룸을_시작한다(기본_로그인_토큰, 두번째_골룸_아이디);
@@ -289,7 +284,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_응답.content().id(), 정상적인_골룸_이름,
                 20, 골룸_투두_요청, 골룸_노드_별_기간_요청);
 
-        final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(두번째_골룸_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(두번째_골룸_생성_요청, 기본_로그인_토큰);
 
         골룸을_시작한다(기본_로그인_토큰, 첫번째_골룸_아이디);
         골룸을_시작한다(기본_로그인_토큰, 두번째_골룸_아이디);
@@ -564,18 +559,6 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
 
         // then
         assertThat(예외_응답.message()).isEqualTo("존재하지 않는 골룸입니다. goalRoomId = 1");
-    }
-
-    private MemberGoalRoomResponse 사용자의_특정_골룸_정보를_조회한다(final String 로그인_토큰_정보, final Long 골룸_아이디) {
-        return given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰_정보)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/me", 골룸_아이디)
-                .then()
-                .log().all()
-                .extract()
-                .as(new TypeRef<>() {
-                });
     }
 
     private ExtractableResponse<Response> 인증_피드_전체_조회_요청(final String 액세스_토큰, final Long 골룸_아이디) {

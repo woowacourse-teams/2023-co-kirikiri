@@ -10,4 +10,5 @@ public record RoadmapReviewReadDto(
         String content,
         Double rate
 ) {
+
 }

@@ -6,4 +6,5 @@ public record RoadmapForListScrollDto(
         List<RoadmapForListDto> dtos,
         boolean hasNext
 ) {
+
 }

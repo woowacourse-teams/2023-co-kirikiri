@@ -18,7 +18,6 @@ import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
@@ -65,11 +64,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -77,6 +71,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomReadServiceTest {
@@ -164,7 +163,7 @@ class GoalRoomReadServiceTest {
         // when
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(
                 creator.getIdentifier().getValue(), goalRoom.getId());
-        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(true);
+        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(true, 1);
 
         // then
         assertThat(goalRoomResponse)
@@ -189,7 +188,62 @@ class GoalRoomReadServiceTest {
         // when
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(
                 creator.getIdentifier().getValue(), goalRoom.getId());
-        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(false);
+        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(false, 1);
+
+        // then
+        assertThat(goalRoomResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 모집중이지_않은_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_사용자_목록_조회시_참여하는_사용자면_참여여부가_true로_반환된다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
+        goalRoom.start();
+
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, creator);
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.of(goalRoomMember));
+
+        // when
+        final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(
+                creator.getIdentifier().getValue(), goalRoom.getId());
+        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(true, 0);
+
+        // then
+        assertThat(goalRoomResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 모집중이지_않은_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_사용자_목록_조회시_참여하지_않는_사용자면_참여여부가_false로_반환된다() {
+        // given
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, targetRoadmapContent);
+        goalRoom.start();
+
+        when(goalRoomRepository.findByIdWithRoadmapContent(any()))
+                .thenReturn(Optional.of(goalRoom));
+        when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .thenReturn(Optional.empty());
+
+        // when
+        final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(
+                creator.getIdentifier().getValue(), goalRoom.getId());
+        final GoalRoomCertifiedResponse expected = 예상하는_로그인된_사용자의_골룸_응답을_생성한다(false, 0);
 
         // then
         assertThat(goalRoomResponse)
@@ -603,8 +657,8 @@ class GoalRoomReadServiceTest {
         goalRoom3.join(member);
         goalRoom4.join(member);
 
-        goalRoom3.updateStatus(GoalRoomStatus.RUNNING);
-        goalRoom4.updateStatus(GoalRoomStatus.COMPLETED);
+        goalRoom3.start();
+        goalRoom4.complete();
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(member));
@@ -653,8 +707,8 @@ class GoalRoomReadServiceTest {
         goalRoom3.join(member);
         goalRoom4.join(member);
 
-        goalRoom3.updateStatus(GoalRoomStatus.RUNNING);
-        goalRoom4.updateStatus(GoalRoomStatus.RUNNING);
+        goalRoom3.start();
+        goalRoom4.start();
 
         goalRoom3.addAllGoalRoomMembers(List.of(
                 new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3, creator),
@@ -710,8 +764,8 @@ class GoalRoomReadServiceTest {
         goalRoom3.join(member);
         goalRoom4.join(member);
 
-        goalRoom3.updateStatus(GoalRoomStatus.COMPLETED);
-        goalRoom4.updateStatus(GoalRoomStatus.COMPLETED);
+        goalRoom3.complete();
+        goalRoom4.complete();
 
         goalRoom3.addAllGoalRoomMembers(List.of(
                 new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3, creator),
@@ -1009,11 +1063,12 @@ class GoalRoomReadServiceTest {
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 31);
     }
 
-    private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined) {
+    private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined,
+                                                                        final int currentMemberCount) {
         final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
                 new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
                 new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
-        return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 31, isJoined);
+        return new GoalRoomCertifiedResponse("골룸", currentMemberCount, 10, goalRoomNodeResponses, 31, isJoined);
     }
 
     private CheckFeed 인증피드를_생성한다(final String serverFilePath, final String description,

@@ -5,44 +5,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.integration.helper.TestTransactionService;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 class RoadmapReviewReadIntegrationTest extends RoadmapReviewCreateIntegrationTest {
 
     public RoadmapReviewReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                            final GoalRoomRepository goalRoomRepository,
-                                            final GoalRoomMemberRepository goalRoomMemberRepository,
-                                            final MemberRepository memberRepository,
                                             final TestTransactionService testTransactionService) {
-        super(roadmapCategoryRepository, goalRoomRepository, goalRoomMemberRepository, memberRepository,
-                testTransactionService);
+        super(roadmapCategoryRepository, testTransactionService);
     }
 
     @Override
@@ -54,40 +47,35 @@ class RoadmapReviewReadIntegrationTest extends RoadmapReviewCreateIntegrationTes
     @Test
     void 로드맵에_대한_리뷰를_최신순으로_조회한다() throws IOException {
         // given
-        final Member 크리에이터 = testTransactionService.findMemberById(기본_회원_아이디);
-
         final Long 로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
-
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
-        final RoadmapContent 로드맵_컨텐츠 = testTransactionService.findRoadmapById(로드맵_응답.content().id());
 
         final MemberJoinRequest 리더_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "leader", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 리더_로그인_요청 = new LoginRequest(리더_회원_가입_요청.identifier(), 리더_회원_가입_요청.password());
-        final Long 리더_아이디 = 회원가입(리더_회원_가입_요청);
+        회원가입(리더_회원_가입_요청);
         final String 리더_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(리더_로그인_요청).accessToken());
-
-        final Member 리더 = testTransactionService.findMemberById(리더_아이디);
+        final MemberInformationResponse 리더_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(리더_액세스_토큰).as(new TypeRef<>() {
+        });
 
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
                 "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 팔로워1_로그인_요청 = new LoginRequest(팔로워1_회원_가입_요청.identifier(), 팔로워1_회원_가입_요청.password());
-        final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
+        회원가입(팔로워1_회원_가입_요청);
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
-
-        final Member 팔로워1 = testTransactionService.findMemberById(팔로워1_아이디);
+        final MemberInformationResponse 팔로워1_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워1_액세스_토큰).as(new TypeRef<>() {
+        });
 
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier4", "paswword2@",
                 "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 팔로워2_로그인_요청 = new LoginRequest(팔로워2_회원_가입_요청.identifier(), 팔로워2_회원_가입_요청.password());
-        final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
+        회원가입(팔로워2_회원_가입_요청);
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
+        final MemberInformationResponse 팔로워2_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워2_액세스_토큰).as(new TypeRef<>() {
+        });
 
-        final Member 팔로워2 = testTransactionService.findMemberById(팔로워2_아이디);
-
-        // TODO 임의로 완료된 골룸을 생성한다 (골룸 완료 API 추가 시 변경)
-        final GoalRoom 골룸 = 완료한_골룸을_생성한다(로드맵_컨텐츠, 리더);
-        골룸에_대한_참여자_리스트를_생성한다(리더, 골룸, 팔로워1, 팔로워2);
+        final GoalRoom 골룸 = 완료한_골룸을_생성한다(로드맵_응답);
+        골룸에_대한_참여자_리스트를_생성한다(리더_정보, 골룸, 팔로워1_정보, 팔로워2_정보);
 
         final RoadmapReviewSaveRequest 리더_로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest("리더 리뷰 내용", 5.0);
         final RoadmapReviewSaveRequest 팔로워1_로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest("팔로워1 리뷰 내용", 1.5);
@@ -111,13 +99,13 @@ class RoadmapReviewReadIntegrationTest extends RoadmapReviewCreateIntegrationTes
 
         // then
         final List<RoadmapReviewResponse> 첫번째_로드맵_리뷰_조회_요청_예상값 = List.of(
-                new RoadmapReviewResponse(3L, new MemberResponse(4L, "follow2", "http://example.com" + 팔로워2.getImage().getServerFilePath()),
+                new RoadmapReviewResponse(3L, new MemberResponse(4L, "follow2", 팔로워2_정보.profileImageUrl()),
                         LocalDateTime.now(), "팔로워2 리뷰 내용", 3.0),
-                new RoadmapReviewResponse(2L, new MemberResponse(3L, "follow1", "http://example.com" + 팔로워1.getImage().getServerFilePath()),
+                new RoadmapReviewResponse(2L, new MemberResponse(3L, "follow1", 팔로워1_정보.profileImageUrl()),
                         LocalDateTime.now(), "팔로워1 리뷰 내용", 1.5));
 
         final List<RoadmapReviewResponse> 두번째_로드맵_리뷰_조회_요청_예상값 = List.of(
-                new RoadmapReviewResponse(1L, new MemberResponse(2L, "leader", "http://example.com" + 리더.getImage().getServerFilePath()),
+                new RoadmapReviewResponse(1L, new MemberResponse(2L, "leader", 리더_정보.profileImageUrl()),
                         LocalDateTime.now(), "리더 리뷰 내용", 5.0));
 
         assertAll(
@@ -135,32 +123,27 @@ class RoadmapReviewReadIntegrationTest extends RoadmapReviewCreateIntegrationTes
     @Test
     void 로드맵_리뷰_조회_요청_시_작성된_리뷰가_없다면_빈_값을_반환한다() throws IOException {
         // given
-        final Member 크리에이터 = testTransactionService.findMemberById(기본_회원_아이디);
-
         final Long 로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
-
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
-        final RoadmapContent 로드맵_컨텐츠 = testTransactionService.findRoadmapById(로드맵_응답.content().id());
 
         final MemberJoinRequest 리더_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "leader", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 리더_로그인_요청 = new LoginRequest(리더_회원_가입_요청.identifier(), 리더_회원_가입_요청.password());
-        final Long 리더_아이디 = 회원가입(리더_회원_가입_요청);
+        회원가입(리더_회원_가입_요청);
         final String 리더_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(리더_로그인_요청).accessToken());
-
-        final Member 리더 = memberRepository.findById(리더_아이디).get();
+        final MemberInformationResponse 리더_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(리더_액세스_토큰).as(new TypeRef<>() {
+        });
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
                 "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
-        final Long 팔로워_아이디 = 회원가입(팔로워_회원_가입_요청);
+        회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
+        final MemberInformationResponse 팔로워_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
+        });
 
-        final Member 팔로워 = memberRepository.findById(팔로워_아이디).get();
-
-        // TODO 임의로 완료된 골룸을 생성한다 (골룸 완료 API 추가 시 변경)
-        final GoalRoom 골룸 = 완료한_골룸을_생성한다(로드맵_컨텐츠, 리더);
-        골룸에_대한_참여자_리스트를_생성한다(리더, 골룸, 팔로워);
+        final GoalRoom 골룸 = 완료한_골룸을_생성한다(로드맵_응답);
+        골룸에_대한_참여자_리스트를_생성한다(리더_정보, 골룸, 팔로워_정보);
 
         final CustomScrollRequest 스크롤_요청 = new CustomScrollRequest(null, 10);
 

@@ -17,12 +17,12 @@ import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.mapper.MemberMapper;
+import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
 
 @Service
 @Transactional(readOnly = true)
@@ -98,7 +98,8 @@ public class MemberService {
 
     public MemberInformationForPublicResponse findMemberInformationForPublic(final Long memberId) {
         final Member memberWithPublicInfo = findMemberInformationByMemberId(memberId);
-        final URL memberimageURl = fileService.generateUrl(memberWithPublicInfo.getImage().getServerFilePath(), HttpMethod.GET);
+        final URL memberimageURl = fileService.generateUrl(memberWithPublicInfo.getImage().getServerFilePath(),
+                HttpMethod.GET);
         final MemberInformationForPublicDto memberInformationForPublicDto =
                 new MemberInformationForPublicDto(memberWithPublicInfo.getNickname().getValue(),
                         memberimageURl.toExternalForm(),

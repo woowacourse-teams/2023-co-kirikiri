@@ -14,4 +14,5 @@ public record RoadmapGoalRoomDto(
         LocalDate endDate,
         MemberDto goalRoomLeader
 ) {
+
 }

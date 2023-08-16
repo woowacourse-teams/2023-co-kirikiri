@@ -37,16 +37,16 @@ import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -91,7 +91,8 @@ public class GoalRoomReadService {
         if (goalRoom.isRecruiting()) {
             final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
                     goalRoomId, goalRoomMemberSortType);
-            final List<GoalRoomMemberDto> goalRoomMemberDtos = makeGoalRoomMemberDtosWithAccomplishmentRateZero(goalRoomPendingMembers);
+            final List<GoalRoomMemberDto> goalRoomMemberDtos = makeGoalRoomMemberDtosWithAccomplishmentRateZero(
+                    goalRoomPendingMembers);
             return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMemberDtos);
         }
         final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
@@ -112,7 +113,8 @@ public class GoalRoomReadService {
                 .toList();
     }
 
-    private GoalRoomMemberDto makeGoalRoomMemberDtoWithAccomplishmentRateZero(final GoalRoomPendingMember goalRoomPendingMember) {
+    private GoalRoomMemberDto makeGoalRoomMemberDtoWithAccomplishmentRateZero(
+            final GoalRoomPendingMember goalRoomPendingMember) {
         final Member member = goalRoomPendingMember.getMember();
         final URL memberImageUrl = fileService.generateUrl(member.getImage().getServerFilePath(), HttpMethod.GET);
         return new GoalRoomMemberDto(member.getId(), member.getNickname().getValue(),

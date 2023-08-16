@@ -189,7 +189,7 @@ class GoalRoomTest {
 
         final Member 참여자 = 사용자를_생성한다(2L, "identifier1", "팔로워");
 //        goalRoom.join(참여자);
-        goalRoom.updateStatus(GoalRoomStatus.RUNNING);
+        goalRoom.start();
 
         //expect
         assertAll(

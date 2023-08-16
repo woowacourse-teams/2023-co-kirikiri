@@ -15,4 +15,5 @@ public record MemberGoalRoomForListDto(
         LocalDate endDate,
         MemberDto goalRoomLeader
 ) {
+
 }

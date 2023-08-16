@@ -12,7 +12,7 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
@@ -40,16 +40,16 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -113,15 +113,16 @@ public class GoalRoomMapper {
                 goalRoom.getLimitedMemberCount().getValue(), roadmapNodeResponses, period, isJoined);
     }
 
-    public static RoadmapGoalRoomsFilterType convertToGoalRoomFilterType(
-            final RoadmapGoalRoomsFilterTypeDto filterType) {
-        if (filterType == null) {
-            return RoadmapGoalRoomsFilterType.LATEST;
+    public static RoadmapGoalRoomsOrderType convertToGoalRoomOrderType(
+            final RoadmapGoalRoomsOrderTypeDto orderType) {
+        if (orderType == null) {
+            return RoadmapGoalRoomsOrderType.LATEST;
         }
-        return RoadmapGoalRoomsFilterType.valueOf(filterType.name());
+        return RoadmapGoalRoomsOrderType.valueOf(orderType.name());
     }
 
-    public static RoadmapGoalRoomResponses convertToRoadmapGoalRoomResponses(final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto) {
+    public static RoadmapGoalRoomResponses convertToRoadmapGoalRoomResponses(
+            final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto) {
         final List<RoadmapGoalRoomResponse> responses = roadmapGoalRoomScrollDto.roadmapGoalRoomDtos()
                 .stream()
                 .map(GoalRoomMapper::convertToRoadmapGoalRoomResponse)
@@ -129,7 +130,8 @@ public class GoalRoomMapper {
         return new RoadmapGoalRoomResponses(responses, roadmapGoalRoomScrollDto.hasNext());
     }
 
-    private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(final RoadmapGoalRoomDto roadmapGoalRoomDto) {
+    private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(
+            final RoadmapGoalRoomDto roadmapGoalRoomDto) {
         return new RoadmapGoalRoomResponse(roadmapGoalRoomDto.goalRoomId(), roadmapGoalRoomDto.name(),
                 roadmapGoalRoomDto.currentMemberCount(), roadmapGoalRoomDto.limitedMemberCount(),
                 roadmapGoalRoomDto.createdAt(), roadmapGoalRoomDto.startDate(),
@@ -250,7 +252,8 @@ public class GoalRoomMapper {
         return new MemberGoalRoomForListResponse(memberGoalRoomForListDto.goalRoomId(), memberGoalRoomForListDto.name(),
                 memberGoalRoomForListDto.goalRoomStatus(), memberGoalRoomForListDto.currentMemberCount(),
                 memberGoalRoomForListDto.limitedMemberCount(),
-                memberGoalRoomForListDto.createdAt(), memberGoalRoomForListDto.startDate(), memberGoalRoomForListDto.endDate(),
+                memberGoalRoomForListDto.createdAt(), memberGoalRoomForListDto.startDate(),
+                memberGoalRoomForListDto.endDate(),
                 new MemberResponse(memberDto.id(), memberDto.name(),
                         memberDto.imageUrl()));
     }

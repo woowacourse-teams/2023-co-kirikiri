@@ -7,4 +7,5 @@ public record RoadmapContentDto(
         String content,
         List<RoadmapNodeDto> nodes
 ) {
+
 }

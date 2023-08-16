@@ -3,7 +3,7 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryDto;
@@ -19,8 +19,8 @@ import co.kirikiri.service.dto.roadmap.RoadmapReviewReadDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
-import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
@@ -34,10 +34,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.util.Collections;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -70,13 +70,15 @@ public final class RoadmapMapper {
         return new RoadmapTagSaveDto(request.name());
     }
 
-    public static RoadmapResponse convertToRoadmapResponse(final RoadmapDto roadmapDto, final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto) {
+    public static RoadmapResponse convertToRoadmapResponse(final RoadmapDto roadmapDto,
+                                                           final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto) {
         return new RoadmapResponse(
                 roadmapDto.roadmapId(),
                 new RoadmapCategoryResponse(roadmapDto.category().id(), roadmapDto.category().name()),
                 roadmapDto.roadmapTitle(),
                 roadmapDto.introduction(),
-                new MemberResponse(roadmapDto.creator().id(), roadmapDto.creator().name(), roadmapDto.creator().imageUrl()),
+                new MemberResponse(roadmapDto.creator().id(), roadmapDto.creator().name(),
+                        roadmapDto.creator().imageUrl()),
                 convertToRoadmapContentResponse(roadmapDto.content()),
                 roadmapDto.difficulty(),
                 roadmapDto.recommendedRoadmapPeriod(),
@@ -102,11 +104,11 @@ public final class RoadmapMapper {
                 .toList();
     }
 
-    public static RoadmapFilterType convertRoadmapOrderType(final RoadmapFilterTypeRequest filterType) {
+    public static RoadmapOrderType convertRoadmapOrderType(final RoadmapOrderTypeRequest filterType) {
         if (filterType == null) {
-            return RoadmapFilterType.LATEST;
+            return RoadmapOrderType.LATEST;
         }
-        return RoadmapFilterType.valueOf(filterType.name());
+        return RoadmapOrderType.valueOf(filterType.name());
     }
 
     private static List<RoadmapTagResponse> convertRoadmapTagResponses(final List<RoadmapTagDto> roadmapTagDtos) {
@@ -115,7 +117,8 @@ public final class RoadmapMapper {
                 .toList();
     }
 
-    public static RoadmapForListResponses convertRoadmapResponses(final RoadmapForListScrollDto roadmapForListScrollDto) {
+    public static RoadmapForListResponses convertRoadmapResponses(
+            final RoadmapForListScrollDto roadmapForListScrollDto) {
         final List<RoadmapForListResponse> responses = roadmapForListScrollDto.dtos()
                 .stream()
                 .map(RoadmapMapper::convertRoadmapResponse)
@@ -182,7 +185,8 @@ public final class RoadmapMapper {
                 .toList();
     }
 
-    private static RoadmapReviewResponse convertToRoadmapReviewResponse(final RoadmapReviewReadDto roadmapReviewReadDto) {
+    private static RoadmapReviewResponse convertToRoadmapReviewResponse(
+            final RoadmapReviewReadDto roadmapReviewReadDto) {
         final MemberDto memberDto = roadmapReviewReadDto.member();
         return new RoadmapReviewResponse(roadmapReviewReadDto.id(),
                 new MemberResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl()),

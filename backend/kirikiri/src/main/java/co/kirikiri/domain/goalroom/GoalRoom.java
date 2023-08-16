@@ -14,13 +14,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -77,10 +77,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         final GoalRoomPendingMember leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, member);
         leader.updateGoalRoom(this);
         goalRoomPendingMembers.add(leader);
-    }
-
-    public void updateStatus(final GoalRoomStatus status) {
-        this.status = status;
     }
 
     public void join(final Member member) {
@@ -182,18 +178,19 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     }
 
     public Integer getCurrentMemberCount() {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.size();
         }
         return goalRoomMembers.size();
     }
 
+    // FIXME 테스트용 메서드
     public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
         this.goalRoomMembers.addAll(new ArrayList<>(members));
     }
 
     public boolean isGoalRoomMember(final Member member) {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.isMember(member);
         }
         return goalRoomMembers.isMember(member);

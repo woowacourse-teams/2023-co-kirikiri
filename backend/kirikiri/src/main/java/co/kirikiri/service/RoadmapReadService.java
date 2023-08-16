@@ -11,10 +11,10 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
@@ -30,11 +30,11 @@ import co.kirikiri.service.dto.roadmap.RoadmapDto;
 import co.kirikiri.service.dto.roadmap.RoadmapForListDto;
 import co.kirikiri.service.dto.roadmap.RoadmapForListScrollDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewReadDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagDto;
-import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
@@ -45,12 +45,12 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import co.kirikiri.service.mapper.ScrollResponseMapper;
+import java.net.URL;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -125,14 +125,15 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
-    public RoadmapForListResponses findRoadmapsByFilterType(final Long categoryId,
-                                                            final RoadmapFilterTypeRequest filterType,
-                                                            final CustomScrollRequest scrollRequest) {
+    public RoadmapForListResponses findRoadmapsByOrderType(final Long categoryId,
+                                                           final RoadmapOrderTypeRequest orderTypeRequest,
+                                                           final CustomScrollRequest scrollRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
-        final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
+        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(orderTypeRequest);
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCategory(category, orderType,
                 scrollRequest.lastId(), scrollRequest.size());
-        final RoadmapForListScrollDto roadmapForListScrollDto = makeRoadmapForListScrollDto(roadmaps, scrollRequest.size());
+        final RoadmapForListScrollDto roadmapForListScrollDto = makeRoadmapForListScrollDto(roadmaps,
+                scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmapForListScrollDto);
     }
 
@@ -159,7 +160,8 @@ public class RoadmapReadService {
                 category.getName());
         final Member creator = roadmap.getCreator();
         final URL creatorImageUrl = fileService.generateUrl(creator.getImage().getServerFilePath(), HttpMethod.GET);
-        final MemberDto memberDto = new MemberDto(creator.getId(), creator.getNickname().getValue(), creatorImageUrl.toExternalForm());
+        final MemberDto memberDto = new MemberDto(creator.getId(), creator.getNickname().getValue(),
+                creatorImageUrl.toExternalForm());
         final List<RoadmapTagDto> roadmapTagDtos = makeRoadmapTagDto(roadmap.getTags());
 
         return new RoadmapForListDto(
@@ -182,15 +184,16 @@ public class RoadmapReadService {
                 .toList();
     }
 
-    public RoadmapForListResponses search(final RoadmapFilterTypeRequest filterTypeRequest,
+    public RoadmapForListResponses search(final RoadmapOrderTypeRequest orderTypeRequest,
                                           final RoadmapSearchRequest searchRequest,
                                           final CustomScrollRequest scrollRequest) {
-        final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterTypeRequest);
+        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(orderTypeRequest);
         final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(
-                searchRequest.creatorId(), searchRequest.roadmapTitle(), searchRequest.tagName());
+                searchRequest.creatorName(), searchRequest.roadmapTitle(), searchRequest.tagName());
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType,
                 scrollRequest.lastId(), scrollRequest.size());
-        final RoadmapForListScrollDto roadmapForListScrollDto = makeRoadmapForListScrollDto(roadmaps, scrollRequest.size());
+        final RoadmapForListScrollDto roadmapForListScrollDto = makeRoadmapForListScrollDto(roadmaps,
+                scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmapForListScrollDto);
     }
 
@@ -212,14 +215,15 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
-    public RoadmapGoalRoomResponses findRoadmapGoalRoomsByFilterType(final Long roadmapId,
-                                                                     final RoadmapGoalRoomsFilterTypeDto filterTypeDto,
-                                                                     final CustomScrollRequest scrollRequest) {
+    public RoadmapGoalRoomResponses findRoadmapGoalRoomsByOrderType(final Long roadmapId,
+                                                                    final RoadmapGoalRoomsOrderTypeDto orderTypeDto,
+                                                                    final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final RoadmapGoalRoomsFilterType filterType = GoalRoomMapper.convertToGoalRoomFilterType(filterTypeDto);
+        final RoadmapGoalRoomsOrderType orderType = GoalRoomMapper.convertToGoalRoomOrderType(orderTypeDto);
         final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
-                roadmap, filterType, scrollRequest.lastId(), scrollRequest.size());
-        final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto = makeGoalRoomDtos(goalRoomsWithPendingMembers, scrollRequest.size());
+                roadmap, orderType, scrollRequest.lastId(), scrollRequest.size());
+        final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto = makeGoalRoomDtos(goalRoomsWithPendingMembers,
+                scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(roadmapGoalRoomScrollDto);
     }
 

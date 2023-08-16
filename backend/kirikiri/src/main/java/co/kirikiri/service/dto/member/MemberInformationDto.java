@@ -11,4 +11,5 @@ public record MemberInformationDto(
         String phoneNumber,
         LocalDate birthday
 ) {
+
 }

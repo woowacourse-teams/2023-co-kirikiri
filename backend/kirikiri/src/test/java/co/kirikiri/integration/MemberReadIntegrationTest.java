@@ -29,7 +29,6 @@ class MemberReadIntegrationTest extends AuthenticationIntegrationTest {
     void 로그인한_사용자_자신의_정보를_성공적으로_조회한다() throws JsonProcessingException {
         // given
         // when
-        // TODO: 회원가입 시 이미지 저장하는 로직 추가된 후 회원가입 API 사용하도록 수정
         final ExtractableResponse<Response> 사용자_자신의_정보_조회_응답 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰);
 
         // then
@@ -47,7 +46,6 @@ class MemberReadIntegrationTest extends AuthenticationIntegrationTest {
     @Test
     void 특정_사용자의_정보를_성공적으로_조회한다() throws JsonProcessingException {
         // given
-        // TODO: 회원가입 시 이미지 저장하는 로직 추가된 후 회원가입 API 사용하도록 수정
         final MemberJoinRequest 다른_회원의_가입_요청 = new MemberJoinRequest("identifier2", "password2!",
                 "hello", DEFAULT_PHONE_NUMBER, DEFAULT_GENDER_TYPE, DEFAULT_BIRTHDAY);
         final Long 다른_회원_아이디 = 회원가입(다른_회원의_가입_요청);
@@ -71,7 +69,6 @@ class MemberReadIntegrationTest extends AuthenticationIntegrationTest {
     @Test
     void 특정_사용자의_정보를_조회시_존재하지_않는_회원이면_실패한다() throws JsonProcessingException {
         // given
-        // TODO: 회원가입 시 이미지 저장하는 로직 추가된 후 회원가입 API 사용하도록 수정
         // when
         final ExtractableResponse<Response> 특정_사용자의_정보_조회_응답 = 요청을_받는_특정_사용자의_정보_조회(기본_로그인_토큰, 2L);
 

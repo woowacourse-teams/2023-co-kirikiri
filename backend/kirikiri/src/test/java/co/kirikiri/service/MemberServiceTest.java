@@ -22,16 +22,16 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -136,7 +136,8 @@ class MemberServiceTest {
         final MemberInformationResponse response = memberService.findMemberInformation(identifier.getValue());
 
         // then
-        final MemberInformationResponse expected = new MemberInformationResponse(1L, "nickname", "http://example.com/serverFilePath",
+        final MemberInformationResponse expected = new MemberInformationResponse(1L, "nickname",
+                "http://example.com/serverFilePath",
                 Gender.MALE.name(),
                 "identifier1", "010-1234-5678", LocalDate.now());
 

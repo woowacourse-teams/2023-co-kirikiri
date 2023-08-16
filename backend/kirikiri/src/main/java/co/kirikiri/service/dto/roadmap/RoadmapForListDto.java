@@ -15,4 +15,5 @@ public record RoadmapForListDto(
         RoadmapCategoryDto category,
         List<RoadmapTagDto> tags
 ) {
+
 }

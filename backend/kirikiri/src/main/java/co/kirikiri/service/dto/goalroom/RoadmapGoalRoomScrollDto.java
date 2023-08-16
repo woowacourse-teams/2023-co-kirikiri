@@ -6,4 +6,5 @@ public record RoadmapGoalRoomScrollDto(
         List<RoadmapGoalRoomDto> roadmapGoalRoomDtos,
         boolean hasNext
 ) {
+
 }

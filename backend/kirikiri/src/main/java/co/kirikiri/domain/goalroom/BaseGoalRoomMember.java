@@ -2,6 +2,7 @@ package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.member.Member;
+import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,10 +30,12 @@ public abstract class BaseGoalRoomMember extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_room_id", nullable = false)
+    @QueryInit(value = {"roadmapContent.roadmap"})
     protected GoalRoom goalRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @QueryInit(value = {"identifier"})
     protected Member member;
 
     public BaseGoalRoomMember(final GoalRoomRole role, final LocalDateTime joinedAt,

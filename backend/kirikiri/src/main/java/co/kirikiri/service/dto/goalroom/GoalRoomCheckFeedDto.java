@@ -6,4 +6,5 @@ public record GoalRoomCheckFeedDto(
         MemberDto memberDto,
         CheckFeedDto checkFeedDto
 ) {
+
 }

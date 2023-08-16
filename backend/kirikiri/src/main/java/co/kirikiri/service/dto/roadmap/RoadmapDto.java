@@ -16,4 +16,5 @@ public record RoadmapDto(
         LocalDateTime createdAt,
         List<RoadmapTagDto> tags
 ) {
+
 }

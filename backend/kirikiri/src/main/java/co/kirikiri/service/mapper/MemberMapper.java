@@ -24,15 +24,18 @@ public final class MemberMapper {
         return new MemberJoinDto(identifier, password, nickname, request.phoneNumber(), gender, request.birthday());
     }
 
-    public static MemberInformationResponse convertToMemberInformationResponse(final MemberInformationDto memberInformationDto) {
+    public static MemberInformationResponse convertToMemberInformationResponse(
+            final MemberInformationDto memberInformationDto) {
         return new MemberInformationResponse(memberInformationDto.id(), memberInformationDto.nickname(),
-                memberInformationDto.profileImageUrl(), memberInformationDto.gender(), memberInformationDto.identifier(),
+                memberInformationDto.profileImageUrl(), memberInformationDto.gender(),
+                memberInformationDto.identifier(),
                 memberInformationDto.phoneNumber(), memberInformationDto.birthday());
     }
 
     public static MemberInformationForPublicResponse convertToMemberInformationForPublicResponse(
             final MemberInformationForPublicDto memberInformationForPublicDto) {
-        return new MemberInformationForPublicResponse(memberInformationForPublicDto.nickname(), memberInformationForPublicDto.profileImageUrl(),
+        return new MemberInformationForPublicResponse(memberInformationForPublicDto.nickname(),
+                memberInformationForPublicDto.profileImageUrl(),
                 memberInformationForPublicDto.gender());
     }
 }
