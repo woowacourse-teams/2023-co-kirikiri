@@ -1,8 +1,9 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
 import {
-    BackDrop,
-    CountBox, TitleWrapper,
+  BackDrop,
+  CountBox,
+  TitleWrapper,
 } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
 
 export const CertificationFeedWrapper = styled(DashBoardSection)``;
