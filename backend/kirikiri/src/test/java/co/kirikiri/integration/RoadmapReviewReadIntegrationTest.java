@@ -25,14 +25,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 class RoadmapReviewReadIntegrationTest extends RoadmapReviewCreateIntegrationTest {
 
@@ -111,13 +111,13 @@ class RoadmapReviewReadIntegrationTest extends RoadmapReviewCreateIntegrationTes
 
         // then
         final List<RoadmapReviewResponse> 첫번째_로드맵_리뷰_조회_요청_예상값 = List.of(
-                new RoadmapReviewResponse(3L, new MemberResponse(4L, "follow2", 팔로워2.getImage().getServerFilePath()),
+                new RoadmapReviewResponse(3L, new MemberResponse(4L, "follow2", "http://example.com" + 팔로워2.getImage().getServerFilePath()),
                         LocalDateTime.now(), "팔로워2 리뷰 내용", 3.0),
-                new RoadmapReviewResponse(2L, new MemberResponse(3L, "follow1", 팔로워1.getImage().getServerFilePath()),
+                new RoadmapReviewResponse(2L, new MemberResponse(3L, "follow1", "http://example.com" + 팔로워1.getImage().getServerFilePath()),
                         LocalDateTime.now(), "팔로워1 리뷰 내용", 1.5));
 
         final List<RoadmapReviewResponse> 두번째_로드맵_리뷰_조회_요청_예상값 = List.of(
-                new RoadmapReviewResponse(1L, new MemberResponse(2L, "leader", 리더.getImage().getServerFilePath()),
+                new RoadmapReviewResponse(1L, new MemberResponse(2L, "leader", "http://example.com" + 리더.getImage().getServerFilePath()),
                         LocalDateTime.now(), "리더 리뷰 내용", 5.0));
 
         assertAll(

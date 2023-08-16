@@ -23,7 +23,9 @@ import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
+import co.kirikiri.service.dto.goalroom.MemberGoalRoomForListDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
@@ -35,15 +37,16 @@ import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -88,16 +91,46 @@ public class GoalRoomReadService {
         if (goalRoom.isRecruiting()) {
             final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
                     goalRoomId, goalRoomMemberSortType);
-            return GoalRoomMapper.convertToGoalRoomPendingMemberResponses(goalRoomPendingMembers);
+            final List<GoalRoomMemberDto> goalRoomMemberDtos = makeGoalRoomMemberDtosWithAccomplishmentRateZero(goalRoomPendingMembers);
+            return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMemberDtos);
         }
         final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoomIdOrderedBySortType(
                 goalRoomId, goalRoomMemberSortType);
-        return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMembers);
+        final List<GoalRoomMemberDto> goalRoomMemberDtos = makeGoalRoomMemberDtos(goalRoomMembers);
+        return GoalRoomMapper.convertToGoalRoomMemberResponses(goalRoomMemberDtos);
     }
 
     private GoalRoom findGoalRoomById(final Long goalRoomId) {
         return goalRoomRepository.findById(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
+    }
+
+    private List<GoalRoomMemberDto> makeGoalRoomMemberDtosWithAccomplishmentRateZero(
+            final List<GoalRoomPendingMember> goalRoomPendingMembers) {
+        return goalRoomPendingMembers.stream()
+                .map(this::makeGoalRoomMemberDtoWithAccomplishmentRateZero)
+                .toList();
+    }
+
+    private GoalRoomMemberDto makeGoalRoomMemberDtoWithAccomplishmentRateZero(final GoalRoomPendingMember goalRoomPendingMember) {
+        final Member member = goalRoomPendingMember.getMember();
+        final URL memberImageUrl = fileService.generateUrl(member.getImage().getServerFilePath(), HttpMethod.GET);
+        return new GoalRoomMemberDto(member.getId(), member.getNickname().getValue(),
+                memberImageUrl.toExternalForm(), 0D);
+    }
+
+    private List<GoalRoomMemberDto> makeGoalRoomMemberDtos(
+            final List<GoalRoomMember> goalRoomPendingMembers) {
+        return goalRoomPendingMembers.stream()
+                .map(this::makeGoalRoomMemberDto)
+                .toList();
+    }
+
+    private GoalRoomMemberDto makeGoalRoomMemberDto(final GoalRoomMember goalRoomMember) {
+        final Member member = goalRoomMember.getMember();
+        final URL memberImageUrl = fileService.generateUrl(member.getImage().getServerFilePath(), HttpMethod.GET);
+        return new GoalRoomMemberDto(member.getId(), member.getNickname().getValue(),
+                memberImageUrl.toExternalForm(), goalRoomMember.getAccomplishmentRate());
     }
 
     public List<GoalRoomTodoResponse> findAllGoalRoomTodo(final Long goalRoomId, final String identifier) {
@@ -132,7 +165,14 @@ public class GoalRoomReadService {
         final GoalRoomRoadmapNode currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
         final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoomRoadmapNode(currentGoalRoomRoadmapNode);
         final List<GoalRoomToDoCheck> checkedTodos = findMemberCheckedGoalRoomToDoIds(goalRoomId, identifier);
-        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeeds, checkedTodos);
+        final List<CheckFeedDto> checkFeedDtos = makeCheckFeedDtos(checkFeeds);
+        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, checkFeedDtos, checkedTodos);
+    }
+
+    private List<CheckFeedDto> makeCheckFeedDtos(final List<CheckFeed> checkFeeds) {
+        return checkFeeds.stream()
+                .map(it -> makeCheckFeedDto(it))
+                .collect(Collectors.toList());
     }
 
     private GoalRoom findMemberGoalRoomById(final Long goalRoomId) {
@@ -159,7 +199,24 @@ public class GoalRoomReadService {
     public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMember(member);
-        return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRooms);
+        final List<MemberGoalRoomForListDto> memberGoalRoomForListDtos = makeMemberGoalRoomForListDto(memberGoalRooms);
+        return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRoomForListDtos);
+    }
+
+    private List<MemberGoalRoomForListDto> makeMemberGoalRoomForListDto(final List<GoalRoom> memberGoalRooms) {
+        return memberGoalRooms.stream()
+                .map(this::makeMemberGoalRoomForListDto)
+                .toList();
+    }
+
+    private MemberGoalRoomForListDto makeMemberGoalRoomForListDto(final GoalRoom goalRoom) {
+        final Member leader = goalRoom.findGoalRoomLeader();
+        final URL leaderImageUrl = fileService.generateUrl(leader.getImage().getServerFilePath(), HttpMethod.GET);
+        return new MemberGoalRoomForListDto(goalRoom.getId(), goalRoom.getName().getValue(),
+                goalRoom.getStatus().name(), goalRoom.getCurrentMemberCount(),
+                goalRoom.getLimitedMemberCount().getValue(),
+                goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
+                new MemberDto(leader.getId(), leader.getNickname().getValue(), leaderImageUrl.toExternalForm()));
     }
 
     public List<MemberGoalRoomForListResponse> findMemberGoalRoomsByStatusType(final String identifier,
@@ -167,7 +224,8 @@ public class GoalRoomReadService {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         final GoalRoomStatus goalRoomStatus = GoalRoomMapper.convertToGoalRoomStatus(goalRoomStatusTypeRequest);
         final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMemberAndStatus(member, goalRoomStatus);
-        return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRooms);
+        final List<MemberGoalRoomForListDto> memberGoalRoomForListDtos = makeMemberGoalRoomForListDto(memberGoalRooms);
+        return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRoomForListDtos);
     }
 
     public List<GoalRoomRoadmapNodeResponse> findAllGoalRoomNodes(final Long goalRoomId, final String identifier) {
@@ -203,18 +261,20 @@ public class GoalRoomReadService {
                 .toList();
     }
 
+    private CheckFeedDto makeCheckFeedDto(final CheckFeed checkFeed) {
+        final URL checkFeedImageUrl = fileService.generateUrl(checkFeed.getServerFilePath(), HttpMethod.GET);
+        return new CheckFeedDto(checkFeed.getId(), checkFeedImageUrl.toExternalForm(),
+                checkFeed.getDescription(), checkFeed.getCreatedAt());
+    }
+
     private GoalRoomCheckFeedDto makeGoalRoomCheckFeedDto(final CheckFeed checkFeed) {
         final GoalRoomMember goalRoomMember = checkFeed.getGoalRoomMember();
         final Member member = goalRoomMember.getMember();
 
         final URL memberImageUrl = fileService.generateUrl(member.getImage().getServerFilePath(), HttpMethod.GET);
-        final URL checkFeedImageUrl = fileService.generateUrl(checkFeed.getServerFilePath(), HttpMethod.GET);
 
-        return new GoalRoomCheckFeedDto(
-                new MemberDto(member.getId(), member.getNickname().getValue(),
-                        memberImageUrl.toExternalForm()),
-                new CheckFeedDto(checkFeed.getId(), checkFeedImageUrl.toExternalForm(),
-                        checkFeed.getDescription(), checkFeed.getCreatedAt()));
+        return new GoalRoomCheckFeedDto(new MemberDto(member.getId(), member.getNickname().getValue(),
+                memberImageUrl.toExternalForm()), makeCheckFeedDto(checkFeed));
     }
 
     private GoalRoom findGoalRoomWithNodesById(final Long goalRoomId) {

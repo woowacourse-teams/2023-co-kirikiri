@@ -7,7 +7,6 @@ import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import jakarta.validation.Valid;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/members")
@@ -39,10 +39,8 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     @Authenticated
-    public ResponseEntity<MemberInformationForPublicResponse> findMemberInfo(@MemberIdentifier final String identifier,
-                                                                             @PathVariable final Long memberId) {
-        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(identifier,
-                memberId);
+    public ResponseEntity<MemberInformationForPublicResponse> findMemberInfo(@PathVariable final Long memberId) {
+        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(memberId);
         return ResponseEntity.ok(response);
     }
 }
