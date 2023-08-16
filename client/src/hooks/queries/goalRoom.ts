@@ -51,8 +51,9 @@ export const useGoalRoomDetail = (goalRoomId: number) => {
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
-  const { data: goalRoomRes } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
-    getGoalRoomDashboard(goalRoomId)
+  const { data: goalRoomRes } = useSuspendedQuery(
+    [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
+    () => getGoalRoomDashboard(goalRoomId)
   );
 
   return {

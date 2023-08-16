@@ -7,6 +7,7 @@ const QUERY_KEYS = {
     detail: 'roadmapDetail',
   },
   goalRoom: {
+    dashboard: 'dashboard',
     participants: 'participants',
     certificationFeeds: 'certificationFeeds',
   },
