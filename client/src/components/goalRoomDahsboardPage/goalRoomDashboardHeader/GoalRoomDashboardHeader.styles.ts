@@ -22,3 +22,10 @@ export const GoalRoomLabel = styled.div`
     width: 3rem;
   }
 `;
+
+export const GoalRoomStartButton = styled.button`
+  width: 15rem;
+  height: 3rem;
+  background: ${({ theme }) => theme.colors.main_dark};
+  border-radius: 10px;
+`;
