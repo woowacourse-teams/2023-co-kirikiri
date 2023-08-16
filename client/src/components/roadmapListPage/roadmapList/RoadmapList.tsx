@@ -37,9 +37,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
           <div />
         </S.WavyLoading>
       )}
-      <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>
-        로드맵 생성하러가기
-      </S.CreateRoadmapButton>
+      <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
     </S.RoadmapList>
   );
 };
