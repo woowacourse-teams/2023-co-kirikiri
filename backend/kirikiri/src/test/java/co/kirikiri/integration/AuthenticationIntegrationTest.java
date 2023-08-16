@@ -3,37 +3,40 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.integration.helper.IntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-class AuthenticationIntegrationTest extends IntegrationTest {
+class AuthenticationIntegrationTest extends MemberCreateIntegrationTest {
 
-    private static final String IDENTIFIER = "identifier1";
-    private static final String PASSWORD = "password1!";
+    protected String 기본_로그인_토큰;
+    protected String 기본_재발행_토큰;
+
+    @Override
+    @BeforeEach
+    void init() {
+        super.init();
+        기본_로그인_토큰 = String.format(BEARER_TOKEN_FORMAT, 기본_로그인().accessToken());
+        기본_재발행_토큰 = 기본_로그인().refreshToken();
+    }
 
     @Test
     void 정상적으로_로그인에_성공한다() {
         //given
-        회원가입();
-        final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, PASSWORD);
+        final LoginRequest 로그인_요청 = new LoginRequest(DEFAULT_IDENTIFIER, DEFAULT_PASSWORD);
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
+        final ExtractableResponse<Response> 로그인_응답 = 응답을_반환하는_로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -46,10 +49,10 @@ class AuthenticationIntegrationTest extends IntegrationTest {
     @Test
     void 회원이_존재하지_않을때_로그인에_실패한다() {
         //given
-        final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, PASSWORD);
+        final LoginRequest 로그인_요청 = new LoginRequest("wrongmember1", "password1!");
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
+        final ExtractableResponse<Response> 로그인_응답 = 응답을_반환하는_로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -61,11 +64,10 @@ class AuthenticationIntegrationTest extends IntegrationTest {
     @Test
     void 비밀번호가_틀렸을때_로그인에_실패한다() {
         //given
-        회원가입();
-        final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, "wrongpassword1!");
+        final LoginRequest 로그인_요청 = new LoginRequest(DEFAULT_IDENTIFIER, "password2@");
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
+        final ExtractableResponse<Response> 로그인_응답 = 응답을_반환하는_로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -80,7 +82,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         final LoginRequest 로그인_요청 = new LoginRequest("", "");
 
         //when
-        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
+        final ExtractableResponse<Response> 로그인_응답 = 응답을_반환하는_로그인(로그인_요청);
 
         //then
         assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -99,11 +101,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
     @Test
     void 정상적으로_토큰_재발행을_힌다() {
         //given
-        회원가입();
-        final LoginRequest 로그인_요청 = new LoginRequest(IDENTIFIER, PASSWORD);
-        final ExtractableResponse<Response> 로그인_응답 = 로그인(로그인_요청);
-        final AuthenticationResponse 로그인_응답_바디 = 로그인_응답.as(AuthenticationResponse.class);
-        final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest(로그인_응답_바디.refreshToken());
+        final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest(기본_재발행_토큰);
 
         //when
         final ExtractableResponse<Response> 토큰_재발행_응답 = 토큰_재발행(토큰_재발행_요청);
@@ -149,21 +147,7 @@ class AuthenticationIntegrationTest extends IntegrationTest {
         assertThat(에러_메세지_바디.message()).isEqualTo("Invalid Token");
     }
 
-    void 회원가입() {
-        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(IDENTIFIER, PASSWORD, "nickname", "010-1234-5678",
-                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
-
-        given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(회원가입_요청)
-                .post(API_PREFIX + "/members/join")
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 로그인(final LoginRequest 로그인_요청) {
+    private ExtractableResponse<Response> 응답을_반환하는_로그인(final LoginRequest 로그인_요청) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
@@ -174,8 +158,17 @@ class AuthenticationIntegrationTest extends IntegrationTest {
                 .extract();
     }
 
+    protected AuthenticationResponse 로그인(final LoginRequest 로그인_요청) {
+        return 응답을_반환하는_로그인(로그인_요청).as(AuthenticationResponse.class);
+    }
+
+    protected AuthenticationResponse 기본_로그인() {
+        final LoginRequest request = new LoginRequest(DEFAULT_IDENTIFIER, DEFAULT_PASSWORD);
+        return 로그인(request);
+    }
+
     private ExtractableResponse<Response> 토큰_재발행(final ReissueTokenRequest 토큰_재발행_요청) {
-        final ExtractableResponse<Response> 토큰_재발행_응답 = given().log().all()
+        return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .body(토큰_재발행_요청)
@@ -183,6 +176,5 @@ class AuthenticationIntegrationTest extends IntegrationTest {
                 .then()
                 .log().all()
                 .extract();
-        return 토큰_재발행_응답;
     }
 }

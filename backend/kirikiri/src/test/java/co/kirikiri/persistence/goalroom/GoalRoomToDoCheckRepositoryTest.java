@@ -98,9 +98,8 @@ class GoalRoomToDoCheckRepositoryTest {
         goalRoomToDoCheckRepository.saveAll(List.of(firstGoalRoomToDoCheck, secondGoalRoomToDoCheck));
 
         // when
-        final GoalRoomToDoCheck findGoalRoomTodoCheck = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoIdAndMemberIdentifier(
-                goalRoom.getId(), firstGoalRoomTodo.getId(),
-                new Identifier("identifier1")).get();
+        final GoalRoomToDoCheck findGoalRoomTodoCheck = goalRoomToDoCheckRepository.findByGoalRoomIdAndTodoAndMemberIdentifier(
+                goalRoom.getId(), firstGoalRoomTodo, new Identifier("identifier1")).get();
 
         // then
         assertThat(findGoalRoomTodoCheck)
@@ -164,7 +163,7 @@ class GoalRoomToDoCheckRepositoryTest {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 phoneNumber);
         final Member creator = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password(password)), new Nickname(nickname), memberProfile);
+                new EncryptedPassword(new Password(password)), new Nickname(nickname), null, memberProfile);
         return memberRepository.save(creator);
     }
 

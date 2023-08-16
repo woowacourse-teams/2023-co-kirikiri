@@ -1,10 +1,13 @@
 package co.kirikiri.persistence.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
@@ -81,10 +84,67 @@ class RoadmapReviewRepositoryTest {
                 .isEmpty();
     }
 
+    @Test
+    void 로드맵에_대한_리뷰_정보를_최신순으로_조회한다() {
+        // given
+        final Member member = 사용자를_저장한다("코끼리", "cokirikiri");
+        final Member member2 = 사용자를_저장한다("끼리코", "kirikirico");
+        final Member member3 = 사용자를_저장한다("리끼코", "rikirikico");
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(member, category);
+
+        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰1", 2.5, member);
+        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰2", 4.0, member2);
+        final RoadmapReview roadmapReview3 = new RoadmapReview("리뷰3", 5.0, member3);
+        roadmapReview1.updateRoadmap(roadmap);
+        roadmapReview2.updateRoadmap(roadmap);
+        roadmapReview3.updateRoadmap(roadmap);
+        roadmapReviewRepository.save(roadmapReview1);
+        roadmapReviewRepository.save(roadmapReview2);
+        roadmapReviewRepository.save(roadmapReview3);
+
+        // when
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, null, 2);
+
+        final List<RoadmapReview> roadmapReviewsSecondPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap, roadmapReviewsFirstPage.get(1).getId(), 2);
+
+        // then
+        assertAll(
+                () -> assertThat(roadmapReviewsFirstPage)
+                        .isEqualTo(List.of(roadmapReview3, roadmapReview2)),
+                () -> assertThat(roadmapReviewsSecondPage)
+                        .isEqualTo(List.of(roadmapReview1))
+        );
+    }
+
+    @Test
+    void 로드맵에_대한_리뷰_정보가_없으면_빈_값을_반환한다() {
+        // given
+        final Member member = 사용자를_저장한다("코끼리", "cokirikiri");
+        final Member member2 = 사용자를_저장한다("끼리코", "kirikirico");
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap1 = 로드맵을_저장한다(member, category);
+        final Roadmap roadmap2 = 로드맵을_저장한다(member2, category);
+
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member);
+        roadmapReview.updateRoadmap(roadmap1);
+        roadmapReviewRepository.save(roadmapReview);
+
+        // when
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+                roadmap2, null, 1);
+
+        // then
+        assertThat(roadmapReviewsFirstPage).isEmpty();
+    }
+
     private Member 사용자를_저장한다(final String name, final String identifier) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final MemberImage memberImage = new MemberImage("test-name", "test-path", ImageContentType.PNG);
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
-                new Nickname(name), memberProfile);
+                new Nickname(name), memberImage, memberProfile);
         return memberRepository.save(creator);
     }
 

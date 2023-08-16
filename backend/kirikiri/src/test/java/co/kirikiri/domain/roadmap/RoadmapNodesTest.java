@@ -11,10 +11,10 @@ class RoadmapNodesTest {
     @Test
     void 로드맵_노드를_추가한다() {
         // given
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(new RoadmapNode("로드맵 노드 제목", "로드맵 노드 내용")));
+        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(new RoadmapNode("로드맵 노드 제목1", "로드맵 노드 내용")));
 
         // when
-        roadmapNodes.add(new RoadmapNode("로드맵 노드 제목", "로드맵 노드 내용"));
+        roadmapNodes.add(new RoadmapNode("로드맵 노드 제목2", "로드맵 노드 내용"));
 
         // then
         assertThat(roadmapNodes.getValues()).hasSize(2);

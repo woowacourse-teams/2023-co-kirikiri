@@ -1,5 +1,6 @@
 package co.kirikiri.controller;
 
+import static co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -37,7 +38,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberNameAndImageResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
@@ -324,7 +324,8 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                         fieldWithPath("[0].startDate").description("골룸 시작 날짜"),
                                         fieldWithPath("[0].endDate").description("골룸 종료 날짜"),
                                         fieldWithPath("[0].goalRoomLeader.id").description("골룸 생성 사용자 아이디"),
-                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 생성 사용자 닉네임")
+                                        fieldWithPath("[0].goalRoomLeader.name").description("골룸 생성 사용자 닉네임"),
+                                        fieldWithPath("[0].goalRoomLeader.imageUrl").description("골룸 생성 사용자 프로필 이미지 경로")
                                 )))
                 .andReturn().getResponse()
                 .getContentAsString();
@@ -345,13 +346,15 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 50D);
         final GoalRoomMemberResponse goalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "nickname2", "imagePath2",
                 40D);
-        given(goalRoomReadService.findGoalRoomMembers(anyLong()))
+        given(goalRoomReadService.findGoalRoomMembers(anyLong(), any()))
                 .willReturn(List.of(goalRoomMemberResponse1, goalRoomMemberResponse2));
 
         // when
-        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
-                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
-                        .contextPath(API_PREFIX))
+        final MvcResult mvcResult = mockMvc.perform(
+                        get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
+                                .param("sortCond", ACCOMPLISHMENT_RATE.name())
+                                .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                                .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
                 .andDo(
                         documentationResultHandler.document(
@@ -360,6 +363,16 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 pathParameters(
                                         parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                queryParameters(
+                                        parameterWithName("sortCond")
+                                                .description(
+                                                        "정렬 조건 (null일 경우: 골룸 모집중 -> 골룸 입장 순(오래된순)/ 골룸 진행중, 완료됨 -> 달성률 순으로 기본 정렬) +"
+                                                                + "\n"
+                                                                + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                                + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                                + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .optional()
                                 ),
                                 responseFields(
                                         fieldWithPath("[0].memberId").description("회원 id"),
@@ -381,17 +394,28 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         //given
         doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
                 .when(goalRoomReadService)
-                .findGoalRoomMembers(1L);
+                .findGoalRoomMembers(anyLong(), any());
 
         //when
         final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/goal-rooms/{goalRoomId}/members", 1L)
                         .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .param("sortCond", ACCOMPLISHMENT_RATE.name())
                         .contextPath(API_PREFIX))
                 .andExpect(status().isNotFound())
                 .andDo(
                         documentationResultHandler.document(
                                 pathParameters(
                                         parameterWithName("goalRoomId").description("골룸 아이디")
+                                ),
+                                queryParameters(
+                                        parameterWithName("sortCond")
+                                                .description(
+                                                        "정렬 조건 (null일 경우: 골룸 모집중 -> 골룸 입장 순(오래된순)/ 골룸 진행중, 완료됨 -> 달성률 순으로 기본 정렬) +"
+                                                                + "\n"
+                                                                + "ACCOMPLISHMENT_RATE : 달성률 순 +" + "\n"
+                                                                + "JOINED_ASC : 골룸 입장 순 (오래된순) +" + "\n"
+                                                                + "JOINED_DESC : 골룸 입장 순 (최신순) +" + "\n")
+                                                .optional()
                                 ),
                                 responseFields(
                                         fieldWithPath("message").description("예외 메세지")
@@ -612,10 +636,10 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     void 골룸의_인증피드를_전체_조회한다() throws Exception {
         // given
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
-                new MemberNameAndImageResponse(1L, "name1", "imageUrl"),
+                new MemberResponse(1L, "name1", "imageUrl"),
                 new CheckFeedResponse(1L, "imageUrl", "image description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
-                new MemberNameAndImageResponse(2L, "name2", "imageUrl"),
+                new MemberResponse(2L, "name2", "imageUrl"),
                 new CheckFeedResponse(2L, "imageUrl", "image description2", LocalDate.now()));
 
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse2,
@@ -640,7 +664,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 ),
                                 responseFields(
                                         fieldWithPath("[0].member.id").description("사용자 ID"),
-                                        fieldWithPath("[0].member.nickname").description("사용자 닉네임"),
+                                        fieldWithPath("[0].member.name").description("사용자 닉네임"),
                                         fieldWithPath("[0].member.imageUrl").description("사용자 이미지 Url"),
                                         fieldWithPath("[0].checkFeed.id").description("인증 피드 ID"),
                                         fieldWithPath("[0].checkFeed.imageUrl").description("인증 피드 이미지 Url"),
@@ -756,11 +780,11 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         return List.of(new MemberGoalRoomForListResponse(1L, "골룸 이름", GoalRoomStatus.RUNNING.name(),
                         15, 20, LocalDateTime.of(2023, 7, 1, 0, 0),
                         LocalDate.of(2023, 7, 15), LocalDate.of(2023, 8, 15),
-                        new MemberResponse(1L, "황시진")),
+                        new MemberResponse(1L, "황시진", "default-member-image")),
                 new MemberGoalRoomForListResponse(2L, "골룸 이름", GoalRoomStatus.RUNNING.name(),
                         15, 20, LocalDateTime.of(2023, 7, 5, 0, 0),
                         LocalDate.of(2023, 7, 8), LocalDate.of(2023, 8, 1),
-                        new MemberResponse(2L, "시진이"))
+                        new MemberResponse(2L, "시진이", "default-member-image"))
         );
     }
 }

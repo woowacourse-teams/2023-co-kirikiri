@@ -14,9 +14,6 @@ spring:
     multipart:
       max-file-size: 10MB
 
-file:
-  upload-dir: src/test/resources/static/images/
-  server-path: http://localhost/images/
 
 logging:
   level:
@@ -26,6 +23,12 @@ logging:
         orm:
           jdbc:
             bind: TRACE
+  file-path: ./log
+  file-name: test-name
+  custom-pattern: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%thread] [%logger{36}] - %msg%n'
+
+  slack:
+    webhook-url: test-url
 
 server:
   servlet:
@@ -40,6 +43,20 @@ jwt:
 image:
   default:
     originalFileName: default-member-image
-    serverFilePath: /api/default-member-image
+    serverFilePath: /test/member/profile/default/default-member-image
     imageContentType: PNG
     extension: .png
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      instanceProfile: true
+    s3:
+      bucket: 2023-team-project
+      root-directory: 2023-co-kirikiri
+      sub-directory: prod
+      url-expiration: 60000

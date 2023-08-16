@@ -50,15 +50,15 @@ class RoadmapSchedulerTest {
 
     @InjectMocks
     private RoadmapScheduler roadmapScheduler;
-    
+
     @Test
     void 삭제된_상태의_로드맵_삭제시_종료되지_않은_골룸이_있으면_삭제되지_않는다() {
         // given
         final Member member1 = new Member(new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("name1"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("name1"), null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-1111"));
         final Member member2 = new Member(new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password2!")), new Nickname("name2"),
+                new EncryptedPassword(new Password("password2!")), new Nickname("name2"), null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-2222"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");
@@ -100,10 +100,10 @@ class RoadmapSchedulerTest {
     void 삭제된_상태의_로드맵_삭제시_골룸이_종료된지_3개월이_지나지_않으면_삭제되지_않는다() {
         // given
         final Member member1 = new Member(new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("name1"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("name1"), null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-1111"));
         final Member member2 = new Member(new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password2!")), new Nickname("name2"),
+                new EncryptedPassword(new Password("password2!")), new Nickname("name2"), null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-2222"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");
@@ -139,10 +139,10 @@ class RoadmapSchedulerTest {
     void 삭제된_상태의_로드맵이_없는_경우_삭제되지_않는다() {
         // given
         final Member member1 = new Member(new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("name1"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("name1"), null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-1111"));
         final Member member2 = new Member(new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password2!")), new Nickname("name2"),
+                new EncryptedPassword(new Password("password2!")), new Nickname("name2"), null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-2222"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");

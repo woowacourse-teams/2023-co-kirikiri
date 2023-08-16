@@ -79,10 +79,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomPendingMembers.add(leader);
     }
 
-    public void updateStatus(final GoalRoomStatus status) {
-        this.status = status;
-    }
-
     public void join(final Member member) {
         final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
         newMember.updateGoalRoom(this);
@@ -177,23 +173,24 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomToDos.findLast();
     }
 
-    public Optional<GoalRoomRoadmapNode> getNodeByDate(final LocalDate date) {
+    public Optional<GoalRoomRoadmapNode> findNodeByDate(final LocalDate date) {
         return goalRoomRoadmapNodes.getNodeByDate(date);
     }
 
     public Integer getCurrentMemberCount() {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.size();
         }
         return goalRoomMembers.size();
     }
 
+    // FIXME 테스트용 메서드
     public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
         this.goalRoomMembers.addAll(new ArrayList<>(members));
     }
 
     public boolean isGoalRoomMember(final Member member) {
-        if (status == GoalRoomStatus.RECRUITING || status == GoalRoomStatus.RECRUIT_COMPLETED) {
+        if (status == GoalRoomStatus.RECRUITING) {
             return goalRoomPendingMembers.isMember(member);
         }
         return goalRoomMembers.isMember(member);
@@ -211,6 +208,10 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         goalRoomMembers.remove(goalRoomMember);
     }
 
+    public boolean cannotStart() {
+        return startDate.isAfter(LocalDate.now());
+    }
+
     private GoalRoomPendingMember findGoalRoomPendingMemberByMember(final Member member) {
         return goalRoomPendingMembers.findByMember(member)
                 .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
@@ -221,7 +222,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         if (goalRoomPendingMember.isLeader()) {
             goalRoomPendingMembers.findNextLeader()
                     .ifPresent(GoalRoomPendingMember::becomeLeader);
-
         }
     }
 
@@ -240,6 +240,14 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public boolean isEmptyGoalRoom() {
         return goalRoomPendingMembers.isEmpty() && goalRoomMembers.isEmpty();
+    }
+
+    public Optional<GoalRoomToDo> findGoalRoomTodoByTodoId(final Long todoId) {
+        return goalRoomToDos.findById(todoId);
+    }
+
+    public void deleteAllPendingMembers() {
+        goalRoomPendingMembers.deleteAll();
     }
 
     public boolean isCompletedAfterMonths(final long numberOfMonth) {
@@ -275,11 +283,11 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomRoadmapNodes;
     }
 
-    public GoalRoomMembers getGoalRoomMembers() {
-        return goalRoomMembers;
-    }
-
     public GoalRoomToDos getGoalRoomToDos() {
         return goalRoomToDos;
+    }
+
+    public GoalRoomPendingMembers getGoalRoomPendingMembers() {
+        return goalRoomPendingMembers;
     }
 }

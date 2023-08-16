@@ -8,7 +8,6 @@ public record GoalRoomTodoResponse(
         LocalDate startDate,
         LocalDate endDate,
         GoalRoomToDoCheckResponse check
-
 ) {
 
 }

@@ -55,12 +55,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateServiceTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null,
             new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
     @Mock
@@ -81,6 +83,9 @@ class RoadmapCreateServiceTest {
     @Mock
     private RoadmapCategoryRepository roadmapCategoryRepository;
 
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @InjectMocks
     private RoadmapCreateService roadmapService;
 
@@ -95,7 +100,7 @@ class RoadmapCreateServiceTest {
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");
 
         final List<RoadmapNodeSaveRequest> roadmapNodes = List.of(
-                new RoadmapNodeSaveRequest("로드맵 노드1 제목", "로드맵 노드1 설명"));
+                new RoadmapNodeSaveRequest("로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList()));
         final List<RoadmapTagSaveRequest> roadmapTags = List.of(new RoadmapTagSaveRequest("태그 1"));
         final RoadmapSaveRequest request = new RoadmapSaveRequest(1L, roadmapTitle, roadmapIntroduction, roadmapContent,
                 difficulty, requiredPeriod, roadmapNodes, roadmapTags);
@@ -109,8 +114,7 @@ class RoadmapCreateServiceTest {
                 .thenReturn(Optional.of(MEMBER));
 
         // expect
-        assertThat(roadmapService.create(request, "identifier1"))
-                .isEqualTo(1L);
+        assertDoesNotThrow(() -> roadmapService.create(request, "identifier1"));
     }
 
     @Test
@@ -118,7 +122,7 @@ class RoadmapCreateServiceTest {
         // given
         final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그 1")));
 
         given(memberRepository.findByIdentifier(any()))
@@ -134,7 +138,7 @@ class RoadmapCreateServiceTest {
         // given
         final RoadmapSaveRequest request = new RoadmapSaveRequest(10L, "로드맵 제목", "로드맵 소개글", "로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명")),
+                List.of(new RoadmapNodeSaveRequest("로드맵 노드1", "로드맵 노드1 설명", Collections.emptyList())),
                 List.of(new RoadmapTagSaveRequest("태그 1")));
 
         given(memberRepository.findByIdentifier(any()))
@@ -152,6 +156,7 @@ class RoadmapCreateServiceTest {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
@@ -214,6 +219,7 @@ class RoadmapCreateServiceTest {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
@@ -261,7 +267,7 @@ class RoadmapCreateServiceTest {
     void 골룸이_생성된_적이_있는_로드맵을_삭제한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
                 new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
