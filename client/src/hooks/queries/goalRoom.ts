@@ -31,7 +31,7 @@ export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { roadmapId, filterCond, lastCreatedAt, size, lastId } = params;
 
   const { data, fetchNextPage } = useInfiniteQuery(
-    ['goalRoomList', roadmapId, filterCond, lastCreatedAt, size, lastId],
+    [QUERY_KEYS.goalRoom.list, roadmapId, filterCond, lastCreatedAt, size, lastId],
     ({ pageParam }) => getGoalRoomList({ ...params, lastId: pageParam }),
     {
       getNextPageParam: (lastPage) =>
@@ -49,7 +49,7 @@ export const useGoalRoomList = (params: GoalRoomListRequest) => {
 };
 
 export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => {
-  const { data } = useSuspendedQuery(['myGoalRoomList', statusCond], () =>
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.my, statusCond], () =>
     getMyGoalRoomList(statusCond)
   );
 
@@ -57,15 +57,16 @@ export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => 
 };
 
 export const useGoalRoomDetail = (goalRoomId: number) => {
-  const { data } = useSuspendedQuery(['goalRoomDetail', goalRoomId], () =>
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.detail, goalRoomId], () =>
     getGoalRoomDetail(goalRoomId)
   );
   return { goalRoomInfo: data };
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
-  const { data: goalRoomRes } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
-    getGoalRoomDashboard(goalRoomId)
+  const { data: goalRoomRes } = useSuspendedQuery(
+    [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
+    () => getGoalRoomDashboard(goalRoomId)
   );
 
   return {
@@ -82,7 +83,7 @@ export const useCreateGoalRoom = (roadmapContentId: number) => {
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
       async onSuccess() {
-        await queryClient.refetchQueries([['myGoalRoomList']]);
+        await queryClient.refetchQueries([[QUERY_KEYS.goalRoom.my, roadmapContentId]]);
         navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
         triggerToast({ message: '골룸을 생성했습니다!' });
       },
@@ -103,8 +104,8 @@ export const useCreateTodo = (goalRoomId: string) => {
     {
       onSuccess() {
         queryClient.invalidateQueries([
-          ['goalRoom', goalRoomId],
-          ['goalRoomTodos', goalRoomId],
+          [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
+          [QUERY_KEYS.goalRoom.todos, goalRoomId],
         ]);
       },
     }
@@ -116,7 +117,7 @@ export const useCreateTodo = (goalRoomId: string) => {
 };
 
 export const useFetchGoalRoomTodos = (goalRoomId: string) => {
-  const { data } = useSuspendedQuery(['goalRoomTodos', goalRoomId], () =>
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.todos, goalRoomId], () =>
     getGoalRoomTodos(goalRoomId)
   );
 
@@ -137,8 +138,8 @@ export const usePostChangeTodoCheckStatus = ({
     {
       onSuccess() {
         triggerToast({ message: '투두리스트 상태 변경 완료!' });
-        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
-        queryClient.invalidateQueries(['goalRoomTodos', goalRoomId]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.todos, goalRoomId]);
       },
     }
   );
@@ -155,7 +156,7 @@ export const useCreateCertificationFeed = (goalRoomId: string) => {
     (formData: FormData) => postCreateNewCertificationFeed(goalRoomId, formData),
     {
       onSuccess() {
-        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
       },
     }
   );
@@ -174,7 +175,7 @@ export const useJoinGoalRoom = ({ goalRoomId }: JoinGoalRoomRequest) => {
     onSuccess() {
       navigate(`/goalroom-dashboard/${goalRoomId}`);
       triggerToast({ message: '골룸에 참여하였습니다!' });
-      queryClient.invalidateQueries(['goalRoomDetail', goalRoomId]);
+      queryClient.invalidateQueries([QUERY_KEYS.goalRoom.detail, goalRoomId]);
     },
   });
 
