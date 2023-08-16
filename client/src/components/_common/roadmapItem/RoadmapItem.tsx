@@ -52,7 +52,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
           <S.RecommendedRoadmapPeriodNumber>
             {item.recommendedRoadmapPeriod}
           </S.RecommendedRoadmapPeriodNumber>
-          <div aria-label='일'>Days</div>
+          일
         </S.RecommendedRoadmapPeriod>
       </S.ItemExtraInfos>
       <Button onClick={moveGoalRoomListPage}>

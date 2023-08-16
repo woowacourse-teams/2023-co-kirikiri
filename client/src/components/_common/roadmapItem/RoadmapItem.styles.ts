@@ -55,7 +55,7 @@ export const ExtraHeader = styled.div`
 `;
 
 export const RecommendedRoadmapPeriodNumber = styled.span`
-  color: ${({ theme }) => theme.colors.main_middle};
+  color: ${({ theme }) => theme.colors.main_dark};
 `;
 
 export const ItemExtraInfos = styled.div`
@@ -73,7 +73,6 @@ export const ItemExtraInfos = styled.div`
 export const ExtraInfoBox = styled.div`
   ${({ theme }) => theme.fonts.description4}
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 
