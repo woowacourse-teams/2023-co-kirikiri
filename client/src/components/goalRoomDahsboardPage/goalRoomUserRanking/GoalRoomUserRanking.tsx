@@ -2,7 +2,6 @@ import * as S from './GoalRoomUserRanking.styles';
 import { useFetchGoalRoomParticipants } from '@hooks/queries/goalRoom';
 import useValidParams from '@hooks/_common/useValidParams';
 import { GoalRoomDashboardContentParams } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent';
-import { BASE_URL } from '@apis/axios/client';
 import podiumImg from '@assets/images/podium.png';
 
 const GoalRoomUserRanking = () => {
@@ -24,7 +23,7 @@ const GoalRoomUserRanking = () => {
             <S.Participant key={participant.memberId} position={index}>
               <S.UserInfoLabel>
                 <img
-                  src={BASE_URL + participant.imagePath}
+                  src={participant.imagePath}
                   alt={`${participant.nickname} 의 프로필 이미지`}
                 />
                 <p>{participant.nickname}</p>
@@ -38,7 +37,7 @@ const GoalRoomUserRanking = () => {
           <S.Card key={participant.memberId}>
             <S.UserInfoLabel>
               <img
-                src={BASE_URL + participant.imagePath}
+                src={participant.imagePath}
                 alt={`${participant.nickname} 의 프로필 이미지`}
               />
               <p>{participant.nickname}</p>

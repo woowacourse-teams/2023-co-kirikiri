@@ -9,7 +9,6 @@ import {
   useCreateCertificationFeed,
 } from '@hooks/queries/goalRoom';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
-import { BASE_URL } from '@apis/axios/client';
 
 const CertificationFeedModal = () => {
   const { goalroomId } = useGoalRoomDashboardContext();
@@ -99,7 +98,7 @@ const CertificationFeedModal = () => {
           return (
             <S.CertificationFeedCard key={feed.checkFeed.id}>
               <S.CertificationFeedImage
-                src={BASE_URL + feed.checkFeed.imageUrl}
+                src={feed.checkFeed.imageUrl}
                 alt='인증피드 이미지'
               />
               <S.CertificationFeedDescription>
@@ -107,7 +106,7 @@ const CertificationFeedModal = () => {
               </S.CertificationFeedDescription>
               <S.CertificationFeedsUserInfo>
                 <S.CertificationFeedsUserImage
-                  src={BASE_URL + feed.member.imageUrl}
+                  src={feed.member.imageUrl}
                   alt='유저 이미지'
                 />
                 <S.CertificationFeedsUserName>
