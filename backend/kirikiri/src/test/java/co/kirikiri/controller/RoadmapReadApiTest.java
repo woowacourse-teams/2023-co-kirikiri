@@ -133,7 +133,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     void 로드맵_목록을_조건에_따라_조회한다() throws Exception {
         // given
         final RoadmapForListResponses expected = 로드맵_리스트_응답을_생성한다();
-        when(roadmapReadService.findRoadmapsByFilterType(any(), any(), any()))
+        when(roadmapReadService.findRoadmapsByOrderType(any(), any(), any()))
                 .thenReturn(expected);
 
         // when
@@ -189,7 +189,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 로드맵_목록_조회시_유효하지_않은_카테고리_아이디를_보내면_예외가_발생한다() throws Exception {
         // given
-        when(roadmapReadService.findRoadmapsByFilterType(any(), any(), any())).thenThrow(
+        when(roadmapReadService.findRoadmapsByOrderType(any(), any(), any())).thenThrow(
                 new NotFoundException("존재하지 않는 카테고리입니다. categoryId = 1L"));
 
         // when
@@ -286,7 +286,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                         get(API_PREFIX + "/roadmaps/search")
                                 .param("roadmapTitle", "roadmap")
                                 .param("lastId", "1")
-                                .param("creatorId", "1")
+                                .param("creatorName", "코끼리")
                                 .param("tagName", "Java")
                                 .param("filterCond", RoadmapOrderTypeRequest.LATEST.name())
                                 .param("size", "10")
@@ -298,7 +298,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         parameterWithName("roadmapTitle").description("로드맵 제목 검색어")
                                                 .attributes(new Attributes.Attribute(RESTRICT, "- 길이: 1자 이상"))
                                                 .optional(),
-                                        parameterWithName("creatorId").description("크리에이터 아이디")
+                                        parameterWithName("creatorName").description("크리에이터 닉네임")
                                                 .optional(),
                                         parameterWithName("tagName").description("로드맵 태그 이름")
                                                 .attributes(new Attributes.Attribute(RESTRICT, "- 길이: 1자 이상"))
@@ -446,7 +446,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     void 로드맵의_골룸_목록을_조건에_따라_조회한다() throws Exception {
         // given
         final RoadmapGoalRoomResponses 골룸_페이지_응답 = 골룸_응답들을_생성한다();
-        given(roadmapReadService.findRoadmapGoalRoomsByFilterType(any(), any(), any(CustomScrollRequest.class)))
+        given(roadmapReadService.findRoadmapGoalRoomsByOrderType(any(), any(), any(CustomScrollRequest.class)))
                 .willReturn(골룸_페이지_응답);
 
         // when
@@ -502,7 +502,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     @Test
     void 로드맵의_골룸_목록을_조건에_따라_조회할_때_로드맵이_존재하지_않으면_예외가_발생한다() throws Exception {
         // given
-        given(roadmapReadService.findRoadmapGoalRoomsByFilterType(any(), any(), any(CustomScrollRequest.class)))
+        given(roadmapReadService.findRoadmapGoalRoomsByOrderType(any(), any(), any(CustomScrollRequest.class)))
                 .willThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
         // when

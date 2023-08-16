@@ -16,10 +16,9 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +42,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     @Override
     public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
-                                                                          final RoadmapGoalRoomsFilterType orderType,
+                                                                          final RoadmapGoalRoomsOrderType orderType,
                                                                           final Long lastId,
                                                                           final int pageSize) {
         return selectFrom(goalRoom)
@@ -106,7 +105,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return goalRoom.status.eq(status);
     }
 
-    private BooleanExpression lessThanLastId(final Long lastId, final RoadmapGoalRoomsFilterType filterType) {
+    private BooleanExpression lessThanLastId(final Long lastId, final RoadmapGoalRoomsOrderType filterType) {
         if (lastId == null) {
             return null;
         }
@@ -118,8 +117,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         );
     }
 
-    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsFilterType orderType) {
-        if (orderType == RoadmapGoalRoomsFilterType.PARTICIPATION_RATE) {
+    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsOrderType orderType) {
+        if (orderType == RoadmapGoalRoomsOrderType.PARTICIPATION_RATE) {
             return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
         }
         return goalRoom.createdAt.desc();

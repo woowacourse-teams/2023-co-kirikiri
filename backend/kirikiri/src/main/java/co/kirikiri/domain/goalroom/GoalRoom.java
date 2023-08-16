@@ -281,4 +281,8 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     public GoalRoomToDos getGoalRoomToDos() {
         return goalRoomToDos;
     }
+
+    public GoalRoomPendingMembers getGoalRoomPendingMembers() {
+        return goalRoomPendingMembers;
+    }
 }

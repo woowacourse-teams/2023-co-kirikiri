@@ -9,11 +9,13 @@ import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
 import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
 
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
+import co.kirikiri.persistence.dto.RoadmapSearchCreatorNickname;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.dto.RoadmapSearchTagName;
 import co.kirikiri.persistence.dto.RoadmapSearchTitle;
@@ -79,7 +81,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                         lessThanLastId(lastId, orderType),
                         statusCond(RoadmapStatus.CREATED),
                         titleCond(searchRequest.getTitle()),
-                        creatorCond(searchRequest.getCreatorId()),
+                        creatorNicknameCond(searchRequest.getCreatorName()),
                         tagCond(searchRequest.getTagName()))
                 .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
@@ -95,7 +97,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
                 .where(
-                        creatorCond(member.getId()),
+                        creatorIdCond(member.getId()),
                         lessThanLastId(lastId, orderType))
                 .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
@@ -124,11 +126,18 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         return Expressions.stringTemplate("REPLACE({0}, ' ', '')", field);
     }
 
-    private BooleanExpression creatorCond(final Long creatorId) {
+    private BooleanExpression creatorIdCond(final Long creatorId) {
         if (creatorId == null) {
             return null;
         }
         return roadmap.creator.id.eq(creatorId);
+    }
+
+    private BooleanExpression creatorNicknameCond(final RoadmapSearchCreatorNickname creatorName) {
+        if (creatorName == null) {
+            return null;
+        }
+        return roadmap.creator.nickname.eq(new Nickname(creatorName.value()));
     }
 
     private BooleanExpression tagCond(final RoadmapSearchTagName tagName) {

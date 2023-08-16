@@ -16,7 +16,7 @@ import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
@@ -40,7 +40,7 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import java.time.LocalDate;
@@ -113,12 +113,12 @@ public class GoalRoomMapper {
                 goalRoom.getLimitedMemberCount().getValue(), roadmapNodeResponses, period, isJoined);
     }
 
-    public static RoadmapGoalRoomsFilterType convertToGoalRoomFilterType(
-            final RoadmapGoalRoomsFilterTypeDto filterType) {
-        if (filterType == null) {
-            return RoadmapGoalRoomsFilterType.LATEST;
+    public static RoadmapGoalRoomsOrderType convertToGoalRoomOrderType(
+            final RoadmapGoalRoomsOrderTypeDto orderType) {
+        if (orderType == null) {
+            return RoadmapGoalRoomsOrderType.LATEST;
         }
-        return RoadmapGoalRoomsFilterType.valueOf(filterType.name());
+        return RoadmapGoalRoomsOrderType.valueOf(orderType.name());
     }
 
     public static RoadmapGoalRoomResponses convertToRoadmapGoalRoomResponses(final List<GoalRoom> goalRooms,

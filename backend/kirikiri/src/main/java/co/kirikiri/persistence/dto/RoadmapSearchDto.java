@@ -8,20 +8,22 @@ import lombok.Getter;
 @Getter
 public class RoadmapSearchDto {
 
-    private final Long creatorId;
+    private final RoadmapSearchCreatorNickname creatorName;
     private final RoadmapSearchTitle title;
     private final RoadmapSearchTagName tagName;
 
-    public static RoadmapSearchDto create(final Long creatorId, final String title, final String tagName) {
+    public static RoadmapSearchDto create(final String creatorName, final String title, final String tagName) {
         if (title == null && tagName == null) {
-            return new RoadmapSearchDto(creatorId, null, null);
+            return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), null, null);
         }
         if (title == null) {
-            return new RoadmapSearchDto(creatorId, null, new RoadmapSearchTagName(tagName));
+            return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), null,
+                    new RoadmapSearchTagName(tagName));
         }
         if (tagName == null) {
-            return new RoadmapSearchDto(creatorId, new RoadmapSearchTitle(title), null);
+            return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), new RoadmapSearchTitle(title), null);
         }
-        return new RoadmapSearchDto(creatorId, new RoadmapSearchTitle(title), new RoadmapSearchTagName(tagName));
+        return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), new RoadmapSearchTitle(title),
+                new RoadmapSearchTagName(tagName));
     }
 }

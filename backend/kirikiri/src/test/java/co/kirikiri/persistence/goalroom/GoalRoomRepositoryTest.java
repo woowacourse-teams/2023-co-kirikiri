@@ -25,7 +25,7 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
@@ -116,9 +116,9 @@ class GoalRoomRepositoryTest {
 
         // when
         final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
-                RoadmapGoalRoomsFilterType.LATEST, null, 1);
+                RoadmapGoalRoomsOrderType.LATEST, null, 1);
         final List<GoalRoom> goalRooms2 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
-                RoadmapGoalRoomsFilterType.LATEST, goalRoom2.getId(), 10);
+                RoadmapGoalRoomsOrderType.LATEST, goalRoom2.getId(), 10);
 
         assertThat(goalRooms1)
                 .isEqualTo(List.of(goalRoom2, goalRoom1));
@@ -157,7 +157,7 @@ class GoalRoomRepositoryTest {
 
         // when
         final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
-                RoadmapGoalRoomsFilterType.PARTICIPATION_RATE, null, 1);
+                RoadmapGoalRoomsOrderType.PARTICIPATION_RATE, null, 1);
 
         // then
         assertThat(goalRooms1).isEqualTo(List.of(goalRoom1, goalRoom2));

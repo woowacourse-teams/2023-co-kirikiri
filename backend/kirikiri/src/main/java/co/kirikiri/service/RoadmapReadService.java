@@ -14,7 +14,7 @@ import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
@@ -26,7 +26,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapCategoryDto;
 import co.kirikiri.service.dto.roadmap.RoadmapContentDto;
 import co.kirikiri.service.dto.roadmap.RoadmapDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
+import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagDto;
@@ -119,11 +119,11 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
-    public RoadmapForListResponses findRoadmapsByFilterType(final Long categoryId,
-                                                            final RoadmapOrderTypeRequest filterType,
-                                                            final CustomScrollRequest scrollRequest) {
+    public RoadmapForListResponses findRoadmapsByOrderType(final Long categoryId,
+                                                           final RoadmapOrderTypeRequest orderTypeRequest,
+                                                           final CustomScrollRequest scrollRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
-        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
+        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(orderTypeRequest);
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCategory(category, orderType,
                 scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmaps, scrollRequest.size());
@@ -137,12 +137,12 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
     }
 
-    public RoadmapForListResponses search(final RoadmapOrderTypeRequest filterTypeRequest,
+    public RoadmapForListResponses search(final RoadmapOrderTypeRequest orderTypeRequest,
                                           final RoadmapSearchRequest searchRequest,
                                           final CustomScrollRequest scrollRequest) {
-        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(filterTypeRequest);
+        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(orderTypeRequest);
         final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(
-                searchRequest.creatorId(), searchRequest.roadmapTitle(), searchRequest.tagName());
+                searchRequest.creatorName(), searchRequest.roadmapTitle(), searchRequest.tagName());
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType,
                 scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmaps, scrollRequest.size());
@@ -166,13 +166,13 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
-    public RoadmapGoalRoomResponses findRoadmapGoalRoomsByFilterType(final Long roadmapId,
-                                                                     final RoadmapGoalRoomsFilterTypeDto filterTypeDto,
-                                                                     final CustomScrollRequest scrollRequest) {
+    public RoadmapGoalRoomResponses findRoadmapGoalRoomsByOrderType(final Long roadmapId,
+                                                                    final RoadmapGoalRoomsOrderTypeDto orderTypeDto,
+                                                                    final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final RoadmapGoalRoomsFilterType filterType = GoalRoomMapper.convertToGoalRoomFilterType(filterTypeDto);
+        final RoadmapGoalRoomsOrderType orderType = GoalRoomMapper.convertToGoalRoomOrderType(orderTypeDto);
         final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
-                roadmap, filterType, scrollRequest.lastId(), scrollRequest.size());
+                roadmap, orderType, scrollRequest.lastId(), scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(goalRoomsWithPendingMembers, scrollRequest.size());
     }
 

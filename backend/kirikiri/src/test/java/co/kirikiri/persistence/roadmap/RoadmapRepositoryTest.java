@@ -366,7 +366,7 @@ class RoadmapRepositoryTest {
     }
 
     @Test
-    void 로드맵을_크리에이터_아이디로_검색한다() {
+    void 로드맵을_크리에이터_닉네임으로_검색한다() {
         // given
         final Member creator1 = 사용자를_생성한다("cokirikiri", "코끼리");
         final Member creator2 = 사용자를_생성한다("cokirikiri2", "끼리코");
@@ -380,7 +380,7 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("로드맵", creator1, category);
 
         final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
-        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getId(), null, null);
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getNickname().getValue(), null, null);
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
