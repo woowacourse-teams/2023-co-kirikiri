@@ -47,20 +47,17 @@ class RoadmapRepositoryTest {
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final RoadmapReviewRepository roadmapReviewRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
     public RoadmapRepositoryTest(final MemberRepository memberRepository,
                                  final RoadmapRepository roadmapRepository,
                                  final GoalRoomRepository goalRoomRepository,
-                                 final RoadmapReviewRepository roadmapReviewRepository,
                                  final GoalRoomMemberRepository goalRoomMemberRepository,
                                  final RoadmapCategoryRepository roadmapCategoryRepository) {
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
-        this.roadmapReviewRepository = roadmapReviewRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
     }

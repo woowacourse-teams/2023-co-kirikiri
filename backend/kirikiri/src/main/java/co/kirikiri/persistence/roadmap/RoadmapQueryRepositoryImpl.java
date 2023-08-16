@@ -1,5 +1,3 @@
-
-
 package co.kirikiri.persistence.roadmap;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
@@ -147,40 +145,40 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (orderType == RoadmapOrderType.GOAL_ROOM_COUNT) {
             return new OrderSpecifier<>(
                     Order.DESC,
-                    goalRoomCountCond(goalRoom.roadmapContent.roadmap.id.eq(roadmap.id))
+                    goalRoomCountCond(goalRoom.roadmapContent.roadmap.eq(roadmap))
             );
         }
         if (orderType == RoadmapOrderType.PARTICIPANT_COUNT) {
             return new OrderSpecifier<>(
                     Order.DESC,
-                    participantCountCond(goalRoomMember.goalRoom.roadmapContent.roadmap.id.eq(roadmap.id))
+                    participantCountCond(goalRoomMember.goalRoom.roadmapContent.roadmap.eq(roadmap))
             );
         }
         if (orderType == RoadmapOrderType.REVIEW_RATE) {
             return new OrderSpecifier<>(
                     Order.DESC,
-                    reviewRateCond(roadmapReview.roadmap.id.eq(roadmap.id))
+                    reviewRateCond(roadmapReview.roadmap.eq(roadmap))
             );
         }
         return roadmap.createdAt.desc();
     }
 
-    private JPAQuery<Long> goalRoomCountCond(final BooleanExpression id) {
+    private JPAQuery<Long> goalRoomCountCond(final BooleanExpression isSatisfiedRoadmap) {
         return select(goalRoom.count())
                 .from(goalRoom)
-                .where(id);
+                .where(isSatisfiedRoadmap);
     }
 
-    private JPAQuery<Long> participantCountCond(final BooleanExpression id) {
+    private JPAQuery<Long> participantCountCond(final BooleanExpression isSatisfiedRoadmap) {
         return select(goalRoomMember.count())
                 .from(goalRoomMember)
-                .where(id);
+                .where(isSatisfiedRoadmap);
     }
 
-    private JPAQuery<Double> reviewRateCond(final BooleanExpression id) {
+    private JPAQuery<Double> reviewRateCond(final BooleanExpression isSatisfiedRoadmap) {
         return select(roadmapReview.rate.avg())
                 .from(roadmapReview)
-                .where(id);
+                .where(isSatisfiedRoadmap);
     }
 
     private BooleanExpression lessThanLastId(final Long lastId, final RoadmapOrderType orderType) {
