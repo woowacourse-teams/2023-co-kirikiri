@@ -47,8 +47,6 @@ class AmazonS3FileServiceTest {
         //given
         when(multipartFile.getInputStream())
                 .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
-        when(multipartFile.getOriginalFilename())
-                .thenReturn("originalFilename.png");
         when(environment.getProperty("cloud.aws.s3.root-directory"))
                 .thenReturn("rootDirectory");
         when(environment.getProperty("cloud.aws.s3.sub-directory"))
@@ -62,24 +60,10 @@ class AmazonS3FileServiceTest {
         //then
         assertDoesNotThrow(() -> amazonS3FileService.save(PATH, multipartFile));
     }
-
-    @Test
-    void 파일_저장_시_원본_파일이름이_존재하지_않을떄_예외가_터진다() {
-        //given
-        when(multipartFile.getOriginalFilename())
-                .thenReturn(null);
-
-        //when
-        //then
-        assertThatThrownBy(() -> amazonS3FileService.save(PATH, multipartFile))
-                .isInstanceOf(ServerException.class);
-    }
-
+    
     @Test
     void 파일_저장_시_InputStream을_가져올때_예외가_터진다() throws IOException {
         //given
-        when(multipartFile.getOriginalFilename())
-                .thenReturn("originalFilename.png");
         when(multipartFile.getInputStream())
                 .thenThrow(new IOException());
 
@@ -94,8 +78,6 @@ class AmazonS3FileServiceTest {
         //given
         when(multipartFile.getInputStream())
                 .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
-        when(multipartFile.getOriginalFilename())
-                .thenReturn("originalFilename.png");
         when(amazonS3.putObject(any(), any(), any(), any()))
                 .thenThrow(new AmazonServiceException("server가 원할하지 않습니다."));
 
@@ -110,8 +92,6 @@ class AmazonS3FileServiceTest {
         //given
         when(multipartFile.getInputStream())
                 .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
-        when(multipartFile.getOriginalFilename())
-                .thenReturn("originalFilename.png");
         when(amazonS3.putObject(any(), any(), any(), any()))
                 .thenThrow(new SdkClientException("sdk client 원할하지 않습니다."));
 
