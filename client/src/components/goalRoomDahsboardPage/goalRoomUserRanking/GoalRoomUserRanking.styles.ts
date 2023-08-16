@@ -41,6 +41,7 @@ export const Participant = styled.div<{ position: number }>`
 `;
 
 export const Card = styled.div`
+  ${({ theme }) => theme.fonts.description2};
   width: 100%;
   margin: 1rem 0;
   padding: 1rem;
