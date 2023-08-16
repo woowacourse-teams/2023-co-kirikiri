@@ -1,7 +1,9 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
 
-export const TodoWrapper = styled(DashBoardSection)``;
+export const TodoWrapper = styled(DashBoardSection)`
+  grid-column: 1 /3 ;
+`;
 
 export const TitleWrapper = styled.div`
   display: flex;

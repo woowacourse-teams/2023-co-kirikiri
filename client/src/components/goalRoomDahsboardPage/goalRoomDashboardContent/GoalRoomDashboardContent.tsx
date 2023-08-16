@@ -1,5 +1,4 @@
 import GoalRoomDashboardHeader from '@components/goalRoomDahsboardPage/goalRoomDashboardHeader/GoalRoomDashboardHeader';
-import GoalRoomDashboardChat from '@components/goalRoomDahsboardPage/goalRoomDashboardChat/GoalRoomDashboardChat';
 import GoalRoomDashboardTodo from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo';
 import GoalRoomDashboardRoadmap from '@components/goalRoomDahsboardPage/goalRoomDahsboardRoadmap/GoalRoomDashboardRoadmap';
 import GoalRoomCertificationFeed from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/GoalRoomCertificationFeed';
@@ -30,7 +29,6 @@ const GoalRoomDashboardContent = () => {
       <div>
         <GoalRoomDashboardHeader goalRoomData={goalRoom} isLeader={isLeader} />
         <S.GoalRoomGridContainer>
-          <GoalRoomDashboardChat />
           <GoalRoomDashboardTodo goalRoomData={goalRoom} isLeader={isLeader} />
           <GoalRoomDashboardRoadmap />
           <GoalRoomUserRanking />
