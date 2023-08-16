@@ -3,14 +3,15 @@ import { Link } from 'react-router-dom';
 import BackButton from '@components/_common/backButton/BackButton';
 import LoginOptions from '@components/loginPage/loginOptions/LoginOptions';
 import LoginForm from '@components/loginPage/loginForm/LoginForm';
-import { SingleCardWrapper } from '@components/_common/SingleCard/SingleCard.styles';
 import { useSwitch } from '@hooks/_common/useSwitch';
+
+import * as S from './LoginContent.styles';
 
 const LoginContent = () => {
   const { isSwitchOn: isLoginFormVisible, toggleSwitch: toggleLoginForm } = useSwitch();
 
   return (
-    <SingleCardWrapper>
+    <S.LoginContentWrapper>
       <Link to='/'>
         <img src={logo} alt='코끼리 로고' />
       </Link>
@@ -20,7 +21,7 @@ const LoginContent = () => {
         <LoginOptions toggleLoginForm={toggleLoginForm} />
       )}
       {isLoginFormVisible && <BackButton action={toggleLoginForm} />}
-    </SingleCardWrapper>
+    </S.LoginContentWrapper>
   );
 };
 
