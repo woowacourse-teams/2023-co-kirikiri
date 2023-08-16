@@ -73,6 +73,7 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private static final LocalDate 이십일_후 = 오늘.plusDays(20);
     private static final LocalDate 삼십일_후 = 오늘.plusDays(30);
     private static final int 오늘부터_십일까지_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
+    private static final int 십일부터_이십일까지_인증_횟수 = (int) ChronoUnit.DAYS.between(십일_후, 이십일_후);
     private static final int 이십일부터_삼십일까지_인증_횟수 = (int) ChronoUnit.DAYS.between(이십일_후, 삼십일_후);
 
     private final String storageLocation;
@@ -80,7 +81,6 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
     private final IntegrationTestHelper testHelper;
     private final FilePathGenerator filePathGenerator;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
-    private final CheckFeedRepository checkFeedRepository;
     private final GoalRoomCreateService goalRoomCreateService;
     private final GoalRoomScheduler goalRoomScheduler;
 
@@ -89,7 +89,6 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                                        final IntegrationTestHelper testHelper,
                                        final FilePathGenerator filePathGenerator,
                                        final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final CheckFeedRepository checkFeedRepository,
                                        final GoalRoomCreateService goalRoomCreateService,
                                        final GoalRoomScheduler goalRoomScheduler) {
         this.storageLocation = storageLocation;
@@ -97,7 +96,6 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
         this.testHelper = testHelper;
         this.filePathGenerator = filePathGenerator;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
-        this.checkFeedRepository = checkFeedRepository;
         this.goalRoomCreateService = goalRoomCreateService;
         this.goalRoomScheduler = goalRoomScheduler;
     }
@@ -377,8 +375,8 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 십일_후, 이십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
-                new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, 오늘부터_십일까지_인증_횟수, 십일_후, 이십일_후),
-                new GoalRoomRoadmapNodeRequest(로드맵_두번째_노드_아이디, 오늘부터_십일까지_인증_횟수, 이십일_후.plusDays(1), 삼십일_후));
+                new GoalRoomRoadmapNodeRequest(로드맵_첫번째_노드_아이디, 십일부터_이십일까지_인증_횟수, 십일_후, 이십일_후),
+                new GoalRoomRoadmapNodeRequest(로드맵_두번째_노드_아이디, 이십일부터_삼십일까지_인증_횟수, 이십일_후.plusDays(1), 삼십일_후));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름,
                 정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_알아낸다(골룸_생성_요청, 로그인_토큰_정보);
@@ -398,9 +396,9 @@ class GoalRoomReadIntegrationTest extends IntegrationTest {
                 2, 정상적인_골룸_제한_인원, 오늘, 삼십일_후, 1L,
                 new GoalRoomRoadmapNodesResponse(false, false,
                         List.of(
-                                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", 십일_후, 이십일_후, 오늘부터_십일까지_인증_횟수),
+                                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", 십일_후, 이십일_후, 십일부터_이십일까지_인증_횟수),
                                 new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", 이십일_후.plusDays(1), 삼십일_후,
-                                        오늘부터_십일까지_인증_횟수))),
+                                        이십일부터_삼십일까지_인증_횟수))),
                 List.of(new GoalRoomTodoResponse(1L, 정상적인_골룸_투두_컨텐츠, 십일_후, 이십일_후,
                         new GoalRoomToDoCheckResponse(false))),
                 Collections.emptyList()

@@ -142,10 +142,13 @@ public class GoalRoomReadService {
 
     private List<CheckFeed> findCheckFeedsByNodeAndGoalRoomStatus(final GoalRoom goalRoom,
                                                                   final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
-        if (goalRoom.isRunning() && currentGoalRoomRoadmapNode.isEmpty()) {
+        if (goalRoom.isCompleted()) {
+            return checkFeedRepository.findByGoalRoom(goalRoom);
+        }
+        if (goalRoom.isRecruiting() || currentGoalRoomRoadmapNode.isEmpty()) {
             return Collections.emptyList();
         }
-        return checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatus(currentGoalRoomRoadmapNode, goalRoom.getStatus());
+        return checkFeedRepository.findByRunningGoalRoomRoadmapNode(currentGoalRoomRoadmapNode.get());
     }
 
     public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
@@ -178,7 +181,8 @@ public class GoalRoomReadService {
         final GoalRoom goalRoom = findGoalRoomWithNodesById(goalRoomId);
         validateJoinedMemberInRunningGoalRoom(goalRoom, identifier);
         final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
-        final List<CheckFeed> checkFeeds = findCheckFeedsByNodeAndGoalRoomStatusWithMember(goalRoom, currentGoalRoomRoadmapNode);
+        final List<CheckFeed> checkFeeds = findCheckFeedsByNodeAndGoalRoomStatusWithMember(goalRoom,
+                currentGoalRoomRoadmapNode);
         return GoalRoomMapper.convertToGoalRoomCheckFeedResponses(checkFeeds);
     }
 
@@ -193,11 +197,13 @@ public class GoalRoomReadService {
     }
 
     private List<CheckFeed> findCheckFeedsByNodeAndGoalRoomStatusWithMember(final GoalRoom goalRoom,
-                                                                  final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
-        if (goalRoom.isRunning() && currentGoalRoomRoadmapNode.isEmpty()) {
+                                                                            final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
+        if (goalRoom.isCompleted()) {
+            return checkFeedRepository.findByGoalRoomWithMemberAndMemberImage(goalRoom);
+        }
+        if (goalRoom.isRecruiting() || currentGoalRoomRoadmapNode.isEmpty()) {
             return Collections.emptyList();
         }
-        return checkFeedRepository.findByGoalRoomRoadmapNodeAndGoalRoomStatusWithMemberAndMemberImage(
-                currentGoalRoomRoadmapNode, goalRoom.getStatus());
+        return checkFeedRepository.findByRunningGoalRoomRoadmapNodeWithMemberAndMemberImage(currentGoalRoomRoadmapNode.get());
     }
 }
