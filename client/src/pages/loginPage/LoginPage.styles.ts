@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { float } from '@styles/animations';
 
 export const LoginPageWrapper = styled.div`
   position: relative;
@@ -8,18 +9,6 @@ export const LoginPageWrapper = styled.div`
   justify-content: center;
 
   height: 100vh;
-
-  @keyframes float {
-    0% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-    100% {
-      transform: translateY(0);
-    }
-  }
 `;
 
 export const ElephantImage = styled.img`
@@ -33,5 +22,5 @@ export const ElephantImage = styled.img`
   background-repeat: no-repeat;
   background-size: contain;
 
-  animation: float 5s ease-in-out infinite;
+  animation: ${float} 5s ease-in-out infinite;
 `;
