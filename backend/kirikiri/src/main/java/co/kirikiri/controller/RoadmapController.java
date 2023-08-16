@@ -63,7 +63,7 @@ public class RoadmapController {
     }
 
     @GetMapping
-    public ResponseEntity<RoadmapForListResponses> findRoadmapsByFilterType(
+    public ResponseEntity<RoadmapForListResponses> findRoadmapsByOrderType(
             @RequestParam(value = "categoryId", required = false) final Long categoryId,
             @RequestParam(value = "filterCond", required = false) final RoadmapOrderTypeRequest orderTypeRequest,
             @ModelAttribute @Valid final CustomScrollRequest scrollRequest

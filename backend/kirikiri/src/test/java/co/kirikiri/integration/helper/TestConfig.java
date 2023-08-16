@@ -1,7 +1,7 @@
 package co.kirikiri.integration.helper;
 
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.FileService;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class TestConfig {
 
-    private final RoadmapContentRepository roadmapContentRepository;
-    private final MemberRepository memberRepository;
+    private final GoalRoomRepository goalRoomRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
 
-    public TestConfig(final RoadmapContentRepository roadmapContentRepository,
-                      final MemberRepository memberRepository) {
-        this.roadmapContentRepository = roadmapContentRepository;
-        this.memberRepository = memberRepository;
+    public TestConfig(final GoalRoomRepository goalRoomRepository,
+                      final GoalRoomMemberRepository goalRoomMemberRepository) {
+        this.goalRoomRepository = goalRoomRepository;
+        this.goalRoomMemberRepository = goalRoomMemberRepository;
     }
 
     @Bean
@@ -25,6 +25,6 @@ public class TestConfig {
 
     @Bean
     public TestTransactionService testTransactionService() {
-        return new TestTransactionService(roadmapContentRepository, memberRepository);
+        return new TestTransactionService(goalRoomRepository, goalRoomMemberRepository);
     }
 }

@@ -368,7 +368,7 @@ class RoadmapReadServiceTest {
         when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
 
-        final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", 1L, "태그");
+        final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", "닉네임", "태그");
         final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 

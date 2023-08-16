@@ -13,17 +13,15 @@ public class RoadmapSearchDto {
     private final RoadmapSearchTagName tagName;
 
     public static RoadmapSearchDto create(final String creatorName, final String title, final String tagName) {
-        if (title == null && tagName == null) {
+        if (creatorName != null) {
             return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), null, null);
         }
-        if (title == null) {
-            return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), null,
-                    new RoadmapSearchTagName(tagName));
+        if (title != null) {
+            return new RoadmapSearchDto(null, new RoadmapSearchTitle(title), null);
         }
-        if (tagName == null) {
-            return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), new RoadmapSearchTitle(title), null);
+        if (tagName != null) {
+            return new RoadmapSearchDto(null, null, new RoadmapSearchTagName(tagName));
         }
-        return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), new RoadmapSearchTitle(title),
-                new RoadmapSearchTagName(tagName));
+        return new RoadmapSearchDto(null, null, null);
     }
 }
