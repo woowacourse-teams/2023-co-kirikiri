@@ -16,6 +16,8 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -151,6 +153,10 @@ public class Roadmap extends BaseCreatedTimeEntity {
         this.status = RoadmapStatus.DELETED;
     }
 
+    public Optional<RoadmapContent> findLastRoadmapContent() {
+        return this.contents.findLastRoadmapContent();
+    }
+
     public Member getCreator() {
         return creator;
     }
@@ -181,9 +187,5 @@ public class Roadmap extends BaseCreatedTimeEntity {
 
     public RoadmapTags getTags() {
         return tags;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

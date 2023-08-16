@@ -1,4 +1,4 @@
-package co.kirikiri.domain;
+package co.kirikiri.service;
 
 public enum ImageDirType {
     CHECK_FEED("goalroom/checkfeed"),

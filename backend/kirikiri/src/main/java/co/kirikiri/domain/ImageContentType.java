@@ -17,10 +17,10 @@ public enum ImageContentType {
         this.extension = extension;
     }
 
-    public static ImageContentType of(final String extension) {
+    public static ImageContentType findImageContentType(final String imageContentType) {
         return Arrays.stream(values())
-                .filter(type -> type.extension.equals(extension))
+                .filter(it -> it.extension.equals(imageContentType))
                 .findAny()
-                .orElseThrow(() -> new BadRequestException(extension + "는 요청할 수 없는 파일 확장자 형식입니다."));
+                .orElseThrow(() -> new BadRequestException("허용되지 않는 확장자입니다."));
     }
 }
