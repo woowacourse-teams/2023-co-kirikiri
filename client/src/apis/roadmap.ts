@@ -1,4 +1,3 @@
-import { RoadmapValueType } from '@/myTypes/roadmap/internal';
 import type {
   RoadmapDetailResponse,
   RoadmapListRequest,
@@ -31,7 +30,7 @@ export const getRoadmapDetail = async (id: number): Promise<RoadmapDetailRespons
   return data;
 };
 
-export const postCreateRoadmap = (roadmapValue: RoadmapValueType) => {
+export const postCreateRoadmap = (roadmapValue: FormData) => {
   const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue, {
     headers: {
       'Content-Type': 'multipart/form-data;charset=UTF-8',
