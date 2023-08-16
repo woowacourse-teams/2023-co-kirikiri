@@ -60,8 +60,8 @@ const GoalRoomUserRanking = () => {
           })}
           {userRankCardInfo && (
             <S.Card key={userRankCardInfo.memberId}>
-              <p>{userRank}위</p>
               <S.UserInfoLabel>
+                <p>{userRank}위</p>
                 <img
                   src={userRankCardInfo.imagePath}
                   alt={`${userRankCardInfo.nickname} 의 프로필 이미지`}
