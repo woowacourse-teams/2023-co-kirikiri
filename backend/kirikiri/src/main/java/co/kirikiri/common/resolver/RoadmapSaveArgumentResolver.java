@@ -6,6 +6,7 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -36,11 +36,13 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer,
-                                  final NativeWebRequest nativeWebRequest, final WebDataBinderFactory binderFactory) throws MethodArgumentNotValidException {
+                                  final NativeWebRequest nativeWebRequest, final WebDataBinderFactory binderFactory)
+            throws MethodArgumentNotValidException {
         final HttpServletRequest request = (HttpServletRequest) nativeWebRequest.getNativeRequest();
         checkMultipart(request);
         final MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        final RoadmapSaveRequest roadmapSaveRequestNotIncludeImage = makeRoadmapSaveRequestNotIncludeImage(multipartRequest);
+        final RoadmapSaveRequest roadmapSaveRequestNotIncludeImage = makeRoadmapSaveRequestNotIncludeImage(
+                multipartRequest);
         validateRequest(parameter, roadmapSaveRequestNotIncludeImage);
         return makeRoadmapSaveRequestIncludeImage(roadmapSaveRequestNotIncludeImage, multipartRequest);
     }
@@ -52,12 +54,14 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
         }
     }
 
-    private RoadmapSaveRequest makeRoadmapSaveRequestNotIncludeImage(final MultipartHttpServletRequest multipartRequest) {
+    private RoadmapSaveRequest makeRoadmapSaveRequestNotIncludeImage(
+            final MultipartHttpServletRequest multipartRequest) {
         final String jsonData = getJsonData(multipartRequest);
         return bindRoadmapSaveRequest(jsonData);
     }
 
-    private void validateRequest(final MethodParameter parameter, final RoadmapSaveRequest roadmapSaveRequest) throws MethodArgumentNotValidException {
+    private void validateRequest(final MethodParameter parameter, final RoadmapSaveRequest roadmapSaveRequest)
+            throws MethodArgumentNotValidException {
         final DataBinder binder = new DataBinder(roadmapSaveRequest);
         binder.setValidator(validator);
         binder.validate();
@@ -67,7 +71,8 @@ public class RoadmapSaveArgumentResolver implements HandlerMethodArgumentResolve
         }
     }
 
-    private RoadmapSaveRequest makeRoadmapSaveRequestIncludeImage(final RoadmapSaveRequest roadmapSaveRequest, final MultipartHttpServletRequest multipartRequest) {
+    private RoadmapSaveRequest makeRoadmapSaveRequestIncludeImage(final RoadmapSaveRequest roadmapSaveRequest,
+                                                                  final MultipartHttpServletRequest multipartRequest) {
         for (final RoadmapNodeSaveRequest roadmapNode : roadmapSaveRequest.roadmapNodes()) {
             final List<MultipartFile> images = multipartRequest.getFiles(roadmapNode.getTitle());
             roadmapNode.setImages(images);

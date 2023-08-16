@@ -7,4 +7,5 @@ public record RoadmapCreateEvent(
         Roadmap roadmap,
         RoadmapSaveDto roadmapSaveDto
 ) {
+
 }

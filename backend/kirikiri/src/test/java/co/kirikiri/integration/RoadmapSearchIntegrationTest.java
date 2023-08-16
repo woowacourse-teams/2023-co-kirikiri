@@ -3,7 +3,6 @@ package co.kirikiri.integration;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;

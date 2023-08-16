@@ -4,4 +4,5 @@ public record RoadmapCategoryDto(
         long id,
         String name
 ) {
+
 }

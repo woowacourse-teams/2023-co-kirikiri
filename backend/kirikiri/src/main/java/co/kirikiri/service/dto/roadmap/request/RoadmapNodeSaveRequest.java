@@ -1,11 +1,11 @@
 package co.kirikiri.service.dto.roadmap.request;
 
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor

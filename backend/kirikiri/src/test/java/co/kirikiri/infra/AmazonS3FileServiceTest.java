@@ -60,7 +60,7 @@ class AmazonS3FileServiceTest {
         //then
         assertDoesNotThrow(() -> amazonS3FileService.save(PATH, multipartFile));
     }
-    
+
     @Test
     void 파일_저장_시_InputStream을_가져올때_예외가_터진다() throws IOException {
         //given

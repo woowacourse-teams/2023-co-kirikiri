@@ -1,7 +1,6 @@
 package co.kirikiri.service.dto;
 
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 public record CustomScrollRequest(
         Long lastId,

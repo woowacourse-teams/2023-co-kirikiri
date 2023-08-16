@@ -59,7 +59,6 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import com.amazonaws.Protocol;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -127,7 +126,7 @@ class RoadmapReadServiceTest {
         when(goalRoomRepository.findByRoadmap(any()))
                 .thenReturn(goalRooms);
         when(fileService.generateUrl(anyString(), any()))
-                .thenReturn(new URL(Protocol.HTTP.toString(), "host", 80, "file"));
+                .thenReturn(new URL("http://example.com/serverFilePath"));
 
         //when
         final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
@@ -135,7 +134,7 @@ class RoadmapReadServiceTest {
         //then
         final RoadmapResponse expectedResponse = new RoadmapResponse(
                 roadmapId, new RoadmapCategoryResponse(1L, "운동"), "로드맵 제목", "로드맵 소개글",
-                new MemberResponse(1L, "닉네임", "file"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapContentResponse(1L, "로드맵 본문", List.of(
                         new RoadmapNodeResponse(1L, "로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList())
                 )), "DIFFICULT", 30, now,
@@ -177,7 +176,7 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵_목록_조회_시_필터_조건이_null이면_최신순으로_조회한다() {
+    void 로드맵_목록_조회_시_필터_조건이_null이면_최신순으로_조회한다() throws MalformedURLException {
         // given
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");
         final List<Roadmap> roadmaps = List.of(
@@ -188,6 +187,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(category));
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         final Long categoryId = 1L;
         final RoadmapOrderTypeRequest filterType = null;
@@ -200,7 +201,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(1L, "첫 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -208,7 +209,7 @@ class RoadmapReadServiceTest {
 
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -224,7 +225,7 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵_목록_조회시_다음_요소가_존재하면_true로_반환한다() {
+    void 로드맵_목록_조회시_다음_요소가_존재하면_true로_반환한다() throws MalformedURLException {
         // given
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");
         final List<Roadmap> roadmaps = List.of(
@@ -235,6 +236,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(category));
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         final Long categoryId = 1L;
         final RoadmapOrderTypeRequest filterType = null;
@@ -247,7 +250,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(
                 1L, "첫 번째 로드맵", "로드맵 소개글", "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -263,13 +266,15 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵_목록_조회_시_카테고리_조건이_null이면_전체_카테고리를_대상으로_최신순으로_조회한다() {
+    void 로드맵_목록_조회_시_카테고리_조건이_null이면_전체_카테고리를_대상으로_최신순으로_조회한다() throws MalformedURLException {
         // given
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");
         final List<Roadmap> roadmaps = List.of(로드맵을_생성한다("첫 번째 로드맵", category), 로드맵을_생성한다("두 번째 로드맵", category));
 
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         final Long categoryId = null;
         final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
@@ -282,7 +287,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(1L, "첫 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -290,7 +295,7 @@ class RoadmapReadServiceTest {
 
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -306,7 +311,7 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 카테고리_아이디와_필터링_조건을_통해_로드맵_목록을_조회한다() {
+    void 카테고리_아이디와_필터링_조건을_통해_로드맵_목록을_조회한다() throws MalformedURLException {
         // given
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");
         final List<Roadmap> roadmaps = List.of(로드맵을_생성한다("첫 번째 로드맵", category));
@@ -315,6 +320,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(new RoadmapCategory("여행")));
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         final Long categoryId = 1L;
         final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
@@ -327,7 +334,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse roadmapResponse = new RoadmapForListResponse(1L, "첫 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -358,7 +365,7 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵을_검색한다() {
+    void 로드맵을_검색한다() throws MalformedURLException {
         // given
         final RoadmapCategory category = new RoadmapCategory(1L, "여행");
         final List<Roadmap> roadmaps = List.of(
@@ -367,6 +374,8 @@ class RoadmapReadServiceTest {
 
         when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", "닉네임", "태그");
         final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
@@ -379,7 +388,7 @@ class RoadmapReadServiceTest {
         // then
         final RoadmapForListResponse firstRoadmapResponse = new RoadmapForListResponse(1L, "첫 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -387,7 +396,7 @@ class RoadmapReadServiceTest {
 
         final RoadmapForListResponse secondRoadmapResponse = new RoadmapForListResponse(1L, "두 번째 로드맵", "로드맵 소개글",
                 "DIFFICULT", 30, LocalDateTime.now(),
-                new MemberResponse(1L, "닉네임", "default-member-image"),
+                new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapCategoryResponse(1, "여행"),
                 List.of(
                         new RoadmapTagResponse(1L, "태그1"),
@@ -447,7 +456,7 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵의_골룸_목록을_조회한다() {
+    void 로드맵의_골룸_목록을_조회한다() throws MalformedURLException {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "name1");
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
@@ -485,6 +494,8 @@ class RoadmapReadServiceTest {
         given(goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsOrderType.LATEST, null, 10))
                 .willReturn(goalRooms);
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         // when
         final RoadmapGoalRoomResponses result = roadmapService.findRoadmapGoalRoomsByOrderType(1L,
@@ -495,11 +506,11 @@ class RoadmapReadServiceTest {
                         new RoadmapGoalRoomResponse(2L, "goalroom2", 1, 10, LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member3.getId(), member3.getNickname().getValue(),
-                                        member3.getImage().getServerFilePath())),
+                                        "http://example.com/serverFilePath")),
                         new RoadmapGoalRoomResponse(1L, "goalroom1", 1, 10, LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue(),
-                                        member2.getImage().getServerFilePath()))), false);
+                                        "http://example.com/serverFilePath"))), false);
 
         assertThat(result)
                 .usingRecursiveComparison()
@@ -523,7 +534,7 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵의_리뷰_목록을_최신순으로_조회한다() {
+    void 로드맵의_리뷰_목록을_최신순으로_조회한다() throws MalformedURLException {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "리뷰어1");
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "리뷰어2");
@@ -543,15 +554,17 @@ class RoadmapReadServiceTest {
         when(roadmapRepository.findRoadmapById(anyLong())).thenReturn(Optional.of(roadmap));
         when(roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(any(), any(), anyInt()))
                 .thenReturn(List.of(roadmapReview2, roadmapReview1));
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         // when
         final List<RoadmapReviewResponse> response = roadmapService.findRoadmapReviews(1L,
                 new CustomScrollRequest(null, 10));
 
         final List<RoadmapReviewResponse> expect = List.of(
-                new RoadmapReviewResponse(2L, new MemberResponse(2L, "리뷰어2", "default-member-image"),
+                new RoadmapReviewResponse(2L, new MemberResponse(2L, "리뷰어2", "http://example.com/serverFilePath"),
                         LocalDateTime.now(), "리뷰 내용", 4.5),
-                new RoadmapReviewResponse(1L, new MemberResponse(1L, "리뷰어1", "default-member-image"),
+                new RoadmapReviewResponse(1L, new MemberResponse(1L, "리뷰어1", "http://example.com/serverFilePath"),
                         LocalDateTime.now(), "리뷰 내용", 5.0));
 
         // then

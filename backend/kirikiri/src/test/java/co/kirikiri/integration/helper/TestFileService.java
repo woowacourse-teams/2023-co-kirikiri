@@ -15,7 +15,7 @@ public class TestFileService implements FileService {
     @Override
     public URL generateUrl(final String path, final HttpMethod httpMethod) {
         try {
-            return new URL("http://example.com/" + path);
+            return new URL("http://example.com" + path);
         } catch (final MalformedURLException exception) {
             throw new RuntimeException(exception);
         }

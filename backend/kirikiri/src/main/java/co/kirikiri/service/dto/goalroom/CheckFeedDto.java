@@ -8,4 +8,5 @@ public record CheckFeedDto(
         String description,
         LocalDateTime createdAt
 ) {
+
 }

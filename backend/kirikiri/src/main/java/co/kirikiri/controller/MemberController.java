@@ -39,10 +39,8 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     @Authenticated
-    public ResponseEntity<MemberInformationForPublicResponse> findMemberInfo(@MemberIdentifier final String identifier,
-                                                                             @PathVariable final Long memberId) {
-        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(identifier,
-                memberId);
+    public ResponseEntity<MemberInformationForPublicResponse> findMemberInfo(@PathVariable final Long memberId) {
+        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(memberId);
         return ResponseEntity.ok(response);
     }
 }

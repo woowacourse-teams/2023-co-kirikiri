@@ -3,6 +3,7 @@ package co.kirikiri.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import co.kirikiri.domain.ImageContentType;
@@ -21,6 +22,8 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -45,6 +48,9 @@ class MemberServiceTest {
 
     @Mock
     private NumberGenerator numberGenerator;
+
+    @Mock
+    private FileService fileService;
 
     @InjectMocks
     private MemberService memberService;
@@ -111,7 +117,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void 로그인한_사용자_자신의_정보를_조회한다() {
+    void 로그인한_사용자_자신의_정보를_조회한다() throws MalformedURLException {
         // given
         final Identifier identifier = new Identifier("identifier1");
         final Password password = new Password("password1!");
@@ -123,12 +129,15 @@ class MemberServiceTest {
 
         given(memberRepository.findWithMemberProfileAndImageByIdentifier(any()))
                 .willReturn(Optional.of(member));
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         // when
         final MemberInformationResponse response = memberService.findMemberInformation(identifier.getValue());
 
         // then
-        final MemberInformationResponse expected = new MemberInformationResponse(1L, "nickname", "serverFilePath",
+        final MemberInformationResponse expected = new MemberInformationResponse(1L, "nickname",
+                "http://example.com/serverFilePath",
                 Gender.MALE.name(),
                 "identifier1", "010-1234-5678", LocalDate.now());
 
@@ -151,7 +160,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void 특정_사용자의_정보를_조회한다() {
+    void 특정_사용자의_정보를_조회한다() throws MalformedURLException {
         // given
         final Identifier identifier = new Identifier("identifier1");
         final Password password = new Password("password1!");
@@ -161,19 +170,17 @@ class MemberServiceTest {
         final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
                 new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
 
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
         given(memberRepository.findWithMemberProfileAndImageById(any()))
                 .willReturn(Optional.of(member));
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         // when
-        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(
-                identifier.getValue(),
-                1L);
+        final MemberInformationForPublicResponse response = memberService.findMemberInformationForPublic(1L);
 
         // then
         final MemberInformationForPublicResponse expected = new MemberInformationForPublicResponse("nickname",
-                "serverFilePath",
+                "http://example.com/serverFilePath",
                 Gender.MALE.name());
 
         assertThat(response).isEqualTo(expected);
@@ -182,20 +189,15 @@ class MemberServiceTest {
     @Test
     void 특정_사용자의_정보를_조회할때_로그인한_사용자가_존재하지_않는_회원이면_예외가_발생한다() {
         // given
-        final Identifier identifier = new Identifier("identifier1");
-
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.empty());
-
         // when
         // then
-        assertThatThrownBy(() -> memberService.findMemberInformationForPublic(identifier.getValue(), 1L))
+        assertThatThrownBy(() -> memberService.findMemberInformationForPublic(1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }
 
     @Test
-    void 특정_사용자의_정보를_조회할때_조회하려는_사용자가_존재하지_않는_회원이면_예외가_발생한다() {
+    void 특정_사용자의_정보를_조회할때_조회하려는_사용자가_존재하지_않는_회원이면_예외가_발생한다() throws MalformedURLException {
         // given
         final Identifier identifier = new Identifier("identifier1");
         final Password password = new Password("password1!");
@@ -205,14 +207,12 @@ class MemberServiceTest {
         final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
                 new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
 
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
         given(memberRepository.findWithMemberProfileAndImageById(any()))
                 .willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> memberService.findMemberInformationForPublic(identifier.getValue(), 1L))
+        assertThatThrownBy(() -> memberService.findMemberInformationForPublic(1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다. memberId = 1");
     }

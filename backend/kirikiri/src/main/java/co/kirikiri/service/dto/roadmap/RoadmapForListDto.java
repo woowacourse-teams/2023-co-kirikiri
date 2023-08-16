@@ -4,16 +4,15 @@ import co.kirikiri.service.dto.member.MemberDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record RoadmapDto(
-        Long roadmapId,
-        RoadmapCategoryDto category,
+public record RoadmapForListDto(
+        long roadmapId,
         String roadmapTitle,
         String introduction,
-        MemberDto creator,
-        RoadmapContentDto content,
         String difficulty,
         int recommendedRoadmapPeriod,
         LocalDateTime createdAt,
+        MemberDto creator,
+        RoadmapCategoryDto category,
         List<RoadmapTagDto> tags
 ) {
 

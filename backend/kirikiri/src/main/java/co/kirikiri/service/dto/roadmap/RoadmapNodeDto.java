@@ -8,4 +8,5 @@ public record RoadmapNodeDto(
         String description,
         List<String> imageUrls
 ) {
+
 }

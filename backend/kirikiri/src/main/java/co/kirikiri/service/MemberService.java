@@ -10,13 +10,17 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.member.MemberInformationDto;
+import co.kirikiri.service.dto.member.MemberInformationForPublicDto;
 import co.kirikiri.service.dto.member.MemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.mapper.MemberMapper;
+import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +37,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final Environment environment;
     private final NumberGenerator numberGenerator;
+    private final FileService fileService;
 
     @Transactional
     public Long join(final MemberJoinRequest memberJoinRequest) {
@@ -73,7 +78,17 @@ public class MemberService {
 
     public MemberInformationResponse findMemberInformation(final String identifier) {
         final Member memberWithInfo = findMemberInformationByIdentifier(identifier);
-        return MemberMapper.convertToMemberInformationResponse(memberWithInfo);
+        final MemberInformationDto memberInformationDto = makeMemberInformationDto(memberWithInfo);
+        return MemberMapper.convertToMemberInformationResponse(memberInformationDto);
+    }
+
+    public MemberInformationDto makeMemberInformationDto(final Member member) {
+        final MemberImage memberImage = member.getImage();
+        final MemberProfile memberProfile = member.getMemberProfile();
+        final URL imageUrl = fileService.generateUrl(memberImage.getServerFilePath(), HttpMethod.GET);
+        return new MemberInformationDto(member.getId(), member.getNickname().getValue(),
+                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(),
+                memberProfile.getPhoneNumber(), memberProfile.getBirthday());
     }
 
     private Member findMemberInformationByIdentifier(final String identifier) {
@@ -81,16 +96,15 @@ public class MemberService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
-    public MemberInformationForPublicResponse findMemberInformationForPublic(final String identifier,
-                                                                             final Long memberId) {
-        findMemberByIdentifier(identifier);
+    public MemberInformationForPublicResponse findMemberInformationForPublic(final Long memberId) {
         final Member memberWithPublicInfo = findMemberInformationByMemberId(memberId);
-        return MemberMapper.convertToMemberInformationForPublicResponse(memberWithPublicInfo);
-    }
-
-    private Member findMemberByIdentifier(final String identifier) {
-        return memberRepository.findByIdentifier(new Identifier(identifier))
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+        final URL memberimageURl = fileService.generateUrl(memberWithPublicInfo.getImage().getServerFilePath(),
+                HttpMethod.GET);
+        final MemberInformationForPublicDto memberInformationForPublicDto =
+                new MemberInformationForPublicDto(memberWithPublicInfo.getNickname().getValue(),
+                        memberimageURl.toExternalForm(),
+                        memberWithPublicInfo.getMemberProfile().getGender().name());
+        return MemberMapper.convertToMemberInformationForPublicResponse(memberInformationForPublicDto);
     }
 
     private Member findMemberInformationByMemberId(final Long memberId) {

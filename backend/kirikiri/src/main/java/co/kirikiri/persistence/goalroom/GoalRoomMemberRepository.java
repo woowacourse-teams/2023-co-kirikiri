@@ -18,7 +18,7 @@ public interface GoalRoomMemberRepository extends JpaRepository<GoalRoomMember, 
             + "and m.identifier =:identifier")
     Optional<GoalRoomMember> findByGoalRoomAndMemberIdentifier(
             @Param("goalRoom") final GoalRoom goalRoom, @Param("identifier") final Identifier identifier);
-    
+
     @Query("select gm from GoalRoomMember gm "
             + "join fetch gm.goalRoom g "
             + "join fetch gm.member m "

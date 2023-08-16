@@ -1,5 +1,3 @@
-
-
 package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
