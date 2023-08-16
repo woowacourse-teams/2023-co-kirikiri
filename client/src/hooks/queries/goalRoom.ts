@@ -21,17 +21,31 @@ import {
   getCertificationFeeds,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useToast from '@hooks/_common/useToast';
 import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 import { useNavigate } from 'react-router-dom';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
-  const { data } = useSuspendedQuery(['goalRoomList', params.roadmapId], () =>
-    getGoalRoomList(params)
+  const { roadmapId, filterCond, lastCreatedAt, size, lastId } = params;
+
+  const { data, fetchNextPage } = useInfiniteQuery(
+    ['goalRoomList', roadmapId, filterCond, lastCreatedAt, size, lastId],
+    ({ pageParam }) => getGoalRoomList({ ...params, lastId: pageParam }),
+    {
+      getNextPageParam: (lastPage) =>
+        lastPage.hasNext
+          ? lastPage.responses[lastPage.responses.length - 1]?.goalRoomId
+          : undefined,
+    }
   );
-  return { goalRoomList: data.responses };
+
+  const responses = data?.pages.flatMap((page) => page.responses) || [];
+
+  const hasNext = Boolean(data?.pages[data.pages.length - 1]?.hasNext);
+
+  return { goalRoomListResponse: { responses, hasNext }, fetchNextPage };
 };
 
 export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => {
@@ -68,7 +82,7 @@ export const useCreateGoalRoom = (roadmapContentId: number) => {
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
       async onSuccess() {
-        await queryClient.invalidateQueries([['myGoalRoomList']]);
+        await queryClient.refetchQueries([['myGoalRoomList']]);
         navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
         triggerToast({ message: '골룸을 생성했습니다!' });
       },

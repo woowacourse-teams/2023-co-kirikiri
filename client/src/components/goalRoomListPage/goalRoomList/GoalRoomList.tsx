@@ -7,15 +7,26 @@ import GoalRoomFilter from './GoalRoomFilter';
 import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
 import { useState } from 'react';
 import { goalRoomFilter } from '@/constants/goalRoom/goalRoomFilter';
+import { useInfiniteScroll } from '@hooks/_common/useInfiniteScroll';
+import WavyLoading from '@components/_common/wavyLoading/WavyLoading';
 
 const GoalRoomList = () => {
   const { id } = useValidParams<{ id: string }>();
   const [sortedOption, setSortedOption] =
     useState<(typeof goalRoomFilter)[keyof typeof goalRoomFilter]>('마감 임박 순');
-  const { goalRoomList } = useGoalRoomList({
+  const {
+    goalRoomListResponse: { responses: goalRoomList, hasNext },
+    fetchNextPage,
+  } = useGoalRoomList({
     roadmapId: Number(id),
     filterCond: sortedOption === '참여 인원 순' ? 'PARTICIPATION_RATE' : 'LATEST',
   });
+
+  const loadMoreRef = useInfiniteScroll({
+    hasNextPage: hasNext,
+    fetchNextPage,
+  });
+
   const navigate = useNavigate();
 
   const moveCreateGoalRoomPage = () => {
@@ -46,8 +57,9 @@ const GoalRoomList = () => {
       </S.FilterBar>
       <S.ListWrapper role='list' aria-label='골룸 리스트'>
         {goalRoomList.map((goalRoomInfo) => {
-          return <GoalRoomItem {...goalRoomInfo} />;
+          return <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />;
         })}
+        {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
         <S.CreateGoalRoomButton onClick={moveCreateGoalRoomPage}>
           골룸 생성하러 가기
         </S.CreateGoalRoomButton>
