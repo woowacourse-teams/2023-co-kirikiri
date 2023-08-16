@@ -41,6 +41,23 @@ export const Description = styled.div`
   text-overflow: ellipsis;
 `;
 
+export const ExtraHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  width: 100%;
+  height: 3rem;
+  margin-bottom: 1rem;
+
+  background: ${({ theme }) => theme.colors.gray100};
+  border-radius: 8px;
+`;
+
+export const RecommendedRoadmapPeriodNumber = styled.span`
+  color: ${({ theme }) => theme.colors.main_middle};
+`;
+
 export const ItemExtraInfos = styled.div`
   display: flex;
   align-items: center;
