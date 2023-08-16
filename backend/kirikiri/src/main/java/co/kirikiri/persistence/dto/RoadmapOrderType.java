@@ -1,5 +1,5 @@
 package co.kirikiri.persistence.dto;
 
-public enum RoadmapFilterType {
+public enum RoadmapOrderType {
     LATEST, GOAL_ROOM_COUNT, PARTICIPANT_COUNT, REVIEW_RATE
 }

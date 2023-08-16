@@ -12,7 +12,6 @@ import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -45,7 +44,7 @@ import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
@@ -160,7 +159,7 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.empty());
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
+        final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // expected
@@ -182,7 +181,7 @@ class RoadmapReadServiceTest {
                 .thenReturn(roadmaps);
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeRequest filterType = null;
+        final RoadmapOrderTypeRequest filterType = null;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when
@@ -229,7 +228,7 @@ class RoadmapReadServiceTest {
                 .thenReturn(roadmaps);
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeRequest filterType = null;
+        final RoadmapOrderTypeRequest filterType = null;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 1);
 
         // when
@@ -264,7 +263,7 @@ class RoadmapReadServiceTest {
                 .thenReturn(roadmaps);
 
         final Long categoryId = null;
-        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
+        final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when
@@ -309,7 +308,7 @@ class RoadmapReadServiceTest {
                 .thenReturn(roadmaps);
 
         final Long categoryId = 1L;
-        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
+        final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when
@@ -361,7 +360,7 @@ class RoadmapReadServiceTest {
                 .thenReturn(roadmaps);
 
         final RoadmapSearchRequest roadmapSearchRequest = new RoadmapSearchRequest("로드맵", 1L, "태그");
-        final RoadmapFilterTypeRequest filterType = RoadmapFilterTypeRequest.LATEST;
+        final RoadmapOrderTypeRequest filterType = RoadmapOrderTypeRequest.LATEST;
         final CustomScrollRequest scrollRequest = new CustomScrollRequest(null, 10);
 
         // when

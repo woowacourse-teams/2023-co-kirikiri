@@ -8,7 +8,7 @@ import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
@@ -20,7 +20,7 @@ import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsFilterTypeDto;
-import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
@@ -66,10 +66,10 @@ public class RoadmapReadService {
     }
 
     public RoadmapForListResponses findRoadmapsByFilterType(final Long categoryId,
-                                                            final RoadmapFilterTypeRequest filterType,
+                                                            final RoadmapOrderTypeRequest filterType,
                                                             final CustomScrollRequest scrollRequest) {
         final RoadmapCategory category = findCategoryById(categoryId);
-        final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
+        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(filterType);
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCategory(category, orderType,
                 scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmaps, scrollRequest.size());
@@ -83,10 +83,10 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
     }
 
-    public RoadmapForListResponses search(final RoadmapFilterTypeRequest filterTypeRequest,
+    public RoadmapForListResponses search(final RoadmapOrderTypeRequest filterTypeRequest,
                                           final RoadmapSearchRequest searchRequest,
                                           final CustomScrollRequest scrollRequest) {
-        final RoadmapFilterType orderType = RoadmapMapper.convertRoadmapOrderType(filterTypeRequest);
+        final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(filterTypeRequest);
         final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(
                 searchRequest.creatorId(), searchRequest.roadmapTitle(), searchRequest.tagName());
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType,

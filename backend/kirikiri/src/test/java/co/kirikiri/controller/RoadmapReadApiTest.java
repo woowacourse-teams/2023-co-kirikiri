@@ -24,7 +24,7 @@ import co.kirikiri.service.RoadmapReadService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.service.dto.roadmap.request.RoadmapFilterTypeRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
@@ -140,7 +140,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps")
                                 .param("categoryId", "1")
-                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
+                                .param("filterCond", RoadmapOrderTypeRequest.LATEST.name())
                                 .param("lastId", "1")
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))
@@ -196,7 +196,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         final String response = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps")
                                 .param("categoryId", "1")
-                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
+                                .param("filterCond", RoadmapOrderTypeRequest.LATEST.name())
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))
                 .andExpectAll(
@@ -288,7 +288,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                 .param("lastId", "1")
                                 .param("creatorId", "1")
                                 .param("tagName", "Java")
-                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
+                                .param("filterCond", RoadmapOrderTypeRequest.LATEST.name())
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))
                 .andExpect(status().isOk())
@@ -452,7 +452,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         // when
         final String 응답값 = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/goal-rooms", 1L)
-                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
+                                .param("filterCond", RoadmapOrderTypeRequest.LATEST.name())
                                 .param("lastId", "1")
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))
@@ -508,7 +508,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
         // when
         final MvcResult 응답값 = mockMvc.perform(
                         get(API_PREFIX + "/roadmaps/{roadmapId}/goal-rooms", 1L)
-                                .param("filterCond", RoadmapFilterTypeRequest.LATEST.name())
+                                .param("filterCond", RoadmapOrderTypeRequest.LATEST.name())
                                 .param("lastId", "1")
                                 .param("size", "10")
                                 .contextPath(API_PREFIX))

@@ -30,7 +30,7 @@ import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
-import co.kirikiri.persistence.dto.RoadmapFilterType;
+import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -108,7 +108,7 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("여행 로드맵2", creator, travelCategory);
 
         final RoadmapCategory category = null;
-        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
@@ -135,7 +135,7 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("게임 로드맵3", creator, gameCategory);
         삭제된_로드맵을_저장한다("게임 로드맵4", creator, travelCategory);
 
-        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(gameCategory, orderType,
@@ -163,7 +163,7 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("여행 로드맵2", creator, travelCategory);
 
         final RoadmapCategory category = null;
-        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
@@ -207,7 +207,7 @@ class RoadmapRepositoryTest {
         골룸을_생성한다(travelRoadmap.getContents().getValues().get(0), creator);
 
         final RoadmapCategory category = null;
-        final RoadmapFilterType orderType = RoadmapFilterType.GOAL_ROOM_COUNT;
+        final RoadmapOrderType orderType = RoadmapOrderType.GOAL_ROOM_COUNT;
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
@@ -259,7 +259,7 @@ class RoadmapRepositoryTest {
         goalRoomMemberRepository.saveAll(travelRoadmapGoalRoomMembers);
 
         final RoadmapCategory category = null;
-        final RoadmapFilterType orderType = RoadmapFilterType.PARTICIPANT_COUNT;
+        final RoadmapOrderType orderType = RoadmapOrderType.PARTICIPANT_COUNT;
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
@@ -310,7 +310,7 @@ class RoadmapRepositoryTest {
         roadmapRepository.save(travelRoadmap);
 
         final RoadmapCategory category = null;
-        final RoadmapFilterType orderType = RoadmapFilterType.REVIEW_RATE;
+        final RoadmapOrderType orderType = RoadmapOrderType.REVIEW_RATE;
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCategory(category, orderType,
@@ -345,7 +345,7 @@ class RoadmapRepositoryTest {
         로드맵을_저장한다("로드", creator, category);
         삭제된_로드맵을_저장한다("로드맵", creator, category);
 
-        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
         final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, " 로 드 맵 ", null);
 
         // when
@@ -382,7 +382,7 @@ class RoadmapRepositoryTest {
         로드맵을_저장한다("로드맵", creator2, category);
         삭제된_로드맵을_저장한다("로드맵", creator1, category);
 
-        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
         final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getId(), null, null);
 
         // when
@@ -425,7 +425,7 @@ class RoadmapRepositoryTest {
         로드맵을_태그와_저장한다("로드맵", creator, category, new RoadmapTags(List.of(
                 new RoadmapTag(new RoadmapTagName("스프링")))));
 
-        final RoadmapFilterType orderType = RoadmapFilterType.LATEST;
+        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
         final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, null, " 자 바 ");
 
         // when
