@@ -48,7 +48,7 @@ const GoalRoomDashboardTodo = ({
       </S.TodoWrapper>
 
       <DialogBackdrop asChild>
-        <S.BackDrop />
+        <S.DashboardBackDrop />
       </DialogBackdrop>
 
       <DialogContent>

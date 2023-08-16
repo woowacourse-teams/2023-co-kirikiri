@@ -1,10 +1,10 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
 import {
-  BackDrop,
   CountBox,
   TitleWrapper,
 } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
+import {BackDrop} from "@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles";
 
 export const CertificationFeedWrapper = styled(DashBoardSection)``;
 

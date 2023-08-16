@@ -1,5 +1,6 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
+import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
 
 export const TodoWrapper = styled(DashBoardSection)`
   grid-column: 1 /3;
@@ -32,12 +33,4 @@ export const CountBox = styled.span`
   box-shadow: ${({ theme }) => theme.shadows.main};
 `;
 
-export const BackDrop = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
-  background-color: ${({ theme }) => theme.colors.backdrop};
-`;
+export const DashboardBackDrop = styled(BackDrop)``;
