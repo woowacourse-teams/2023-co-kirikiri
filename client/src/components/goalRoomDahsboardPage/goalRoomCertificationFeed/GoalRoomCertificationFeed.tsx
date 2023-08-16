@@ -22,7 +22,10 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
     <DialogBox>
       <S.CertificationFeedWrapper>
         <div>
-          <h2>인증 피드</h2>
+          <S.CertificationTitleWrapper>
+            <h2>인증 피드</h2>
+            <S.CertificationCountBox>{checkFeeds.length}</S.CertificationCountBox>
+          </S.CertificationTitleWrapper>
 
           <DialogTrigger asChild>
             <button aria-labelledby='이미지 피드 전체보기'>

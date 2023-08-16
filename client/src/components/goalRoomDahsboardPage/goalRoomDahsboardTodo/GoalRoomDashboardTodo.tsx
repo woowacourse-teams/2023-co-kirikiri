@@ -27,7 +27,7 @@ const GoalRoomDashboardTodo = ({
         <div>
           <S.TitleWrapper>
             <h2>투두 리스트</h2>
-            <S.CountBox>8</S.CountBox>
+            <S.CountBox>{goalRoomTodos.length}</S.CountBox>
           </S.TitleWrapper>
 
           <DialogTrigger asChild>
