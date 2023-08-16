@@ -10,6 +10,7 @@ export const ImageGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
 
+  min-width: 100%;
   max-width: 50rem;
   max-height: 50rem;
   margin: 0 auto;
