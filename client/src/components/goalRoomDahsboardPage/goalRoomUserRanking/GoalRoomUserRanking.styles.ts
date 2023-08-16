@@ -1,6 +1,6 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled, { keyframes } from 'styled-components';
-import {BackDrop} from "@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles";
+import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
 
 const bounce = keyframes`
   0%, 20%, 50%, 80%, 100% {

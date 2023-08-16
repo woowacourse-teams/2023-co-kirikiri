@@ -4,7 +4,7 @@ import {
   CountBox,
   TitleWrapper,
 } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
-import {BackDrop} from "@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles";
+import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
 
 export const CertificationFeedWrapper = styled(DashBoardSection)``;
 
