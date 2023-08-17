@@ -122,6 +122,9 @@ class GoalRoomCreateServiceTest {
     @InjectMocks
     private GoalRoomCreateService goalRoomCreateService;
 
+    @InjectMocks
+    private GoalRoomScheduler goalRoomScheduler;
+
     @BeforeAll
     static void setUp() {
         ROADMAP_CONTENT.addNodes(ROADMAP_CONTENTS);
@@ -581,13 +584,13 @@ class GoalRoomCreateServiceTest {
         goalRoom1.join(follower2);
         goalRoom2.join(follower3);
 
-        when(goalRoomRepository.findAllByStartDateNow())
+        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
                 .thenReturn(List.of(goalRoom1));
         when(goalRoomPendingMemberRepository.findAllByGoalRoom(any()))
                 .thenReturn(List.of(goalRoomPendingMember, goalRoomPendingMember1, goalRoomPendingMember2));
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // then
         assertAll(
@@ -615,11 +618,11 @@ class GoalRoomCreateServiceTest {
         goalRoom1.join(follower2);
         goalRoom2.join(follower3);
 
-        when(goalRoomRepository.findAllByStartDateNow())
+        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
                 .thenReturn(List.of());
 
         // when
-        goalRoomCreateService.startGoalRooms();
+        goalRoomScheduler.startGoalRooms();
 
         // then
         verify(goalRoomPendingMemberRepository, times(0)).findAllByGoalRoom(any());

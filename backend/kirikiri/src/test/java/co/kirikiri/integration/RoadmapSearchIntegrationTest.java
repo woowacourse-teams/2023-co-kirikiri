@@ -18,7 +18,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class RoadmapSearchIntegrationTest extends RoadmapCreateIntegrationTest {
+class RoadmapSearchIntegrationTest extends RoadmapCreateIntegrationTest {
 
     public RoadmapSearchIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository) {
         super(roadmapCategoryRepository);

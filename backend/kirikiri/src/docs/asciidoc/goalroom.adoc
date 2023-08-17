@@ -149,15 +149,16 @@ operation::goal-room-create-api-test/골룸_투두_추가시_컨텐츠가_250글
 
 === *7-1* 성공
 
-operation::goal-room-create-api-test/인증_피드_등록_요청을_보낸다[snippets='http-request,http-response,request-headers,path-parameters,request-parts,form-parameters,response-headers']
+operation::goal-room-create-api-test/인증_피드_등록_요청을_보낸다[snippets='http-request,request-headers,path-parameters,http-response,response-headers']
 
 === *7-2* 실패 - 인증 피드 요청 시 존재하지 않는 사용자 아이디일 경우
 
 operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response']
+operation::goal-room-create-api-test/인증_피드_등록_요청시_멤버가_존재하지_않을_경우_예외를_반환한다[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === *7-3* 실패 - 인증 피드 요청 시 존재하지 않는 골룸일 경우
 
-operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,http-response']
+operation::goal-room-create-api-test/인증_피드_등록_요청시_로드맵이_존재하지_않을_경우_예외를_반환한다[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === *7-4* 실패 - 인증 피드 요청 시 노드 기간을 벗어난 경우
 

@@ -35,7 +35,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -276,17 +275,6 @@ public class GoalRoomCreateService {
         final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
         goalRoom.addAllGoalRoomMembers(goalRoomMembers);
         goalRoom.deleteAllPendingMembers();
-    }
-
-    @Scheduled(cron = "0 0 0 * * *")
-    public void startGoalRooms() {
-        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDateNow();
-        for (final GoalRoom goalRoom : goalRoomsToStart) {
-            final List<GoalRoomPendingMember> pendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
-                    goalRoom);
-            saveGoalRoomMemberFromPendingMembers(pendingMembers, goalRoom);
-            goalRoom.start();
-        }
     }
 
     private List<GoalRoomMember> makeGoalRoomMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
