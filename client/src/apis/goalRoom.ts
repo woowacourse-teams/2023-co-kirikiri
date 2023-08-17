@@ -1,3 +1,4 @@
+import { FILTER_COND } from '@constants/goalRoom/goalRoomFilter';
 import {
   GoalRoomListRequest,
   GoalRoomBrowseResponse,
@@ -16,9 +17,9 @@ import { GoalRoomRecruitmentStatus, MyPageGoalRoom } from '@myTypes/goalRoom/int
 
 export const getGoalRoomList = async ({
   roadmapId,
-  filterCond = 'LATEST',
+  filterCond = FILTER_COND.latest,
   lastCreatedAt = '',
-  size = 6,
+  size = 8,
   lastId,
 }: GoalRoomListRequest): Promise<GoalRoomDetailResponse> => {
   const { data } = await client.get<GoalRoomDetailResponse>(

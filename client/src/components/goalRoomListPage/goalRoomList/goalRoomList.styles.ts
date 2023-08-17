@@ -2,7 +2,8 @@ import media from '@/styles/media';
 import styled from 'styled-components';
 
 export const ListContainer = styled.section`
-  margin-top: 6rem;
+  min-height: 100vh;
+  margin-top: 4rem;
 `;
 
 export const ItemContainer = styled.article`
@@ -11,7 +12,7 @@ export const ItemContainer = styled.article`
   padding: 1.7rem 4rem 3rem;
 
   background-color: ${({ theme }) => theme.colors.white};
-  border-radius: 34px;
+  border-radius: 16px;
   box-shadow: -1.5653846263885498px 7.826924800872803px 46.961544036865234px 0px
     rgba(0, 0, 0, 0.13);
 `;
@@ -20,11 +21,11 @@ export const FilterBar = styled.div`
   display: flex;
   justify-content: space-between;
   margin-right: 9rem;
-  margin-bottom: 4rem;
+  margin-bottom: 6rem;
 
   & > p {
-    ${({ theme }) => theme.fonts.description4};
-    color: ${({ theme }) => theme.colors.gray200};
+    ${({ theme }) => theme.fonts.button1};
+    color: ${({ theme }) => theme.colors.gray300};
   }
 `;
 
@@ -32,7 +33,6 @@ export const ListWrapper = styled.div`
   display: grid;
   grid-row-gap: 6rem;
   grid-template-columns: repeat(2, 1fr);
-  min-height: 100vh;
 
   ${media.mobile`
   grid-template-columns: repeat(1, 1fr);
@@ -42,8 +42,7 @@ export const ListWrapper = styled.div`
 
 export const Recruiting = styled.div`
   ${({ theme }) => theme.fonts.description4}
-  color: ${({ theme }) => theme.colors.gray200};
-  float: right;
+  color: ${({ theme }) => theme.colors.gray300};
 `;
 
 export const Name = styled.h1`
@@ -94,8 +93,8 @@ export const CreateGoalRoomButton = styled.button`
   left: 50%;
   transform: translate(-50%);
 
-  width: 50%;
   height: 5rem;
+  padding: 0 10rem;
 
   color: ${({ theme }) => theme.colors.white};
 
@@ -104,26 +103,28 @@ export const CreateGoalRoomButton = styled.button`
 `;
 
 export const FilterWrapper = styled.div`
+  position: relation;
   ${({ theme }) => theme.fonts.description4};
   position: relative;
+
   display: flex;
   flex-direction: column;
-  color: ${({ theme }) => theme.colors.gray200};
+
+  color: ${({ theme }) => theme.colors.gray300};
 `;
 
 export const FilterTrigger = styled.button`
-  ${({ theme }) => theme.fonts.description4};
+  ${({ theme }) => theme.fonts.button1};
   width: 9rem;
   height: 1.5rem;
-  color: ${({ theme }) => theme.colors.gray200};
+  color: ${({ theme }) => theme.colors.gray300};
 `;
 
 export const FilterOptionWrapper = styled.ul`
   position: absolute;
-  top: 2rem;
+  top: -1rem;
 
   width: 9rem;
-  /* height: 3rem; */
 
   border: 0.2rem solid ${({ theme }) => theme.colors.main_middle};
   border-radius: 4px;
@@ -131,7 +132,13 @@ export const FilterOptionWrapper = styled.ul`
 
 export const FilterOption = styled.li`
   cursor: pointer;
+
   width: 100%;
   height: 50%;
   padding: 1rem 1rem;
+
+  color: ${({ theme }) => theme.colors.white};
+  text-align: center;
+
+  background-color: ${({ theme }) => theme.colors.main_dark};
 `;
