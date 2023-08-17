@@ -64,13 +64,13 @@ export const useGoalRoomDetail = (goalRoomId: number) => {
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
-  const { data: goalRoomRes } = useSuspendedQuery(
+  const { data: goalRoomResponse } = useSuspendedQuery(
     [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
     () => getGoalRoomDashboard(goalRoomId)
   );
 
   return {
-    goalRoom: goalRoomRes,
+    goalRoom: goalRoomResponse,
   };
 };
 
