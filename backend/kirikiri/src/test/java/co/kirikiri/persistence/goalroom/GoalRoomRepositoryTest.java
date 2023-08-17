@@ -193,7 +193,7 @@ class GoalRoomRepositoryTest {
         goalRoomRepository.save(goalRoom3);
 
         // when
-        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDateNow();
+        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDate(LocalDate.now());
 
         // then
         assertThat(findGoalRooms)

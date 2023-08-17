@@ -17,7 +17,6 @@ import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,14 +68,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                         roadmapCond(roadmap))
                 .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
-                .fetch();
-    }
-
-    @Override
-    public List<GoalRoom> findAllByStartDateNow() {
-        return selectFrom(goalRoom)
-                .join(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
-                .where(startDateEqualsToNow())
                 .fetch();
     }
 
@@ -161,9 +152,5 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression roadmapCond(final Roadmap roadmap) {
         return goalRoom.roadmapContent.roadmap.eq(roadmap);
-    }
-
-    private BooleanExpression startDateEqualsToNow() {
-        return goalRoomRoadmapNode.period.startDate.eq(LocalDate.now());
     }
 }

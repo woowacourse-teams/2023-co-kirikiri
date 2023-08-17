@@ -3,7 +3,6 @@ package co.kirikiri.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.integration.helper.TestTransactionQuery;
 import co.kirikiri.integration.helper.TestTransactionService;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
@@ -22,17 +21,16 @@ public class RoadmapSchedulerIntegrationTest extends GoalRoomCreateIntegrationTe
 
     private static final LocalDate 현재부터_3개월_1일_전 = 오늘.minusMonths(3).minusDays(1);
 
-    private final TestTransactionQuery testTransactionQuery;
+    private final TestTransactionService testTransactionService;
     private final RoadmapScheduler roadmapScheduler;
     private final RoadmapRepository roadmapRepository;
 
     public RoadmapSchedulerIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
                                            final TestTransactionService testTransactionService,
-                                           final TestTransactionQuery testTransactionQuery,
                                            final RoadmapScheduler roadmapScheduler,
                                            final RoadmapRepository roadmapRepository) {
         super(roadmapCategoryRepository, testTransactionService);
-        this.testTransactionQuery = testTransactionQuery;
+        this.testTransactionService = testTransactionService;
         this.roadmapScheduler = roadmapScheduler;
         this.roadmapRepository = roadmapRepository;
     }
@@ -67,8 +65,8 @@ public class RoadmapSchedulerIntegrationTest extends GoalRoomCreateIntegrationTe
 
         로드맵_삭제(기본_로드맵_아이디, 기본_로그인_토큰);
 
-        testTransactionQuery.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
-        testTransactionQuery.골룸의_상태와_종료날짜를_변경한다(골룸_아이디2, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
+        testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
+        testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디2, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
 
         // when
         roadmapScheduler.deleteRoadmaps();
@@ -101,7 +99,7 @@ public class RoadmapSchedulerIntegrationTest extends GoalRoomCreateIntegrationTe
 
         로드맵_삭제(기본_로드맵_아이디, 기본_로그인_토큰);
 
-        testTransactionQuery.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
+        testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
 
         // when
         roadmapScheduler.deleteRoadmaps();
@@ -134,8 +132,8 @@ public class RoadmapSchedulerIntegrationTest extends GoalRoomCreateIntegrationTe
 
         로드맵_삭제(기본_로드맵_아이디, 기본_로그인_토큰);
 
-        testTransactionQuery.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
-        testTransactionQuery.골룸의_상태와_종료날짜를_변경한다(골룸_아이디2, GoalRoomStatus.COMPLETED, 오늘);
+        testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
+        testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디2, GoalRoomStatus.COMPLETED, 오늘);
 
         // when
         roadmapScheduler.deleteRoadmaps();

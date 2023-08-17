@@ -19,8 +19,6 @@ public interface GoalRoomQueryRepository {
                                                                    final Long lastId,
                                                                    final int pageSize);
 
-    List<GoalRoom> findAllByStartDateNow();
-
     Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId);
 
     List<GoalRoom> findByMember(final Member member);
