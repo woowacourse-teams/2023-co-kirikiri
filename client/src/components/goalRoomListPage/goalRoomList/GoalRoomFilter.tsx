@@ -10,8 +10,9 @@ const GoalRoomFilter = ({
     selectedOption: (typeof goalRoomFilter)[keyof typeof goalRoomFilter]
   ) => React.ReactNode;
 }) => {
-  const [selectedOption, setSelectedOption] =
-    useState<(typeof goalRoomFilter)[keyof typeof goalRoomFilter]>('마감 임박 순');
+  const [selectedOption, setSelectedOption] = useState<
+    (typeof goalRoomFilter)[keyof typeof goalRoomFilter]
+  >(goalRoomFilter['1']);
 
   const selectFilterOption = (id: number) => {
     if (Object.hasOwn(goalRoomFilter, id)) {
