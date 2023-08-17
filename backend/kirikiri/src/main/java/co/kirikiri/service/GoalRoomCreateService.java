@@ -58,8 +58,8 @@ public class GoalRoomCreateService {
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
         final RoadmapContent roadmapContent = findRoadmapContentById(goalRoomCreateDto.roadmapContentId());
-        checkDeletedRoadmap(roadmapContent);
-        checkNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
+        validateDeletedRoadmap(roadmapContent);
+        validateNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(
                 goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
         final Member leader = findMemberByIdentifier(memberIdentifier);
@@ -76,14 +76,14 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다."));
     }
 
-    private void checkDeletedRoadmap(final RoadmapContent roadmapContent) {
+    private void validateDeletedRoadmap(final RoadmapContent roadmapContent) {
         final Roadmap roadmap = roadmapContent.getRoadmap();
         if (roadmap.isDeleted()) {
             throw new BadRequestException("삭제된 로드맵에 대해 골룸을 생성할 수 없습니다.");
         }
     }
 
-    private void checkNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {
+    private void validateNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {
         if (roadmapNodesSize != goalRoomRoadmapNodeDtosSize) {
             throw new BadRequestException("모든 노드에 대해 기간이 설정돼야 합니다.");
         }
