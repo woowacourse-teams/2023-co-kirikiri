@@ -36,7 +36,10 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
           endDate: '',
         })),
       },
-      { ...generateNodesValidations(nodes), ...staticValidations }
+      {
+        ...generateNodesValidations(nodes),
+        ...staticValidations,
+      }
     );
 
   const onSubmit = () => {

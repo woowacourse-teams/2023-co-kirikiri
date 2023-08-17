@@ -19,6 +19,10 @@ export const ERROR_MESSAGE = {
   START_DATE_REQUIRED: '시작일은 필수 항목입니다',
   END_DATE_REQUIRED: '종료일은 필수 항목입니다',
   INVALID_DATE: '이전 날짜를 입력할 수 없습니다',
+  NEED_START_DATE: '시작일을 먼저 입력해주세요',
+  INVALID_END_DATE: '시작일보다 빠른 날짜를 입력할 수 없습니다',
+  NEED_HIGHER_THAN_PREV_DATE: '이전 일정보다 높게 설정해주세요',
+  NEED_PREV_DATE: '이전 일정을 먼저 입력해주세요',
 
   CHECK_COUNT_REQUIRED: '인증 횟수는 필수 항목입니다',
 
