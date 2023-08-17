@@ -49,6 +49,9 @@
     </appender>
 
     <root level="INFO">
+        <springProfile name="local">
+            <appender-ref ref="CONSOLE"/>
+        </springProfile>
         <springProfile name="test">
             <appender-ref ref="CONSOLE"/>
         </springProfile>
