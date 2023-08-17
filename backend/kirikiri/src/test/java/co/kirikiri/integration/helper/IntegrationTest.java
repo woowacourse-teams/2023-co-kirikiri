@@ -7,7 +7,6 @@ import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
@@ -21,18 +20,17 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 @Import(TestConfig.class)
 public class IntegrationTest {
 
-    protected final String AUTHORIZATION = "Authorization";
-    protected final String LOCATION = "Location";
-    protected final String BEARER_TOKEN_FORMAT = "Bearer %s";
-
-    @Value("${server.servlet.contextPath}")
-    protected String API_PREFIX;
+//    @Value("${server.servlet.contextPath}")
+//    protected String API_PREFIX;
 
     @LocalServerPort
     private int port;
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected TestTransactionService testTransactionService;
 
     @Autowired
     private DatabaseCleaner databaseCleaner;

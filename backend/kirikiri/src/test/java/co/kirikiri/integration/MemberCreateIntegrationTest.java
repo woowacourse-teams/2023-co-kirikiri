@@ -1,38 +1,23 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_회원가입;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.integration.helper.IntegrationTest;
+import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
 import java.time.Month;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
-class MemberCreateIntegrationTest extends IntegrationTest {
-
-    protected static final String DEFAULT_IDENTIFIER = "identifier1";
-    protected static final String DEFAULT_PASSWORD = "password1!";
-    protected static final String DEFAULT_NICKNAME = "nickname";
-    protected static final String DEFAULT_PHONE_NUMBER = "010-1234-5678";
-    protected static final LocalDate DEFAULT_BIRTHDAY = LocalDate.of(2023, Month.JULY, 12);
-    protected static final GenderType DEFAULT_GENDER_TYPE = GenderType.MALE;
-
-    protected Long 기본_회원_아이디;
-
-    @BeforeEach
-    void init() {
-        기본_회원_아이디 = 기본_회원가입();
-    }
+class MemberCreateIntegrationTest extends InitIntegrationTest {
 
     @Test
     void 정상적으로_회원가입을_성공한다() {
@@ -58,7 +43,8 @@ class MemberCreateIntegrationTest extends IntegrationTest {
         final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
-        final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
+        final ErrorResponse 에러_메세지 = 회원가입_응답.as(new TypeRef<>() {
+        });
         assertThat(회원가입_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(에러_메세지.message()).isEqualTo("제약 조건에 맞지 않는 아이디입니다.");
     }
@@ -173,28 +159,5 @@ class MemberCreateIntegrationTest extends IntegrationTest {
         final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
         assertThat(회원가입_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(에러_메세지.message()).isEqualTo("제약 조건에 맞지 않는 닉네임입니다.");
-    }
-
-    protected ExtractableResponse<Response> 요청을_받는_회원가입(final MemberJoinRequest 회원가입_요청) {
-        return given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(회원가입_요청)
-                .post(API_PREFIX + "/members/join")
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    protected Long 회원가입(final MemberJoinRequest 회원가입_요청) {
-        final Response 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청).response();
-        final String Location_헤더 = 회원가입_응답.header("Location");
-        return Long.parseLong(Location_헤더.substring(13));
-    }
-
-    protected Long 기본_회원가입() {
-        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(DEFAULT_IDENTIFIER, DEFAULT_PASSWORD, DEFAULT_NICKNAME,
-                DEFAULT_PHONE_NUMBER, DEFAULT_GENDER_TYPE, DEFAULT_BIRTHDAY);
-        return 회원가입(회원가입_요청);
     }
 }

@@ -1,10 +1,19 @@
 package co.kirikiri.integration;
 
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_생성하고_아이디를_반환한다;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.십일_후;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.오늘;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_투두_컨텐츠;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_삭제;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.integration.helper.TestTransactionService;
-import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
+import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.RoadmapScheduler;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
@@ -14,37 +23,25 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class RoadmapSchedulerIntegrationTest extends GoalRoomCreateIntegrationTest {
+public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
 
     private static final LocalDate 현재부터_3개월_1일_전 = 오늘.minusMonths(3).minusDays(1);
 
-    private final TestTransactionService testTransactionService;
     private final RoadmapScheduler roadmapScheduler;
     private final RoadmapRepository roadmapRepository;
 
-    public RoadmapSchedulerIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                           final TestTransactionService testTransactionService,
-                                           final RoadmapScheduler roadmapScheduler,
+    public RoadmapSchedulerIntegrationTest(final RoadmapScheduler roadmapScheduler,
                                            final RoadmapRepository roadmapRepository) {
-        super(roadmapCategoryRepository, testTransactionService);
-        this.testTransactionService = testTransactionService;
         this.roadmapScheduler = roadmapScheduler;
         this.roadmapRepository = roadmapRepository;
-    }
-
-    @Override
-    @BeforeEach
-    void init() {
-        super.init();
     }
 
     @Test
     void 삭제된_상태의_로드맵을_삭제시_모든_골룸이_종료된지_3개월이_지났으면_정상적으로_삭제한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -78,7 +75,7 @@ public class RoadmapSchedulerIntegrationTest extends GoalRoomCreateIntegrationTe
     @Test
     void 삭제된_상태의_로드맵_삭제시_종료되지_않은_골룸이_있으면_삭제되지_않는다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -111,7 +108,7 @@ public class RoadmapSchedulerIntegrationTest extends GoalRoomCreateIntegrationTe
     @Test
     void 삭제된_상태의_로드맵_삭제시_종료된지_3개월이_지나지_않은_골룸이_있으면_삭제되지_않는다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);

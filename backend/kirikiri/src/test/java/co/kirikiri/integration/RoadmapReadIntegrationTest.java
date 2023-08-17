@@ -1,12 +1,19 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로그인한_사용자가_생성한_로드맵을_이전에_받은_로드맵의_제일마지막_아이디_이후의_조건으로_조회한다;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로그인한_사용자가_생성한_로드맵을_조회한다;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회한다;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.모든_카테고리를_조회한다;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.사이즈_없이_로드맵을_조회한다;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.사이즈별로_로드맵을_조회한다;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.정렬된_카테고리별_로드맵_리스트_조회;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
@@ -20,30 +27,16 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
-class RoadmapReadIntegrationTest extends RoadmapCreateIntegrationTest {
-
-    public RoadmapReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository) {
-        super(roadmapCategoryRepository);
-    }
-
-    @Override
-    @BeforeEach
-    void init() {
-        super.init();
-    }
+class RoadmapReadIntegrationTest extends InitIntegrationTest {
 
     @Test
     void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보_조회를_성공한다() throws IOException {
         //given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapSaveRequest 다른_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "다른 로드맵 제목", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -85,13 +78,13 @@ class RoadmapReadIntegrationTest extends RoadmapCreateIntegrationTest {
     @Test
     void 사이즈_조건으로_로드맵_목록을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
         final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
-        final RoadmapCategory 다른_카테고리 = 로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "thrid roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -127,7 +120,8 @@ class RoadmapReadIntegrationTest extends RoadmapCreateIntegrationTest {
     @Test
     void 로드맵_카테고리_리스트를_조회한다() {
         // given
-        final List<RoadmapCategory> 로드맵_카테고리_리스트 = 모든_로드맵_카테고리를_저장한다("IT", "여가", "운동", "시험", "게임");
+        final List<RoadmapCategory> 로드맵_카테고리_리스트 = testTransactionService.모든_로드맵_카테고리를_저장한다("IT", "여가", "운동", "시험",
+                "게임");
 
         // when
         final List<RoadmapCategoryResponse> 로드맵_카테고리_응답_리스트 = 모든_카테고리를_조회한다()
@@ -147,7 +141,7 @@ class RoadmapReadIntegrationTest extends RoadmapCreateIntegrationTest {
     @Test
     void 사용자가_생성한_로드맵을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -175,7 +169,7 @@ class RoadmapReadIntegrationTest extends RoadmapCreateIntegrationTest {
     @Test
     void 로드맵_목록_조회시_다음_요소가_존재하면_hasNext가_true로_반환된다() throws IOException {
         // given
-        기본_로드맵_생성(기본_로그인_토큰);
+        로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -196,7 +190,7 @@ class RoadmapReadIntegrationTest extends RoadmapCreateIntegrationTest {
     @Test
     void 사용자가_생성한_로드맵을_이전에_받아온_리스트_이후로_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -219,91 +213,5 @@ class RoadmapReadIntegrationTest extends RoadmapCreateIntegrationTest {
         // then
         assertThat(사용자_로드맵_응답_리스트.hasNext()).isFalse();
         assertThat(사용자_로드맵_응답_리스트.responses().get(0).roadmapId()).isEqualTo(기본_로드맵_아이디);
-    }
-
-    private ExtractableResponse<Response> 로드맵을_아이디로_조회한다(final Long 로드맵_아이디) {
-        return given()
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/roadmaps/{roadmapId}", 로드맵_아이디)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    protected RoadmapResponse 로드맵을_아이디로_조회하고_응답객체를_반환한다(final Long 로드맵_아이디) {
-        return 로드맵을_아이디로_조회한다(로드맵_아이디)
-                .response()
-                .as(new TypeRef<>() {
-                });
-    }
-
-    protected ExtractableResponse<Response> 정렬된_카테고리별_로드맵_리스트_조회(final RoadmapOrderType 정렬_조건,
-                                                                 final Long 검색할_카테고리_아이디, final int 페이지_크기) {
-        return given()
-                .log().all()
-                .when()
-                .get("/api/roadmaps?size=" + 페이지_크기 + "&filterCond=" + 정렬_조건.name() + "&categoryId=" + 검색할_카테고리_아이디)
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 로그인한_사용자가_생성한_로드맵을_이전에_받은_로드맵의_제일마지막_아이디_이후의_조건으로_조회한다(
-            final String 로그인_토큰_정보, final int 페이지_사이즈, final Long 마지막_로드맵_아이디) {
-        return given()
-                .log().all()
-                .when()
-                .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
-                .get("/api/roadmaps/me?lastId=" + 마지막_로드맵_아이디 + "&size=" + 페이지_사이즈)
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 로그인한_사용자가_생성한_로드맵을_조회한다(final String 로그인_토큰_정보, final int 페이지_사이즈) {
-        return given()
-                .log().all()
-                .when()
-                .header(HttpHeaders.AUTHORIZATION, 로그인_토큰_정보)
-                .get("/api/roadmaps/me?size=" + 페이지_사이즈)
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 모든_카테고리를_조회한다() {
-        return given()
-                .log().all()
-                .when()
-                .get("/api/roadmaps/categories")
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 사이즈별로_로드맵을_조회한다(final Integer size) {
-        return given()
-                .log().all()
-                .when()
-                .get("/api/roadmaps?size=" + size)
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 사이즈_없이_로드맵을_조회한다() {
-        return given()
-                .log().all()
-                .when()
-                .get("/api/roadmaps")
-                .then().log().all()
-                .extract();
-    }
-
-    private List<RoadmapCategory> 모든_로드맵_카테고리를_저장한다(final String... 카테고리_이름_목록) {
-        final List<RoadmapCategory> roadmapCategories = new ArrayList<>();
-        for (final String 카테고리_이름 : 카테고리_이름_목록) {
-            final RoadmapCategory 로드맵_카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-            roadmapCategories.add(new RoadmapCategory(로드맵_카테고리.getId(), 카테고리_이름));
-        }
-        roadmapCategoryRepository.saveAll(roadmapCategories);
-        return roadmapCategories;
     }
 }

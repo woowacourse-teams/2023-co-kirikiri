@@ -1,11 +1,38 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
+import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_노드_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_아이디로_골룸을_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_아이디와_토큰으로_골룸_정보를_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_참가_요청;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_투두리스트_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_투두리스트_추가;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_생성하고_아이디를_반환한다;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_시작한다;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸의_사용자_정보를_전체_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸의_사용자_정보를_정렬_기준없이_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.기본_골룸_생성;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.로드맵_아이디로_골룸_목록_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.사용자가_참여한_골룸_중_골룸_진행_상태에_따라_목록을_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.사용자의_모든_골룸_조회;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.사용자의_특정_골룸_정보를_조회한다;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.삼십일_후;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.십일_후;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.오늘;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.이십일_후;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.인증_피드_등록;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.인증_피드_전체_조회_요청;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.integration.helper.TestTransactionService;
+import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
-import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
@@ -38,29 +65,16 @@ import io.restassured.response.Response;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
-class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
-
-    public GoalRoomReadIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                       final TestTransactionService testTransactionService) {
-        super(roadmapCategoryRepository, testTransactionService);
-    }
-
-    @Override
-    @BeforeEach
-    void init() {
-        super.init();
-    }
+class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 
     @Test
     void 골룸_아이디로_골룸_정보를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -77,13 +91,13 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 골룸_아이디와_사용자_아이디로_골룸_정보를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         // when
-        final GoalRoomCertifiedResponse 골룸_응답값 = 골룸_아이디와_토큰으로_골룸_정보를_조회(기본_골룸_아이디)
+        final GoalRoomCertifiedResponse 골룸_응답값 = 골룸_아이디와_토큰으로_골룸_정보를_조회(기본_골룸_아이디, 기본_로그인_토큰)
                 .as(new TypeRef<>() {
                 });
 
@@ -94,7 +108,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 골룸_투두리스트를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -132,7 +146,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 골룸_투두리스트_조회시_참여하지_않은_사용자일_경우() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -162,7 +176,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 진행중인_사용자_단일_골룸을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -190,8 +204,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
                 2, 정상적인_골룸_제한_인원, 오늘, 십일_후, 로드맵_응답.content().id(),
                 new GoalRoomRoadmapNodesResponse(false, false,
                         List.of(new GoalRoomRoadmapNodeResponse(로드맵_응답.content().nodes().get(0).id(),
-                                "roadmap 1st week", 오늘,
-                                십일_후, 정상적인_골룸_노드_인증_횟수))),
+                                "roadmap 1st week", 오늘, 십일_후, 정상적인_골룸_노드_인증_횟수))),
                 List.of(new GoalRoomTodoResponse(1L, "GOAL_ROOM_TO_DO_CONTENT", 오늘, 십일_후,
                         new GoalRoomToDoCheckResponse(false))),
                 List.of(new CheckFeedResponse(2L, "default-image-path", "image description", LocalDate.now()),
@@ -206,7 +219,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 골룸_시작_전에_사용자_단일_골룸_조회_시_인증_피드가_빈_응답을_반환한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -221,7 +234,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 사용자의_모든_골룸_목록을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -239,7 +252,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸을_시작한다(기본_로그인_토큰, 두번째_골룸_아이디);
 
         // when
-        final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자의_모든_골룸_조회()
+        final List<MemberGoalRoomForListResponse> 요청_응답값 = 사용자의_모든_골룸_조회(기본_로그인_토큰)
                 .as(new TypeRef<>() {
                 });
 
@@ -251,12 +264,12 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 사용자가_참여한_골룸_중_모집_중인_골룸_목록을_조회한다() throws IOException {
         // given
-        final Long 첫번쨰_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 첫번쨰_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 첫번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(첫번쨰_로드맵_아이디);
 
         final Long 첫번째_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 첫번째_로드맵_응답);
 
-        final Long 두번째_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(두번째_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("Content", 십일_후, 이십일_후);
@@ -282,12 +295,12 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 사용자가_참여한_골룸_중_진행_중인_골룸_목록을_조회한다() throws IOException {
         // given
-        final Long 첫번쨰_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 첫번쨰_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 첫번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(첫번쨰_로드맵_아이디);
 
         final Long 첫번째_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 첫번째_로드맵_응답);
 
-        final Long 두번째_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(두번째_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("Content", 십일_후, 이십일_후);
@@ -313,7 +326,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 골룸_노드를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -346,7 +359,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 골룸_노드_조회시_참여하지_않은_사용자일_경우_예외가_발생한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -378,7 +391,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -427,7 +440,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         회원가입(다른_회원_회원_가입_요청);
         final String 다른_회원_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_회원_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -465,7 +478,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -507,7 +520,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -542,7 +555,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -576,7 +589,7 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
     @Test
     void 로드맵의_골룸_목록을_마감임박순으로_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 기본_로드맵_생성(기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -598,110 +611,5 @@ class GoalRoomReadIntegrationTest extends GoalRoomCreateIntegrationTest {
         // then
         assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(0).goalRoomId()).isEqualTo(기본_골룸_아이디);
         assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(1).goalRoomId()).isEqualTo(두번째_골룸_아이디);
-    }
-
-    private ExtractableResponse<Response> 인증_피드_전체_조회_요청(final String 액세스_토큰, final Long 골룸_아이디) {
-        return given().log().all()
-                .header(AUTHORIZATION, 액세스_토큰)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds", 골룸_아이디)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 골룸_아이디로_골룸을_조회(final Long 기본_골룸_아이디) {
-        return given()
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 기본_골룸_아이디)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 골룸_아이디와_토큰으로_골룸_정보를_조회(final Long 기본_골룸_아이디) {
-        return given()
-                .header(AUTHORIZATION, 기본_로그인_토큰)
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}", 기본_골룸_아이디)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 골룸_투두리스트_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
-        return given()
-                .header(AUTHORIZATION, 로그인_토큰)
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/todos", 기본_골룸_아이디)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 사용자의_모든_골룸_조회() {
-        return given().log().all()
-                .header(AUTHORIZATION, 기본_로그인_토큰)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/me")
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 사용자가_참여한_골룸_중_골룸_진행_상태에_따라_목록을_조회(final String 로그인_토큰,
-                                                                            final String 골룸_진행_상태) {
-        return given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰)
-                .queryParam("statusCond", 골룸_진행_상태)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/me")
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 골룸_노드_조회(final Long 기본_골룸_아이디, final String 로그인_토큰) {
-        return given()
-                .header(AUTHORIZATION, 로그인_토큰)
-                .log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/nodes", 기본_골룸_아이디)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 골룸의_사용자_정보를_전체_조회(final Long 기본_골룸_아이디, final String 로그인_토큰,
-                                                            final String 정렬조건) {
-        return given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get(API_PREFIX + "/goal-rooms/{goalRoomId}/members?sortCond={sortType}", 기본_골룸_아이디, 정렬조건)
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 로드맵_아이디로_골룸_목록_조회(final String 로그인_토큰, final Long 로드맵_아이디,
-                                                            final String 골룸_정렬_조건, final Integer 사이즈) {
-        return given().log().all()
-                .header(AUTHORIZATION, 로그인_토큰)
-                .when()
-                .get(API_PREFIX
-                                + "/roadmaps/{roadmapId}/goal-rooms?filterCond={orderType}&size={size}",
-                        로드맵_아이디, 골룸_정렬_조건, 사이즈)
-                .then()
-                .log().all()
-                .extract();
     }
 }

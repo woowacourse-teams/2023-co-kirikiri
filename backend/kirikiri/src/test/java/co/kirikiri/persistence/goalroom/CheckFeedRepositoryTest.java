@@ -10,7 +10,6 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -187,7 +186,8 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom1, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom1,
                 member);
-        final GoalRoomMember otherLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom2, creator);
+        final GoalRoomMember otherLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom2,
+                creator);
         goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom1.getGoalRoomRoadmapNodes().getValues().get(0);

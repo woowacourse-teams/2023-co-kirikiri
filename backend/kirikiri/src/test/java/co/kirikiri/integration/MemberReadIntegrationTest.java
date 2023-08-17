@@ -1,9 +1,17 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_BIRTHDAY;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_GENDER_TYPE;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_NICKNAME;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PHONE_NUMBER;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_특정_사용자의_정보_조회;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.member.Gender;
+import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
@@ -12,18 +20,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
-class MemberReadIntegrationTest extends AuthenticationIntegrationTest {
-
-    @Override
-    @BeforeEach
-    void init() {
-        super.init();
-    }
+class MemberReadIntegrationTest extends InitIntegrationTest {
 
     @Test
     void 로그인한_사용자_자신의_정보를_성공적으로_조회한다() throws JsonProcessingException {
@@ -78,27 +78,5 @@ class MemberReadIntegrationTest extends AuthenticationIntegrationTest {
                 });
         assertThat(특정_사용자의_정보_조회_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(에러_메세지.message()).isEqualTo("존재하지 않는 회원입니다. memberId = 2");
-    }
-
-    protected ExtractableResponse<Response> 요청을_받는_사용자_자신의_정보_조회_요청(final String 액세스_토큰) {
-        return given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .header(AUTHORIZATION, 액세스_토큰)
-                .get(API_PREFIX + "/members/me")
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> 요청을_받는_특정_사용자의_정보_조회(final String 액세스_토큰, final Long 조회할_회원_아이디) {
-        return given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .header(AUTHORIZATION, 액세스_토큰)
-                .get(API_PREFIX + "/members/{memberId}", 조회할_회원_아이디)
-                .then()
-                .log().all()
-                .extract();
     }
 }

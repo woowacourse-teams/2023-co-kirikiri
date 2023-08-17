@@ -1,8 +1,12 @@
 package co.kirikiri.integration;
 
-import static io.restassured.RestAssured.given;
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.응답을_반환하는_로그인;
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.토큰_재발행;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
@@ -12,23 +16,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
-class AuthenticationIntegrationTest extends MemberCreateIntegrationTest {
-
-    protected String 기본_로그인_토큰;
-    protected String 기본_재발행_토큰;
-
-    @Override
-    @BeforeEach
-    void init() {
-        super.init();
-        기본_로그인_토큰 = String.format(BEARER_TOKEN_FORMAT, 기본_로그인().accessToken());
-        기본_재발행_토큰 = 기본_로그인().refreshToken();
-    }
+class AuthenticationIntegrationTest extends InitIntegrationTest {
 
     @Test
     void 정상적으로_로그인에_성공한다() {
@@ -145,36 +136,5 @@ class AuthenticationIntegrationTest extends MemberCreateIntegrationTest {
 
         final ErrorResponse 에러_메세지_바디 = 토큰_재발행_응답.as(ErrorResponse.class);
         assertThat(에러_메세지_바디.message()).isEqualTo("Invalid Token");
-    }
-
-    private ExtractableResponse<Response> 응답을_반환하는_로그인(final LoginRequest 로그인_요청) {
-        return given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(로그인_요청)
-                .post(API_PREFIX + "/auth/login")
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    protected AuthenticationResponse 로그인(final LoginRequest 로그인_요청) {
-        return 응답을_반환하는_로그인(로그인_요청).as(AuthenticationResponse.class);
-    }
-
-    protected AuthenticationResponse 기본_로그인() {
-        final LoginRequest request = new LoginRequest(DEFAULT_IDENTIFIER, DEFAULT_PASSWORD);
-        return 로그인(request);
-    }
-
-    private ExtractableResponse<Response> 토큰_재발행(final ReissueTokenRequest 토큰_재발행_요청) {
-        return given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .body(토큰_재발행_요청)
-                .post(API_PREFIX + "/auth/reissue")
-                .then()
-                .log().all()
-                .extract();
     }
 }
