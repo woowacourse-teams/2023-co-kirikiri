@@ -3,6 +3,7 @@ import type { CategoryType, SelectedCategoryId } from '@myTypes/roadmap/internal
 import { CategoriesInfo } from '@constants/roadmap/category';
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './Categories.styles';
+import { useNavigate } from 'react-router-dom';
 
 type CategoriesProps = {
   selectedCategoryId: SelectedCategoryId;
@@ -14,12 +15,21 @@ const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => 
   const upCategories = categories.slice(0, 5);
   const downCategories = categories.slice(5);
 
+  const navigate = useNavigate();
+  console.log(selectCategory);
+
+  const handleClickCategory = (categoryId: CategoryType['id']) => {
+    const queryParams = new URLSearchParams();
+    queryParams.set('category', String(categoryId));
+    navigate(`?${queryParams}`);
+  };
+
   const renderCategory = ({ name, id }: CategoryType) => {
     return (
       <S.Category
         key={id}
         id={String(id)}
-        onClick={selectCategory}
+        onClick={() => handleClickCategory(id)}
         selected={selectedCategoryId === id}
         aria-label={name}
         role='button'
