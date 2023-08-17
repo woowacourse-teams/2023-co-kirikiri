@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+export const GoalRoomWrapper = styled.div`
+  position: relative;
+`;
+
 export const GoalRoomGridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(28rem, 1fr));
