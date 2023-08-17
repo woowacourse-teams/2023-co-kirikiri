@@ -24,6 +24,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
+import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
@@ -31,14 +32,14 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -187,6 +188,7 @@ public class GoalRoomCreateService {
                                   final CheckFeedRequest checkFeedRequest) {
         final MultipartFile checkFeedImage = checkFeedRequest.image();
         validateEmptyImage(checkFeedImage);
+        final FileInformation fileInformation = GoalRoomMapper.convertToFileInformation(checkFeedImage);
 
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
@@ -197,9 +199,9 @@ public class GoalRoomCreateService {
         updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
         final String path = filePathGenerator.makeFilePath(ImageDirType.CHECK_FEED,
-                checkFeedImage.getOriginalFilename());
+                fileInformation.originalFileName());
         saveCheckFeed(checkFeedRequest, checkFeedImage, goalRoomMember, currentNode, path);
-        fileService.save(path, checkFeedImage);
+        fileService.save(path, fileInformation);
         return fileService.generateUrl(path, HttpMethod.GET).toExternalForm();
     }
 

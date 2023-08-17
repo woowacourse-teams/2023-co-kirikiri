@@ -11,8 +11,10 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
+import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
+import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
@@ -43,13 +45,15 @@ import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -286,5 +290,14 @@ public class GoalRoomMapper {
                 goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.RUNNING, Collections.emptyList()).size(),
                 goalRoomsDividedByStatus.getOrDefault(GoalRoomStatus.COMPLETED, Collections.emptyList()).size()
         );
+    }
+
+    public static FileInformation convertToFileInformation(final MultipartFile multipartFile) {
+        try {
+            return new FileInformation(multipartFile.getOriginalFilename(),
+                    multipartFile.getSize(), multipartFile.getContentType(), multipartFile.getInputStream());
+        } catch (final IOException exception) {
+            throw new ServerException(exception.getMessage());
+        }
     }
 }

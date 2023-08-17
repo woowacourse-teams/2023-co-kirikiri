@@ -33,11 +33,11 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.event.RoadmapCreateEvent;
 import co.kirikiri.service.mapper.RoadmapMapper;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -57,11 +57,11 @@ public class RoadmapCreateService {
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
         final RoadmapSaveDto roadmapSaveDto = RoadmapMapper.convertToRoadmapSaveDto(request);
         final Roadmap roadmap = createRoadmap(member, roadmapSaveDto, roadmapCategory);
-        roadmapRepository.save(roadmap);
+        final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
 
-        applicationEventPublisher.publishEvent(new RoadmapCreateEvent(roadmap, roadmapSaveDto));
+        applicationEventPublisher.publishEvent(new RoadmapCreateEvent(savedRoadmap, roadmapSaveDto));
 
-        return roadmap.getId();
+        return savedRoadmap.getId();
     }
 
     private Member findMemberByIdentifier(final String identifier) {

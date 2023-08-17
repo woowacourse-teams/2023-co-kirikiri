@@ -9,15 +9,15 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
+import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.event.RoadmapCreateEvent;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,26 +58,26 @@ public class RoadmapCreateEventListener {
 
     private RoadmapNodeImages makeRoadmapNodeImages(final RoadmapNodeSaveDto roadmapNodeSaveDto,
                                                     final RoadmapNode roadmapNode) {
-        final List<MultipartFile> images = roadmapNodeSaveDto.multipartFiles();
+        final List<FileInformation> fileInformations = roadmapNodeSaveDto.fileInformations();
         final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
-        for (final MultipartFile image : images) {
-            final RoadmapNodeImage roadmapNodeImage = makeRoadmapNodeImage(image);
+        for (final FileInformation fileInformation : fileInformations) {
+            final RoadmapNodeImage roadmapNodeImage = makeRoadmapNodeImage(fileInformation);
             roadmapNodeImages.add(roadmapNodeImage);
-            fileService.save(roadmapNodeImage.getServerFilePath(), image);
+            fileService.save(roadmapNodeImage.getServerFilePath(), fileInformation);
         }
         roadmapNode.addImages(roadmapNodeImages);
         return roadmapNodeImages;
     }
 
-    private RoadmapNodeImage makeRoadmapNodeImage(final MultipartFile image) {
-        final String originalFileName = findOriginalFileName(image);
-        final ImageContentType imageContentType = ImageContentType.findImageContentType(image.getContentType());
+    private RoadmapNodeImage makeRoadmapNodeImage(final FileInformation fileInformation) {
+        final String originalFileName = findOriginalFileName(fileInformation);
+        final ImageContentType imageContentType = ImageContentType.findImageContentType(fileInformation.contentType());
         final String serverFIlePath = filePathGenerator.makeFilePath(ImageDirType.ROADMAP_NODE, originalFileName);
         return new RoadmapNodeImage(originalFileName, serverFIlePath, imageContentType);
     }
 
-    private String findOriginalFileName(final MultipartFile image) {
-        final String originalFilename = image.getOriginalFilename();
+    private String findOriginalFileName(final FileInformation fileInformation) {
+        final String originalFilename = fileInformation.originalFileName();
         if (originalFilename == null) {
             throw new BadRequestException("원본 파일의 이름이 존재하지 않습니다.");
         }

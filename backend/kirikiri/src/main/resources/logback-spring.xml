@@ -61,6 +61,8 @@
             <appender-ref ref="FILE"/>
             <appender-ref ref="CONSOLE"/>
         </springProfile>
+        <springProfile name="local">
+            <appender-ref ref="CONSOLE"/>
+        </springProfile>
     </root>
 </configuration>
-

@@ -1,15 +1,15 @@
 package co.kirikiri.integration.helper;
 
 import co.kirikiri.service.FileService;
+import co.kirikiri.service.dto.FileInformation;
+import org.springframework.http.HttpMethod;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.multipart.MultipartFile;
 
 public class TestFileService implements FileService {
 
     @Override
-    public void save(final String path, final MultipartFile multiPartFile) {
+    public void save(final String path, final FileInformation fileInformation) {
     }
 
     @Override
