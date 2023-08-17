@@ -14,6 +14,7 @@ export type GoalRoomListRequest = {
   lastCreatedAt?: any;
   size?: number;
   filterCond?: FilterCondType;
+  lastId?: number | null;
 };
 
 export type GoalRoomBrowseResponse = {

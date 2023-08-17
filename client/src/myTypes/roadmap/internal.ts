@@ -55,6 +55,25 @@ export type RoadmapDetailType = {
   tags: TagType[];
 };
 
+type RoadmapNodes = {
+  [key: string]: string;
+};
+
+export type RoadmapValueType = {
+  categoryId: null | number;
+  title: null | string;
+  introduction: null | string;
+  content: null | string;
+  difficulty: null | number;
+  requiredPeriod: null | string;
+  roadmapTags: { name: string }[];
+  roadmapNodes: RoadmapNodes[];
+};
+
+export type NodeImagesType = {
+  [key: number]: (string | Blob)[];
+};
+
 export type PatternType = {
   rule: RegExp;
   message: string;

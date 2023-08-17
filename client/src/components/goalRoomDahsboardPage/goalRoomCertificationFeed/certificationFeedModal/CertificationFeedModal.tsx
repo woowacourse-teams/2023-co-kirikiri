@@ -9,7 +9,6 @@ import {
   useCreateCertificationFeed,
 } from '@hooks/queries/goalRoom';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
-import { BASE_URL } from '@apis/axios/client';
 
 const CertificationFeedModal = () => {
   const { goalroomId } = useGoalRoomDashboardContext();
@@ -17,10 +16,25 @@ const CertificationFeedModal = () => {
 
   const [imagePreview, setImagePreview] = useState<string | null>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const { handleInputChange, validateInput, errorMessage, resetErrorMessage, value } =
-    useValidateInput(CERTIFICATION_FEED);
+  const {
+    handleInputChange,
+    validateInput,
+    errorMessage,
+    resetErrorMessage,
+    value,
+    resetValue,
+  } = useValidateInput(CERTIFICATION_FEED);
 
-  const { createCertificationFeed } = useCreateCertificationFeed(goalroomId);
+  const resetCertificationFeedInputs = () => {
+    setImagePreview(null);
+    setImageFile(null);
+    resetValue();
+  };
+
+  const { createCertificationFeed } = useCreateCertificationFeed(
+    goalroomId,
+    resetCertificationFeedInputs
+  );
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
@@ -99,7 +113,7 @@ const CertificationFeedModal = () => {
           return (
             <S.CertificationFeedCard key={feed.checkFeed.id}>
               <S.CertificationFeedImage
-                src={BASE_URL + feed.checkFeed.imageUrl}
+                src={feed.checkFeed.imageUrl}
                 alt='인증피드 이미지'
               />
               <S.CertificationFeedDescription>
@@ -107,7 +121,7 @@ const CertificationFeedModal = () => {
               </S.CertificationFeedDescription>
               <S.CertificationFeedsUserInfo>
                 <S.CertificationFeedsUserImage
-                  src={BASE_URL + feed.member.imageUrl}
+                  src={feed.member.imageUrl}
                   alt='유저 이미지'
                 />
                 <S.CertificationFeedsUserName>

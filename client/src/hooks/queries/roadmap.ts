@@ -43,13 +43,10 @@ export const useRoadmapDetail = (id: number) => {
 };
 
 export const useCreateRoadmap = () => {
-  const { mutate } = useMutation(
-    (roadmapValue: RoadmapValueType) => postCreateRoadmap(roadmapValue),
-    {
-      onSuccess() {},
-      onError() {},
-    }
-  );
+  const { mutate } = useMutation((formData: FormData) => postCreateRoadmap(formData), {
+    onSuccess() {},
+    onError() {},
+  });
 
   return {
     createRoadmap: mutate,

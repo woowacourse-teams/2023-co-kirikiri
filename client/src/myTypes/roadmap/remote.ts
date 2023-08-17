@@ -1,11 +1,4 @@
-import type {
-  // CreatorType,
-  // CategoryType,
-  // ContentType,
-  // TagType,
-  RoadmapItemType,
-  RoadmapDetailType,
-} from './internal';
+import type { RoadmapItemType, RoadmapDetailType, RoadmapValueType } from './internal';
 import { SelectedCategoryId } from './internal';
 
 type RoadmapFilterCondition =
@@ -13,21 +6,6 @@ type RoadmapFilterCondition =
   | 'LATEST'
   | 'PARTICIPANT_COUNT'
   | 'REVIEW_RATE';
-
-type RoadmapNodes = {
-  [key: string]: string;
-};
-
-export type RoadmapValueType = {
-  categoryId: null | number;
-  title: null | string;
-  introduction: null | string;
-  content: null | string;
-  difficulty: null | number;
-  requiredPeriod: null | string;
-  roadmapTags: { name: string }[];
-  roadmapNodes: RoadmapNodes[];
-};
 
 export type RoadmapListRequest = {
   categoryId?: SelectedCategoryId;

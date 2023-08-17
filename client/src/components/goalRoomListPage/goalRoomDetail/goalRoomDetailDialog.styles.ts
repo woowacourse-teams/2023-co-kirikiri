@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const BackDrop = styled.div`
   position: fixed;
+  z-index: ${({ theme }) => theme.zIndex.modal};
   top: 0;
   right: 0;
   bottom: 0;
