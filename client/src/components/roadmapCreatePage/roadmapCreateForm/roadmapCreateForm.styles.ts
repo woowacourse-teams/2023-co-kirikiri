@@ -11,10 +11,14 @@ export const Title = styled.h1`
 `;
 
 export const AddButton = styled.button`
-  width: 13rem;
+  ${({ theme }) => theme.fonts.description5}
+  width: 4rem;
   height: 4rem;
-  border: 0.1rem solid ${({ theme }) => theme.colors.main_dark};
-  border-radius: 15px;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_middle};
+  border-radius: 50%;
 `;
 
 export const Form = styled.form`
