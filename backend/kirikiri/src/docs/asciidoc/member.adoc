@@ -73,7 +73,7 @@ operation::member-read-api-test/로그인한_사용자_자신의_정보를_조�
 
 === *2-2* 실패 - 존재하지 않은 회원일 때
 
-operation::member-read-api-test/로그인한_사용자_자신의_정보를_조회할때_존재하지_않은_회원이면_예외가_발생한다[snippets='http-request,http-response,response-fields']
+operation::member-read-api-test/로그인한_사용자_자신의_정보를_조회할때_존재하지_않은_회원이면_예외_발생[snippets='http-request,http-response']
 
 [[특정사용자정보조회-API]]
 == *3. 특정 사용자 정보 조회*
@@ -82,10 +82,6 @@ operation::member-read-api-test/로그인한_사용자_자신의_정보를_조�
 
 operation::member-read-api-test/특정_사용자의_정보를_조회한다[snippets='http-request,http-response,response-fields']
 
-=== *3-2* 실패 - 로그인 한 사용자가 존재하지 않은 회원일 때
+=== *3-2* 실패 - 조회할 사용자가 존재하지 않은 회원일 때
 
-operation::member-read-api-test/특정_사용자의_정보를_조회할때_로그인한_사용자가_존재하지_않은_회원이면_예외가_발생한다[snippets='http-request,http-response,response-fields']
-
-=== *3-3* 실패 - 조회할 사용자가 존재하지 않은 회원일 때
-
-operation::member-read-api-test/특정_사용자의_정보를_조회할때_조회할_사용자가_존재하지_않은_회원이면_예외가_발생한다[snippets='http-request,http-response,response-fields']
+operation::member-read-api-test/특정_사용자_정보_조회시_조회할_사용자가_없는_회원이면_예외_발생[snippets='http-request,http-response']

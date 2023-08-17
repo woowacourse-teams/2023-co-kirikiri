@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -40,12 +41,21 @@ public class CheckFeed extends BaseCreatedTimeEntity {
     public CheckFeed(final String serverFilePath, final ImageContentType imageContentType,
                      final String originalFileName, final String description,
                      final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember goalRoomMember) {
+        this(serverFilePath, imageContentType, originalFileName, description, goalRoomRoadmapNode, goalRoomMember,
+                null);
+    }
+
+    public CheckFeed(final String serverFilePath, final ImageContentType imageContentType,
+                     final String originalFileName, final String description,
+                     final GoalRoomRoadmapNode goalRoomRoadmapNode, final GoalRoomMember goalRoomMember, final
+                     LocalDateTime createdAt) {
         this.serverFilePath = serverFilePath;
         this.imageContentType = imageContentType;
         this.originalFileName = originalFileName;
         this.description = description;
         this.goalRoomRoadmapNode = goalRoomRoadmapNode;
         this.goalRoomMember = goalRoomMember;
+        this.createdAt = createdAt;
     }
 
     public String getServerFilePath() {

@@ -12,14 +12,12 @@ import org.springframework.data.repository.query.Param;
 public interface GoalRoomMemberRepository extends JpaRepository<GoalRoomMember, Long>, GoalRoomMemberQueryRepository {
 
     @Query("select gm from GoalRoomMember gm "
-            + "inner join gm.goalRoom g "
-            + "inner join gm.member m "
+            + "inner join fetch gm.goalRoom g "
+            + "inner join fetch gm.member m "
             + "where g=:goalRoom "
             + "and m.identifier =:identifier")
     Optional<GoalRoomMember> findByGoalRoomAndMemberIdentifier(
             @Param("goalRoom") final GoalRoom goalRoom, @Param("identifier") final Identifier identifier);
-
-    List<GoalRoomMember> findByGoalRoom(final GoalRoom goalRoom);
 
     @Query("select gm from GoalRoomMember gm "
             + "join fetch gm.goalRoom g "

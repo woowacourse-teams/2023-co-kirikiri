@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity<ErrorResponse> handleInvalidFormatException(final InvalidFormatException exception) {
-        log.error(exception.getMessage(), exception);
+        log.warn(exception.getMessage(), exception);
         final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

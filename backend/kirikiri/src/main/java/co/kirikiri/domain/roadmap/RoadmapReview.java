@@ -73,4 +73,16 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
     public boolean isNotSameRoadmap(final Roadmap roadmap) {
         return this.roadmap == null || !this.roadmap.equals(roadmap);
     }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public Member getMember() {
+        return member;
+    }
 }

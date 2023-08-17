@@ -76,6 +76,10 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
         return nodes.findById(id);
     }
 
+    public Optional<RoadmapNode> findRoadmapNodeByTitle(final String title) {
+        return nodes.findByTitle(title);
+    }
+
     public String getContent() {
         return content;
     }

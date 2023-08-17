@@ -81,6 +81,10 @@ public class GoalRoomPendingMembers {
         return values.isEmpty();
     }
 
+    public void deleteAll() {
+        this.values.clear();
+    }
+
     public List<GoalRoomPendingMember> getValues() {
         return new ArrayList<>(values);
     }

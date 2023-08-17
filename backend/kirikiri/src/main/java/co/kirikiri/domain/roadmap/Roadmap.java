@@ -11,8 +11,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -151,6 +151,14 @@ public class Roadmap extends BaseCreatedTimeEntity {
         this.status = RoadmapStatus.DELETED;
     }
 
+    public Optional<RoadmapContent> findLastRoadmapContent() {
+        return this.contents.findLastRoadmapContent();
+    }
+
+    public boolean isDeleted() {
+        return status == RoadmapStatus.DELETED;
+    }
+
     public Member getCreator() {
         return creator;
     }
@@ -181,9 +189,5 @@ public class Roadmap extends BaseCreatedTimeEntity {
 
     public RoadmapTags getTags() {
         return tags;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

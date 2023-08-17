@@ -4,10 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
@@ -27,15 +25,13 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -49,18 +45,15 @@ class GoalRoomRepositoryTest {
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
 
     public GoalRoomRepositoryTest(final MemberRepository memberRepository,
                                   final RoadmapRepository roadmapRepository,
                                   final GoalRoomRepository goalRoomRepository,
-                                  final GoalRoomMemberRepository goalRoomMemberRepository,
                                   final RoadmapCategoryRepository roadmapCategoryRepository) {
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.goalRoomRepository = goalRoomRepository;
-        this.goalRoomMemberRepository = goalRoomMemberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
     }
 
@@ -123,47 +116,53 @@ class GoalRoomRepositoryTest {
         goalRoomRepository.save(goalRoom2);
 
         // when
-        final List<GoalRoom> goalRooms = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
-                RoadmapGoalRoomsFilterType.LATEST, null, 10);
+        final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+                RoadmapGoalRoomsOrderType.LATEST, null, 1);
+        final List<GoalRoom> goalRooms2 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+                RoadmapGoalRoomsOrderType.LATEST, goalRoom2.getId(), 10);
 
-        assertThat(goalRooms).isEqualTo(List.of(goalRoom2, goalRoom1));
+        assertThat(goalRooms1)
+                .isEqualTo(List.of(goalRoom2, goalRoom1));
+        assertThat(goalRooms2)
+                .isEqualTo(List.of(goalRoom1));
     }
 
     @Test
-    void 골룸을_참여율_순으로_조회한다() {
+    void 골룸을_마감임박_순으로_조회한다() {
         //given
         final Member creator = 사용자를_생성한다("name1", "01011111111", "identifier1", "password!1");
         final RoadmapCategory category = 카테고리를_저장한다("여가");
         final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
         final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(roadmapNode1, roadmapNode2));
         final Roadmap roadmap = 로드맵을_생성한다(creator, category, roadmapContent);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
-                roadmapNodes.getValues().get(0));
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10), roadmapNode1);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20),
-                roadmapNodes.getValues().get(1));
+                roadmapNode2);
         final Member goalRoomPendingMember1 = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
         final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 6, roadmapContent,
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)), goalRoomPendingMember1);
         goalRoomRepository.save(goalRoom1);
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(1), TODAY.plusDays(10),
                 roadmapNode1);
         final GoalRoomRoadmapNode goalRoomRoadmapNode4 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20),
                 roadmapNode2);
-        final Member goalRoomPendingMember2 = 사용자를_생성한다("name3", "01011113333", "identifier3", "password!3");
-        final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 20, roadmapContent,
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)), goalRoomPendingMember2);
+        final Member goalRoomPendingMember3 = 사용자를_생성한다("name4", "01011114444", "identifier4", "password!4");
+        final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 6, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)), goalRoomPendingMember3);
         goalRoomRepository.save(goalRoom2);
 
         // when
-        final List<GoalRoom> goalRoomsPage = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
-                RoadmapGoalRoomsFilterType.PARTICIPATION_RATE, null, 10);
+        final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+                RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE, null, 1);
+        final List<GoalRoom> goalRooms2 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+                RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE, goalRoom1.getId(), 10);
 
         // then
-        assertThat(goalRoomsPage).isEqualTo(List.of(goalRoom1, goalRoom2));
+        assertThat(goalRooms1).isEqualTo(List.of(goalRoom1, goalRoom2));
+        assertThat(goalRooms2).isEqualTo(List.of(goalRoom2));
     }
 
     @Test
@@ -194,7 +193,7 @@ class GoalRoomRepositoryTest {
         goalRoomRepository.save(goalRoom3);
 
         // when
-        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDateNow();
+        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDate(LocalDate.now());
 
         // then
         assertThat(findGoalRooms)
@@ -238,41 +237,6 @@ class GoalRoomRepositoryTest {
                 .usingRecursiveComparison()
                 .ignoringFields("id", "createdAt", "updatedAt")
                 .isEqualTo(goalRoom);
-    }
-
-    @Test
-    void 골룸_아이디와_사용자_아이디로_골룸_멤버를_조회한다() {
-        // given
-        final Member creator = 사용자를_생성한다("name1", "01011111111", "identifier1", "password!1");
-        final RoadmapCategory category = 카테고리를_저장한다("여가");
-        final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
-        final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
-        로드맵을_생성한다(creator, category, roadmapContent);
-
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
-                roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TODAY.plusDays(11), TODAY.plusDays(20),
-                roadmapNode2);
-        final Member goalRoomPendingMember = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
-        final GoalRoom goalRoom = 골룸을_생성한다("goalroom1", 6, roadmapContent,
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)), goalRoomPendingMember);
-        goalRoomRepository.save(goalRoom);
-
-        final GoalRoomMember goalRoomMember = new GoalRoomMember(
-                GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator
-        );
-        goalRoomMemberRepository.save(goalRoomMember);
-
-        // when
-        final GoalRoomMember findGoalRoomMember = goalRoomRepository.findGoalRoomMember(goalRoom.getId(),
-                creator.getIdentifier()).get();
-
-        // then
-        Assertions.assertThat(findGoalRoomMember)
-                .usingRecursiveComparison()
-                .ignoringFields("joinedAt")
-                .isEqualTo(goalRoomMember);
     }
 
     @Test
@@ -352,8 +316,8 @@ class GoalRoomRepositoryTest {
         goalRoom1.join(member);
         goalRoom2.join(member);
         goalRoom3.join(member);
-        goalRoom2.updateStatus(GoalRoomStatus.RUNNING);
-        goalRoom3.updateStatus(GoalRoomStatus.COMPLETED);
+        goalRoom2.start();
+        goalRoom3.complete();
 
         goalRoomRepository.save(goalRoom1);
         goalRoomRepository.save(goalRoom2);
@@ -407,8 +371,8 @@ class GoalRoomRepositoryTest {
         goalRoom2.join(member);
         goalRoom3.join(member);
         goalRoom4.join(member);
-        goalRoom2.updateStatus(GoalRoomStatus.RUNNING);
-        goalRoom3.updateStatus(GoalRoomStatus.COMPLETED);
+        goalRoom2.start();
+        goalRoom3.complete();
 
         goalRoomRepository.save(goalRoom1);
         goalRoomRepository.save(goalRoom2);
@@ -497,11 +461,53 @@ class GoalRoomRepositoryTest {
                 .isEqualTo(List.of(goalRoom1, goalRoom2, goalRoom3));
     }
 
+    @Test
+    void 로드맵으로_골룸을_조회한다() {
+        // given
+        final Member creator = 사용자를_생성한다("name1", "01011111111", "identifier1", "password!1");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
+        final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
+
+        final RoadmapContent roadmapContent1 = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
+        final Roadmap roadmap1 = 로드맵을_생성한다(creator, category, roadmapContent1);
+
+        final RoadmapNode roadmapNode3 = 로드맵_노드를_생성한다("로드맵 1주차 입니다.", "로드맵 1주차 내용");
+        final RoadmapNode roadmapNode4 = 로드맵_노드를_생성한다("로드맵 2주차 입니다.", "로드맵 2주차 내용");
+
+        final RoadmapContent roadmapContent2 = 로드맵_본문을_생성한다(List.of(roadmapNode3, roadmapNode4));
+        로드맵을_생성한다(creator, category, roadmapContent2);
+
+        final Member member = 사용자를_생성한다("name2", "01011112222", "identifier2", "password!2");
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TEN_DAY_LATER, roadmapNode1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = 골룸_로드맵_노드를_생성한다(TWENTY_DAY_LAYER, THIRTY_DAY_LATER,
+                roadmapNode2);
+        final GoalRoom goalRoom1 = 골룸을_생성한다("goalroom1", 6, roadmapContent1,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)), member);
+        final GoalRoom goalRoom2 = 골룸을_생성한다("goalroom2", 6, roadmapContent1,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)), member);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = 골룸_로드맵_노드를_생성한다(TODAY, TEN_DAY_LATER, roadmapNode3);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = 골룸_로드맵_노드를_생성한다(TWENTY_DAY_LAYER, THIRTY_DAY_LATER,
+                roadmapNode4);
+        final GoalRoom goalRoom3 = 골룸을_생성한다("goalroom3", 6, roadmapContent2,
+                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)), member);
+
+        goalRoomRepository.saveAll(List.of(goalRoom1, goalRoom2, goalRoom3));
+
+        // when
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap1);
+
+        // then
+        assertThat(goalRooms).isEqualTo(List.of(goalRoom1, goalRoom2));
+    }
+
     private Member 크리에이터를_저장한다() {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
                 LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberProfile);
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), null, memberProfile);
         return memberRepository.save(creator);
     }
 
@@ -510,7 +516,7 @@ class GoalRoomRepositoryTest {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
                 phoneNumber);
         final Member creator = new Member(new Identifier(identifier),
-                new EncryptedPassword(new Password(password)), new Nickname(nickname), memberProfile);
+                new EncryptedPassword(new Password(password)), new Nickname(nickname), null, memberProfile);
         return memberRepository.save(creator);
     }
 

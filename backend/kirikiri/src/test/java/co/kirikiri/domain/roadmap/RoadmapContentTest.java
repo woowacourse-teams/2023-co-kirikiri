@@ -45,8 +45,9 @@ class RoadmapContentTest {
         final RoadmapContent content = new RoadmapContent("content");
 
         // when
-        content.addNodes(new RoadmapNodes(
-                List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title1", "content1"))));
+        content.addNodes(
+                new RoadmapNodes(
+                        List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title2", "content1"))));
 
         // then
         final RoadmapNodes nodes = content.getNodes();
@@ -58,12 +59,25 @@ class RoadmapContentTest {
     }
 
     @Test
+    void 로드맵_본문에_노드를_추가할때_이름이_겹치면_예외를_던진다() {
+        // given
+        final RoadmapContent content = new RoadmapContent("content");
+
+        // when
+        // then
+        final String title = "title";
+        assertThatThrownBy(() -> content.addNodes(
+                new RoadmapNodes(
+                        List.of(new RoadmapNode(title, "content1"), new RoadmapNode(title, "content1")))));
+    }
+
+    @Test
     void 로드맵_본문의_로드맵인_경우_false를_반환한다() {
         // given
         final RoadmapContent content = new RoadmapContent("content");
         final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
         final Member creator = new Member(new Identifier("creator"),
-                new EncryptedPassword(new Password("password1")), new Nickname("nickname"), profile);
+                new EncryptedPassword(new Password("password1")), new Nickname("nickname"), null, profile);
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creator, category);
 

@@ -7,25 +7,22 @@ import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNo
 import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
-import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.persistence.dto.GoalRoomLastValueDto;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsFilterType;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter implements GoalRoomQueryRepository {
+
+    private static final int LIMIT_OFFSET = 1;
 
     public GoalRoomQueryRepositoryImpl() {
         super(GoalRoom.class);
@@ -41,54 +38,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
-                                                                          final RoadmapGoalRoomsFilterType filterType,
-                                                                          final GoalRoomLastValueDto lastValue,
-                                                                          final int pageSize) {
-        return selectFrom(goalRoom)
-                .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .on(roadmapContent.roadmap.eq(roadmap))
-                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .fetchJoin()
-                .innerJoin(goalRoomPendingMember.member, member)
-                .fetchJoin()
-                .innerJoin(member.memberProfile, memberProfile)
-                .fetchJoin()
-                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastValue(lastValue))
-                .orderBy(sortCond(filterType))
-                .limit(pageSize)
-                .fetch();
-    }
-
-    @Override
-    public List<GoalRoom> findAllByStartDateNow() {
-        return selectFrom(goalRoom)
-                .join(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
-                .where(startDateEqualsToNow())
-                .fetch();
-    }
-
-    @Override
-    public Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId) {
-        return Optional.ofNullable(selectFrom(goalRoom)
-                .leftJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
-                .fetchJoin()
-                .where(goalRoomIdCond(goalRoomId))
-                .fetchFirst());
-    }
-
-    @Override
-    public Optional<GoalRoomMember> findGoalRoomMember(final Long goalRoomId, final Identifier memberIdentifier) {
-        return Optional.ofNullable(selectFrom(goalRoomMember)
-                .innerJoin(goalRoomMember.goalRoom, goalRoom)
-                .where(
-                        goalRoomIdCond(goalRoomId),
-                        memberIdentifierCond(memberIdentifier))
-                .fetchJoin()
-                .fetchFirst());
-    }
-
-    @Override
     public Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
@@ -100,42 +49,35 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
+    public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
+                                                                          final RoadmapGoalRoomsOrderType orderType,
+                                                                          final Long lastId,
+                                                                          final int pageSize) {
+        return selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .on(roadmapContent.roadmap.eq(roadmap))
+                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .fetchJoin()
+                .innerJoin(goalRoomPendingMember.member, member)
+                .fetchJoin()
+                .innerJoin(member.memberProfile, memberProfile)
+                .fetchJoin()
+                .where(
+                        statusCond(GoalRoomStatus.RECRUITING),
+                        lessThanLastId(lastId, orderType),
+                        roadmapCond(roadmap))
+                .limit(pageSize + LIMIT_OFFSET)
+                .orderBy(sortCond(orderType))
+                .fetch();
+    }
+
+    @Override
+    public Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
-                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .leftJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
                 .fetchJoin()
                 .where(goalRoomIdCond(goalRoomId))
-                .fetchOne());
-    }
-
-    private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
-        return goalRoom.id.eq(goalRoomId);
-    }
-
-    private BooleanExpression memberIdentifierCond(final Identifier memberIdentifier) {
-        return goalRoomMember.member.identifier.eq(memberIdentifier);
-    }
-
-    private BooleanExpression statusCond(final GoalRoomStatus status) {
-        return goalRoom.status.eq(status);
-    }
-
-    private BooleanExpression lessThanLastValue(final GoalRoomLastValueDto lastValue) {
-        if (lastValue == null) {
-            return null;
-        }
-        return roadmap.createdAt.lt(lastValue.getLastCreatedAt());
-    }
-
-    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsFilterType filterType) {
-        if (filterType == RoadmapGoalRoomsFilterType.LATEST) {
-            return goalRoom.id.desc();
-        }
-        return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
-    }
-
-    private BooleanExpression startDateEqualsToNow() {
-        return goalRoomRoadmapNode.period.startDate.eq(LocalDate.now());
+                .fetchFirst());
     }
 
     @Override
@@ -160,10 +102,55 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
+    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
+    }
+
+    @Override
     public List<GoalRoom> findByRoadmap(final Roadmap roadmap) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .on(roadmapContent.roadmap.eq(roadmap))
+                .where(roadmapContent.roadmap.eq(roadmap))
                 .fetch();
+    }
+
+    private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
+        return goalRoom.id.eq(goalRoomId);
+    }
+
+    private BooleanExpression statusCond(final GoalRoomStatus status) {
+        return goalRoom.status.eq(status);
+    }
+
+    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsOrderType orderType) {
+        if (orderType == RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE) {
+            return goalRoom.startDate.asc();
+        }
+        return goalRoom.createdAt.desc();
+    }
+
+    private BooleanExpression lessThanLastId(final Long lastId, final RoadmapGoalRoomsOrderType orderType) {
+        if (lastId == null) {
+            return null;
+        }
+        if (orderType == RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE) {
+            return select(goalRoom.startDate)
+                    .from(goalRoom)
+                    .where(goalRoom.id.eq(lastId))
+                    .lt(goalRoom.startDate);
+        }
+        return goalRoom.createdAt.lt(
+                select(goalRoom.createdAt)
+                        .from(goalRoom)
+                        .where(goalRoom.id.eq(lastId))
+        );
+    }
+
+    private BooleanExpression roadmapCond(final Roadmap roadmap) {
+        return goalRoom.roadmapContent.roadmap.eq(roadmap);
     }
 }

@@ -2,6 +2,7 @@ package co.kirikiri.common.config;
 
 import co.kirikiri.common.interceptor.AuthInterceptor;
 import co.kirikiri.common.resolver.MemberIdentifierArgumentResolver;
+import co.kirikiri.common.resolver.RoadmapSaveArgumentResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthInterceptor authInterceptor;
     private final MemberIdentifierArgumentResolver memberIdentifierArgumentResolver;
+    private final RoadmapSaveArgumentResolver roadmapSaveArgumentResolver;
 
     @Override
     public void addInterceptors(final InterceptorRegistry interceptorRegistry) {
@@ -23,6 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(roadmapSaveArgumentResolver);
         argumentResolvers.add(memberIdentifierArgumentResolver);
     }
 }
