@@ -18,12 +18,11 @@ const GoalRoomDetailDialog = ({ goalRoomId }: GoalRoomDetailDialogProps) => {
         <S.DetailButton>자세히 보기</S.DetailButton>
       </DialogTrigger>
       <DialogBackdrop asChild>
-        <S.BackDrop>
-          <DialogContent>
-            <GoalRoomDetailDialogContent goalRoomId={goalRoomId} />
-          </DialogContent>
-        </S.BackDrop>
+        <S.BackDrop />
       </DialogBackdrop>
+      <DialogContent>
+        <GoalRoomDetailDialogContent goalRoomId={goalRoomId} />
+      </DialogContent>
     </DialogBox>
   );
 };

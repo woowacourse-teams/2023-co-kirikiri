@@ -1,6 +1,7 @@
 import { DummyCategoryType } from '@/components/roadmapCreatePage/category/Category';
 import { DummyDifficultyType } from '@/components/roadmapCreatePage/difficulty/Difficulty';
-import { RoadmapValueType } from '@/myTypes/roadmap/remote';
+import { NodeImagesType, RoadmapValueType } from '@/myTypes/roadmap/internal';
+import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateRoadmap } from '../queries/roadmap';
@@ -16,6 +17,7 @@ export const useCollectRoadmapData = () => {
     roadmapTags: [],
     roadmapNodes: [],
   });
+  const [nodeImages, setNodeImages] = useState<NodeImagesType>({});
   const [isSumbited, setIsSubmited] = useState(false);
   const navigate = useNavigate();
   const { createRoadmap } = useCreateRoadmap();
@@ -58,6 +60,16 @@ export const useCollectRoadmapData = () => {
     });
   };
 
+  const getNodeImage = (nodeImage: File, itemId: number) => {
+    const tempNodeImages = structuredClone(nodeImages);
+    if (itemId in tempNodeImages) {
+      tempNodeImages[itemId].push(nodeImage);
+    } else {
+      tempNodeImages[itemId] = [nodeImage];
+    }
+    setNodeImages(tempNodeImages);
+  };
+
   const getTags = (tags: string[]) => {
     setRoadmapValue((prev) => {
       const newTags = tags.map((tag) => {
@@ -84,8 +96,17 @@ export const useCollectRoadmapData = () => {
   };
 
   useEffect(() => {
+    const formData = new FormData();
+
+    formData.append('jsonData', JSON.stringify(roadmapValue));
+    getInvariantObjectKeys(invariantOf(nodeImages)).forEach((itemId) => {
+      nodeImages[itemId].forEach((imageFile) => {
+        formData.append(roadmapValue.roadmapNodes[Number(itemId)].title, imageFile);
+      });
+    });
+
     if (isSumbited) {
-      createRoadmap(roadmapValue);
+      createRoadmap(formData);
       navigate('/');
     }
   }, [isSumbited]);
@@ -95,6 +116,7 @@ export const useCollectRoadmapData = () => {
     getSelectedCategoryId,
     getSelectedDifficulty,
     getRoadmapItemTitle,
+    getNodeImage,
     getTags,
     handleSubmit,
     isSumbited,

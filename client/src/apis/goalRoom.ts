@@ -18,11 +18,21 @@ export const getGoalRoomList = async ({
   roadmapId,
   filterCond = 'LATEST',
   lastCreatedAt = '',
-  size = 10,
+  size = 6,
+  lastId,
 }: GoalRoomListRequest): Promise<GoalRoomDetailResponse> => {
   const { data } = await client.get<GoalRoomDetailResponse>(
-    `/roadmaps/${roadmapId}/goal-rooms?filterCond=${filterCond}&lastCreatedAt=${lastCreatedAt}&size=${size}`
+    `/roadmaps/${roadmapId}/goal-rooms`,
+    {
+      params: {
+        ...(lastId && { lastId }),
+        filterCond,
+        lastCreatedAt,
+        size,
+      },
+    }
   );
+
   return data;
 };
 
