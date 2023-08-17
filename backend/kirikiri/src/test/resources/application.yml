@@ -13,7 +13,8 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-
+  flyway:
+    enabled: false
 
 logging:
   level:
@@ -23,7 +24,7 @@ logging:
         orm:
           jdbc:
             bind: TRACE
-  file-path: ./log
+  file-path: ./logs
   file-name: test-name
   custom-pattern: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%thread] [%logger{36}] - %msg%n'
 

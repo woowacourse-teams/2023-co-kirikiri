@@ -711,7 +711,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 골룸_인증피드_전체_조회_시_골룸에_참여하지_않은_사용자일_경우_예외가_발생한다() throws Exception {
+    void 골룸_인증피드_전체_조회_시_골룸에_참여하지_않은_사용자일_경우_예외_발생() throws Exception {
         //given
         doThrow(new BadRequestException("골룸에 참여하지 않은 회원입니다."))
                 .when(goalRoomReadService)

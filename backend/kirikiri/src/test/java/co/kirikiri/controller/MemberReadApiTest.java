@@ -70,7 +70,7 @@ class MemberReadApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 로그인한_사용자_자신의_정보를_조회할때_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
+    void 로그인한_사용자_자신의_정보를_조회할때_존재하지_않은_회원이면_예외_발생() throws Exception {
         // given
         when(memberService.findMemberInformation(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
@@ -132,36 +132,7 @@ class MemberReadApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 특정_사용자의_정보를_조회할때_로그인한_사용자가_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
-        // given
-        when(memberService.findMemberInformationForPublic(any()))
-                .thenThrow(new NotFoundException("존재하지 않는 회원입니다."));
-
-        // when
-        final MvcResult mvcResult = mockMvc.perform(get(API_PREFIX + "/members/{memberId}", 1L)
-                        .contextPath(API_PREFIX)
-                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "access-token")))
-                .andExpectAll(
-                        status().is4xxClientError(),
-                        jsonPath("$.message").value("존재하지 않는 회원입니다."))
-                .andDo(documentationResultHandler.document(
-                        requestHeaders(
-                                headerWithName(AUTHORIZATION).description("액세스 토큰")
-                        ),
-                        responseFields(fieldWithPath("message").description("예외 메시지"))))
-                .andReturn();
-
-        // then
-        final ErrorResponse errorResponse = jsonToClass(mvcResult, new TypeReference<>() {
-        });
-        final ErrorResponse expected = new ErrorResponse("존재하지 않는 회원입니다.");
-
-        assertThat(errorResponse)
-                .isEqualTo(expected);
-    }
-
-    @Test
-    void 특정_사용자의_정보를_조회할때_조회할_사용자가_존재하지_않은_회원이면_예외가_발생한다() throws Exception {
+    void 특정_사용자_정보_조회시_조회할_사용자가_없는_회원이면_예외_발생() throws Exception {
         // given
         when(memberService.findMemberInformationForPublic(any()))
                 .thenThrow(new NotFoundException("존재하지 않는 회원입니다. memberId = 2"));
