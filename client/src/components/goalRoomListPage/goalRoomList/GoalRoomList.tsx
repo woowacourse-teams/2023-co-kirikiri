@@ -38,10 +38,10 @@ const GoalRoomList = () => {
               <Select.OptionGroup asChild>
                 <S.FilterOptionWrapper>
                   <Select.Option id={1} asChild>
-                    <S.FilterOption>마감 임박순</S.FilterOption>
+                    <S.FilterOption>마감 임박 순</S.FilterOption>
                   </Select.Option>
                   <Select.Option id={2} asChild>
-                    <S.FilterOption>참여인원 순</S.FilterOption>
+                    <S.FilterOption>참여 인원 순</S.FilterOption>
                   </Select.Option>
                 </S.FilterOptionWrapper>
               </Select.OptionGroup>

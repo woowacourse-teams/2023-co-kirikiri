@@ -11,7 +11,7 @@ export const ItemContainer = styled.article`
   padding: 1.7rem 4rem 3rem;
 
   background-color: ${({ theme }) => theme.colors.white};
-  border-radius: 34px;
+  border-radius: 16px;
   box-shadow: -1.5653846263885498px 7.826924800872803px 46.961544036865234px 0px
     rgba(0, 0, 0, 0.13);
 `;
@@ -23,8 +23,8 @@ export const FilterBar = styled.div`
   margin-bottom: 4rem;
 
   & > p {
-    ${({ theme }) => theme.fonts.description4};
-    color: ${({ theme }) => theme.colors.gray200};
+    ${({ theme }) => theme.fonts.button1};
+    color: ${({ theme }) => theme.colors.gray300};
   }
 `;
 
@@ -42,8 +42,7 @@ export const ListWrapper = styled.div`
 
 export const Recruiting = styled.div`
   ${({ theme }) => theme.fonts.description4}
-  color: ${({ theme }) => theme.colors.gray200};
-  float: right;
+  color: ${({ theme }) => theme.colors.gray300};
 `;
 
 export const Name = styled.h1`
@@ -108,14 +107,14 @@ export const FilterWrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  color: ${({ theme }) => theme.colors.gray200};
+  color: ${({ theme }) => theme.colors.gray300};
 `;
 
 export const FilterTrigger = styled.button`
-  ${({ theme }) => theme.fonts.description4};
+  ${({ theme }) => theme.fonts.button1};
   width: 9rem;
   height: 1.5rem;
-  color: ${({ theme }) => theme.colors.gray200};
+  color: ${({ theme }) => theme.colors.gray300};
 `;
 
 export const FilterOptionWrapper = styled.ul`

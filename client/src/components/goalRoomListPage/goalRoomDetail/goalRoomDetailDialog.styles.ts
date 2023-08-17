@@ -127,5 +127,5 @@ export const DetailButton = styled.button`
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 85px;
+  border-radius: 8px;
 `;
