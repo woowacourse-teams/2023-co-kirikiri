@@ -500,7 +500,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 로드맵의_골룸_목록을_조건에_따라_조회할_때_로드맵이_존재하지_않으면_예외가_발생한다() throws Exception {
+    void 로드맵의_골룸_목록을_조건에_따라_조회할_때_로드맵이_존재하지_않으면_예외_발생() throws Exception {
         // given
         given(roadmapReadService.findRoadmapGoalRoomsByOrderType(any(), any(), any(CustomScrollRequest.class)))
                 .willThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
