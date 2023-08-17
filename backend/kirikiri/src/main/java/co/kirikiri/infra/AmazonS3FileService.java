@@ -2,18 +2,17 @@ package co.kirikiri.infra;
 
 import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.FileService;
+import co.kirikiri.service.dto.FileInformation;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Date;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 
 @Service
 public class AmazonS3FileService implements FileService {
@@ -33,11 +32,10 @@ public class AmazonS3FileService implements FileService {
     }
 
     @Override
-    public void save(final String path, final MultipartFile multiPartFile) {
+    public void save(final String path, final FileInformation fileInformation) {
         final String key = makeKey(path);
-        final InputStream inputStream = getInputStream(multiPartFile);
-        final ObjectMetadata objectMetadata = makeObjectMetadata(multiPartFile);
-        putObjectToS3(key, inputStream, objectMetadata);
+        final ObjectMetadata objectMetadata = makeObjectMetadata(fileInformation);
+        putObjectToS3(key, fileInformation.inputStream(), objectMetadata);
     }
 
     private String makeKey(final String path) {
@@ -49,18 +47,10 @@ public class AmazonS3FileService implements FileService {
         return environment.getProperty(property);
     }
 
-    private InputStream getInputStream(final MultipartFile multiPartFile) {
-        try {
-            return multiPartFile.getInputStream();
-        } catch (final IOException exception) {
-            throw new ServerException(exception.getMessage());
-        }
-    }
-
-    private ObjectMetadata makeObjectMetadata(final MultipartFile multipartFile) {
+    private ObjectMetadata makeObjectMetadata(final FileInformation fileInformation) {
         final ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(multipartFile.getSize());
-        objectMetadata.setContentType(multipartFile.getContentType());
+        objectMetadata.setContentLength(fileInformation.size());
+        objectMetadata.setContentType(fileInformation.contentType());
         return objectMetadata;
     }
 

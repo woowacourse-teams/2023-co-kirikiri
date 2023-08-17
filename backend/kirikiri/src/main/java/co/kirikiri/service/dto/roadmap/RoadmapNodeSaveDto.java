@@ -1,12 +1,12 @@
 package co.kirikiri.service.dto.roadmap;
 
+import co.kirikiri.service.dto.FileInformation;
 import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 public record RoadmapNodeSaveDto(
         String title,
         String content,
-        List<MultipartFile> multipartFiles
+        List<FileInformation> fileInformations
 ) {
 
 }

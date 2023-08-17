@@ -3,7 +3,9 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
+import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryDto;
@@ -34,16 +36,19 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import java.util.Collections;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
 
     public static RoadmapSaveDto convertToRoadmapSaveDto(final RoadmapSaveRequest request) {
-        final List<RoadmapNodeSaveDto> roadmapNodes = request.roadmapNodes().stream()
+        final List<RoadmapNodeSaveDto> roadmapNodes = request.roadmapNodes()
+                .stream()
                 .map(RoadmapMapper::convertToRoadmapNodesSaveDto)
                 .toList();
         final List<RoadmapTagSaveDto> roadmapTags = convertToRoadmapTagSaveDtos(request);
@@ -63,7 +68,19 @@ public final class RoadmapMapper {
     }
 
     private static RoadmapNodeSaveDto convertToRoadmapNodesSaveDto(final RoadmapNodeSaveRequest request) {
-        return new RoadmapNodeSaveDto(request.getTitle(), request.getContent(), request.getImages());
+        final List<FileInformation> fileInformations = request.getImages()
+                .stream()
+                .map(RoadmapMapper::converToRoadmapNodeImageDto)
+                .toList();
+        return new RoadmapNodeSaveDto(request.getTitle(), request.getContent(), fileInformations);
+    }
+
+    private static FileInformation converToRoadmapNodeImageDto(final MultipartFile it) {
+        try {
+            return new FileInformation(it.getOriginalFilename(), it.getSize(), it.getContentType(), it.getInputStream());
+        } catch (final IOException exception) {
+            throw new ServerException(exception.getMessage());
+        }
     }
 
     private static RoadmapTagSaveDto convertToRoadmapTagSaveDto(final RoadmapTagSaveRequest request) {

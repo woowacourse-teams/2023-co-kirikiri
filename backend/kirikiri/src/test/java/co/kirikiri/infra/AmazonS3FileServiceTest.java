@@ -8,14 +8,11 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.exception.ServerException;
+import co.kirikiri.service.dto.FileInformation;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.Protocol;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +20,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.multipart.MultipartFile;
+import java.io.FileInputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @ExtendWith(MockitoExtension.class)
 class AmazonS3FileServiceTest {
@@ -36,17 +35,12 @@ class AmazonS3FileServiceTest {
     @Mock
     private Environment environment;
 
-    @Mock
-    private MultipartFile multipartFile;
-
     @InjectMocks
     private AmazonS3FileService amazonS3FileService;
 
     @Test
-    void 정상적으로_파일을_저장한다() throws IOException {
+    void 정상적으로_파일을_저장한다() {
         //given
-        when(multipartFile.getInputStream())
-                .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
         when(environment.getProperty("cloud.aws.s3.root-directory"))
                 .thenReturn("rootDirectory");
         when(environment.getProperty("cloud.aws.s3.sub-directory"))
@@ -55,49 +49,39 @@ class AmazonS3FileServiceTest {
                 .thenReturn("bucket");
         when(amazonS3.putObject(any(), any(), any(), any()))
                 .thenReturn(null);
+        final FileInformation fileInformation = new FileInformation("originalFileName.png", 100L,
+                "image/png", FileInputStream.nullInputStream());
 
         //when
         //then
-        assertDoesNotThrow(() -> amazonS3FileService.save(PATH, multipartFile));
+        assertDoesNotThrow(() -> amazonS3FileService.save(PATH, fileInformation));
     }
 
     @Test
-    void 파일_저장_시_InputStream을_가져올때_예외가_터진다() throws IOException {
+    void 파일_저장_시_AWS서버와_연결이_원할하지_않을_경우_예외가_터진다() {
         //given
-        when(multipartFile.getInputStream())
-                .thenThrow(new IOException());
-
-        //when
-        //then
-        assertThatThrownBy(() -> amazonS3FileService.save(PATH, multipartFile))
-                .isInstanceOf(ServerException.class);
-    }
-
-    @Test
-    void 파일_저장_시_AWS서버와_연결이_원할하지_않을_경우_예외가_터진다() throws IOException {
-        //given
-        when(multipartFile.getInputStream())
-                .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
         when(amazonS3.putObject(any(), any(), any(), any()))
                 .thenThrow(new AmazonServiceException("server가 원할하지 않습니다."));
+        final FileInformation fileInformation = new FileInformation("originalFileName.png", 100L,
+                "image/png", FileInputStream.nullInputStream());
 
         //when
         //then
-        assertThatThrownBy(() -> amazonS3FileService.save(PATH, multipartFile))
+        assertThatThrownBy(() -> amazonS3FileService.save(PATH, fileInformation))
                 .isInstanceOf(ServerException.class);
     }
 
     @Test
-    void 파일_저장_시_SDK_CLIENT에서_예상치_못한_예외가_발생한_경우_경우_예외가_터진다() throws IOException {
+    void 파일_저장_시_SDK_CLIENT에서_예상치_못한_예외가_발생한_경우_경우_예외가_터진다() {
         //given
-        when(multipartFile.getInputStream())
-                .thenReturn(new ByteArrayInputStream("test-content".getBytes()));
         when(amazonS3.putObject(any(), any(), any(), any()))
                 .thenThrow(new SdkClientException("sdk client 원할하지 않습니다."));
+        final FileInformation fileInformation = new FileInformation("originalFileName.png", 100L,
+                "image/png", FileInputStream.nullInputStream());
 
         //when
         //then
-        assertThatThrownBy(() -> amazonS3FileService.save(PATH, multipartFile))
+        assertThatThrownBy(() -> amazonS3FileService.save(PATH, fileInformation))
                 .isInstanceOf(ServerException.class);
     }
 
