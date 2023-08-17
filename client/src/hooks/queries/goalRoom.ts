@@ -21,21 +21,35 @@ import {
   getCertificationFeeds,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useToast from '@hooks/_common/useToast';
 import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 import { useNavigate } from 'react-router-dom';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
-  const { data } = useSuspendedQuery(['goalRoomList', params.roadmapId], () =>
-    getGoalRoomList(params)
+  const { roadmapId, filterCond, lastCreatedAt, size, lastId } = params;
+
+  const { data, fetchNextPage } = useInfiniteQuery(
+    [QUERY_KEYS.goalRoom.list, roadmapId, filterCond, lastCreatedAt, size, lastId],
+    ({ pageParam }) => getGoalRoomList({ ...params, lastId: pageParam }),
+    {
+      getNextPageParam: (lastPage) =>
+        lastPage.hasNext
+          ? lastPage.responses[lastPage.responses.length - 1]?.goalRoomId
+          : undefined,
+    }
   );
-  return { goalRoomList: data.responses };
+
+  const responses = data?.pages.flatMap((page) => page.responses) || [];
+
+  const hasNext = Boolean(data?.pages[data.pages.length - 1]?.hasNext);
+
+  return { goalRoomListResponse: { responses, hasNext }, fetchNextPage };
 };
 
 export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => {
-  const { data } = useSuspendedQuery(['myGoalRoomList', statusCond], () =>
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.my, statusCond], () =>
     getMyGoalRoomList(statusCond)
   );
 
@@ -43,29 +57,33 @@ export const useMyPageGoalRoomList = (statusCond: GoalRoomRecruitmentStatus) => 
 };
 
 export const useGoalRoomDetail = (goalRoomId: number) => {
-  const { data } = useSuspendedQuery(['goalRoomDetail', goalRoomId], () =>
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.detail, goalRoomId], () =>
     getGoalRoomDetail(goalRoomId)
   );
   return { goalRoomInfo: data };
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
-  const { data: goalRoomRes } = useSuspendedQuery(['goalRoom', goalRoomId], () =>
-    getGoalRoomDashboard(goalRoomId)
+  const { data: goalRoomResponse } = useSuspendedQuery(
+    [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
+    () => getGoalRoomDashboard(goalRoomId)
   );
 
   return {
-    goalRoom: goalRoomRes,
+    goalRoom: goalRoomResponse,
   };
 };
 
 export const useCreateGoalRoom = (roadmapContentId: number) => {
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
   const { triggerToast } = useToast();
   const { mutate } = useMutation(
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
-      onSuccess() {
+      async onSuccess() {
+        await queryClient.refetchQueries([[QUERY_KEYS.goalRoom.my, roadmapContentId]]);
         navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
         triggerToast({ message: '골룸을 생성했습니다!' });
       },
@@ -86,8 +104,8 @@ export const useCreateTodo = (goalRoomId: string) => {
     {
       onSuccess() {
         queryClient.invalidateQueries([
-          ['goalRoom', goalRoomId],
-          ['goalRoomTodos', goalRoomId],
+          [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
+          [QUERY_KEYS.goalRoom.todos, goalRoomId],
         ]);
       },
     }
@@ -99,7 +117,7 @@ export const useCreateTodo = (goalRoomId: string) => {
 };
 
 export const useFetchGoalRoomTodos = (goalRoomId: string) => {
-  const { data } = useSuspendedQuery(['goalRoomTodos', goalRoomId], () =>
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.todos, goalRoomId], () =>
     getGoalRoomTodos(goalRoomId)
   );
 
@@ -120,8 +138,8 @@ export const usePostChangeTodoCheckStatus = ({
     {
       onSuccess() {
         triggerToast({ message: '투두리스트 상태 변경 완료!' });
-        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
-        queryClient.invalidateQueries(['goalRoomTodos', goalRoomId]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.todos, goalRoomId]);
       },
     }
   );
@@ -138,7 +156,7 @@ export const useCreateCertificationFeed = (goalRoomId: string) => {
     (formData: FormData) => postCreateNewCertificationFeed(goalRoomId, formData),
     {
       onSuccess() {
-        queryClient.invalidateQueries(['goalRoom', goalRoomId]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
       },
     }
   );
@@ -157,7 +175,7 @@ export const useJoinGoalRoom = ({ goalRoomId }: JoinGoalRoomRequest) => {
     onSuccess() {
       navigate(`/goalroom-dashboard/${goalRoomId}`);
       triggerToast({ message: '골룸에 참여하였습니다!' });
-      queryClient.invalidateQueries(['goalRoomDetail', goalRoomId]);
+      queryClient.invalidateQueries([QUERY_KEYS.goalRoom.detail, goalRoomId]);
     },
   });
 
