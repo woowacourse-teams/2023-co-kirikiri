@@ -2,6 +2,7 @@ import {
   CheckFeed,
   GoalRoomDetailType,
   GoalRoomInfoType,
+  GoalRoomNodeListType,
   GoalRoomRecruitmentStatus,
   GoalRoomRoadmap,
   GoalRoomTodo,
@@ -100,3 +101,5 @@ export type CertificationFeedType = {
 };
 
 export type GoalRoomCertificationFeedsResponse = CertificationFeedType[];
+
+export type GoalRoomNodeListResponse = GoalRoomNodeListType;

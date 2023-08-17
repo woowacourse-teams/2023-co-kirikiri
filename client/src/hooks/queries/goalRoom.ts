@@ -20,6 +20,7 @@ import {
   getGoalRoomParticipants,
   getCertificationFeeds,
   postStartGoalRoom,
+  getGoalRoomNodeList,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -233,5 +234,15 @@ export const useStartGoalRoom = (goalRoomId: string) => {
 
   return {
     startGoalRoom: mutate,
+  };
+};
+
+export const useGoalRoomNodeList = (goalRoomId: string) => {
+  const { data } = useSuspendedQuery(['goalRoomNodeList', goalRoomId], () =>
+    getGoalRoomNodeList(goalRoomId)
+  );
+
+  return {
+    goalRoomNodeList: data,
   };
 };
