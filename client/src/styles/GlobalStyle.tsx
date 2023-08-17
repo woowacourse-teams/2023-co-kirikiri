@@ -91,7 +91,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Noto Sans', 'Noto Sans KR', sans-serif;
+    font-family: 'Noto Sans KR', 'Noto Sans' , sans-serif;
 
     button {
       border:none;

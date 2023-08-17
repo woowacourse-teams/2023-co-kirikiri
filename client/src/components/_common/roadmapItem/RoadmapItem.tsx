@@ -40,12 +40,19 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
         <S.RoadmapTitle aria-label='로드맵 제목'>{item.roadmapTitle}</S.RoadmapTitle>
         <S.Description aria-label='로드맵 소개'>{item.introduction}</S.Description>
       </div>
+      <S.ExtraHeader>
+        <span>카테고리</span>
+        <span>난이도</span>
+        <span>권장 소요기간</span>
+      </S.ExtraHeader>
       <S.ItemExtraInfos aria-label='로드맵 속성'>
         <S.ExtraInfoBox aria-label='로드맵 카테고리 분류'>{categoryIcon}</S.ExtraInfoBox>
         <S.Difficulty aria-label='로드맵 난이도'>{difficultyIcon}</S.Difficulty>
         <S.RecommendedRoadmapPeriod aria-label='로드맵 진행 기간'>
-          <div>{item.recommendedRoadmapPeriod}</div>
-          <div aria-label='일'>Days</div>
+          <S.RecommendedRoadmapPeriodNumber>
+            {item.recommendedRoadmapPeriod}
+          </S.RecommendedRoadmapPeriodNumber>
+          일
         </S.RecommendedRoadmapPeriod>
       </S.ItemExtraInfos>
       <Button onClick={moveGoalRoomListPage}>

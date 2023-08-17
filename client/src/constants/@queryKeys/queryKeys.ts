@@ -5,6 +5,7 @@ const QUERY_KEYS = {
   roadmap: {
     list: 'roadmapList',
     detail: 'roadmapDetail',
+    myRoadmap: 'myRoadmap',
   },
   goalRoom: {
     dashboard: 'dashboard',

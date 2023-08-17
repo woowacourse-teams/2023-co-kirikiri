@@ -17,6 +17,7 @@ import GoalRoomListPage from './pages/goalRoomListPage/GoalRoomListPage';
 import GoalRoomCreatePage from './pages/goalRoomCreatePage/GoalRoomCreatePage';
 import MyPage from '@pages/myPage/MyPage';
 import UserInfoProvider from './components/_providers/UserInfoProvider';
+import MainPage from '@pages/mainPage/MainPage';
 
 const App = () => {
   return (
@@ -28,7 +29,7 @@ const App = () => {
             <ResponsiveContainer>
               <PageLayout>
                 <Routes>
-                  <Route path='/' element={<RoadmapListPage />} />
+                  <Route path='/' element={<MainPage />} />
                   <Route path='/login' element={<LoginPage />} />
                   <Route path='/join' element={<SignUpPage />} />
                   <Route path='/roadmap-list' element={<RoadmapListPage />} />

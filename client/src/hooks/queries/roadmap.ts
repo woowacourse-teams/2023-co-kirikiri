@@ -1,5 +1,10 @@
-import { RoadmapListRequest } from '@/myTypes/roadmap/remote';
-import { getRoadmapDetail, getRoadmapList, postCreateRoadmap } from '@apis/roadmap';
+import { RoadmapListRequest, RoadmapValueType } from '@/myTypes/roadmap/remote';
+import {
+  getMyRoadmapList,
+  getRoadmapDetail,
+  getRoadmapList,
+  postCreateRoadmap,
+} from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
@@ -46,4 +51,15 @@ export const useCreateRoadmap = () => {
   return {
     createRoadmap: mutate,
   };
+};
+
+export const useMyRoadmapList = () => {
+  const size = 10;
+  const lastId = undefined;
+
+  const { data } = useSuspendedQuery([QUERY_KEYS.roadmap.myRoadmap, size, lastId], () =>
+    getMyRoadmapList(10, lastId)
+  );
+
+  return { myRoadmapList: data };
 };
