@@ -1,7 +1,11 @@
 import RoadmapCreateForm from '@/components/roadmapCreatePage/roadmapCreateForm/RoadmapCreateForm';
 
 const RoadmapCreatePage = () => {
-  return <RoadmapCreateForm />;
+  return (
+    <>
+      <RoadmapCreateForm />
+    </>
+  );
 };
 
 export default RoadmapCreatePage;

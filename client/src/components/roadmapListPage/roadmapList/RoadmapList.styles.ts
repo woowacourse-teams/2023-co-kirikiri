@@ -17,15 +17,16 @@ export const RoadmapList = styled.div`
 `;
 
 export const CreateRoadmapButton = styled.button`
-  ${({ theme }) => theme.fonts.h2}
+  ${({ theme }) => theme.fonts.nav_title}
   position: fixed;
-  top: 1rem;
+  right: 5%;
+  bottom: 1rem;
 
-  width: 30%;
+  width: 5rem;
   height: 5rem;
 
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme }) => theme.colors.main_middle};
-  border-radius: 20px;
+  border-radius: 50%;
 `;

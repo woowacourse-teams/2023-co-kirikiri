@@ -12,7 +12,7 @@ const LoginContent = () => {
 
   return (
     <S.LoginContentWrapper>
-      <Link to='/'>
+      <Link to='/roadmap-list'>
         <img src={logo} alt='코끼리 로고' />
       </Link>
       {isLoginFormVisible ? (

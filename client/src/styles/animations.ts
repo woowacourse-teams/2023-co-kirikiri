@@ -27,3 +27,15 @@ export const wavyAnimation = keyframes`
   0%, 40%, 100% { transform: scaleY(0.4); }
   20% { transform: scaleY(1); }
 `;
+
+export const float = keyframes`
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+`;

@@ -11,8 +11,8 @@ const RoadmapDetail = () => {
   const navigate = useNavigate();
   const { roadmapInfo } = useRoadmapDetail(Number(roadmapId));
 
-  const moveGoalRoomListPage = () => {
-    navigate(`/roadmap/${roadmapId}/goalroom-list`);
+  const moveToGoalRoomCreatePage = () => {
+    navigate(`/roadmap/${roadmapId}/goalroom-create`);
   };
 
   console.log(roadmapInfo);
@@ -32,7 +32,8 @@ const RoadmapDetail = () => {
         roadmapTitle={roadmapInfo.roadmapTitle}
         nodeInfo={roadmapInfo.content.nodes}
       />
-      <Button onClick={moveGoalRoomListPage}>진행중인 골룸 보기</Button>
+      <S.RoadmapBody>{roadmapInfo.content.content}</S.RoadmapBody>
+      <Button onClick={moveToGoalRoomCreatePage}>골룸 생성하러 가기</Button>
     </S.RoadmapDetail>
   );
 };

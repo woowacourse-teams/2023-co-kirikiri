@@ -1,5 +1,6 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled, { keyframes } from 'styled-components';
+import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
 
 const bounce = keyframes`
   0%, 20%, 50%, 80%, 100% {
@@ -40,7 +41,8 @@ export const Participant = styled.div<{ position: number }>`
 `;
 
 export const Card = styled.div`
-  width: calc(33.33% - 1rem);
+  ${({ theme }) => theme.fonts.description2};
+  width: 100%;
   margin: 1rem 0;
   padding: 1rem;
 
@@ -58,3 +60,5 @@ export const UserInfoLabel = styled.div`
     height: 5rem;
   }
 `;
+
+export const ModalBackdrop = styled(BackDrop)``;

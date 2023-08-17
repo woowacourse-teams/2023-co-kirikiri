@@ -2440,3 +2440,33 @@ export const FemaleFace = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
+
+export const SearchIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 -960 960 960'
+  >
+    <path
+      fill='currentColor'
+      d='M796-121 533-384q-30 26-69.959 40.5T378-329q-108.162 0-183.081-75Q120-479 120-585t75-181q75-75 181.5-75t181 75Q632-691 632-584.85 632-542 618-502q-14 40-42 75l264 262-44 44ZM377-389q81.25 0 138.125-57.5T572-585q0-81-56.875-138.5T377-781q-82.083 0-139.542 57.5Q180-666 180-585t57.458 138.5Q294.917-389 377-389Z'
+    />
+  </svg>
+);
+
+export const ImageUploadIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 -960 960 960'
+  >
+    <path
+      fill='gray'
+      d='M180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm0-60h600v-600H180v600Zm56-97h489L578-473 446-302l-93-127-117 152Zm-56 97v-600 600Z'
+    />
+  </svg>
+);

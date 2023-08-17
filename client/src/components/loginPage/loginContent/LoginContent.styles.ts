@@ -5,6 +5,6 @@ export { InfoText, FormList } from '@components/signUpPage/SignUpForm.styles';
 
 export const LoginContentWrapper = styled(SingleCardWrapper)`
   & img {
-    margin-left: 4rem;
+    margin-left: 11rem;
   }
 `;

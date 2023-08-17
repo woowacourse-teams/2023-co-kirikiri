@@ -5,14 +5,15 @@ const QUERY_KEYS = {
   roadmap: {
     list: 'roadmapList',
     detail: 'roadmapDetail',
+    myRoadmap: 'myRoadmap',
   },
   goalRoom: {
+    dashboard: 'dashboard',
     list: 'goalRoomList',
     participants: 'participants',
     certificationFeeds: 'certificationFeeds',
     my: 'myGoalRoomList',
     detail: 'goalRoomDetail',
-    dashboard: 'goalRoom',
     todos: 'goalRoomTodos',
   },
 } as const;

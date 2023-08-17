@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const GoalRoomGridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+  grid-template-columns: repeat(3, minmax(28rem, 1fr));
   grid-template-rows: repeat(28rem, 1fr);
   gap: 2rem;
 

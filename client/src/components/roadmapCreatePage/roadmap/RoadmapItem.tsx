@@ -1,4 +1,5 @@
-// import { useUploadImage } from '@/hooks/_common/useUploadImage';
+import { ImageUploadIcon } from '@/components/icons/svgIcons';
+import { useUploadImage } from '@/hooks/_common/useUploadImage';
 import React, { ChangeEvent } from 'react';
 import * as S from './roadmap.styles';
 
@@ -9,25 +10,26 @@ type RoadmapItemProps = {
     e: React.ChangeEvent<T>,
     itemId: number
   ) => void;
+  getNodeImage: (nodeImage: File, itemId: number) => void;
 };
 
 const RoadmapItem = ({
   roadmapNumber,
   itemId,
   getRoadmapItemTitle,
+  getNodeImage,
 }: RoadmapItemProps) => {
-  // const { imagePreviews, getFileFromElement, showPrevImage, checkFileSize } =
-  //   useUploadImage();
+  const { imagePreviews, getFileFromElement, showPrevImage } = useUploadImage();
 
-  // const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   Array.from(getFileFromElement(event)).forEach((uploadedFile) => {
-  //     getNodeImage(uploadedFile, itemId);
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    Array.from(getFileFromElement(event)).forEach((uploadedFile) => {
+      getNodeImage(uploadedFile, itemId);
 
-  //     if (uploadedFile && checkFileSize(3 * 1024 * 1024, uploadedFile)) {
-  //       showPrevImage(uploadedFile);
-  //     }
-  //   });
-  // };
+      if (uploadedFile) {
+        showPrevImage(uploadedFile);
+      }
+    });
+  };
 
   return (
     <>

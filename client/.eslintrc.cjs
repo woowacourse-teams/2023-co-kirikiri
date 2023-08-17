@@ -75,6 +75,7 @@ module.exports = {
     'react/jsx-no-constructed-context-values': 'off',
     'react/jsx-props-no-spreading': 'off',
     'no-nested-ternary': 'off',
-    "react/jsx-no-useless-fragment": "off"
+    "react/jsx-no-useless-fragment": "off",
+    "react/no-unescaped-entities": "off",
   }
 };
