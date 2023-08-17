@@ -5,10 +5,12 @@ import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
+import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
 import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
 
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
@@ -45,7 +47,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
-                .where(roadmap.id.eq(roadmapId))
+                .where(roadmapCond(roadmapId))
                 .fetchOne());
     }
 
@@ -102,6 +104,27 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
                 .fetch();
+    }
+
+    @Override
+    public Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier) {
+        return Optional.ofNullable(selectFrom(roadmap)
+                .where(creatorIdentifierCond(identifier),
+                        roadmapCond(roadmapId))
+                .fetchOne());
+    }
+
+    @Override
+    public List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatus status) {
+        return selectFrom(roadmap)
+                .innerJoin(roadmap.contents.values, roadmapContent)
+                .fetchJoin()
+                .where(statusCond(status))
+                .fetch();
+    }
+
+    private BooleanExpression roadmapCond(final Long roadmapId) {
+        return roadmap.id.eq(roadmapId);
     }
 
     private BooleanExpression categoryCond(final RoadmapCategory category) {
@@ -214,5 +237,10 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                         .from(roadmap)
                         .where(roadmap.id.eq(lastId))
         );
+    }
+
+    private BooleanExpression creatorIdentifierCond(final String identifier) {
+        final Identifier creatorIdentifier = new Identifier(identifier);
+        return roadmap.creator.identifier.eq(creatorIdentifier);
     }
 }

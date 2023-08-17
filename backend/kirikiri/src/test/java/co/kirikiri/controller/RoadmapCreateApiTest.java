@@ -2,17 +2,21 @@ package co.kirikiri.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -23,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
@@ -632,6 +637,91 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
                 .isEqualTo(expected);
     }
 
+    @Test
+    void 정상적으로_로드맵을_삭제한다() throws Exception {
+        // given
+        doNothing()
+                .when(roadmapCreateService)
+                .deleteRoadmap(anyString(), anyLong());
+
+        // when
+        mockMvc.perform(delete(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNoContent())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디").optional()))
+                );
+    }
+
+    @Test
+    void 로드맵_삭제시_존재하지_않는_로드맵인_경우_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"))
+                .when(roadmapCreateService)
+                .deleteRoadmap(anyString(), anyLong());
+
+        // when
+        final String response = mockMvc.perform(delete(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(status().isNotFound(),
+                        jsonPath("$.message")
+                                .value("존재하지 않는 로드맵입니다. roadmapId = 1"))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디").optional()),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메시지"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse("존재하지 않는 로드맵입니다. roadmapId = 1");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_삭제시_자신이_생성한_로드맵이_아닌_경우_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new ForbiddenException("해당 로드맵을 생성한 사용자가 아닙니다."))
+                .when(roadmapCreateService)
+                .deleteRoadmap(anyString(), anyLong());
+
+        // when
+        final String response = mockMvc.perform(delete(API_PREFIX + "/roadmaps/{roadmapId}", 1L)
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpectAll(status().isForbidden(),
+                        jsonPath("$.message")
+                                .value("해당 로드맵을 생성한 사용자가 아닙니다."))
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("roadmapId").description("로드맵 아이디").optional()),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메시지"))))
+                .andReturn().getResponse()
+                .getContentAsString();
+
+        // then
+        final ErrorResponse errorResponse = objectMapper.readValue(response, ErrorResponse.class);
+        final ErrorResponse expected = new ErrorResponse("해당 로드맵을 생성한 사용자가 아닙니다.");
+        assertThat(errorResponse)
+                .isEqualTo(expected);
+    }
+
     private RoadmapSaveRequest 로드맵_생성_요청을_생성한다(final Long categoryId, final String roadmapTitle,
                                                final String roadmapIntroduction, final String roadmapContent,
                                                final RoadmapDifficultyType roadmapDifficulty,
@@ -699,5 +789,4 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
                                 headerWithName("Location").description("로드맵 아이디").optional()
                         )));
     }
-
 }

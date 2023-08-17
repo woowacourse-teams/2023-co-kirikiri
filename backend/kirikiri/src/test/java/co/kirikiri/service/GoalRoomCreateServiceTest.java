@@ -1,13 +1,11 @@
 package co.kirikiri.service;
 
-import static co.kirikiri.domain.goalroom.GoalRoomStatus.RECRUITING;
 import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -19,7 +17,6 @@ import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
@@ -45,11 +42,11 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
+import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -83,12 +80,19 @@ class GoalRoomCreateServiceTest {
 
     private static final RoadmapNode ROADMAP_NODE = new RoadmapNode(1L, "title", "content");
     private static final RoadmapContent ROADMAP_CONTENT = new RoadmapContent(1L, "content");
+    private static final RoadmapContent DELETED_ROADMAP_CONTENT = new RoadmapContent(2L, "content2");
     private static final RoadmapNodes ROADMAP_CONTENTS = new RoadmapNodes(new ArrayList<>(List.of(ROADMAP_NODE)));
 
-    private static final Member GOAL_ROOM_MEMBER1 = new Member(new Identifier("identifier2"),
+    private static final Member MEMBER = new Member(new Identifier("identifier2"),
             new EncryptedPassword(new Password("password!2")),
             new Nickname("name2"), null,
             new MemberProfile(Gender.FEMALE, LocalDate.now(), "010-1111-2222"));
+
+    private static final Roadmap ROADMAP = new Roadmap("roadmap", "introduction", 30, RoadmapDifficulty.DIFFICULT,
+            MEMBER, new RoadmapCategory("IT"));
+
+    private static final Roadmap DELETED_ROADMAP = new Roadmap("roadmap", "introduction", 30,
+            RoadmapDifficulty.DIFFICULT, RoadmapStatus.DELETED, MEMBER, new RoadmapCategory("IT"));
 
     private static Member member;
 
@@ -97,9 +101,6 @@ class GoalRoomCreateServiceTest {
 
     @Mock
     private GoalRoomMemberRepository goalRoomMemberRepository;
-
-    @Mock
-    private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     @Mock
     private RoadmapContentRepository roadmapContentRepository;
@@ -122,12 +123,11 @@ class GoalRoomCreateServiceTest {
     @InjectMocks
     private GoalRoomCreateService goalRoomCreateService;
 
-    @InjectMocks
-    private GoalRoomScheduler goalRoomScheduler;
-
     @BeforeAll
     static void setUp() {
         ROADMAP_CONTENT.addNodes(ROADMAP_CONTENTS);
+        ROADMAP.addContent(ROADMAP_CONTENT);
+        DELETED_ROADMAP.addContent(DELETED_ROADMAP_CONTENT);
         final Identifier identifier = new Identifier("identifier1");
         final Password password = new Password("password1!");
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
@@ -144,7 +144,7 @@ class GoalRoomCreateServiceTest {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -156,13 +156,29 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
+    void 골룸_생성_시_삭제된_로드맵이면_예외를_던진다() {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+
+        given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
+                .willReturn(Optional.of(DELETED_ROADMAP_CONTENT));
+
+        //when
+        //then
+        assertThatThrownBy(() -> goalRoomCreateService.create(request, member.getIdentifier().getValue()))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
     void 골룸_생성_시_존재하지_않은_로드맵_컨텐츠가_들어올때_예외를_던진다() {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.empty());
 
         //when
@@ -181,7 +197,7 @@ class GoalRoomCreateServiceTest {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 wrongSizeGoalRoomRoadmapNodeRequest);
 
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
 
         //when
@@ -198,7 +214,7 @@ class GoalRoomCreateServiceTest {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(wrongRoadmapNodId, 10, TODAY, TEN_DAY_LATER))));
 
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
 
         //when
@@ -214,7 +230,7 @@ class GoalRoomCreateServiceTest {
                 20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
@@ -562,80 +578,6 @@ class GoalRoomCreateServiceTest {
     }
 
     @Test
-    void 골룸의_시작날짜가_되면_골룸의_상태가_진행중으로_변경된다() {
-        // given
-        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
-        final Roadmap roadmap = 로드맵을_생성한다(creator);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
-        final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
-
-        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "010-1111-1111");
-        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "010-1111-1112");
-        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "010-1111-1113");
-
-        final GoalRoomPendingMember goalRoomPendingMember = 골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
-        final GoalRoomPendingMember goalRoomPendingMember1 = 골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
-        final GoalRoomPendingMember goalRoomPendingMember2 = 골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
-
-        goalRoom1.join(follower1);
-        goalRoom1.join(follower2);
-        goalRoom2.join(follower3);
-
-        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
-                .thenReturn(List.of(goalRoom1));
-        when(goalRoomPendingMemberRepository.findAllByGoalRoom(any()))
-                .thenReturn(List.of(goalRoomPendingMember, goalRoomPendingMember1, goalRoomPendingMember2));
-
-        // when
-        goalRoomScheduler.startGoalRooms();
-
-        // then
-        assertAll(
-                () -> assertThat(goalRoom1.getStatus()).isEqualTo(RUNNING),
-                () -> assertThat(goalRoom2.getStatus()).isEqualTo(RECRUITING)
-        );
-    }
-
-    @Test
-    void 골룸의_시작날짜가_아직_지나지_않았다면_골룸의_상태가_변경되지_않는다() {
-        // given
-        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
-        final Roadmap roadmap = 로드맵을_생성한다(creator);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
-        final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
-
-        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "010-1111-1111");
-        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "010-1111-1112");
-        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "010-1111-1113");
-
-        goalRoom1.join(follower1);
-        goalRoom1.join(follower2);
-        goalRoom2.join(follower3);
-
-        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
-                .thenReturn(List.of());
-
-        // when
-        goalRoomScheduler.startGoalRooms();
-
-        // then
-        verify(goalRoomPendingMemberRepository, times(0)).findAllByGoalRoom(any());
-        verify(goalRoomMemberRepository, times(0)).saveAll(anyList());
-        verify(goalRoomPendingMemberRepository, times(0)).deleteAll(anyList());
-
-        assertAll(
-                () -> assertThat(goalRoom1.getStatus()).isEqualTo(RECRUITING),
-                () -> assertThat(goalRoom2.getStatus()).isEqualTo(RECRUITING)
-        );
-    }
-
-    @Test
     void 인증_피드_등록을_요청한다() {
         // given
         final CheckFeedRequest request = 인증_피드_요청_DTO를_생성한다("image/jpeg");
@@ -971,10 +913,10 @@ class GoalRoomCreateServiceTest {
     void 골룸을_나간다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
-                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
+                new RoadmapContent("content"), MEMBER);
 
         given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(GOAL_ROOM_MEMBER1));
+                .willReturn(Optional.of(MEMBER));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
 
@@ -1014,7 +956,7 @@ class GoalRoomCreateServiceTest {
     void 골룸을_나갈때_골룸이_진행중이면_예외가_발생한다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
-                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
+                new RoadmapContent("content"), MEMBER);
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -1033,7 +975,7 @@ class GoalRoomCreateServiceTest {
     void 골룸을_나갈때_골룸에_남아있는_사용자가_없으면_골룸이_삭제된다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3),
-                new RoadmapContent("content"), GOAL_ROOM_MEMBER1);
+                new RoadmapContent("content"), MEMBER);
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -1102,11 +1044,6 @@ class GoalRoomCreateServiceTest {
         goalRoom.addAllGoalRoomRoadmapNodes(
                 new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode)));
         return goalRoom;
-    }
-
-    private GoalRoomPendingMember 골룸_대기자를_생성한다(final GoalRoom goalRoom, final Member follower,
-                                               final GoalRoomRole role) {
-        return new GoalRoomPendingMember(role, LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, follower);
     }
 
     private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다(final RoadmapNodes roadmapNodes) {

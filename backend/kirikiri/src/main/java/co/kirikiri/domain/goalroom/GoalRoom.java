@@ -51,7 +51,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
 
     @Embedded
-    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(new ArrayList<>());
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
 
     @Embedded
     private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos();
@@ -248,6 +248,11 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     public void deleteAllPendingMembers() {
         goalRoomPendingMembers.deleteAll();
+    }
+
+    public boolean isCompletedAfterMonths(final long numberOfMonth) {
+        final LocalDate currentDate = LocalDate.now();
+        return currentDate.isAfter(endDate.plusMonths(numberOfMonth));
     }
 
     public GoalRoomName getName() {

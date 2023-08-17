@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,9 +100,9 @@ public class RoadmapController {
     }
 
     @GetMapping("/{roadmapId}/goal-rooms")
-    public ResponseEntity<RoadmapGoalRoomResponses> findGoalRoomsByFilterType(
+    public ResponseEntity<RoadmapGoalRoomResponses> findGoalRoomsByOrderType(
             @PathVariable final Long roadmapId,
-            @RequestParam(value = "roadmapGoalRoomsOrderTypeDto", required = false) final RoadmapGoalRoomsOrderTypeDto roadmapGoalRoomsOrderTypeDto,
+            @RequestParam(value = "filterCond", required = false) final RoadmapGoalRoomsOrderTypeDto roadmapGoalRoomsOrderTypeDto,
             @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
         final RoadmapGoalRoomResponses responses = roadmapReadService.findRoadmapGoalRoomsByOrderType(
@@ -116,5 +117,13 @@ public class RoadmapController {
     ) {
         final List<RoadmapReviewResponse> responses = roadmapReadService.findRoadmapReviews(roadmapId, scrollRequest);
         return ResponseEntity.ok(responses);
+    }
+
+    @DeleteMapping("/{roadmapId}")
+    @Authenticated
+    public ResponseEntity<Void> deleteRoadmap(@MemberIdentifier final String identifier,
+                                              @PathVariable("roadmapId") final Long roadmapId) {
+        roadmapCreateService.deleteRoadmap(identifier, roadmapId);
+        return ResponseEntity.noContent().build();
     }
 }

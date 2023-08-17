@@ -230,7 +230,7 @@ public class GoalRoomMapper {
     private static List<CheckFeedResponse> convertToCheckFeedResponses(final List<CheckFeedDto> checkFeedDtos) {
         return checkFeedDtos.stream()
                 .map(checkFeed -> new CheckFeedResponse(checkFeed.id(), checkFeed.imageUrl(),
-                        checkFeed.description(), checkFeed.createdAt()))
+                        checkFeed.description(), checkFeed.createdAt().toLocalDate()))
                 .limit(MAX_MEMBER_GOAL_ROOM_CHECK_FEED_NUMBER)
                 .toList();
     }
@@ -273,7 +273,7 @@ public class GoalRoomMapper {
 
         final CheckFeedDto checkFeedDto = goalRoomCheckFeedDto.checkFeedDto();
         final CheckFeedResponse checkFeedResponse = new CheckFeedResponse(checkFeedDto.id(), checkFeedDto.imageUrl(),
-                checkFeedDto.description(), checkFeedDto.createdAt());
+                checkFeedDto.description(), checkFeedDto.createdAt().toLocalDate());
 
         return new GoalRoomCheckFeedResponse(memberResponse, checkFeedResponse);
     }

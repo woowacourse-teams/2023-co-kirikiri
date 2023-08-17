@@ -6,6 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.member.request.GenderType;
+import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
@@ -15,6 +18,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -337,6 +341,77 @@ class RoadmapCreateIntegrationTest extends MemberReadIntegrationTest {
         assertThat(에러_메세지.message()).isEqualTo("태그 이름은 최소 1자부터 최대 10자까지 가능합니다.");
     }
 
+    @Test
+    void 골룸이_생성된_적이_없는_로드맵을_정상적으로_삭제한다() throws IOException {
+        // given
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+
+        // when
+        final ExtractableResponse<Response> 로드맵_삭제_응답 = 로드맵_삭제(로드맵_아이디, 기본_로그인_토큰);
+
+        // then
+        응답_상태_코드_검증(로드맵_삭제_응답, HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    void 로드맵을_삭제할_때_존재하지_않는_로드맵이면_예외가_발생한다() throws IOException {
+        // given
+        final Long 존재하지_않는_로드맵_아이디 = 1L;
+
+        // when
+        final ExtractableResponse<Response> 로드맵_삭제_응답 = 로드맵_삭제(존재하지_않는_로드맵_아이디, 기본_로그인_토큰);
+
+        // then
+        final ErrorResponse 에러_메세지 = 로드맵_삭제_응답.as(ErrorResponse.class);
+        응답_상태_코드_검증(로드맵_삭제_응답, HttpStatus.NOT_FOUND);
+        assertThat(에러_메세지.message()).isEqualTo("존재하지 않는 로드맵입니다. roadmapId = 1");
+
+    }
+
+    @Test
+    void 로드맵을_삭제할_때_자신이_생성한_로드맵이_아니면_예외가_발생한다() throws IOException {
+        // given
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+
+        회원가입(new MemberJoinRequest("identifier2", "password2!", "name2", "010-1111-2222", GenderType.FEMALE,
+                LocalDate.now()));
+        final String 다른_사용자_로그인_토큰 = String.format(BEARER_TOKEN_FORMAT,
+                로그인(new LoginRequest("identifier2", "password2!")).accessToken());
+
+        // when
+        final ExtractableResponse<Response> 로드맵_삭제_응답 = 로드맵_삭제(로드맵_아이디, 다른_사용자_로그인_토큰);
+
+        // then
+        final ErrorResponse 에러_메세지 = 로드맵_삭제_응답.as(ErrorResponse.class);
+        응답_상태_코드_검증(로드맵_삭제_응답, HttpStatus.FORBIDDEN);
+        assertThat(에러_메세지.message()).isEqualTo("해당 로드맵을 생성한 사용자가 아닙니다.");
+
+    }
+
+    protected Long 기본_로드맵_생성(final String 액세스_토큰) throws IOException {
+        if (기본_카테고리 == null) {
+            기본_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        }
+        기본_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "로드맵 제목", "로드맵 소개글",
+                "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest("roadmap 1st week", "로드맵 1주차 내용", null)),
+                List.of(new RoadmapTagSaveRequest("태그1")));
+        return 로드맵_생성(기본_로드맵_생성_요청, 액세스_토큰);
+    }
+
+    protected Long 로드맵_생성(final RoadmapSaveRequest 로드맵_생성_요청, final String 액세스_토큰) throws IOException {
+        if (기본_카테고리 == null) {
+            기본_카테고리 = 로드맵_카테고리를_저장한다("여행");
+        }
+        final Response 응답 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청, 액세스_토큰).response();
+        return Long.parseLong(응답.header(HttpHeaders.LOCATION).split("/")[3]);
+    }
+
+    protected RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
+        final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
+        return roadmapCategoryRepository.save(로드맵_카테고리);
+    }
+
     private ExtractableResponse<Response> 요청을_받는_이미지가_포함된_로드맵_생성(final RoadmapSaveRequest 로드맵_생성_요청값,
                                                                  final String accessToken)
             throws IOException {
@@ -373,28 +448,13 @@ class RoadmapCreateIntegrationTest extends MemberReadIntegrationTest {
         return requestSpecification;
     }
 
-    protected Long 로드맵_생성(final RoadmapSaveRequest 로드맵_생성_요청, final String 액세스_토큰) throws IOException {
-        if (기본_카테고리 == null) {
-            기본_카테고리 = 로드맵_카테고리를_저장한다("여행");
-        }
-        final Response 응답 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청, 액세스_토큰).response();
-        return Long.parseLong(응답.header(HttpHeaders.LOCATION).split("/")[3]);
-    }
-
-    protected Long 기본_로드맵_생성(final String 액세스_토큰) throws IOException {
-        if (기본_카테고리 == null) {
-            기본_카테고리 = 로드맵_카테고리를_저장한다("여행");
-        }
-        기본_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "로드맵 제목", "로드맵 소개글",
-                "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("roadmap 1st week", "로드맵 1주차 내용", null)),
-                List.of(new RoadmapTagSaveRequest("태그1")));
-        return 로드맵_생성(기본_로드맵_생성_요청, 액세스_토큰);
-    }
-
-    protected RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
-        final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
-        return roadmapCategoryRepository.save(로드맵_카테고리);
+    protected ExtractableResponse<Response> 로드맵_삭제(final Long 삭제할_로드맵_아이디, final String 로그인_토큰) {
+        return given().log().all()
+                .header(HttpHeaders.AUTHORIZATION, 로그인_토큰)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .delete(API_PREFIX + "/roadmaps/{roadmapId}", 삭제할_로드맵_아이디)
+                .then().log().all()
+                .extract();
     }
 
     private void 응답_상태_코드_검증(final ExtractableResponse<Response> 응답, final HttpStatus http_상태) {

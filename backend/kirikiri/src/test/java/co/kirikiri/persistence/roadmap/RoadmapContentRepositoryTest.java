@@ -38,20 +38,40 @@ class RoadmapContentRepositoryTest {
     }
 
     @Test
+    void 로드맵_컨텐츠를_로드맵과_함께_조회한다() {
+        // given
+        final Roadmap roadmap = 로드맵을_생성한다();
+        final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
+        final Long roadmapContentId = savedRoadmap.getContents().getValues().get(0).getId();
+
+        // when
+        final RoadmapContent roadmapContent = roadmapContentRepository.findByIdWithRoadmap(roadmapContentId).get();
+
+        // then
+        assertAll(
+                () -> assertThat(roadmapContent).isEqualTo(savedRoadmap.getContents().getValues().get(0)),
+                () -> assertThat(roadmapContent.getRoadmap()).isEqualTo(savedRoadmap)
+        );
+    }
+
+    @Test
     void 로드맵의_가장_최근_컨텐츠를_조회한다() {
+        // given
         final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
         final RoadmapContent oldRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
                 savedRoadmap).get();
 
         final RoadmapContent newRoadmapContent = new RoadmapContent("로드맵 제목");
         savedRoadmap.addContent(newRoadmapContent);
+
+        // when
         final RoadmapContent expectedRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
                 savedRoadmap).get();
 
+        // then
         assertAll(
                 () -> assertThat(oldRoadmapContent).isNotEqualTo(expectedRoadmapContent),
-                () -> assertThat(expectedRoadmapContent).usingRecursiveComparison()
-                        .isEqualTo(newRoadmapContent)
+                () -> assertThat(expectedRoadmapContent).isEqualTo(newRoadmapContent)
         );
     }
 

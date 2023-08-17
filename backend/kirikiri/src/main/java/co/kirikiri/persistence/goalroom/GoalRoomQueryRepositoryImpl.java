@@ -38,6 +38,17 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
+    public Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .fetchJoin()
+                .innerJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
+    }
+
+    @Override
     public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
                                                                           final RoadmapGoalRoomsOrderType orderType,
                                                                           final Long lastId,
@@ -51,9 +62,12 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchJoin()
                 .innerJoin(member.memberProfile, memberProfile)
                 .fetchJoin()
-                .where(statusCond(GoalRoomStatus.RECRUITING), lessThanLastId(lastId, orderType))
-                .orderBy(sortCond(orderType))
+                .where(
+                        statusCond(GoalRoomStatus.RECRUITING),
+                        lessThanLastId(lastId, orderType),
+                        roadmapCond(roadmap))
                 .limit(pageSize + LIMIT_OFFSET)
+                .orderBy(sortCond(orderType))
                 .fetch();
     }
 
@@ -64,53 +78,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetchJoin()
                 .where(goalRoomIdCond(goalRoomId))
                 .fetchFirst());
-    }
-
-    @Override
-    public Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId) {
-        return Optional.ofNullable(selectFrom(goalRoom)
-                .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .fetchJoin()
-                .innerJoin(goalRoom.goalRoomToDos.values, goalRoomToDo)
-                .fetchJoin()
-                .where(goalRoomIdCond(goalRoomId))
-                .fetchOne());
-    }
-
-    @Override
-    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
-        return Optional.ofNullable(selectFrom(goalRoom)
-                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
-                .fetchJoin()
-                .where(goalRoomIdCond(goalRoomId))
-                .fetchOne());
-    }
-
-    private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
-        return goalRoom.id.eq(goalRoomId);
-    }
-
-    private BooleanExpression statusCond(final GoalRoomStatus status) {
-        return goalRoom.status.eq(status);
-    }
-
-    private BooleanExpression lessThanLastId(final Long lastId, final RoadmapGoalRoomsOrderType filterType) {
-        if (lastId == null) {
-            return null;
-        }
-        // TODO 참여율 순으로 조회 시 조건 추가해야 함
-        return goalRoom.createdAt.lt(
-                select(goalRoom.createdAt)
-                        .from(goalRoom)
-                        .where(goalRoom.id.eq(lastId))
-        );
-    }
-
-    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsOrderType orderType) {
-        if (orderType == RoadmapGoalRoomsOrderType.PARTICIPATION_RATE) {
-            return goalRoom.goalRoomPendingMembers.values.size().divide(goalRoom.limitedMemberCount.value).desc();
-        }
-        return goalRoom.createdAt.desc();
     }
 
     @Override
@@ -135,10 +102,55 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
+    public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
+                .fetchJoin()
+                .where(goalRoomIdCond(goalRoomId))
+                .fetchOne());
+    }
+
+    @Override
     public List<GoalRoom> findByRoadmap(final Roadmap roadmap) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .on(roadmapContent.roadmap.eq(roadmap))
+                .where(roadmapContent.roadmap.eq(roadmap))
                 .fetch();
+    }
+
+    private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
+        return goalRoom.id.eq(goalRoomId);
+    }
+
+    private BooleanExpression statusCond(final GoalRoomStatus status) {
+        return goalRoom.status.eq(status);
+    }
+
+    private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsOrderType orderType) {
+        if (orderType == RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE) {
+            return goalRoom.startDate.asc();
+        }
+        return goalRoom.createdAt.desc();
+    }
+
+    private BooleanExpression lessThanLastId(final Long lastId, final RoadmapGoalRoomsOrderType orderType) {
+        if (lastId == null) {
+            return null;
+        }
+        if (orderType == RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE) {
+            return select(goalRoom.startDate)
+                    .from(goalRoom)
+                    .where(goalRoom.id.eq(lastId))
+                    .lt(goalRoom.startDate);
+        }
+        return goalRoom.createdAt.lt(
+                select(goalRoom.createdAt)
+                        .from(goalRoom)
+                        .where(goalRoom.id.eq(lastId))
+        );
+    }
+
+    private BooleanExpression roadmapCond(final Roadmap roadmap) {
+        return goalRoom.roadmapContent.roadmap.eq(roadmap);
     }
 }

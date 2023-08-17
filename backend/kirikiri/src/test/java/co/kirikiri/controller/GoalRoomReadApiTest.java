@@ -637,10 +637,10 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "imageUrl"),
-                new CheckFeedResponse(1L, "imageUrl", "image description1", LocalDateTime.now()));
+                new CheckFeedResponse(1L, "imageUrl", "image description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(2L, "name2", "imageUrl"),
-                new CheckFeedResponse(2L, "imageUrl", "image description2", LocalDateTime.now()));
+                new CheckFeedResponse(2L, "imageUrl", "image description2", LocalDate.now()));
 
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse2,
                 goalRoomCheckFeedResponse1);
@@ -769,10 +769,10 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 List.of(new GoalRoomTodoResponse(1L, "첫 번째 할일",
                         LocalDate.of(2023, 1, 15), LocalDate.of(2023, 1, 31),
                         new GoalRoomToDoCheckResponse(false))),
-                List.of(new CheckFeedResponse(1L, "imageUrl1", "인증 피드 설명 1", LocalDateTime.now()),
-                        new CheckFeedResponse(2L, "imageUrl2", "인증 피드 설명 2", LocalDateTime.now()),
-                        new CheckFeedResponse(3L, "imageUrl3", "인증 피드 설명 3", LocalDateTime.now()),
-                        new CheckFeedResponse(4L, "imageUrl4", "인증 피드 설명 4", LocalDateTime.now())));
+                List.of(new CheckFeedResponse(1L, "imageUrl1", "인증 피드 설명 1", LocalDate.now()),
+                        new CheckFeedResponse(2L, "imageUrl2", "인증 피드 설명 2", LocalDate.now()),
+                        new CheckFeedResponse(3L, "imageUrl3", "인증 피드 설명 3", LocalDate.now()),
+                        new CheckFeedResponse(4L, "imageUrl4", "인증 피드 설명 4", LocalDate.now())));
 
     }
 

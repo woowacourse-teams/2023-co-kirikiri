@@ -149,6 +149,29 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
     }
 
     @Test
+    void 골룸_생성_시_삭제된_로드맵_경우() throws Exception {
+        //given
+        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
+                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+        doThrow(new BadRequestException("삭제된 로드맵에 대해 골룸을 생성할 수 없습니다."))
+                .when(goalRoomCreateService)
+                .create(any(), any());
+
+        //when
+        final MvcResult mvcResult = 골룸_생성(jsonRequest, status().isBadRequest())
+                .andReturn();
+
+        //then
+        final ErrorResponse expectedResponse = new ErrorResponse("삭제된 로드맵에 대해 골룸을 생성할 수 없습니다.");
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
     void 골룸_생성_시_로드맵의_노드_크기와_요청의_노드_크기가_일치하지_않을_경우() throws Exception {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",

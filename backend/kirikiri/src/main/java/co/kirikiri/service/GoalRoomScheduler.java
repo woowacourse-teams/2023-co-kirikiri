@@ -3,8 +3,6 @@ package co.kirikiri.service;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,20 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class GoalRoomScheduler {
 
     private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-    private final GoalRoomMemberRepository goalRoomMemberRepository;
 
     @Scheduled(cron = "0 0 0 * * *")
     public void startGoalRooms() {
         final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDate(LocalDate.now());
         for (final GoalRoom goalRoom : goalRoomsToStart) {
-            final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findAllByGoalRoom(
-                    goalRoom);
-            final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
-            goalRoomMemberRepository.saveAll(goalRoomMembers);
-            goalRoomPendingMemberRepository.deleteAll(goalRoomPendingMembers);
+            final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoom.getGoalRoomPendingMembers().getValues();
+            saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers, goalRoom);
             goalRoom.start();
         }
+    }
+
+    private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers,
+                                                      final GoalRoom goalRoom) {
+        final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
+        goalRoom.addAllGoalRoomMembers(goalRoomMembers);
+        goalRoom.deleteAllPendingMembers();
     }
 
     private List<GoalRoomMember> makeGoalRoomMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {

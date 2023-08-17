@@ -37,31 +37,35 @@ operation::goal-room-create-api-test/골룸_생성_시_로드맵의_노드_크�
 
 operation::goal-room-create-api-test/골룸_생성_시_로드맵이_존재하지_않을_경우[snippets='http-request,http-response']
 
-=== *1-6* 실패 - 골룸 생성 시 존재하지 않는 회원일 경우
+=== *1-6* 실패 - 골룸 생성 시 삭제된 로드맵인 경우
+
+operation::goal-room-create-api-test/골룸_생성_시_삭제된_로드맵_경우[snippets='http-request,http-response']
+
+=== *1-7* 실패 - 골룸 생성 시 존재하지 않는 회원일 경우
 
 operation::goal-room-create-api-test/골룸_생성_시_존재하지_않는_회원일_경우[snippets='http-request,http-response']
 
-=== *1-7* 실패 - 골룸 생성 시 골룸 투두의 시작 날짜가 오늘보다 전일 경우
+=== *1-8* 실패 - 골룸 생성 시 골룸 투두의 시작 날짜가 오늘보다 전일 경우
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_투두의_시작_날짜가_오늘보다_전일_경우[snippets='http-request,http-response']
 
-=== *1-8* 실패 - 골룸 생성 시 골룸 투두의 시작 날짜보다 종료 날짜가 빠른 경우
+=== *1-9* 실패 - 골룸 생성 시 골룸 투두의 시작 날짜보다 종료 날짜가 빠른 경우
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_투두의_시작_날짜보다_종료_날짜가_빠른_경우[snippets='http-request,http-response']
 
-=== *1-9* 실패 - 골룸 생성 시 골룸 노드의 시작 날짜가 오늘보다 전일 경우
+=== *1-10* 실패 - 골룸 생성 시 골룸 노드의 시작 날짜가 오늘보다 전일 경우
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_시작_날짜가_오늘보다_전일_경우[snippets='http-request,http-response']
 
-=== *1-10* 실패 - 골룸 생성 시 골룸 노드의 시작 날짜보다 종료 날짜가 빠른 경우
+=== *1-11* 실패 - 골룸 생성 시 골룸 노드의 시작 날짜보다 종료 날짜가 빠른 경우
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_시작_날짜보다_종료_날짜가_빠른_경우[snippets='http-request,http-response']
 
-=== *1-11* 실패 - 골룸 생성 시 골룸 노드의 인증 횟수가 0보다 작을 경우
+=== *1-12* 실패 - 골룸 생성 시 골룸 노드의 인증 횟수가 0보다 작을 경우
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_인증_횟수가_0보다_작을_경우[snippets='http-request,http-response']
 
-=== *1-12* 실패 - 골룸 생성 시 골룸 노드의 인증 횟수가 기간보다 클 경우
+=== *1-13* 실패 - 골룸 생성 시 골룸 노드의 인증 횟수가 기간보다 클 경우
 
 operation::goal-room-create-api-test/골룸_생성_시_골룸_노드의_인증_횟수가_기간보다_클_경우[snippets='http-request,http-response']
 

@@ -16,7 +16,7 @@ public class RoadmapNodeImages {
 
     private static final int MAX_SIZE = 2;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "roadmap_node_id", nullable = false, updatable = false)
     private final List<RoadmapNodeImage> values = new ArrayList<>();
 

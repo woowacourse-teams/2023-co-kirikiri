@@ -3,6 +3,7 @@ package co.kirikiri.persistence.roadmap;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import java.util.List;
@@ -25,4 +26,8 @@ public interface RoadmapQueryRepository {
     List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
                                                                 final Long lastId,
                                                                 final int pageSize);
+
+    Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier);
+
+    List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatus status);
 }
