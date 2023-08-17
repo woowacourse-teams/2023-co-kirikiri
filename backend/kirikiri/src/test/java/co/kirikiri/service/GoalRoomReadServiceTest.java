@@ -41,7 +41,6 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
@@ -504,7 +503,7 @@ class GoalRoomReadServiceTest {
                         new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
                                 goalRoomRoadmapNode2.getStartDate(),
                                 goalRoomRoadmapNode2.getEndDate(), goalRoomRoadmapNode2.getCheckCount())
-                )), null,
+                )), Collections.emptyList(),
                 List.of(
                         new CheckFeedResponse(1L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDateTime.now()),
                         new CheckFeedResponse(2L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDateTime.now()),
@@ -518,7 +517,7 @@ class GoalRoomReadServiceTest {
         //then
         assertThat(response)
                 .usingRecursiveComparison()
-                .ignoringFields("goalRoomTodos", "checkFeeds.id", "checkFeeds.createdAt")
+                .ignoringFields("checkFeeds.id", "checkFeeds.createdAt")
                 .isEqualTo(expected);
     }
 
@@ -566,16 +565,13 @@ class GoalRoomReadServiceTest {
                         new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
                                 goalRoomRoadmapNode2.getStartDate(),
                                 goalRoomRoadmapNode2.getEndDate(), goalRoomRoadmapNode2.getCheckCount())
-                )), null, Collections.emptyList());
+                )), Collections.emptyList(), Collections.emptyList());
 
         //when
         final MemberGoalRoomResponse response = goalRoomReadService.findMemberGoalRoom("identifier1", 1L);
 
         //then
-        assertThat(response)
-                .usingRecursiveComparison()
-                .ignoringFields("goalRoomTodos")
-                .isEqualTo(expected);
+        assertThat(response).isEqualTo(expected);
     }
 
     @Test
@@ -630,7 +626,7 @@ class GoalRoomReadServiceTest {
                         new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
                                 goalRoomRoadmapNode2.getStartDate(),
                                 goalRoomRoadmapNode2.getEndDate(), goalRoomRoadmapNode2.getCheckCount())
-                )), null,
+                )), Collections.emptyList(),
                 List.of(
                         new CheckFeedResponse(1L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDateTime.now()),
                         new CheckFeedResponse(2L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDateTime.now()),
@@ -644,7 +640,7 @@ class GoalRoomReadServiceTest {
         //then
         assertThat(response)
                 .usingRecursiveComparison()
-                .ignoringFields("goalRoomTodos", "checkFeeds.id", "checkFeeds.createdAt")
+                .ignoringFields("checkFeeds.id", "checkFeeds.createdAt")
                 .isEqualTo(expected);
     }
 
@@ -1170,12 +1166,12 @@ class GoalRoomReadServiceTest {
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
-                .willThrow(new BadRequestException("골룸에 참여하지 않은 회원입니다."));
+                .willThrow(new ForbiddenException("골룸에 참여하지 않은 회원입니다."));
 
         // when
         // then
         assertThatThrownBy(() -> goalRoomReadService.findGoalRoomCheckFeeds("cokirikiri", 1L))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(ForbiddenException.class);
     }
 
     private Member 크리에이터를_생성한다() {

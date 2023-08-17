@@ -172,7 +172,7 @@ class CheckFeedRepositoryTest {
     }
 
     @Test
-    void 골룸에서_등록된_모든_인증_피드들을_조회한다() {
+    void 특정_골룸에서_등록된_모든_인증_피드들을_조회한다() {
         //given
         final Member creator = 사용자를_저장한다("cokiri", "코끼리");
         final RoadmapCategory category = 카테고리를_저장한다("여가");
@@ -181,15 +181,18 @@ class CheckFeedRepositoryTest {
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final Member member = 사용자를_저장한다("participant", "참여자");
-        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+        final GoalRoom goalRoom1 = 골룸을_저장한다(targetRoadmapContent, creator);
+        final GoalRoom goalRoom2 = 골룸을_저장한다(targetRoadmapContent, creator);
 
-        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
-        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom1, creator);
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom1,
                 member);
+        final GoalRoomMember otherLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom2, creator);
         goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom1.getGoalRoomRoadmapNodes().getValues().get(0);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom1.getGoalRoomRoadmapNodes().getValues().get(1);
+        final GoalRoomRoadmapNode otherGoalRoomRoadmapNode = goalRoom2.getGoalRoomRoadmapNodes().getValues().get(0);
 
         final CheckFeed checkFeed1 = 인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
         final CheckFeed checkFeed2 = 인증_피드를_저장한다(goalRoomRoadmapNode1, joinedMember);
@@ -197,9 +200,11 @@ class CheckFeedRepositoryTest {
         final CheckFeed checkFeed4 = 인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
         final CheckFeed checkFeed5 = 인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
         final CheckFeed checkFeed6 = 인증_피드를_저장한다(goalRoomRoadmapNode2, joinedMember);
+        인증_피드를_저장한다(otherGoalRoomRoadmapNode, otherLeader);
+        인증_피드를_저장한다(otherGoalRoomRoadmapNode, otherLeader);
 
         //when
-        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoom(goalRoom);
+        final List<CheckFeed> checkFeeds = checkFeedRepository.findByGoalRoom(goalRoom1);
 
         assertThat(checkFeeds)
                 .hasSize(6)

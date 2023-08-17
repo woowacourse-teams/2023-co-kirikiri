@@ -11,7 +11,6 @@ import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
@@ -208,10 +207,10 @@ public class GoalRoomReadService {
         if (goalRoom.isCompleted()) {
             return checkFeedRepository.findByGoalRoom(goalRoom);
         }
-        if (goalRoom.isRecruiting() || currentGoalRoomRoadmapNode.isEmpty()) {
-            return Collections.emptyList();
+        if (goalRoom.isRunning() && currentGoalRoomRoadmapNode.isPresent()) {
+            return checkFeedRepository.findByRunningGoalRoomRoadmapNode(currentGoalRoomRoadmapNode.get());
         }
-        return checkFeedRepository.findByRunningGoalRoomRoadmapNode(currentGoalRoomRoadmapNode.get());
+        return Collections.emptyList();
     }
 
     public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
@@ -276,7 +275,7 @@ public class GoalRoomReadService {
     private void validateJoinedMemberInRunningGoalRoom(final GoalRoom goalRoom, final String identifier) {
         if (goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
                 .isEmpty()) {
-            throw new BadRequestException("골룸에 참여하지 않은 회원입니다.");
+            throw new ForbiddenException("골룸에 참여하지 않은 회원입니다.");
         }
     }
 
@@ -285,11 +284,11 @@ public class GoalRoomReadService {
         if (goalRoom.isCompleted()) {
             return checkFeedRepository.findByGoalRoomWithMemberAndMemberImage(goalRoom);
         }
-        if (goalRoom.isRecruiting() || currentGoalRoomRoadmapNode.isEmpty()) {
-            return Collections.emptyList();
+        if (goalRoom.isRunning() && currentGoalRoomRoadmapNode.isPresent()) {
+            return checkFeedRepository.findByRunningGoalRoomRoadmapNodeWithMemberAndMemberImage(
+                    currentGoalRoomRoadmapNode.get());
         }
-        return checkFeedRepository.findByRunningGoalRoomRoadmapNodeWithMemberAndMemberImage(
-                currentGoalRoomRoadmapNode.get());
+        return Collections.emptyList();
     }
 
     public List<GoalRoomCheckFeedDto> makeGoalRoomCheckFeedDtos(

@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseCreatedTimeEntity extends BaseEntity {
 
-    static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+    private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

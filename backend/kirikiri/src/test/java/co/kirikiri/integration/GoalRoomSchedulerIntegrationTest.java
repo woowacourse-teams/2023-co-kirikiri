@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.integration.helper.IntegrationTestHelper;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.integration.helper.TestTransactionService;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
@@ -32,19 +32,16 @@ import org.springframework.http.MediaType;
 
 class GoalRoomSchedulerIntegrationTest extends GoalRoomCreateIntegrationTest {
 
-    private final IntegrationTestHelper testHelper;
     private final GoalRoomScheduler goalRoomScheduler;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
 
     public GoalRoomSchedulerIntegrationTest(final RoadmapCategoryRepository roadmapCategoryRepository,
                                             final TestTransactionService testTransactionService,
-                                            final IntegrationTestHelper testHelper,
                                             final GoalRoomScheduler goalRoomScheduler,
                                             final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository,
                                             final GoalRoomMemberRepository goalRoomMemberRepository) {
         super(roadmapCategoryRepository, testTransactionService);
-        this.testHelper = testHelper;
         this.goalRoomScheduler = goalRoomScheduler;
         this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
@@ -99,7 +96,7 @@ class GoalRoomSchedulerIntegrationTest extends GoalRoomCreateIntegrationTest {
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
 
         골룸_참가_요청(기본_골룸_아이디, 팔로워_액세스_토큰);
-        testHelper.골룸의_시작날짜를_변경한다(기본_골룸_아이디, 오늘.plusDays(1));
+        testTransactionService.골룸의_시작날짜를_변경한다(기본_골룸_아이디, 오늘.plusDays(1));
 
         // when
         goalRoomScheduler.startGoalRooms();
@@ -129,12 +126,12 @@ class GoalRoomSchedulerIntegrationTest extends GoalRoomCreateIntegrationTest {
         골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
-        testHelper.골룸의_종료날짜를_변경한다(기본_골룸_아이디, 오늘.minusDays(1));
+        testTransactionService.골룸의_종료날짜를_변경한다(기본_골룸_아이디, 오늘.minusDays(1));
         goalRoomScheduler.endGoalRooms();
         final MemberGoalRoomResponse 요청_응답값 = 사용자의_특정_골룸_정보를_조회한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // then
-        assertThat(요청_응답값.status()).isEqualTo("COMPLETED");
+        assertThat(요청_응답값.status()).isEqualTo(GoalRoomStatus.COMPLETED.name());
     }
 
     @Test
@@ -159,7 +156,7 @@ class GoalRoomSchedulerIntegrationTest extends GoalRoomCreateIntegrationTest {
         final MemberGoalRoomResponse 요청_응답값 = 사용자의_특정_골룸_정보를_조회한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // then
-        assertThat(요청_응답값.status()).isEqualTo("RUNNING");
+        assertThat(요청_응답값.status()).isEqualTo(GoalRoomStatus.RUNNING.name());
     }
 
     @Test
@@ -178,7 +175,7 @@ class GoalRoomSchedulerIntegrationTest extends GoalRoomCreateIntegrationTest {
 
         골룸_참가_요청(기본_골룸_아이디, 팔로워_액세스_토큰);
 
-        testHelper.골룸의_시작날짜를_변경한다(기본_골룸_아이디, 오늘);
+        testTransactionService.골룸의_시작날짜를_변경한다(기본_골룸_아이디, 오늘);
         골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
