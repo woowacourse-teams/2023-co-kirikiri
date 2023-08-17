@@ -42,3 +42,23 @@ export const SearchCategoryOption = styled.li<{ isSelected?: boolean }>`
   background-color: ${({ theme, isSelected }) =>
     isSelected !== undefined && isSelected ? theme.colors.main_dark : theme.colors.white};
 `;
+
+export const ServiceDescWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 2rem 0 2rem 0;
+`;
+
+export const ServiceDescContent = styled.div`
+  width: 70rem;
+  padding: 1rem;
+  background: ${({ theme }) => theme.colors.gray100};
+  border-radius: 10px;
+`;
+
+export const ServiceDesc = styled.p`
+  ${({ theme }) => theme.fonts.description3};
+  text-align: center;
+  line-height: 2;
+`;

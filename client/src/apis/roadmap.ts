@@ -3,7 +3,6 @@ import type {
   RoadmapListRequest,
   RoadmapListResponse,
   RoadmapValueRequest,
-  RoadmapValueType,
 } from '@myTypes/roadmap/remote';
 import client from './axios/client';
 
@@ -46,7 +45,22 @@ export const getRoadmapDetail = async (id: number): Promise<RoadmapDetailRespons
   return data;
 };
 
-export const postCreateRoadmap = (roadmapValue: RoadmapValueType) => {
-  const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue);
+export const postCreateRoadmap = (roadmapValue: FormData) => {
+  const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue, {
+    headers: {
+      'Content-Type': 'multipart/form-data;charset=UTF-8',
+    },
+  });
   return resposne;
+};
+
+export const getMyRoadmapList = async (size: number, lastId?: number) => {
+  const { data } = await client.get<RoadmapListResponse>('/roadmaps/me', {
+    params: {
+      size,
+      ...(lastId && { lastId }),
+    },
+  });
+
+  return data;
 };

@@ -1,8 +1,9 @@
-import { RoadmapListRequest, RoadmapValueType } from '@/myTypes/roadmap/remote';
+import { RoadmapListRequest } from '@/myTypes/roadmap/remote';
 import {
   getRoadmapDetail,
   getRoadmapList,
   getSearchRoadmapList,
+  getMyRoadmapList,
   postCreateRoadmap,
 } from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
@@ -76,15 +77,23 @@ export const useRoadmapDetail = (id: number) => {
 };
 
 export const useCreateRoadmap = () => {
-  const { mutate } = useMutation(
-    (roadmapValue: RoadmapValueType) => postCreateRoadmap(roadmapValue),
-    {
-      onSuccess() {},
-      onError() {},
-    }
-  );
+  const { mutate } = useMutation((formData: FormData) => postCreateRoadmap(formData), {
+    onSuccess() {},
+    onError() {},
+  });
 
   return {
     createRoadmap: mutate,
   };
+};
+
+export const useMyRoadmapList = () => {
+  const size = 10;
+  const lastId = undefined;
+
+  const { data } = useSuspendedQuery([QUERY_KEYS.roadmap.myRoadmap, size, lastId], () =>
+    getMyRoadmapList(10, lastId)
+  );
+
+  return { myRoadmapList: data };
 };
