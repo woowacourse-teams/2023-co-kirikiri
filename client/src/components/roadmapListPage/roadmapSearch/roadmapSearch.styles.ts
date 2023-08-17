@@ -1,11 +1,29 @@
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
-export const RoadmapListView = styled.div`
+export const Wrapper = styled.section`
   display: flex;
-  flex-direction: column;
-  row-gap: 2.5rem;
-  margin-top: 8rem;
+  align-items: center;
+  justify-content: space-around;
+
+  width: 60%;
+  height: 6rem;
+
+  background-color: ${({ theme }) => theme.colors.gray100};
+  border-radius: 30px;
 `;
+
+export const InputWrapper = styled.div`
+  display: inline;
+  width: 40rem;
+`;
+
+export const SearchInput = styled.input`
+  ${({ theme }) => theme.fonts.description5}
+  float: inline-end;
+  width: 100%;
+`;
+
+export const SearchButton = styled.button``;
 
 export const SelectWrapper = styled.div`
   ${({ theme }) => theme.fonts.description5}
@@ -41,24 +59,4 @@ export const SearchCategoryOption = styled.li<{ isSelected?: boolean }>`
 
   background-color: ${({ theme, isSelected }) =>
     isSelected !== undefined && isSelected ? theme.colors.main_dark : theme.colors.white};
-`;
-
-export const ServiceDescWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 2rem 0 2rem 0;
-`;
-
-export const ServiceDescContent = styled.div`
-  width: 70rem;
-  padding: 1rem;
-  background: ${({ theme }) => theme.colors.gray100};
-  border-radius: 10px;
-`;
-
-export const ServiceDesc = styled.p`
-  ${({ theme }) => theme.fonts.description3};
-  text-align: center;
-  line-height: 2;
 `;
