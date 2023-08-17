@@ -10,7 +10,10 @@ export type ValidationReturnType = {
   updateOnFail?: boolean;
 };
 
-export type ValidationFunctionType = (inputValue: string) => ValidationReturnType;
+export type ValidationFunctionType = (
+  inputValue: string,
+  formState?: any
+) => ValidationReturnType;
 
 export type ValidationsType = {
   [key: string]: ValidationFunctionType;
@@ -59,7 +62,7 @@ const useFormInput = <T extends object>(
   const validateInputValue = (name: string, inputValue: string) => {
     if (typeof validations?.[name] !== 'function') return true;
 
-    const result = validations[name](inputValue);
+    const result = validations[name](inputValue, formState);
 
     if (!result.ok) {
       setError((prev) => ({
@@ -100,7 +103,7 @@ const useFormInput = <T extends object>(
     if (!validations) return isValid;
 
     Object.keys(validations).forEach((key) => {
-      const result = validations[key](String(getNestedValue(formState, key)));
+      const result = validations[key](String(getNestedValue(formState, key)), formState);
 
       if (!result.ok) {
         setError((prev) => ({
