@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { ElephantImage } from '@pages/loginPage/LoginPage.styles';
 
 export const MainPageWrapper = styled.div`
   position: relative;
@@ -18,10 +17,14 @@ export const MainPageContent = styled.div`
   align-items: center;
 `;
 
-export const Elephant = styled(ElephantImage)`
+export const Elephant = styled.img`
   position: relative;
+  transform-style: preserve-3d;
+
   width: 30rem;
   height: 30rem;
+
+  transition: transform 0.1s ease;
 `;
 
 export const MainPageDesc = styled.p`
