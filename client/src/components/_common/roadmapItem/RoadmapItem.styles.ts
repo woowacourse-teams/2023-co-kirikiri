@@ -6,11 +6,11 @@ export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
   width: 100%;
   max-width: 36.8rem;
   height: fit-content;
-  padding: ${({ hasBorder }) => (hasBorder ? '3rem 2.6rem 3rem 2.6rem' : 0)};
+  padding: 3rem 2.6rem 3rem 2.6rem;
 
   background: ${({ theme }) => theme.colors.white};
   border-radius: 18px;
-  box-shadow: ${({ theme, hasBorder }) => (hasBorder ? theme.shadows.box : 'none')};
+  box-shadow: ${({ theme }) => theme.shadows.box};
 `;
 
 export const ItemHeader = styled.div`
