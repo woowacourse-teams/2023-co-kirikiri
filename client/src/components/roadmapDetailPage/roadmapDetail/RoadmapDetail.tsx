@@ -15,8 +15,6 @@ const RoadmapDetail = () => {
     navigate(`/roadmap/${roadmapId}/goalroom-create`);
   };
 
-  console.log(roadmapInfo);
-
   return (
     <S.RoadmapDetail>
       <S.PageOnTop>
@@ -32,7 +30,6 @@ const RoadmapDetail = () => {
         roadmapTitle={roadmapInfo.roadmapTitle}
         nodeInfo={roadmapInfo.content.nodes}
       />
-      <S.RoadmapBody>{roadmapInfo.content.content}</S.RoadmapBody>
       <Button onClick={moveToGoalRoomCreatePage}>골룸 생성하러 가기</Button>
     </S.RoadmapDetail>
   );

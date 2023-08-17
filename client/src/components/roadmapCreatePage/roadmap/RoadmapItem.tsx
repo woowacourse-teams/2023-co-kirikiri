@@ -19,13 +19,14 @@ const RoadmapItem = ({
   getRoadmapItemTitle,
   getNodeImage,
 }: RoadmapItemProps) => {
-  const { imagePreviews, getFileFromElement, showPrevImage } = useUploadImage();
+  const { imagePreviews, getFileFromElement, showPrevImage, checkFileSize } =
+    useUploadImage();
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     Array.from(getFileFromElement(event)).forEach((uploadedFile) => {
       getNodeImage(uploadedFile, itemId);
 
-      if (uploadedFile) {
+      if (uploadedFile && checkFileSize(3 * 1024 * 1024, uploadedFile)) {
         showPrevImage(uploadedFile);
       }
     });
@@ -55,7 +56,7 @@ const RoadmapItem = ({
           name='content'
           placeholder='로드맵의 본문을 입렵해주세요'
         />
-        {/* <S.ImageSection>
+        <S.ImageSection>
           {imagePreviews?.map((preview) => {
             return <S.UploadedNodeImage src={preview} alt='로드맵 노드 이미지' />;
           })}
@@ -68,7 +69,7 @@ const RoadmapItem = ({
               accept='.png, .jpg, .jpeg'
             />
           </S.NodeInputLabel>
-        </S.ImageSection> */}
+        </S.ImageSection>
       </S.BodyFieldWrapper>
     </>
   );

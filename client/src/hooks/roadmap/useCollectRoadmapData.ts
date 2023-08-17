@@ -106,7 +106,7 @@ export const useCollectRoadmapData = () => {
     });
 
     if (isSumbited) {
-      createRoadmap(roadmapValue);
+      createRoadmap(formData);
       navigate('/roadmap-list');
     }
   }, [isSumbited]);
