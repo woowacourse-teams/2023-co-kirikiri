@@ -32,9 +32,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}
       {roadmapListResponse?.hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
-      <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>
-        로드맵 생성하러가기
-      </S.CreateRoadmapButton>
+      <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
     </S.RoadmapList>
   );
 };

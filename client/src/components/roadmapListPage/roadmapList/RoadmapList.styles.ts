@@ -4,11 +4,16 @@ import styled from 'styled-components';
 export const RoadmapList = styled.div`
   display: grid;
   grid-gap: 3rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   justify-items: center;
 
   margin-bottom: 8rem;
   min-height: 100vh;
+
+  ${media.tablet`
+  grid-template-columns: 1fr 1fr;
+
+  `}
 
   ${media.mobile`
   grid-template-columns: 1fr;

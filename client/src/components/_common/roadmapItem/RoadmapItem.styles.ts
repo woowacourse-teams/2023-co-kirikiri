@@ -3,8 +3,7 @@ import { styled } from 'styled-components';
 export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
   flex-shrink: 0;
 
-  width: 100%;
-  max-width: 36.8rem;
+  width: 30rem;
   height: fit-content;
   padding: 3rem 2.6rem 3rem 2.6rem;
 
