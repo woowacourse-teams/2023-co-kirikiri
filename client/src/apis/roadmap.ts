@@ -25,16 +25,20 @@ export const getRoadmapList = async ({
 };
 
 export const getSearchRoadmapList = async ({
-  roadmapTitle,
-  creatorName,
-  tagName,
+  category,
+  search,
   filterCond = 'LATEST',
   lastId = '',
   size = 10,
 }: any) => {
-  const { data } = await client.get<RoadmapListResponse>(
-    `/roadmaps/search?roadmapTitle=${roadmapTitle}&lastId=${lastId}&creatorName=${creatorName}&tagName=${tagName}&filterCond=${filterCond}&size=${size}`
-  );
+  const { data } = await client.get<RoadmapListResponse>(`/roadmaps/search`, {
+    params: {
+      [category]: search,
+      filterCond,
+      ...(lastId && { lastId }),
+      size,
+    },
+  });
 
   return data;
 };
