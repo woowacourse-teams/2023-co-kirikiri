@@ -120,7 +120,8 @@ export const Indicator = (props: PropsWithChildren<IndicatorProps>) => {
 // select의 각 Option
 export const Option = (props: PropsWithChildren<OptionProps>) => {
   const { asChild = false, children, ...restProps } = props;
-  const { selectOption, selectedId } = useContextScope<SelectContextType>(SelectContext);
+  const { selectOption, selectedId, toggleBoxOpen } =
+    useContextScope<SelectContextType>(SelectContext);
   const isSelected = restProps.id === selectedId;
 
   if (asChild) {
@@ -130,6 +131,7 @@ export const Option = (props: PropsWithChildren<OptionProps>) => {
       onClick: (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         selectOption(restProps.id);
+        toggleBoxOpen();
       },
     });
   }

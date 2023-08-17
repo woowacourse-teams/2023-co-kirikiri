@@ -2,7 +2,8 @@ import media from '@/styles/media';
 import styled from 'styled-components';
 
 export const ListContainer = styled.section`
-  margin-top: 6rem;
+  min-height: 100vh;
+  margin-top: 4rem;
 `;
 
 export const ItemContainer = styled.article`
@@ -20,7 +21,7 @@ export const FilterBar = styled.div`
   display: flex;
   justify-content: space-between;
   margin-right: 9rem;
-  margin-bottom: 4rem;
+  margin-bottom: 6rem;
 
   & > p {
     ${({ theme }) => theme.fonts.button1};
@@ -32,7 +33,6 @@ export const ListWrapper = styled.div`
   display: grid;
   grid-row-gap: 6rem;
   grid-template-columns: repeat(2, 1fr);
-  min-height: 100vh;
 
   ${media.mobile`
   grid-template-columns: repeat(1, 1fr);
@@ -93,8 +93,8 @@ export const CreateGoalRoomButton = styled.button`
   left: 50%;
   transform: translate(-50%);
 
-  width: 50%;
   height: 5rem;
+  padding: 0 10rem;
 
   color: ${({ theme }) => theme.colors.white};
 
@@ -103,10 +103,13 @@ export const CreateGoalRoomButton = styled.button`
 `;
 
 export const FilterWrapper = styled.div`
+  position: relation;
   ${({ theme }) => theme.fonts.description4};
   position: relative;
+
   display: flex;
   flex-direction: column;
+
   color: ${({ theme }) => theme.colors.gray300};
 `;
 
@@ -119,10 +122,9 @@ export const FilterTrigger = styled.button`
 
 export const FilterOptionWrapper = styled.ul`
   position: absolute;
-  top: 2rem;
+  top: -1rem;
 
   width: 9rem;
-  /* height: 3rem; */
 
   border: 0.2rem solid ${({ theme }) => theme.colors.main_middle};
   border-radius: 4px;
@@ -130,7 +132,13 @@ export const FilterOptionWrapper = styled.ul`
 
 export const FilterOption = styled.li`
   cursor: pointer;
+
   width: 100%;
   height: 50%;
   padding: 1rem 1rem;
+
+  color: ${({ theme }) => theme.colors.white};
+  text-align: center;
+
+  background-color: ${({ theme }) => theme.colors.main_dark};
 `;
