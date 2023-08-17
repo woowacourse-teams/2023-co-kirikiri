@@ -100,9 +100,9 @@ public class RoadmapController {
     }
 
     @GetMapping("/{roadmapId}/goal-rooms")
-    public ResponseEntity<RoadmapGoalRoomResponses> findGoalRoomsByFilterType(
+    public ResponseEntity<RoadmapGoalRoomResponses> findGoalRoomsByOrderType(
             @PathVariable final Long roadmapId,
-            @RequestParam(value = "roadmapGoalRoomsOrderTypeDto", required = false) final RoadmapGoalRoomsOrderTypeDto roadmapGoalRoomsOrderTypeDto,
+            @RequestParam(value = "filterCond", required = false) final RoadmapGoalRoomsOrderTypeDto roadmapGoalRoomsOrderTypeDto,
             @ModelAttribute final CustomScrollRequest scrollRequest
     ) {
         final RoadmapGoalRoomResponses responses = roadmapReadService.findRoadmapGoalRoomsByOrderType(

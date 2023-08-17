@@ -463,7 +463,7 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                         parameterWithName("roadmapId").description("로드맵 아이디")),
                                 queryParameters(
                                         parameterWithName("filterCond").description(
-                                                "필터 조건(LATEST, PARTICIPATION_RATE)").optional(),
+                                                "정렬 조건(LATEST, CLOSE_TO_DEADLINE)").optional(),
                                         parameterWithName("lastId")
                                                 .description("이전 요청에서 받은 응답 중 가장 마지막 골룸 아이디 (첫 요청 시 미전송)")
                                                 .optional(),

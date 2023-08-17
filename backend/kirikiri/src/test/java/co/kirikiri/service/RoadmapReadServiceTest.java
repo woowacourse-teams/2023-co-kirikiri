@@ -456,7 +456,7 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵의_골룸_목록을_조회한다() throws MalformedURLException {
+    void 로드맵의_골룸_목록을_최신순으로_조회한다() throws MalformedURLException {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "name1");
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
