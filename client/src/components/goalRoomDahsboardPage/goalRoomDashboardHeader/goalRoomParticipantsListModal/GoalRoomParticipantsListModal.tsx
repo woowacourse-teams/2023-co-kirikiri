@@ -4,7 +4,6 @@ import { GoalRoomDashboardContentParams } from '@components/goalRoomDahsboardPag
 import { useFetchGoalRoomParticipants } from '@hooks/queries/goalRoom';
 import { ChangeEvent, useState } from 'react';
 import { ParticipantsSortOrder } from '@myTypes/goalRoom/remote';
-import { BASE_URL } from '@apis/axios/client';
 
 const GoalRoomParticipantsListModal = () => {
   const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
@@ -30,10 +29,7 @@ const GoalRoomParticipantsListModal = () => {
 
       {goalRoomParticipants.map((participant) => (
         <S.ParticipantWrapper key={participant.memberId}>
-          <S.ParticipantImage
-            src={BASE_URL + participant.imagePath}
-            alt='참여자 프로필 이미지'
-          />
+          <S.ParticipantImage src={participant.imagePath} alt='참여자 프로필 이미지' />
           <S.ParticipantName>{participant.nickname}</S.ParticipantName>
         </S.ParticipantWrapper>
       ))}

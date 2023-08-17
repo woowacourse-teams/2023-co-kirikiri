@@ -2,7 +2,6 @@ import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './NavBar.styles';
 import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
 import isValidUserInfo from '@utils/user/isValidUserInfo';
-import { BASE_URL } from '@apis/axios/client';
 import { useLogout } from '@hooks/queries/user';
 
 type NavBarProps = {
@@ -42,7 +41,7 @@ const NavBar = ({ isSwitchOn }: NavBarProps) => {
           <S.Links>
             <S.Item to='/myPage'>
               <S.ItemIcon>
-                <S.UserProfileImage src={BASE_URL + userInfo.profileImageUrl} alt='' />
+                <S.UserProfileImage src={userInfo.profileImageUrl} alt='' />
               </S.ItemIcon>
               <S.Text>{userInfo.nickname}</S.Text>
             </S.Item>

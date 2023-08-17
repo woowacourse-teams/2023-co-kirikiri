@@ -1,6 +1,10 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
-import { BackDrop } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
+import {
+  CountBox,
+  TitleWrapper,
+} from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
+import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
 
 export const CertificationFeedWrapper = styled(DashBoardSection)``;
 
@@ -10,6 +14,7 @@ export const ImageGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
 
+  min-width: 100%;
   max-width: 50rem;
   max-height: 50rem;
   margin: 0 auto;
@@ -30,3 +35,7 @@ export const StyledImage = styled.img`
 `;
 
 export const ModalBackdrop = styled(BackDrop)``;
+
+export const CertificationTitleWrapper = styled(TitleWrapper)``;
+
+export const CertificationCountBox = styled(CountBox)``;

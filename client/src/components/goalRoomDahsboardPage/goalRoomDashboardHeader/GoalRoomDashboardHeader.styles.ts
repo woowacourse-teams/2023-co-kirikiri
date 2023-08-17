@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { BackDrop } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
+import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
 
 export const GoalRoomDashboardTitle = styled.h1`
   ${({ theme }) => theme.fonts.nav_title};
@@ -22,6 +22,13 @@ export const GoalRoomLabel = styled.div`
   & > svg {
     width: 3rem;
   }
+`;
+
+export const GoalRoomStartButton = styled.button`
+  width: 15rem;
+  height: 3rem;
+  background: ${({ theme }) => theme.colors.main_dark};
+  border-radius: 10px;
 `;
 
 export const LabelButton = styled.button`
