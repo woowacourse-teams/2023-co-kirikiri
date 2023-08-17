@@ -1,3 +1,4 @@
+import media from '@/styles/media';
 import styled from 'styled-components';
 
 export const Wrapper = styled.section`
@@ -59,4 +60,44 @@ export const SearchCategoryOption = styled.li<{ isSelected?: boolean }>`
 
   background-color: ${({ theme, isSelected }) =>
     isSelected !== undefined && isSelected ? theme.colors.main_dark : theme.colors.white};
+`;
+
+export const RoadmapList = styled.div`
+  display: grid;
+  grid-gap: 3rem;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+
+  margin-bottom: 8rem;
+  min-height: 100vh;
+
+  ${media.mobile`
+  grid-template-columns: 1fr;
+  
+  `}
+`;
+
+export const CreateRoadmapButton = styled.button`
+  ${({ theme }) => theme.fonts.nav_title}
+  position: fixed;
+  right: 5%;
+  bottom: 1rem;
+
+  width: 5rem;
+  height: 5rem;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_middle};
+  border-radius: 50%;
+`;
+
+export const InputFlex = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
+
+export const ResetSearchButton = styled.button`
+  ${({ theme }) => theme.fonts.description3}
+  color: ${({ theme }) => theme.colors.main_dark};
 `;
