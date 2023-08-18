@@ -32,10 +32,7 @@ client.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response) {
-      if (
-        error.response.status === 401 &&
-        error.response.data.message === 'Expired Token'
-      ) {
+      if (error.response.status === 401 && error.response.data.message === 'Token') {
         if (!originalRequest.shouldRetry) {
           originalRequest.shouldRetry = true;
           const refreshToken = getCookie('refresh_token');
