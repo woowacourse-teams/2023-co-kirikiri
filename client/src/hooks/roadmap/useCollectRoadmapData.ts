@@ -3,7 +3,6 @@ import { DummyDifficultyType } from '@/components/roadmapCreatePage/difficulty/D
 import { NodeImagesType, RoadmapValueType } from '@/myTypes/roadmap/internal';
 import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useCreateRoadmap } from '../queries/roadmap';
 
 export const useCollectRoadmapData = () => {
@@ -19,7 +18,6 @@ export const useCollectRoadmapData = () => {
   });
   const [nodeImages, setNodeImages] = useState<NodeImagesType>({});
   const [isSumbited, setIsSubmited] = useState(false);
-  const navigate = useNavigate();
   const { createRoadmap } = useCreateRoadmap();
 
   const getSelectedCategoryId = (category: keyof DummyCategoryType | null) => {
@@ -107,7 +105,6 @@ export const useCollectRoadmapData = () => {
 
     if (isSumbited) {
       createRoadmap(formData);
-      navigate('/roadmap-list');
     }
   }, [isSumbited]);
 

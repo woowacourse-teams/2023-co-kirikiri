@@ -14,6 +14,8 @@ export const Node = styled.div`
 `;
 
 export const NodeInfo = styled.div`
+  overflow-y: scroll;
+
   width: 100%;
   height: 20rem;
   padding: 2rem;
