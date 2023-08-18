@@ -87,7 +87,7 @@ export const useCollectRoadmapData = () => {
       ...prev,
       title: target.roadmapTitle.value,
       introduction: target.introduction.value,
-      content: target.content.value,
+      content: target.body.value,
       requiredPeriod: target.requiredPeriod.value,
     }));
     setIsSubmited(true);

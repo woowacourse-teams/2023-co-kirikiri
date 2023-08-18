@@ -37,7 +37,7 @@ const Category = ({ getSelectedCategoryId }: CategoryProps) => {
         <S.Wrapper>
           {getInvariantObjectKeys(invariantOf(CategoriesInfo)).map((categoryId) => {
             return (
-              <Select.Option id={Number(categoryId)} asChild>
+              <Select.Option id={Number(categoryId)} asChild defaultOpen>
                 <S.CategoryBox>{CategoriesInfo[categoryId].name}</S.CategoryBox>
               </Select.Option>
             );
