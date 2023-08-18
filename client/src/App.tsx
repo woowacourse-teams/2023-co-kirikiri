@@ -22,15 +22,18 @@ import UserInfoProvider, {
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
 import ErrorBoundary from '@components/_common/errorBoundary/ErrorBoundary';
+import useToast from '@hooks/_common/useToast';
 
 const PrivateRouter = (props: PropsWithChildren) => {
   const { children } = props;
   const { userInfo } = useContext(userInfoContext);
+  const { triggerToast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (userInfo.id === null) {
       navigate('/login');
+      triggerToast({ message: '로그인이 필요한 서비스입니다.' });
     }
   }, [userInfo.id, navigate]);
 
@@ -46,56 +49,56 @@ const App = () => {
           <BrowserRouter>
             <ResponsiveContainer>
               <PageLayout>
-               <ErrorBoundary>
-                <Routes>
-                  <Route path='/' element={<MainPage />} />
-                  <Route path='/login' element={<LoginPage />} />
-                  <Route path='/join' element={<SignUpPage />} />
-                  <Route path='/roadmap-list' element={<RoadmapListPage />}>
-                    <Route path=':category/:search' element={<RoadmapSearchResult />} />
-                  </Route>
-                  <Route
-                    path='/roadmap/:id'
-                    element={
-                      <Suspense fallback={<Fallback />}>
-                        <RoadmapDetailPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path='/roadmap/:id/goalroom-list'
-                    element={<GoalRoomListPage />}
-                  />
-                  <Route
-                    path='/roadmap-create'
-                    element={
-                      <PrivateRouter>
-                        <RoadmapCreatePage />
-                      </PrivateRouter>
-                    }
-                  />
-                  <Route
-                    path='/roadmap/:id/goalroom-create'
-                    element={
-                      <PrivateRouter>
-                        <GoalRoomCreatePage />
-                      </PrivateRouter>
-                    }
-                  />
-                  <Route
-                    path='/goalroom-dashboard/:goalroomId'
-                    element={<GoalRoomDashboardPage />}
-                  />
-                  <Route
-                    path='/myPage'
-                    element={
-                      <PrivateRouter>
-                        <MyPage />
-                      </PrivateRouter>
-                    }
-                  />
-                </Routes>
-              </ErrorBoundary>
+                <ErrorBoundary>
+                  <Routes>
+                    <Route path='/' element={<MainPage />} />
+                    <Route path='/login' element={<LoginPage />} />
+                    <Route path='/join' element={<SignUpPage />} />
+                    <Route path='/roadmap-list' element={<RoadmapListPage />}>
+                      <Route path=':category/:search' element={<RoadmapSearchResult />} />
+                    </Route>
+                    <Route
+                      path='/roadmap/:id'
+                      element={
+                        <Suspense fallback={<Fallback />}>
+                          <RoadmapDetailPage />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path='/roadmap/:id/goalroom-list'
+                      element={<GoalRoomListPage />}
+                    />
+                    <Route
+                      path='/roadmap-create'
+                      element={
+                        <PrivateRouter>
+                          <RoadmapCreatePage />
+                        </PrivateRouter>
+                      }
+                    />
+                    <Route
+                      path='/roadmap/:id/goalroom-create'
+                      element={
+                        <PrivateRouter>
+                          <GoalRoomCreatePage />
+                        </PrivateRouter>
+                      }
+                    />
+                    <Route
+                      path='/goalroom-dashboard/:goalroomId'
+                      element={<GoalRoomDashboardPage />}
+                    />
+                    <Route
+                      path='/myPage'
+                      element={
+                        <PrivateRouter>
+                          <MyPage />
+                        </PrivateRouter>
+                      }
+                    />
+                  </Routes>
+                </ErrorBoundary>
               </PageLayout>
             </ResponsiveContainer>
           </BrowserRouter>
