@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { PropsWithChildren, Suspense, useContext, useEffect } from 'react';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
 import { ThemeProvider } from 'styled-components';
@@ -16,9 +16,25 @@ import ToastProvider from '@components/_common/toastProvider/ToastProvider';
 import GoalRoomListPage from './pages/goalRoomListPage/GoalRoomListPage';
 import GoalRoomCreatePage from './pages/goalRoomCreatePage/GoalRoomCreatePage';
 import MyPage from '@pages/myPage/MyPage';
-import UserInfoProvider from './components/_providers/UserInfoProvider';
+import UserInfoProvider, {
+  userInfoContext,
+} from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
+
+const PrivateRouter = (props: PropsWithChildren) => {
+  const { children } = props;
+  const { userInfo } = useContext(userInfoContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userInfo.id === null) {
+      navigate('/login');
+    }
+  }, [userInfo.id, navigate]);
+
+  return <>{children}</>;
+};
 
 const App = () => {
   return (
@@ -48,16 +64,34 @@ const App = () => {
                     path='/roadmap/:id/goalroom-list'
                     element={<GoalRoomListPage />}
                   />
-                  <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
+                  <Route
+                    path='/roadmap-create'
+                    element={
+                      <PrivateRouter>
+                        <RoadmapCreatePage />
+                      </PrivateRouter>
+                    }
+                  />
                   <Route
                     path='/roadmap/:id/goalroom-create'
-                    element={<GoalRoomCreatePage />}
+                    element={
+                      <PrivateRouter>
+                        <GoalRoomCreatePage />
+                      </PrivateRouter>
+                    }
                   />
                   <Route
                     path='/goalroom-dashboard/:goalroomId'
                     element={<GoalRoomDashboardPage />}
                   />
-                  <Route path='/myPage' element={<MyPage />} />
+                  <Route
+                    path='/myPage'
+                    element={
+                      <PrivateRouter>
+                        <MyPage />
+                      </PrivateRouter>
+                    }
+                  />
                 </Routes>
               </PageLayout>
             </ResponsiveContainer>
