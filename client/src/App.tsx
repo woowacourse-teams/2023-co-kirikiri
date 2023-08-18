@@ -21,6 +21,7 @@ import UserInfoProvider, {
 } from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
+import ErrorBoundary from '@components/_common/errorBoundary/ErrorBoundary';
 
 const PrivateRouter = (props: PropsWithChildren) => {
   const { children } = props;
@@ -45,6 +46,7 @@ const App = () => {
           <BrowserRouter>
             <ResponsiveContainer>
               <PageLayout>
+               <ErrorBoundary>
                 <Routes>
                   <Route path='/' element={<MainPage />} />
                   <Route path='/login' element={<LoginPage />} />
@@ -93,6 +95,7 @@ const App = () => {
                     }
                   />
                 </Routes>
+              </ErrorBoundary>
               </PageLayout>
             </ResponsiveContainer>
           </BrowserRouter>
