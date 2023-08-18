@@ -19,6 +19,7 @@ import MyPage from '@pages/myPage/MyPage';
 import UserInfoProvider from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
+import ErrorBoundary from '@components/_common/errorBoundary/ErrorBoundary';
 
 const App = () => {
   return (
@@ -29,36 +30,38 @@ const App = () => {
           <BrowserRouter>
             <ResponsiveContainer>
               <PageLayout>
-                <Routes>
-                  <Route path='/' element={<MainPage />} />
-                  <Route path='/login' element={<LoginPage />} />
-                  <Route path='/join' element={<SignUpPage />} />
-                  <Route path='/roadmap-list' element={<RoadmapListPage />}>
-                    <Route path=':category/:search' element={<RoadmapSearchResult />} />
-                  </Route>
-                  <Route
-                    path='/roadmap/:id'
-                    element={
-                      <Suspense fallback={<Fallback />}>
-                        <RoadmapDetailPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path='/roadmap/:id/goalroom-list'
-                    element={<GoalRoomListPage />}
-                  />
-                  <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
-                  <Route
-                    path='/roadmap/:id/goalroom-create'
-                    element={<GoalRoomCreatePage />}
-                  />
-                  <Route
-                    path='/goalroom-dashboard/:goalroomId'
-                    element={<GoalRoomDashboardPage />}
-                  />
-                  <Route path='/myPage' element={<MyPage />} />
-                </Routes>
+                <ErrorBoundary>
+                  <Routes>
+                    <Route path='/' element={<MainPage />} />
+                    <Route path='/login' element={<LoginPage />} />
+                    <Route path='/join' element={<SignUpPage />} />
+                    <Route path='/roadmap-list' element={<RoadmapListPage />}>
+                      <Route path=':category/:search' element={<RoadmapSearchResult />} />
+                    </Route>
+                    <Route
+                      path='/roadmap/:id'
+                      element={
+                        <Suspense fallback={<Fallback />}>
+                          <RoadmapDetailPage />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path='/roadmap/:id/goalroom-list'
+                      element={<GoalRoomListPage />}
+                    />
+                    <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
+                    <Route
+                      path='/roadmap/:id/goalroom-create'
+                      element={<GoalRoomCreatePage />}
+                    />
+                    <Route
+                      path='/goalroom-dashboard/:goalroomId'
+                      element={<GoalRoomDashboardPage />}
+                    />
+                    <Route path='/myPage' element={<MyPage />} />
+                  </Routes>
+                </ErrorBoundary>
               </PageLayout>
             </ResponsiveContainer>
           </BrowserRouter>
