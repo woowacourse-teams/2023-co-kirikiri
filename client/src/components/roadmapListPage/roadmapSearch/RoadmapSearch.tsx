@@ -37,13 +37,13 @@ const RoadmapSearch = () => {
         <Select defaultOpen externalSelectState={selectSearchCategory}>
           <Select.OptionGroup asChild>
             <S.SearchCategoryOptionGroup>
-              <Select.Option id={1} asChild>
+              <Select.Option id={1} asChild defaultOpen>
                 <S.SearchCategoryOption>태그명</S.SearchCategoryOption>
               </Select.Option>
-              <Select.Option id={2} asChild defaultSelected>
+              <Select.Option id={2} asChild defaultSelected defaultOpen>
                 <S.SearchCategoryOption>로드맵 제목</S.SearchCategoryOption>
               </Select.Option>
-              <Select.Option id={3} asChild>
+              <Select.Option id={3} asChild defaultOpen>
                 <S.SearchCategoryOption>크리에이터</S.SearchCategoryOption>
               </Select.Option>
             </S.SearchCategoryOptionGroup>
