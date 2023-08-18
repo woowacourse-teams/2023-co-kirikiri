@@ -11,6 +11,7 @@ import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
@@ -159,7 +160,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (creatorName == null) {
             return null;
         }
-        return roadmap.creator.nickname.value.eq(creatorName.value());
+        return roadmap.creator.nickname.eq(new Nickname(creatorName.value()));
     }
 
     private BooleanExpression tagCond(final RoadmapSearchTagName tagName) {
