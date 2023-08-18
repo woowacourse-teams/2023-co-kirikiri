@@ -9,6 +9,7 @@ import {
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 export const useRoadmapList = ({
   categoryId,
@@ -76,10 +77,12 @@ export const useRoadmapDetail = (id: number) => {
 
 export const useCreateRoadmap = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { mutate } = useMutation((formData: FormData) => postCreateRoadmap(formData), {
-    onSuccess() {
-      queryClient.invalidateQueries(['searchRoadmapList']);
+    async onSuccess() {
+      await queryClient.refetchQueries([QUERY_KEYS.roadmap.list]);
+      navigate('/roadmap-list');
     },
     onError() {},
   });
