@@ -1,4 +1,4 @@
-import React, { cloneElement, PropsWithChildren, ReactElement } from 'react';
+import React, { cloneElement, PropsWithChildren, ReactElement, useEffect } from 'react';
 import { useContextScope } from '@/hooks/_common/useContextScope';
 import { combineStates, getCustomElement } from '@/hooks/_common/compound';
 import {
@@ -120,8 +120,15 @@ export const Indicator = (props: PropsWithChildren<IndicatorProps>) => {
 // select의 각 Option
 export const Option = (props: PropsWithChildren<OptionProps>) => {
   const { asChild = false, children, ...restProps } = props;
-  const { selectOption, selectedId } = useContextScope<SelectContextType>(SelectContext);
+  const { selectOption, selectedId, toggleBoxOpen } =
+    useContextScope<SelectContextType>(SelectContext);
   const isSelected = restProps.id === selectedId;
+
+  useEffect(() => {
+    if (restProps.defaultSelected) {
+      selectOption(restProps.id);
+    }
+  }, []);
 
   if (asChild) {
     return getCustomElement(children as ReactElement, {
@@ -130,6 +137,7 @@ export const Option = (props: PropsWithChildren<OptionProps>) => {
       onClick: (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         selectOption(restProps.id);
+        toggleBoxOpen();
       },
     });
   }

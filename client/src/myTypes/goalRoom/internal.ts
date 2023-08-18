@@ -78,3 +78,13 @@ export type MyPageGoalRoom = {
   endDate: string;
   goalRoomLeader: GoalRoomLeaderType;
 };
+
+export type GoalRoomNodeType = {
+  id: number;
+  title: string;
+  startData: string[];
+  endDate: string[];
+  checkCount: number;
+};
+
+export type GoalRoomNodeListType = GoalRoomNodeType[];

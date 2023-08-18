@@ -1,6 +1,17 @@
 import styled from 'styled-components';
 import { StyledLink } from '@components/signUpPage/SignUpForm.styles';
 
+export const ContentHeader = styled.div`
+  ${({ theme }) => theme.fonts.h2};
+  display: flex;
+  align-items: center;
+  margin: 2rem 0 2rem 2rem;
+
+  & > svg {
+    margin-left: 1rem !important;
+  }
+`;
+
 export const TabView = styled.div`
   display: flex;
   flex-direction: column;

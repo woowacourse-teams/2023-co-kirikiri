@@ -10,19 +10,42 @@ import {
   DialogTrigger,
 } from '@components/_common/dialog/dialog';
 import GoalRoomParticipantsListModal from '@components/goalRoomDahsboardPage/goalRoomDashboardHeader/goalRoomParticipantsListModal/GoalRoomParticipantsListModal';
+import isTodayOrAfter from '@utils/_common/isTodayOrAfter';
+import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
+import { useStartGoalRoom } from '@hooks/queries/goalRoom';
 
 type GoalRoomDashboardHeaderProps = {
   goalRoomData: GoalRoomBrowseResponse;
+  isLeader: boolean;
 };
 
-const GoalRoomDashboardHeader = ({ goalRoomData }: GoalRoomDashboardHeaderProps) => {
+const GoalRoomDashboardHeader = ({
+  goalRoomData,
+  isLeader,
+}: GoalRoomDashboardHeaderProps) => {
   const { name, status, currentMemberCount, limitedMemberCount, startDate, endDate } =
     goalRoomData;
+
+  const { goalroomId } = useGoalRoomDashboardContext();
+
+  const { startGoalRoom } = useStartGoalRoom(goalroomId);
+
+  const isStartButtonVisible =
+    isLeader && isTodayOrAfter(startDate) && status === 'RECRUITING';
+
+  const handleGoalRoomStartButton = () => {
+    startGoalRoom();
+  };
 
   return (
     <DialogBox>
       <header>
         <S.GoalRoomDashboardTitle>{name}</S.GoalRoomDashboardTitle>
+        {isStartButtonVisible && (
+          <S.GoalRoomStartButton onClick={handleGoalRoomStartButton}>
+            골룸 시작하기
+          </S.GoalRoomStartButton>
+        )}
         <S.GoalRoomLabel>
           <SVGIcon name='ITIcon' />
           <span>{recruitmentStatus[status]}</span>

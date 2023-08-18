@@ -1,3 +1,4 @@
+import { FILTER_COND } from '@constants/goalRoom/goalRoomFilter';
 import {
   GoalRoomListRequest,
   GoalRoomBrowseResponse,
@@ -10,15 +11,16 @@ import {
   GoalRoomParticipantsResponse,
   ParticipantsSortOrder,
   GoalRoomCertificationFeedsResponse,
+  GoalRoomNodeListResponse,
 } from '@/myTypes/goalRoom/remote';
 import client from '@apis/axios/client';
 import { GoalRoomRecruitmentStatus, MyPageGoalRoom } from '@myTypes/goalRoom/internal';
 
 export const getGoalRoomList = async ({
   roadmapId,
-  filterCond = 'LATEST',
+  filterCond = FILTER_COND.latest,
   lastCreatedAt = '',
-  size = 6,
+  size = 8,
   lastId,
 }: GoalRoomListRequest): Promise<GoalRoomDetailResponse> => {
   const { data } = await client.get<GoalRoomDetailResponse>(
@@ -119,5 +121,16 @@ export const getCertificationFeeds = async (goalRoomId: string) => {
     `/goal-rooms/${goalRoomId}/checkFeeds`
   );
 
+  return data;
+};
+
+export const postStartGoalRoom = async (goalRoomId: string) => {
+  return client.post(`/goal-rooms/${goalRoomId}/start`);
+};
+
+export const getGoalRoomNodeList = async (goalRoomId: string) => {
+  const { data } = await client.get<GoalRoomNodeListResponse>(
+    `/goal-rooms/${goalRoomId}/nodes`
+  );
   return data;
 };

@@ -1,5 +1,11 @@
 import { RoadmapListRequest } from '@/myTypes/roadmap/remote';
-import { getRoadmapDetail, getRoadmapList, postCreateRoadmap } from '@apis/roadmap';
+import {
+  getRoadmapDetail,
+  getRoadmapList,
+  getSearchRoadmapList,
+  getMyRoadmapList,
+  postCreateRoadmap,
+} from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
@@ -29,6 +35,37 @@ export const useRoadmapList = ({
   return { roadmapListResponse: { responses, hasNext }, fetchNextPage };
 };
 
+export const useSearchRoadmapList = ({
+  category,
+  search,
+  filterCond = 'LATEST',
+  lastId = '',
+  size = 10,
+}: any) => {
+  const { data, fetchNextPage } = useInfiniteQuery(
+    ['searchRoadmapList', category, search, filterCond, lastId, size],
+    ({ pageParams }: any) =>
+      getSearchRoadmapList({
+        category,
+        search,
+        filterCond,
+        lastId: pageParams,
+        size,
+      }),
+    {
+      getNextPageParam: (lastPage) =>
+        lastPage.hasNext
+          ? lastPage.responses[lastPage.responses.length - 1]?.roadmapId
+          : undefined,
+    }
+  );
+  const responses = data?.pages.flatMap((page) => page.responses) || [];
+
+  const hasNext = Boolean(data?.pages[data.pages.length - 1]?.hasNext);
+
+  return { searchRoadmapListResponse: { responses, hasNext }, fetchNextPage };
+};
+
 export const useRoadmapDetail = (id: number) => {
   const { data } = useSuspendedQuery([QUERY_KEYS.roadmap.detail, id], () =>
     getRoadmapDetail(id)
@@ -46,4 +83,15 @@ export const useCreateRoadmap = () => {
   return {
     createRoadmap: mutate,
   };
+};
+
+export const useMyRoadmapList = () => {
+  const size = 10;
+  const lastId = undefined;
+
+  const { data } = useSuspendedQuery([QUERY_KEYS.roadmap.myRoadmap, size, lastId], () =>
+    getMyRoadmapList(10, lastId)
+  );
+
+  return { myRoadmapList: data };
 };

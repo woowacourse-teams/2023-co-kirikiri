@@ -6,10 +6,14 @@ import {
 } from '@myTypes/user/remote';
 import { getUserInfo, login, signUp } from '@apis/user';
 import useToast from '@hooks/_common/useToast';
-import { useUserInfoContext } from '@/components/_providers/UserInfoProvider';
+import {
+  defaultUserInfo,
+  useUserInfoContext,
+} from '@/components/_providers/UserInfoProvider';
 import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { setCookie } from '@/utils/_common/cookies';
+import logout from '@utils/user/logout';
 
 export const useSignUp = () => {
   const { triggerToast } = useToast();
@@ -48,7 +52,7 @@ export const useLogin = () => {
           setUserInfo(response.data);
         });
 
-        navigate('/');
+        navigate('/roadmap-list');
       },
     }
   );
@@ -56,4 +60,17 @@ export const useLogin = () => {
   return {
     login: mutate,
   };
+};
+
+export const useLogout = () => {
+  const { triggerToast } = useToast();
+  const { setUserInfo } = useUserInfoContext();
+
+  const triggerLogout = () => {
+    logout();
+    setUserInfo(defaultUserInfo);
+    triggerToast({ message: '로그아웃 성공!' });
+  };
+
+  return { logout: triggerLogout };
 };

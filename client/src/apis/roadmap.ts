@@ -24,6 +24,25 @@ export const getRoadmapList = async ({
   return data;
 };
 
+export const getSearchRoadmapList = async ({
+  category,
+  search,
+  filterCond = 'LATEST',
+  lastId = '',
+  size = 10,
+}: any) => {
+  const { data } = await client.get<RoadmapListResponse>(`/roadmaps/search`, {
+    params: {
+      [category]: search,
+      filterCond,
+      ...(lastId && { lastId }),
+      size,
+    },
+  });
+
+  return data;
+};
+
 export const getRoadmapDetail = async (id: number): Promise<RoadmapDetailResponse> => {
   const { data } = await client.get<RoadmapDetailResponse>(`/roadmaps/${id}`);
 
@@ -37,4 +56,15 @@ export const postCreateRoadmap = (roadmapValue: FormData) => {
     },
   });
   return resposne;
+};
+
+export const getMyRoadmapList = async (size: number, lastId?: number) => {
+  const { data } = await client.get<RoadmapListResponse>('/roadmaps/me', {
+    params: {
+      size,
+      ...(lastId && { lastId }),
+    },
+  });
+
+  return data;
 };

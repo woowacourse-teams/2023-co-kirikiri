@@ -5,8 +5,8 @@ import Header from '../header/Header';
 const PageLayout = ({ children }: PropsWithChildren) => {
   return (
     <S.Layout>
-      <Header />
       <S.ChildrenLayout>{children}</S.ChildrenLayout>
+      <Header />
     </S.Layout>
   );
 };

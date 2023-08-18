@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const BackDrop = styled.div`
   position: fixed;
+  z-index: ${({ theme }) => theme.zIndex.modal};
   top: 0;
   right: 0;
   bottom: 0;
@@ -127,5 +128,5 @@ export const DetailButton = styled.button`
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 85px;
+  border-radius: 8px;
 `;

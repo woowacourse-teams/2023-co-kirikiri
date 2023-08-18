@@ -9,7 +9,6 @@ import {
   DialogTrigger,
 } from '@components/_common/dialog/dialog';
 import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/certificationFeedModal/CertificationFeedModal';
-import { BASE_URL } from '@apis/axios/client';
 
 type GoalRoomCertificationFeedProps = {
   goalRoomData: GoalRoomBrowseResponse;
@@ -23,7 +22,10 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
     <DialogBox>
       <S.CertificationFeedWrapper>
         <div>
-          <h2>인증 피드</h2>
+          <S.CertificationTitleWrapper>
+            <h2>인증 피드</h2>
+            <S.CertificationCountBox>{checkFeeds.length}</S.CertificationCountBox>
+          </S.CertificationTitleWrapper>
 
           <DialogTrigger asChild>
             <button aria-labelledby='이미지 피드 전체보기'>
@@ -36,7 +38,7 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
           {checkFeeds.map((feed) => {
             return (
               <button key={feed.id} aria-label='이미지 크게보기'>
-                <StyledImage src={BASE_URL + feed.imageUrl} alt={`Image ${feed.id}`} />
+                <StyledImage src={feed.imageUrl} alt={`Image ${feed.id}`} />
               </button>
             );
           })}

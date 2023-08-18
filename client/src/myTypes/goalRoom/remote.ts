@@ -1,13 +1,15 @@
+import { FILTER_COND } from '@constants/goalRoom/goalRoomFilter';
 import {
   CheckFeed,
   GoalRoomDetailType,
   GoalRoomInfoType,
+  GoalRoomNodeListType,
   GoalRoomRecruitmentStatus,
   GoalRoomRoadmap,
   GoalRoomTodo,
 } from '@myTypes/goalRoom/internal';
 
-type FilterCondType = 'LATEST' | 'PARTICIPATION_RATE';
+type FilterCondType = (typeof FILTER_COND)[keyof typeof FILTER_COND];
 
 export type GoalRoomListRequest = {
   roadmapId: number;
@@ -100,3 +102,5 @@ export type CertificationFeedType = {
 };
 
 export type GoalRoomCertificationFeedsResponse = CertificationFeedType[];
+
+export type GoalRoomNodeListResponse = GoalRoomNodeListType;
