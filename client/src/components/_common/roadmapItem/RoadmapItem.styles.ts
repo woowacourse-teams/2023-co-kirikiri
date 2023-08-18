@@ -43,7 +43,7 @@ export const Description = styled.div`
 export const ExtraHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
 
   width: 100%;
   height: 3rem;
@@ -51,6 +51,11 @@ export const ExtraHeader = styled.div`
 
   background: ${({ theme }) => theme.colors.gray100};
   border-radius: 8px;
+`;
+
+export const ExtraHeaderText = styled.span`
+  width: 30%;
+  text-align: center;
 `;
 
 export const RecommendedRoadmapPeriodNumber = styled.span`
@@ -83,8 +88,8 @@ export const ExtraInfoBox = styled.div`
 `;
 
 export const Difficulty = styled(ExtraInfoBox)`
-  & > svg {
-    margin-top: 1.5rem;
+  & > div {
+    margin-top: 3rem;
   }
 `;
 
