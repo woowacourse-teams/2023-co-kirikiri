@@ -41,9 +41,9 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
         <S.Description aria-label='로드맵 소개'>{item.introduction}</S.Description>
       </div>
       <S.ExtraHeader>
-        <span>카테고리</span>
-        <span>난이도</span>
-        <span>권장 소요기간</span>
+        <S.ExtraHeaderText>카테고리</S.ExtraHeaderText>
+        <S.ExtraHeaderText>난이도</S.ExtraHeaderText>
+        <S.ExtraHeaderText>권장 소요기간</S.ExtraHeaderText>
       </S.ExtraHeader>
       <S.ItemExtraInfos aria-label='로드맵 속성'>
         <S.ExtraInfoBox aria-label='로드맵 카테고리 분류'>{categoryIcon}</S.ExtraInfoBox>
