@@ -137,7 +137,9 @@ export const Option = (props: PropsWithChildren<OptionProps>) => {
       onClick: (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         selectOption(restProps.id);
-        toggleBoxOpen();
+        if (!restProps.defaultOpen) {
+          toggleBoxOpen();
+        }
       },
     });
   }
