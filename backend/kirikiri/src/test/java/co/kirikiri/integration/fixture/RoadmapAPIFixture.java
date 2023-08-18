@@ -188,7 +188,7 @@ public class RoadmapAPIFixture {
         return given()
                 .log().all()
                 .when()
-                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&tagName=" + 태그)
+                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&tagName=" + 태그 + "&roadmapTitle=&creatorName=")
                 .then().log().all()
                 .extract();
     }
@@ -197,7 +197,7 @@ public class RoadmapAPIFixture {
         return given()
                 .log().all()
                 .when()
-                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&creatorName=" + 크리에이터_닉네임)
+                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&creatorName=" + 크리에이터_닉네임 + "&roadmapTitle=&tagName=")
                 .then().log().all()
                 .extract();
     }
@@ -206,7 +206,8 @@ public class RoadmapAPIFixture {
         return given()
                 .log().all()
                 .when()
-                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&roadmapTitle=" + 로드맵_제목)
+                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&roadmapTitle=" + 로드맵_제목
+                        + "&lastId=&creatorName=&tagName=")
                 .then().log().all()
                 .extract();
     }

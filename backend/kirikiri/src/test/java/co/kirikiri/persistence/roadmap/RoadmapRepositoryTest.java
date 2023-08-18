@@ -345,7 +345,7 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("로드맵", creator, category);
 
         final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
-        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, " 로 드 맵 ", null);
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create("", " 로 드 맵 ", "");
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
@@ -382,7 +382,7 @@ class RoadmapRepositoryTest {
         삭제된_로드맵을_저장한다("로드맵", creator1, category);
 
         final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
-        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getNickname().getValue(), null, null);
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getNickname().getValue(), "", "");
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
@@ -425,7 +425,7 @@ class RoadmapRepositoryTest {
                 new RoadmapTag(new RoadmapTagName("스프링")))));
 
         final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
-        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, null, " 자 바 ");
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create("", "", " 자 바 ");
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,

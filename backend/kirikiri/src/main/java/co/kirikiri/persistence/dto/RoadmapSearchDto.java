@@ -13,13 +13,13 @@ public class RoadmapSearchDto {
     private final RoadmapSearchTagName tagName;
 
     public static RoadmapSearchDto create(final String creatorName, final String title, final String tagName) {
-        if (creatorName != null) {
+        if (!creatorName.isBlank()) {
             return new RoadmapSearchDto(new RoadmapSearchCreatorNickname(creatorName), null, null);
         }
-        if (title != null) {
+        if (!title.isBlank()) {
             return new RoadmapSearchDto(null, new RoadmapSearchTitle(title), null);
         }
-        if (tagName != null) {
+        if (!tagName.isBlank()) {
             return new RoadmapSearchDto(null, null, new RoadmapSearchTagName(tagName));
         }
         return new RoadmapSearchDto(null, null, null);
