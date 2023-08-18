@@ -36,20 +36,18 @@ export const useRoadmapList = ({
 };
 
 export const useSearchRoadmapList = ({
-  roadmapTitle,
-  creatorName,
-  tagName,
+  category,
+  search,
   filterCond = 'LATEST',
   lastId = '',
   size = 10,
 }: any) => {
   const { data, fetchNextPage } = useInfiniteQuery(
-    ['searchRoadmapList', roadmapTitle, creatorName, tagName, filterCond, lastId, size],
+    ['searchRoadmapList', category, search, filterCond, lastId, size],
     ({ pageParams }: any) =>
       getSearchRoadmapList({
-        roadmapTitle,
-        creatorName,
-        tagName,
+        category,
+        search,
         filterCond,
         lastId: pageParams,
         size,

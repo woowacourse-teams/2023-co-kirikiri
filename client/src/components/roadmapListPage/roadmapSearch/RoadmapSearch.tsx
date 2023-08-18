@@ -27,6 +27,10 @@ const RoadmapSearch = () => {
     navigate(`/roadmap-list/${searchCategory}/${searchWordRef.current?.value}`);
   };
 
+  const resetSearchResult = () => {
+    navigate('/roadmap-list');
+  };
+
   return (
     <>
       <S.SelectWrapper>
@@ -36,7 +40,7 @@ const RoadmapSearch = () => {
               <Select.Option id={1} asChild>
                 <S.SearchCategoryOption>태그명</S.SearchCategoryOption>
               </Select.Option>
-              <Select.Option id={2} asChild>
+              <Select.Option id={2} asChild defaultSelected>
                 <S.SearchCategoryOption>로드맵 제목</S.SearchCategoryOption>
               </Select.Option>
               <Select.Option id={3} asChild>
@@ -47,18 +51,23 @@ const RoadmapSearch = () => {
         </Select>
         <p>(으)로 검색하기</p>
       </S.SelectWrapper>
-      <S.Wrapper>
-        <S.InputWrapper>
-          <S.SearchInput
-            placeholder='로드맵을 검색해주세요'
-            maxLength={20}
-            ref={searchWordRef}
-          />
-        </S.InputWrapper>
-        <S.SearchButton onClick={searchRoadmap}>
-          <SearchIcon width='30px' height='30px' />
-        </S.SearchButton>
-      </S.Wrapper>
+      <S.InputFlex>
+        <S.Wrapper>
+          <S.InputWrapper>
+            <S.SearchInput
+              placeholder='로드맵을 검색해주세요'
+              maxLength={20}
+              ref={searchWordRef}
+            />
+          </S.InputWrapper>
+          <S.SearchButton onClick={searchRoadmap}>
+            <SearchIcon width='30px' height='30px' />
+          </S.SearchButton>
+        </S.Wrapper>
+        <S.ResetSearchButton onClick={resetSearchResult}>
+          전체결과로 돌아가기
+        </S.ResetSearchButton>
+      </S.InputFlex>
     </>
   );
 };

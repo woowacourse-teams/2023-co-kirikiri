@@ -38,6 +38,7 @@ export type OptionGroupProps = {
 export type OptionProps = {
   asChild: boolean;
   id: number;
+  defaultSelected?: boolean;
 };
 
 export type IndicatorProps = OptionProps;
