@@ -13,6 +13,7 @@ export const BackDrop = styled.div`
 
 export const Container = styled.section`
   position: absolute;
+  z-index: 200;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -118,6 +119,8 @@ export const EnterGoalRoomButton = styled.button`
 
   background-color: ${({ theme }) => theme.colors.main_dark};
   border-radius: 34px;
+
+  z-index: 201;
 `;
 
 export const DetailButton = styled.button`

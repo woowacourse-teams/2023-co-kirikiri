@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { PropsWithChildren, Suspense, useContext, useEffect } from 'react';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
 import { ThemeProvider } from 'styled-components';
@@ -16,10 +16,26 @@ import ToastProvider from '@components/_common/toastProvider/ToastProvider';
 import GoalRoomListPage from './pages/goalRoomListPage/GoalRoomListPage';
 import GoalRoomCreatePage from './pages/goalRoomCreatePage/GoalRoomCreatePage';
 import MyPage from '@pages/myPage/MyPage';
-import UserInfoProvider from './components/_providers/UserInfoProvider';
+import UserInfoProvider, {
+  userInfoContext,
+} from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
 import ErrorBoundary from '@components/_common/errorBoundary/ErrorBoundary';
+
+const PrivateRouter = (props: PropsWithChildren) => {
+  const { children } = props;
+  const { userInfo } = useContext(userInfoContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userInfo.id === null) {
+      navigate('/login');
+    }
+  }, [userInfo.id, navigate]);
+
+  return <>{children}</>;
+};
 
 const App = () => {
   return (
@@ -30,38 +46,56 @@ const App = () => {
           <BrowserRouter>
             <ResponsiveContainer>
               <PageLayout>
-                <ErrorBoundary>
-                  <Routes>
-                    <Route path='/' element={<MainPage />} />
-                    <Route path='/login' element={<LoginPage />} />
-                    <Route path='/join' element={<SignUpPage />} />
-                    <Route path='/roadmap-list' element={<RoadmapListPage />}>
-                      <Route path=':category/:search' element={<RoadmapSearchResult />} />
-                    </Route>
-                    <Route
-                      path='/roadmap/:id'
-                      element={
-                        <Suspense fallback={<Fallback />}>
-                          <RoadmapDetailPage />
-                        </Suspense>
-                      }
-                    />
-                    <Route
-                      path='/roadmap/:id/goalroom-list'
-                      element={<GoalRoomListPage />}
-                    />
-                    <Route path='/roadmap-create' element={<RoadmapCreatePage />} />
-                    <Route
-                      path='/roadmap/:id/goalroom-create'
-                      element={<GoalRoomCreatePage />}
-                    />
-                    <Route
-                      path='/goalroom-dashboard/:goalroomId'
-                      element={<GoalRoomDashboardPage />}
-                    />
-                    <Route path='/myPage' element={<MyPage />} />
-                  </Routes>
-                </ErrorBoundary>
+               <ErrorBoundary>
+                <Routes>
+                  <Route path='/' element={<MainPage />} />
+                  <Route path='/login' element={<LoginPage />} />
+                  <Route path='/join' element={<SignUpPage />} />
+                  <Route path='/roadmap-list' element={<RoadmapListPage />}>
+                    <Route path=':category/:search' element={<RoadmapSearchResult />} />
+                  </Route>
+                  <Route
+                    path='/roadmap/:id'
+                    element={
+                      <Suspense fallback={<Fallback />}>
+                        <RoadmapDetailPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path='/roadmap/:id/goalroom-list'
+                    element={<GoalRoomListPage />}
+                  />
+                  <Route
+                    path='/roadmap-create'
+                    element={
+                      <PrivateRouter>
+                        <RoadmapCreatePage />
+                      </PrivateRouter>
+                    }
+                  />
+                  <Route
+                    path='/roadmap/:id/goalroom-create'
+                    element={
+                      <PrivateRouter>
+                        <GoalRoomCreatePage />
+                      </PrivateRouter>
+                    }
+                  />
+                  <Route
+                    path='/goalroom-dashboard/:goalroomId'
+                    element={<GoalRoomDashboardPage />}
+                  />
+                  <Route
+                    path='/myPage'
+                    element={
+                      <PrivateRouter>
+                        <MyPage />
+                      </PrivateRouter>
+                    }
+                  />
+                </Routes>
+              </ErrorBoundary>
               </PageLayout>
             </ResponsiveContainer>
           </BrowserRouter>
