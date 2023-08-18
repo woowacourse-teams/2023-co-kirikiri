@@ -1,10 +1,10 @@
 import RoadmapItem from '../../_common/roadmapItem/RoadmapItem';
-import OpenNodeListButton from '../openNodeListButton/OpenNodeListButton';
 import Button from '../../_common/button/Button';
 import * as S from './RoadmapDetail.styles';
 import useValidParams from '@/hooks/_common/useValidParams';
 import { useNavigate } from 'react-router-dom';
 import { useRoadmapDetail } from '@/hooks/queries/roadmap';
+import RoadmapNodeList from '../roadmapNodeList/RoadmapNodeList';
 
 const RoadmapDetail = () => {
   const { id: roadmapId } = useValidParams<{ id: string }>();
@@ -19,9 +19,17 @@ const RoadmapDetail = () => {
     <S.RoadmapDetail>
       <S.PageOnTop>
         <RoadmapItem item={roadmapInfo} hasBorder={false} roadmapId={Number(roadmapId)} />
-        <OpenNodeListButton />
+        <S.RoadmapBody>
+          <strong>로드맵 설명</strong> <br />
+          {roadmapInfo.content.content === ''
+            ? '로드맵에 대한 설명이 없어요🥲'
+            : roadmapInfo.content.content}
+        </S.RoadmapBody>
       </S.PageOnTop>
-      <S.RoadmapBody>{roadmapInfo.content.content}</S.RoadmapBody>
+      <RoadmapNodeList
+        roadmapTitle={roadmapInfo.roadmapTitle}
+        nodeInfo={roadmapInfo.content.nodes}
+      />
       <Button onClick={moveToGoalRoomCreatePage}>골룸 생성하러 가기</Button>
     </S.RoadmapDetail>
   );

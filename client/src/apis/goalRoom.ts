@@ -11,6 +11,7 @@ import {
   GoalRoomParticipantsResponse,
   ParticipantsSortOrder,
   GoalRoomCertificationFeedsResponse,
+  GoalRoomNodeListResponse,
 } from '@/myTypes/goalRoom/remote';
 import client from '@apis/axios/client';
 import { GoalRoomRecruitmentStatus, MyPageGoalRoom } from '@myTypes/goalRoom/internal';
@@ -125,4 +126,11 @@ export const getCertificationFeeds = async (goalRoomId: string) => {
 
 export const postStartGoalRoom = async (goalRoomId: string) => {
   return client.post(`/goal-rooms/${goalRoomId}/start`);
+};
+
+export const getGoalRoomNodeList = async (goalRoomId: string) => {
+  const { data } = await client.get<GoalRoomNodeListResponse>(
+    `/goal-rooms/${goalRoomId}/nodes`
+  );
+  return data;
 };

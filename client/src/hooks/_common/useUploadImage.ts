@@ -23,10 +23,19 @@ export const useUploadImage = () => {
     reader.readAsDataURL(uploadedFile);
   };
 
+  const checkFileSize = (maxSize: number, file: File) => {
+    if (file.size > maxSize) {
+      alert('사진의 용량은 3MB를 넘을 수 없습니다.');
+      return false;
+    }
+    return true;
+  };
+
   return {
     imagePreviews,
     imageFile,
     getFileFromElement,
     showPrevImage,
+    checkFileSize,
   };
 };

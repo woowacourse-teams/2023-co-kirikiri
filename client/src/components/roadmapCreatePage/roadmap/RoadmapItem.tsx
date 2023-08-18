@@ -19,13 +19,14 @@ const RoadmapItem = ({
   getRoadmapItemTitle,
   getNodeImage,
 }: RoadmapItemProps) => {
-  const { imagePreviews, getFileFromElement, showPrevImage } = useUploadImage();
+  const { imagePreviews, getFileFromElement, showPrevImage, checkFileSize } =
+    useUploadImage();
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     Array.from(getFileFromElement(event)).forEach((uploadedFile) => {
       getNodeImage(uploadedFile, itemId);
 
-      if (uploadedFile) {
+      if (uploadedFile && checkFileSize(3 * 1024 * 1024, uploadedFile)) {
         showPrevImage(uploadedFile);
       }
     });
@@ -65,6 +66,7 @@ const RoadmapItem = ({
               id={`fileInput-${itemId}`}
               type='file'
               onChange={handleImageChange}
+              accept='.png, .jpg, .jpeg'
             />
           </S.NodeInputLabel>
         </S.ImageSection>
