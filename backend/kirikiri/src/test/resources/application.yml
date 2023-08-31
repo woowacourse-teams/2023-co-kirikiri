@@ -1,0 +1,63 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MYSQL
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  flyway:
+    enabled: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
+        orm:
+          jdbc:
+            bind: TRACE
+  file-path: ./logs
+  file-name: test-name
+  custom-pattern: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%thread] [%logger{36}] - %msg%n'
+
+  slack:
+    webhook-url: test-url
+
+server:
+  servlet:
+    contextPath: /api
+  port: 8080
+
+jwt:
+  secret-key: 9zrOjg1kDd2gUp6KBbElGJj5GHP5BnneDs3nXEhdztHAUjKBX7l69JXUErBovPLn7TVWV0UCfejYZyxIjIMC5KPfSvBzo9C1gJ2
+  access-token-validity-in-seconds: 86400
+  refresh-token-validity-in-seconds: 86400
+
+image:
+  default:
+    originalFileName: default-member-image
+    serverFilePath: /test/member/profile/default/default-member-image
+    imageContentType: PNG
+    extension: .png
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      instanceProfile: true
+    s3:
+      bucket: 2023-team-project
+      root-directory: 2023-co-kirikiri
+      sub-directory: prod
+      url-expiration: 60000

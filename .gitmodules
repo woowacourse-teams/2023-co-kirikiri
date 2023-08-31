@@ -1,0 +1,4 @@
+[submodule "co-kirikiri-property"]
+	path = backend/kirikiri/src/main/resources/properties
+	url = https://github.com/co-kirikiri-backend/co-kirikiri-property
+	branch = main

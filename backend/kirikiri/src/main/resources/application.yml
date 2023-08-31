@@ -1,0 +1,13 @@
+spring:
+  config:
+    import: "classpath:properties/application-dev.yml"
+    activate:
+      on-profile: dev
+
+---
+
+spring:
+  config:
+    import: "classpath:properties/application-prod.yml"
+    activate:
+      on-profile: prod
