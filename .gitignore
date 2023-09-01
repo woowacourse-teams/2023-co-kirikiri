@@ -1,0 +1,8 @@
+.vscode
+.idea
+
+# test coverage dir
+coverage
+
+# misc
+.DS_Store
