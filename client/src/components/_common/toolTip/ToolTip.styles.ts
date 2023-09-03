@@ -18,7 +18,7 @@ export const ToolTipButton = styled.button<{ isActive: boolean }>`
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme, isActive }) =>
-    isActive ? theme.colors.red : theme.colors.gray300};
+    isActive ? theme.colors.main_dark : theme.colors.gray300};
   border-radius: 50%;
 `;
 
