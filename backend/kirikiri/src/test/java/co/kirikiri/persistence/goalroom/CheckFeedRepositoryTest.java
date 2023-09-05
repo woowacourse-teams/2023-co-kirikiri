@@ -37,6 +37,7 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -92,10 +93,10 @@ class CheckFeedRepositoryTest {
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
 
         //when
-        final boolean isUpdateToday = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember,
+        final boolean isUpdateToday = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember.getId(),
                 TODAY_START, TOMORROW_START).isPresent();
 
-        final boolean isUpdateTomorrow = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember,
+        final boolean isUpdateTomorrow = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember.getId(),
                 TOMORROW_START, DAY_AFTER_TOMORROW_START).isPresent();
 
         //then
@@ -103,6 +104,37 @@ class CheckFeedRepositoryTest {
                 () -> assertThat(isUpdateToday).isTrue(),
                 () -> assertThat(isUpdateTomorrow).isFalse()
         );
+    }
+
+    @Test
+    void 인증_피드_등록_여부를_위해_사용되는_쿼리는_사용자가_해당_골룸에서_오늘_올린_피드가_삭제되어도_존재유무를_확인한다() {
+        //given
+        final Member creator = 사용자를_저장한다("cokiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                member);
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final CheckFeed checkFeed = 인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
+        인증_피드를_삭제한다(checkFeed);
+
+        //when
+        final boolean isUpdateToday = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember.getId(),
+                TODAY_START, TOMORROW_START).isPresent();
+        final int checkFeedNumber = checkFeedRepository.countByGoalRoomMember(joinedMember);
+
+        //then
+        assertThat(isUpdateToday).isTrue();
+        assertThat(checkFeedNumber).isZero();
     }
 
     @Test
@@ -129,11 +161,49 @@ class CheckFeedRepositoryTest {
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
 
         //when
-        final int checkCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(joinedMember,
-                goalRoomRoadmapNode);
+        final int checkCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(joinedMember.getId(),
+                goalRoomRoadmapNode.getId());
 
         //then
         assertThat(checkCount).isEqualTo(4);
+    }
+
+    @Test
+    void 사용자가_현재_진행중인_노드에서_인증한_횟수를_계산하는_쿼리는_삭제된_경우를_포함한다() {
+        //given
+        final Member creator = 사용자를_저장한다("cokiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_저장한다("여가");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final Member member = 사용자를_저장한다("participant", "참여자");
+        final GoalRoom goalRoom = 골룸을_저장한다(targetRoadmapContent, member);
+
+        final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
+        final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
+                member);
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final CheckFeed checkFeed1 = 인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
+        final CheckFeed checkFeed2 = 인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
+        final CheckFeed checkFeed3 = 인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
+        final CheckFeed checkFeed4 = 인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
+
+        인증_피드를_삭제한다(checkFeed1);
+        인증_피드를_삭제한다(checkFeed2);
+        인증_피드를_삭제한다(checkFeed3);
+        인증_피드를_삭제한다(checkFeed4);
+
+        //when
+        final int checkCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(joinedMember.getId(),
+                goalRoomRoadmapNode.getId());
+        final int wholeFeedNumber = checkFeedRepository.countByGoalRoomMember(joinedMember);
+
+        //then
+        assertThat(checkCount).isEqualTo(4);
+        assertThat(wholeFeedNumber).isZero();
     }
 
     @Test
@@ -501,5 +571,9 @@ class CheckFeedRepositoryTest {
         return checkFeedRepository.save(
                 new CheckFeed("src/test/resources/testImage", ImageContentType.JPEG,
                         "originalFileName", "인증 피드 본문", goalRoomRoadmapNode, joinedMember));
+    }
+
+    private void 인증_피드를_삭제한다(final CheckFeed checkFeed) {
+        checkFeedRepository.deleteById(checkFeed.getId());
     }
 }

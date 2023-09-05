@@ -12,12 +12,13 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CheckFeedRepository extends JpaRepository<CheckFeed, Long>, CheckFeedQueryRepository {
 
-    @Query("SELECT cf"
-            + " FROM CheckFeed cf"
-            + " WHERE cf.goalRoomMember = :goalRoomMember"
-            + " AND cf.createdAt >= :start"
-            + " AND cf.createdAt < :end")
-    Optional<CheckFeed> findByGoalRoomMemberAndDateTime(final GoalRoomMember goalRoomMember, final LocalDateTime start,
+    @Query(value = "SELECT *"
+            + " FROM check_feed"
+            + " WHERE goal_room_member_id = :goalRoomMemberId"
+            + " AND created_at >= :start"
+            + " AND created_at < :end",
+            nativeQuery = true)
+    Optional<CheckFeed> findByGoalRoomMemberAndDateTime(final Long goalRoomMemberId, final LocalDateTime start,
                                                         final LocalDateTime end);
 
     @Query("SELECT COUNT(cf)"
@@ -25,12 +26,13 @@ public interface CheckFeedRepository extends JpaRepository<CheckFeed, Long>, Che
             + " WHERE cf.goalRoomMember = :goalRoomMember")
     int countByGoalRoomMember(final GoalRoomMember goalRoomMember);
 
-    @Query("SELECT COUNT(cf)"
-            + " FROM CheckFeed cf"
-            + " WHERE cf.goalRoomMember = :goalRoomMember"
-            + " AND cf.goalRoomRoadmapNode = :goalRoomRoadmapNode")
-    int countByGoalRoomMemberAndGoalRoomRoadmapNode(final GoalRoomMember goalRoomMember,
-                                                    final GoalRoomRoadmapNode goalRoomRoadmapNode);
+    @Query(value = "SELECT COUNT(*)"
+            + " FROM check_feed"
+            + " WHERE goal_room_member_id = :goalRoomMemberId"
+            + " AND goal_room_roadmap_node_id = :goalRoomRoadmapNodeId",
+            nativeQuery = true)
+    int countByGoalRoomMemberAndGoalRoomRoadmapNode(final Long goalRoomMemberId,
+                                                    final Long goalRoomRoadmapNodeId);
 
     @Query("SELECT cf"
             + " FROM CheckFeed cf"

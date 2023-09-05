@@ -194,7 +194,7 @@ public class GoalRoomCreateService {
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
         final GoalRoomRoadmapNode currentNode = getNodeByDate(goalRoom);
         final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(
-                goalRoomMember, currentNode);
+                goalRoomMember.getId(), currentNode.getId());
         validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
         updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
@@ -243,7 +243,7 @@ public class GoalRoomCreateService {
         final LocalDate today = LocalDate.now();
         final LocalDateTime todayStart = today.atStartOfDay();
         final LocalDateTime todayEnd = today.plusDays(1).atStartOfDay();
-        if (checkFeedRepository.findByGoalRoomMemberAndDateTime(member, todayStart, todayEnd).isPresent()) {
+        if (checkFeedRepository.findByGoalRoomMemberAndDateTime(member.getId(), todayStart, todayEnd).isPresent()) {
             throw new BadRequestException("이미 오늘 인증 피드를 등록하였습니다.");
         }
     }
