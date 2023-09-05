@@ -246,7 +246,6 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
         final String 로드맵_노드_설명 = "a".repeat(2001);
         final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(
                 new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명, Collections.emptyList()));
-        testTransactionService.로드맵_카테고리를_저장한다("여행");
 
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(기본_카테고리.getId(), "로드맵 제목", "로드맵 소개글",
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));

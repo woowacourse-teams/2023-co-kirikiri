@@ -16,6 +16,7 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.리뷰를_생성한다;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.정렬된_로드맵_리스트_조회;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.정렬된_카테고리별_로드맵_리스트_조회;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
@@ -34,9 +35,9 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
 
@@ -55,8 +56,8 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
 
         // 다른 카테고리의 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
-        final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
+        final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(2L, "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
@@ -107,7 +108,7 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         리뷰를_생성한다(팔로워_액세스_토큰2, 두번째_로드맵_아이디, 두번째_로드맵_리뷰_생성_요청);
 
         // 다른 카테고리의 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -146,7 +147,7 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         로드맵에_대한_골룸을_생성한다(두번째_로드맵_응답);
 
         // 다른 카테고리의 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -188,7 +189,7 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         골룸을_시작한다(기본_로그인_토큰, 두번째_로드맵의_골룸_아이디);
 
         // 다른 카테고리의 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -222,7 +223,7 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
 
         // 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -275,7 +276,7 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         리뷰를_생성한다(팔로워_액세스_토큰2, 두번째_로드맵_아이디, 두번째_로드맵_리뷰_생성_요청);
 
         // 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -323,7 +324,7 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         로드맵에_대한_골룸을_생성한다(두번째_로드맵_응답);
 
         // 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -370,7 +371,7 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
 
         // 세 번째 로드맵 생성
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "third roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),

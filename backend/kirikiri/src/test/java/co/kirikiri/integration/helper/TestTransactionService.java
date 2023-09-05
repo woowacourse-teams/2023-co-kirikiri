@@ -21,10 +21,8 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
@@ -32,11 +30,11 @@ import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class TestTransactionService {
@@ -44,31 +42,13 @@ public class TestTransactionService {
     @PersistenceContext
     private EntityManager em;
 
-    private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
 
-    public TestTransactionService(final RoadmapCategoryRepository roadmapCategoryRepository,
-                                  final GoalRoomRepository goalRoomRepository,
+    public TestTransactionService(final GoalRoomRepository goalRoomRepository,
                                   final GoalRoomMemberRepository goalRoomMemberRepository) {
-        this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.goalRoomRepository = goalRoomRepository;
         this.goalRoomMemberRepository = goalRoomMemberRepository;
-    }
-
-    public List<RoadmapCategory> 모든_로드맵_카테고리를_저장한다(final String... 카테고리_이름_목록) {
-        final List<RoadmapCategory> roadmapCategories = new ArrayList<>();
-        for (final String 카테고리_이름 : 카테고리_이름_목록) {
-            final RoadmapCategory 로드맵_카테고리 = 로드맵_카테고리를_저장한다(카테고리_이름);
-            roadmapCategories.add(new RoadmapCategory(로드맵_카테고리.getId(), 카테고리_이름));
-        }
-        roadmapCategoryRepository.saveAll(roadmapCategories);
-        return roadmapCategories;
-    }
-
-    public RoadmapCategory 로드맵_카테고리를_저장한다(final String 카테고리_이름) {
-        final RoadmapCategory 로드맵_카테고리 = new RoadmapCategory(카테고리_이름);
-        return roadmapCategoryRepository.save(로드맵_카테고리);
     }
 
     public GoalRoom 골룸을_완료시킨다(final Long 골룸_아이디) {

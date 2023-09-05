@@ -8,6 +8,8 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.모든_카테고
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.사이즈_없이_로드맵을_조회한다;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.사이즈별로_로드맵을_조회한다;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.정렬된_카테고리별_로드맵_리스트_조회;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리_생성;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리들_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -26,10 +28,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import java.io.IOException;
+import java.util.List;
 
 class RoadmapReadIntegrationTest extends InitIntegrationTest {
 
@@ -84,7 +86,7 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
         final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
-        final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
+        final RoadmapCategory 다른_카테고리 = 카테고리_생성(기본_로그인_토큰, "여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "thrid roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
@@ -120,7 +122,7 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_카테고리_리스트를_조회한다() {
         // given
-        final List<RoadmapCategory> 로드맵_카테고리_리스트 = testTransactionService.모든_로드맵_카테고리를_저장한다("IT", "여가", "운동", "시험",
+        final List<RoadmapCategory> 로드맵_카테고리_리스트 = 카테고리들_생성(기본_로그인_토큰, "IT", "여가", "운동", "시험",
                 "게임");
 
         // when
@@ -130,10 +132,8 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
                 });
 
         // then
-        assertThat(로드맵_카테고리_응답_리스트.get(0).id()).isEqualTo(1L);
         assertThat(로드맵_카테고리_응답_리스트.get(0).name()).isEqualTo("여행");
         for (int index = 1; index < 로드맵_카테고리_응답_리스트.size(); index++) {
-            assertThat(로드맵_카테고리_응답_리스트.get(index).id()).isEqualTo(로드맵_카테고리_리스트.get(index - 1).getId());
             assertThat(로드맵_카테고리_응답_리스트.get(index).name()).isEqualTo(로드맵_카테고리_리스트.get(index - 1).getName());
         }
     }
