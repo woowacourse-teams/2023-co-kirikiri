@@ -725,7 +725,7 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 로드맵_카테고리를_생성한다() throws Exception {
+    void 정상적으로_로드맵_카테고리를_생성한다() throws Exception {
         // given
         final RoadmapCategorySaveRequest request = new RoadmapCategorySaveRequest("카테고리 이름");
         doNothing().when(roadmapCreateService)
