@@ -1,9 +1,14 @@
-import { useState, PropsWithChildren } from 'react';
+import { useSwitch } from '@/hooks/_common/useSwitch';
+import { PropsWithChildren } from 'react';
 import * as S from './ToolTip.styles';
 
 const ToolTip = ({ children }: PropsWithChildren) => {
-  const [isHover, setIsHover] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+  const {
+    isSwitchOn: isHover,
+    turnSwitchOn: setHoverOn,
+    turnSwitchOff: setHoverOff,
+  } = useSwitch(false);
+  const { isSwitchOn: isActive, toggleSwitch: toggleActive } = useSwitch(false);
 
   const isShow = isHover || isActive;
 
@@ -11,9 +16,9 @@ const ToolTip = ({ children }: PropsWithChildren) => {
     <S.ToolTip>
       <S.ToolTipButton
         isActive={isActive}
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
-        onClick={() => setIsActive((prev) => !prev)}
+        onMouseEnter={setHoverOn}
+        onMouseLeave={setHoverOff}
+        onClick={toggleActive}
       >
         !
       </S.ToolTipButton>
