@@ -27,19 +27,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.RoadmapCreateService;
 import co.kirikiri.service.RoadmapReadService;
 import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -53,6 +53,8 @@ import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.restdocs.snippet.Attributes.Attribute;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebMvcTest(RoadmapController.class)
 class RoadmapCreateApiTest extends ControllerTestHelper {
@@ -720,6 +722,106 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
         final ErrorResponse expected = new ErrorResponse("해당 로드맵을 생성한 사용자가 아닙니다.");
         assertThat(errorResponse)
                 .isEqualTo(expected);
+    }
+
+    @Test
+    void 로드맵_카테고리를_생성한다() throws Exception {
+        // given
+        final RoadmapCategorySaveRequest request = new RoadmapCategorySaveRequest("카테고리 이름");
+        doNothing().when(roadmapCreateService)
+                .createRoadmapCategory(request);
+
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post(API_PREFIX + "/roadmaps/categories")
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isCreated())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                                        .attributes(new Attribute(RESTRICT, "- 길이 : 1 ~ 10")))));
+    }
+
+    @Test
+    void 로드맵_카테고리_생성_시_카테고리_이름이_빈값일_경우() throws Exception {
+        // given
+        final RoadmapCategorySaveRequest request = new RoadmapCategorySaveRequest("");
+        doNothing().when(roadmapCreateService)
+                .createRoadmapCategory(request);
+
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post(API_PREFIX + "/roadmaps/categories")
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                                        .attributes(new Attribute(RESTRICT, "- 길이 : 1 ~ 10")))));
+    }
+
+    @Test
+    void 로드맵_카테고리_생성_시_카테고리_이름이_10자_초과일_경우() throws Exception {
+        // given
+        final RoadmapCategorySaveRequest request = new RoadmapCategorySaveRequest("10자가 초과되는 카테고리 이름입니다.");
+        doThrow(new BadRequestException("카테고리 이름은 1자 이상 10자 이하입니다.")).when(roadmapCreateService)
+                .createRoadmapCategory(request);
+
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post(API_PREFIX + "/roadmaps/categories")
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isBadRequest())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                                        .attributes(new Attribute(RESTRICT, "- 길이 : 1 ~ 10"))),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메시지"))));
+    }
+
+    @Test
+    void 로드맵_카테고리_생성_시_카테고리_이름이_중복될_경우() throws Exception {
+        // given
+        final RoadmapCategorySaveRequest request = new RoadmapCategorySaveRequest("10자가 초과되는 카테고리 이름입니다.");
+        doThrow(new ConflictException("이미 존재하는 이름의 카테고리입니다.")).when(roadmapCreateService)
+                .createRoadmapCategory(request);
+
+        final String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post(API_PREFIX + "/roadmaps/categories")
+                        .header(AUTHORIZATION, String.format(BEARER_TOKEN_FORMAT, "test-token"))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isConflict())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        requestFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                                        .attributes(new Attribute(RESTRICT, "- 길이 : 1 ~ 10"))),
+                        responseFields(
+                                fieldWithPath("message").description("예외 메시지"))));
     }
 
     private RoadmapSaveRequest 로드맵_생성_요청을_생성한다(final Long categoryId, final String roadmapTitle,

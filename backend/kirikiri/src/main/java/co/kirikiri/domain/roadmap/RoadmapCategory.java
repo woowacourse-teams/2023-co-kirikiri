@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class RoadmapCategory extends BaseEntity {
 
+    private static final int MIN_NAME_LENGTH = 1;
     private static final int MAX_NAME_LENGTH = 10;
 
     @Column(length = 15, nullable = false)
@@ -29,8 +30,8 @@ public class RoadmapCategory extends BaseEntity {
     }
 
     private void validateNameLength(final String name) {
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new BadRequestException("카테고리 이름은 10자 이하입니다.");
+        if (name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) {
+            throw new BadRequestException("카테고리 이름은 1자 이상 10자 이하입니다.");
         }
     }
 

@@ -383,26 +383,10 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
         응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.CREATED);
     }
 
-
-    @Test
-    void 카테고리_생성_시_빈_이름이_들어올_경우() {
-        //given
-        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("운동");
-
-        //when
-        final ExtractableResponse<Response> 로드맵_카테고리_생성_응답 = 로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
-
-        //then
-        final ErrorResponse 에러_메세지 = 로드맵_카테고리_생성_응답.as(ErrorResponse.class);
-
-        응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.BAD_REQUEST);
-        assertThat(에러_메세지.message()).isEqualTo("카테고리 이름은 빈 값일 수 없습니다.");
-    }
-
     @Test
     void 카테고리_생성_시_10글자_초과_이름이_들어올_경우() {
         //given
-        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("운동");
+        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("10자 초과되는 카테고리 이름");
 
         //when
         final ExtractableResponse<Response> 로드맵_카테고리_생성_응답 = 로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
@@ -411,7 +395,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
         final ErrorResponse 에러_메세지 = 로드맵_카테고리_생성_응답.as(ErrorResponse.class);
 
         응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.BAD_REQUEST);
-        assertThat(에러_메세지.message()).isEqualTo("카테고리 이름은 10자 이하입니다.");
+        assertThat(에러_메세지.message()).isEqualTo("카테고리 이름은 1자 이상 10자 이하입니다.");
     }
 
     @Test
