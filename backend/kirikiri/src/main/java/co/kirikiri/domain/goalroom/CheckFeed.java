@@ -13,8 +13,12 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
+@SQLDelete(sql = "UPDATE check_feed SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CheckFeed extends BaseCreatedTimeEntity {
 
@@ -29,6 +33,8 @@ public class CheckFeed extends BaseCreatedTimeEntity {
     private String originalFileName;
 
     private String description;
+
+    private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_room_roadmap_node_id", nullable = false)
