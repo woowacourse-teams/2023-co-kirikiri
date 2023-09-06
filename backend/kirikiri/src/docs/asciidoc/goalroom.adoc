@@ -298,3 +298,26 @@ operation::goal-room-create-api-test/골룸을_시작하는_사용자가_골룸�
 === *15-5* 실패 - 골룸의 시작 날짜가 미래인 경우
 
 operation::goal-room-create-api-test/골룸_시작시_골룸의_시작날짜가_미래라면_예외가_발생한다[snippets='http-request,http-response']
+
+[[인증피드신고-API]]
+== *16. 골룸 신고 AIP*
+
+=== *16-1* 성공
+
+operation::goal-room-create-api-test/인증_피드를_신고한다[snippets='http-request,request-headers,path-parameters,http-response']
+
+=== *16-2* 실패 - 존재하지 않는 사용자인 경우
+
+operation::goal-room-create-api-test/인증_피드_신고시_존재하지_않는_사용자면_예외가_발생한다[snippets='http-request,request-headers,path-parameters,http-response']
+
+=== *16-3* 실패 - 존재하지 않는 골룸인 경우
+
+operation::goal-room-create-api-test/인증_피드_신고시_존재하지_않는_골룸이면_예외가_발생한다[snippets='http-request,request-headers,path-parameters,http-response']
+
+=== *16-4* 실패 - 존재하지 않는 인증 피드인 경우
+
+operation::goal-room-create-api-test/인증_피드_신고시_존재하지_않는_인증피드면_예외가_발생한다[snippets='http-request,request-headers,path-parameters,http-response']
+
+=== *16-5* 실패 - 신고자가 참여하지 않은 골룸에 등록된 인증 피드에 대해 신고한 경우
+
+operation::goal-room-create-api-test/인증_피드_신고시_사용자가_참여하지_않은_골룸이면_예외가_발생한다[snippets='http-request,request-headers,path-parameters,http-response']

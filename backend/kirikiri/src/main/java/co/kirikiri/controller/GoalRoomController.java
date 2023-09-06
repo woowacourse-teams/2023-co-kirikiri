@@ -180,4 +180,14 @@ public class GoalRoomController {
                 goalRoomId);
         return ResponseEntity.ok(response);
     }
+
+    @Authenticated
+    @PostMapping("{goalRoomId}/checkFeeds/{checkFeedId}/report")
+    public ResponseEntity<Void> reportCheckFeed(
+            @MemberIdentifier final String identifier,
+            @PathVariable("goalRoomId") final Long goalRoomId,
+            @PathVariable("checkFeedId") final Long checkFeedId) {
+        goalRoomCreateService.reportCheckFeed(identifier, goalRoomId, checkFeedId);
+        return ResponseEntity.ok().build();
+    }
 }

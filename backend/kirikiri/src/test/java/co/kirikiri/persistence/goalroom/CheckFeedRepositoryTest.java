@@ -37,7 +37,7 @@ import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -128,13 +128,17 @@ class CheckFeedRepositoryTest {
         인증_피드를_삭제한다(checkFeed);
 
         //when
+        final boolean isDeletedToday = checkFeedRepository.findById(checkFeed.getId()).isEmpty();
         final boolean isUpdateToday = checkFeedRepository.findByGoalRoomMemberAndDateTime(joinedMember.getId(),
                 TODAY_START, TOMORROW_START).isPresent();
         final int checkFeedNumber = checkFeedRepository.countByGoalRoomMember(joinedMember);
 
         //then
-        assertThat(isUpdateToday).isTrue();
-        assertThat(checkFeedNumber).isZero();
+        Assertions.assertAll(
+                () -> assertThat(isDeletedToday).isTrue(),
+                () -> assertThat(isUpdateToday).isTrue(),
+                () -> assertThat(checkFeedNumber).isZero()
+        );
     }
 
     @Test

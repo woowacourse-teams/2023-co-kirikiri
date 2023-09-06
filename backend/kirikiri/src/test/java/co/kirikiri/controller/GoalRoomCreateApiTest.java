@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.service.GoalRoomCreateService;
 import co.kirikiri.service.GoalRoomReadService;
@@ -1247,6 +1248,135 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
         final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
         });
         assertThat(response).isEqualTo(new ErrorResponse("골룸의 시작 날짜가 되지 않았습니다."));
+    }
+
+    @Test
+    void 인증_피드를_신고한다() throws Exception {
+        //given
+        doNothing().when(goalRoomCreateService)
+                .reportCheckFeed(anyString(), anyLong(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds/{checkFeedId}/report", 1L, 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디"),
+                                parameterWithName("checkFeedId").description("인증 피드 아이디"))))
+                .andReturn();
+    }
+
+    @Test
+    void 인증_피드_신고시_존재하지_않는_사용자면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new NotFoundException("존재하지 않는 회원입니다."))
+                .when(goalRoomCreateService)
+                .reportCheckFeed(anyString(), anyLong(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds/{checkFeedId}/report", 1L, 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디"),
+                                parameterWithName("checkFeedId").description("인증피드 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("존재하지 않는 회원입니다."));
+    }
+
+    @Test
+    void 인증_피드_신고시_존재하지_않는_골룸이면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = 1"))
+                .when(goalRoomCreateService)
+                .reportCheckFeed(anyString(), anyLong(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds/{checkFeedId}/report", 1L, 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디"),
+                                parameterWithName("checkFeedId").description("인증피드 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("존재하지 않는 골룸입니다. goalRoomId = 1"));
+    }
+
+    @Test
+    void 인증_피드_신고시_존재하지_않는_인증피드면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new NotFoundException("존재하지 않는 인증 피드입니다."))
+                .when(goalRoomCreateService)
+                .reportCheckFeed(anyString(), anyLong(), anyLong());
+
+        // when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds/{checkFeedId}/report", 1L, 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디"),
+                                parameterWithName("checkFeedId").description("인증피드 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("존재하지 않는 인증 피드입니다."));
+    }
+
+    @Test
+    void 인증_피드_신고시_사용자가_참여하지_않은_골룸이면_예외가_발생한다() throws Exception {
+        // given
+        doThrow(new ForbiddenException("사용자가 참여하지 않은 골룸의 인증피드에 대해서 신고할 수 없습니다."))
+                .when(goalRoomCreateService)
+                .reportCheckFeed(anyString(), anyLong(), anyLong());
+
+        // wehn
+        // when
+        final MvcResult mvcResult = mockMvc.perform(post(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds/{checkFeedId}/report", 1L, 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                        .contextPath(API_PREFIX))
+                .andExpect(status().isForbidden())
+                .andDo(print())
+                .andDo(documentationResultHandler.document(
+                        requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                        pathParameters(
+                                parameterWithName("goalRoomId").description("골룸 아이디"),
+                                parameterWithName("checkFeedId").description("인증피드 아이디")),
+                        responseFields(fieldWithPath("message").description("예외 메세지"))))
+                .andReturn();
+
+        //then
+        final ErrorResponse response = jsonToClass(mvcResult, new TypeReference<>() {
+        });
+        assertThat(response).isEqualTo(new ErrorResponse("사용자가 참여하지 않은 골룸의 인증피드에 대해서 신고할 수 없습니다."));
     }
 
     private ResultActions 골룸_생성(final String jsonRequest, final ResultMatcher result) throws Exception {
