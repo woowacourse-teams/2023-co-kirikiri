@@ -84,6 +84,10 @@ public class Member extends BaseUpdatedTimeEntity {
         return nickname;
     }
 
+    public MemberRole getRole() {
+        return role;
+    }
+
     public MemberImage getImage() {
         return image;
     }

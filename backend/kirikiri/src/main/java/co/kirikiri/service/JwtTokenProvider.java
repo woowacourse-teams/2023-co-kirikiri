@@ -23,6 +23,7 @@ public class JwtTokenProvider implements TokenProvider {
 
     private static final String TYPE_CLAIM_KEY = "type";
     private static final String UUID_CLAIM_KEY = "UUID";
+    private static final String ROLE_CLAIM_KEY = "role";
 
     private final String secretKey;
     private final Long accessTokenValidityInSeconds;
@@ -37,18 +38,20 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createAccessToken(final String subject, final Map<String, Object> claims) {
+    public String createAccessToken(final String subject, final String role, final Map<String, Object> claims) {
         final Map<String, Object> copiedClaims = new HashMap<>(claims);
         copiedClaims.put(TYPE_CLAIM_KEY, "Access");
         copiedClaims.put(UUID_CLAIM_KEY, generateUUID());
+        copiedClaims.put(ROLE_CLAIM_KEY, role);
         return createToken(accessTokenValidityInSeconds, subject, copiedClaims);
     }
 
     @Override
-    public String createRefreshToken(final String subject, final Map<String, Object> claims) {
+    public String createRefreshToken(final String subject, final String role, final Map<String, Object> claims) {
         final Map<String, Object> copiedClaims = new HashMap<>(claims);
         copiedClaims.put(TYPE_CLAIM_KEY, "Refresh");
         copiedClaims.put(UUID_CLAIM_KEY, generateUUID());
+        copiedClaims.put(ROLE_CLAIM_KEY, role);
         return createToken(refreshTokenValidityInSeconds, subject, copiedClaims);
     }
 
@@ -113,5 +116,12 @@ public class JwtTokenProvider implements TokenProvider {
         final Jws<Claims> claimsJws = parseToClaimsJws(token);
         return claimsJws.getBody()
                 .getSubject();
+    }
+
+    @Override
+    public String findRole(final String token) {
+        final Jws<Claims> claimsJws = parseToClaimsJws(token);
+        return claimsJws.getBody()
+                .get(ROLE_CLAIM_KEY, String.class);
     }
 }

@@ -47,9 +47,11 @@ public class AuthService {
     }
 
     private AuthenticationResponse makeAuthenticationResponse(final Member member) {
-        final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
+        final String identifier = member.getIdentifier().getValue();
+        final String role = member.getRole().name();
+        final String refreshToken = tokenProvider.createRefreshToken(identifier, role, Map.of());
         saveRefreshToken(member, refreshToken);
-        final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
+        final String accessToken = tokenProvider.createAccessToken(identifier, role, Map.of());
         return AuthMapper.convertToAuthenticationResponse(refreshToken, accessToken);
     }
 

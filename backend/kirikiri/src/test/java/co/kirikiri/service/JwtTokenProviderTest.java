@@ -21,10 +21,11 @@ class JwtTokenProviderTest {
     void 정상적으로_subject와_claims를_포함한_ACCESS_TOKEN을_생성한다() {
         //given
         final String subject = "subject";
+        final String role = "role";
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
 
         //when
-        final String accessToken = tokenProvider.createAccessToken(subject, claims);
+        final String accessToken = tokenProvider.createAccessToken(subject, role, claims);
 
         //then
         final Claims result = getClaims(accessToken);
@@ -42,10 +43,11 @@ class JwtTokenProviderTest {
     void 정상적으로_subject와_claims를_포함한_REFRESH_TOKEN을_생성한다() {
         //given
         final String subject = "subject";
+        final String role = "role";
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
 
         //when
-        final String accessToken = tokenProvider.createRefreshToken(subject, claims);
+        final String accessToken = tokenProvider.createRefreshToken(subject, role, claims);
 
         //then
         final Claims result = getClaims(accessToken);
@@ -63,8 +65,9 @@ class JwtTokenProviderTest {
     void 정상적인_토큰의_유효성을_검사한다() {
         //given
         final String subject = "subject";
+        final String role = "role";
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
-        final String accessToken = tokenProvider.createAccessToken(subject, claims);
+        final String accessToken = tokenProvider.createAccessToken(subject, role, claims);
 
         //when
         final boolean result = tokenProvider.isValidToken(accessToken);
@@ -77,9 +80,10 @@ class JwtTokenProviderTest {
     void 만료된_토큰의_유효성을_검사한다() {
         //given
         final String subject = "subject";
+        final String role = "role";
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
         final TokenProvider tokenProvider = new JwtTokenProvider(secretKey, 0L, 0L);
-        final String accessToken = tokenProvider.createAccessToken(subject, claims);
+        final String accessToken = tokenProvider.createAccessToken(subject, role, claims);
 
         //when
         //then
@@ -113,13 +117,29 @@ class JwtTokenProviderTest {
     void 토큰에서_Subject를_가져온다() {
         //given
         final String subject = "subject";
+        final String role = "role";
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
-        final String accessToken = tokenProvider.createAccessToken(subject, claims);
+        final String accessToken = tokenProvider.createAccessToken(subject, role, claims);
 
         //when
         final String result = tokenProvider.findSubject(accessToken);
 
         //then
         assertThat(result).isEqualTo(subject);
+    }
+
+    @Test
+    void 토큰에서_Role을_가져온다() {
+        //given
+        final String subject = "subject";
+        final String role = "role";
+        final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
+        final String accessToken = tokenProvider.createAccessToken(subject, role, claims);
+
+        //when
+        final String result = tokenProvider.findRole(accessToken);
+
+        //then
+        assertThat(result).isEqualTo(role);
     }
 }

@@ -67,9 +67,9 @@ class AuthServiceTest {
         final String refreshToken = "refreshToken";
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
-        given(tokenProvider.createAccessToken(any(), any()))
+        given(tokenProvider.createAccessToken(any(), any(), any()))
                 .willReturn(accessToken);
-        given(tokenProvider.createRefreshToken(any(), any()))
+        given(tokenProvider.createRefreshToken(any(), any(), any()))
                 .willReturn(refreshToken);
         given(tokenProvider.findTokenExpiredAt(anyString()))
                 .willReturn(LocalDateTime.now());
@@ -119,9 +119,9 @@ class AuthServiceTest {
                 .willReturn(true);
         given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
                 .willReturn(Optional.of(refreshToken));
-        given(tokenProvider.createAccessToken(any(), any()))
+        given(tokenProvider.createAccessToken(any(), any(), any()))
                 .willReturn(rawAccessToken);
-        given(tokenProvider.createRefreshToken(any(), any()))
+        given(tokenProvider.createRefreshToken(any(), any(), any()))
                 .willReturn(rawRefreshToken);
         given(tokenProvider.findTokenExpiredAt(anyString()))
                 .willReturn(LocalDateTime.now());
