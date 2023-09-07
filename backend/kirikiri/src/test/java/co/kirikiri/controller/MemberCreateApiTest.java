@@ -288,8 +288,34 @@ class MemberCreateApiTest extends ControllerTestHelper {
         회원가입(jsonRequest, status().isConflict());
     }
 
+    @Test
+    void 정상적으로_어드민_역할로_회원가입에_성공한다() throws Exception {
+        //given
+        final MemberJoinRequest memberJoinRequest = new MemberJoinRequest("identifier1", "password1!",
+                "nickname", "010-1234-5678", GenderType.MALE, LocalDate.now());
+        final String jsonRequest = objectMapper.writeValueAsString(memberJoinRequest);
+
+        //when
+        //then
+        final List<FieldDescription> requestFieldDescription = makeSuccessRequestFieldDescription();
+
+        어드민_회원가입(jsonRequest, status().isCreated())
+                .andDo(documentationResultHandler.document(
+                        requestFields(makeFieldDescriptor(requestFieldDescription)),
+                        responseHeaders(headerWithName(HttpHeaders.LOCATION).description("회원 단일 조회 api 경로"))));
+    }
+
     private ResultActions 회원가입(final String jsonRequest, final ResultMatcher result) throws Exception {
         return mockMvc.perform(post(API_PREFIX + "/members/join")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(result)
+                .andDo(print());
+    }
+
+    private ResultActions 어드민_회원가입(final String jsonRequest, final ResultMatcher result) throws Exception {
+        return mockMvc.perform(post(API_PREFIX + "/members/join/admin")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .contextPath(API_PREFIX))

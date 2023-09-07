@@ -85,3 +85,14 @@ operation::member-read-api-test/특정_사용자의_정보를_조회한다[snipp
 === *3-2* 실패 - 조회할 사용자가 존재하지 않은 회원일 때
 
 operation::member-read-api-test/특정_사용자_정보_조회시_조회할_사용자가_없는_회원이면_예외_발생[snippets='http-request,http-response']
+
+[[어드민회원가입-API]]
+== *4. 어드민 회원 가입*
+
+=== *4-1* 성공
+
+operation::member-create-api-test/정상적으로_어드민_역할로_회원가입에_성공한다[snippets='http-request,http-response,request-fields,response-headers']
+
+=== *4-2* 실패
+
+1-2 ~ 1-12의 경우와 동일
