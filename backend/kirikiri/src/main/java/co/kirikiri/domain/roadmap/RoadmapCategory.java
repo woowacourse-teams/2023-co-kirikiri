@@ -25,8 +25,9 @@ public class RoadmapCategory extends BaseEntity {
 
     public RoadmapCategory(final Long id, final String name) {
         super.id = id;
-        validateNameLength(name);
-        this.name = name;
+        final String trimmed = name.trim();
+        validateNameLength(trimmed);
+        this.name = trimmed;
     }
 
     private void validateNameLength(final String name) {

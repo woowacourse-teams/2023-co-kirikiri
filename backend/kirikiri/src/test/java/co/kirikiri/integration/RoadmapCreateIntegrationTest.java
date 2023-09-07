@@ -398,6 +398,21 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
     }
 
     @Test
+    void 카테고리_생성_시_공백이_들어올_경우() {
+        //given
+        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("");
+
+        //when
+        final ExtractableResponse<Response> 로드맵_카테고리_생성_응답 = 로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
+
+        //then
+        final ErrorResponse[] 에러_메세지 = 로드맵_카테고리_생성_응답.as(ErrorResponse[].class);
+
+        응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.BAD_REQUEST);
+        assertThat(에러_메세지[0].message()).isEqualTo("카테고리 이름은 빈 값일 수 없습니다.");
+    }
+
+    @Test
     void 카테고리_생성_시_이미_있는_이름인_경우() {
         //given
         final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("운동");

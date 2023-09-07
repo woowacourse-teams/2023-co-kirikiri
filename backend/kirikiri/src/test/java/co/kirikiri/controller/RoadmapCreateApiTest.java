@@ -801,7 +801,7 @@ class RoadmapCreateApiTest extends ControllerTestHelper {
     @Test
     void 로드맵_카테고리_생성_시_카테고리_이름이_중복될_경우() throws Exception {
         // given
-        final RoadmapCategorySaveRequest request = new RoadmapCategorySaveRequest("10자가 초과되는 카테고리 이름입니다.");
+        final RoadmapCategorySaveRequest request = new RoadmapCategorySaveRequest("여행");
         doThrow(new ConflictException("이미 존재하는 이름의 카테고리입니다.")).when(roadmapCreateService)
                 .createRoadmapCategory(request);
 
