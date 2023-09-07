@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.CheckFeed;
+import co.kirikiri.domain.goalroom.CheckFeedReport;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
@@ -45,6 +46,7 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.CheckFeedReportRepository;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -113,6 +115,9 @@ class GoalRoomCreateServiceTest {
 
     @Mock
     private CheckFeedRepository checkFeedRepository;
+
+    @Mock
+    private CheckFeedReportRepository checkFeedReportRepository;
 
     @Mock
     private FileService fileService;
@@ -783,7 +788,7 @@ class GoalRoomCreateServiceTest {
         assertThatThrownBy(
                 () -> goalRoomCreateService.createCheckFeed("identifier", 1L, request))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessage("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + "identifier");
+                .hasMessage("골룸에 사용자가 존재하지 않습니다. goalRoomId = 1 memberIdentifier = " + "identifier");
     }
 
     @Test
@@ -989,6 +994,157 @@ class GoalRoomCreateServiceTest {
         verify(goalRoomRepository, times(1)).delete(goalRoom);
     }
 
+    @Test
+    void 골룸_참가자가_인증_피드를_신고했을_때_신고수가_기준_미달시_인증피드를_삭제하지_않는다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+        final Member follower1 = 사용자를_생성한다(2L, "follower1", "pasword2@", "팔로워", "010-1111-1111");
+        final Member follower2 = 사용자를_생성한다(3L, "follower2", "password3#", "김김김", "010-2222-2222");
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(1L, creator, targetRoadmapContent, 20);
+        goalRoom.join(follower1);
+        goalRoom.join(follower2);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final CheckFeed checkFeed = 인증_피드를_생성한다(goalRoomRoadmapNode, goalRoomLeader);
+        final CheckFeedReport checkFeedReport = 인증_피드를_신고한다(checkFeed, goalRoomLeader);
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
+        given(checkFeedRepository.findById(anyLong()))
+                .willReturn(Optional.of(checkFeed));
+        given(checkFeedReportRepository.save(any()))
+                .willReturn(checkFeedReport);
+        given(checkFeedReportRepository.countAllByCheckFeed(any()))
+                .willReturn(1);
+
+        // when
+        goalRoomCreateService.reportCheckFeed("cokirikiri", 1L, 1L);
+
+        // then
+        verify(checkFeedRepository, times(0)).delete(checkFeed);
+    }
+
+    @Test
+    void 골룸_참가자가_인증_피드를_신고하고_신고_수가_기준을_충족시_해당_인증피드가_삭제된다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(1L, creator, targetRoadmapContent, 20);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+        final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
+        final CheckFeed checkFeed = 인증_피드를_생성한다(goalRoomRoadmapNode, goalRoomLeader);
+        final CheckFeedReport checkFeedReport = 인증_피드를_신고한다(checkFeed, goalRoomLeader);
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
+        given(checkFeedRepository.findById(anyLong()))
+                .willReturn(Optional.of(checkFeed));
+        given(checkFeedReportRepository.save(any()))
+                .willReturn(checkFeedReport);
+
+        // when
+        goalRoomCreateService.reportCheckFeed("cokirikiri", 1L, 1L);
+
+        // then
+        verify(checkFeedRepository, times(1)).delete(checkFeed);
+    }
+
+    @Test
+    void 인증_피드_신고시_존재하는_사용자가_아니면_예외가_발생한다() {
+        // given
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> goalRoomCreateService.reportCheckFeed("cokirikiri", 1L, 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("존재하지 않는 회원입니다.");
+    }
+    
+    @Test
+    void 인증_피드_신고시_존재하는_골룸이_아니면_예외가_발생한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> goalRoomCreateService.reportCheckFeed("cokirikiri", 1L, 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("존재하지 않는 골룸입니다. goalRoomId = 1");
+    }
+
+    @Test
+    void 인증_피드_신고시_신고자가_골룸이_참여하지_않았을_때_예외가_발생한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(1L, creator, targetRoadmapContent, 20);
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> goalRoomCreateService.reportCheckFeed("cokirikiri", 1L, 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("골룸에 사용자가 존재하지 않습니다. goalRoomId = 1 memberIdentifier = cokirikiri");
+    }
+
+    @Test
+    void 인증_피드_신고시_존재하지_않는_인증피드면_예외가_발생한다() {
+        // given
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(1L, creator, targetRoadmapContent, 20);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                creator);
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
+        given(checkFeedRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> goalRoomCreateService.reportCheckFeed("cokirikiri", 1L, 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("존재하지 않는 인증 피드입니다.");
+    }
+
     private Member 사용자를_생성한다(final Long memberId, final String identifier, final String password, final String nickname,
                              final String phoneNumber) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
@@ -1071,5 +1227,9 @@ class GoalRoomCreateServiceTest {
         } catch (final MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private CheckFeedReport 인증_피드를_신고한다(final CheckFeed checkFeed, final GoalRoomMember goalRoomMember) {
+        return new CheckFeedReport(checkFeed, goalRoomMember);
     }
 }

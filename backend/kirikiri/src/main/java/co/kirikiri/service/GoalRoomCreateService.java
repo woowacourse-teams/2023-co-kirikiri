@@ -2,6 +2,7 @@ package co.kirikiri.service;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.CheckFeed;
+import co.kirikiri.domain.goalroom.CheckFeedReport;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
@@ -17,9 +18,9 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.goalroom.CheckFeedReportRepository;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -32,14 +33,15 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional
@@ -53,8 +55,8 @@ public class GoalRoomCreateService {
     private final RoadmapContentRepository roadmapContentRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
-    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final CheckFeedRepository checkFeedRepository;
+    private final CheckFeedReportRepository checkFeedReportRepository;
 
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
@@ -191,7 +193,7 @@ public class GoalRoomCreateService {
         final FileInformation fileInformation = GoalRoomMapper.convertToFileInformation(checkFeedImage);
 
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
-        final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
+        final GoalRoomMember goalRoomMember = findGoalRoomMember(new Identifier(identifier), goalRoom);
         final GoalRoomRoadmapNode currentNode = getNodeByDate(goalRoom);
         final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(
                 goalRoomMember.getId(), currentNode.getId());
@@ -213,11 +215,6 @@ public class GoalRoomCreateService {
         if (image.getOriginalFilename() == null) {
             throw new BadRequestException("파일 이름은 반드시 포함되어야 합니다.");
         }
-    }
-
-    private GoalRoomMember findGoalRoomMemberByGoalRoomAndIdentifier(final GoalRoom goalRoom, final String identifier) {
-        return goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(goalRoom, new Identifier(identifier))
-                .orElseThrow(() -> new NotFoundException("골룸에 해당 사용자가 존재하지 않습니다. 사용자 아이디 = " + identifier));
     }
 
     private GoalRoomRoadmapNode getNodeByDate(final GoalRoom goalRoom) {
@@ -314,5 +311,31 @@ public class GoalRoomCreateService {
         if (goalRoom.isRunning()) {
             throw new BadRequestException("진행중인 골룸에서는 나갈 수 없습니다.");
         }
+    }
+
+    public void reportCheckFeed(final String identifier, final Long goalRoomId, final Long checkFeedId) {
+        findMemberByIdentifier(identifier);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        final GoalRoomMember goalRoomMember = findGoalRoomMember(new Identifier(identifier), goalRoom);
+        final CheckFeed checkFeed = findCheckFeedById(checkFeedId);
+
+        final CheckFeedReport checkFeedReport = new CheckFeedReport(checkFeed, goalRoomMember);
+        try {
+            checkFeedReportRepository.save(checkFeedReport);
+        } catch (DataIntegrityViolationException e) {}
+
+        if (judgeRemoveCheckFeed(goalRoom, checkFeed)) {
+            checkFeedRepository.delete(checkFeed);
+        }
+    }
+
+    private CheckFeed findCheckFeedById(final Long checkFeedId) {
+        return checkFeedRepository.findById(checkFeedId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 인증 피드입니다."));
+    }
+
+    private boolean judgeRemoveCheckFeed(final GoalRoom goalRoom, final CheckFeed checkFeed) {
+        final int reportCount = checkFeedReportRepository.countAllByCheckFeed(checkFeed);
+        return reportCount >= Math.min(3, goalRoom.getCurrentMemberCount() - 1);
     }
 }
