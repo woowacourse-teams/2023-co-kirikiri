@@ -17,6 +17,7 @@ import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
@@ -29,6 +30,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
+import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.event.RoadmapCreateEvent;
@@ -166,5 +168,14 @@ public class RoadmapCreateService {
     private void validateRoadmapCreator(final Long roadmapId, final String identifier) {
         roadmapRepository.findByIdAndMemberIdentifier(roadmapId, identifier)
                 .orElseThrow(() -> new ForbiddenException("해당 로드맵을 생성한 사용자가 아닙니다."));
+    }
+
+    public void createRoadmapCategory(final RoadmapCategorySaveRequest roadmapCategorySaveRequest) {
+        final RoadmapCategory roadmapCategory = RoadmapMapper.convertToRoadmapCategory(roadmapCategorySaveRequest);
+        roadmapCategoryRepository.findByName(roadmapCategory.getName())
+                .ifPresent(it -> {
+                    throw new ConflictException("이미 존재하는 이름의 카테고리입니다.");
+                });
+        roadmapCategoryRepository.save(roadmapCategory);
     }
 }

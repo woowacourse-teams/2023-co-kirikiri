@@ -21,6 +21,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapReviewReadDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
+import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
@@ -208,5 +209,9 @@ public final class RoadmapMapper {
         return new RoadmapReviewResponse(roadmapReviewReadDto.id(),
                 new MemberResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl()),
                 roadmapReviewReadDto.createdAt(), roadmapReviewReadDto.content(), roadmapReviewReadDto.rate());
+    }
+
+    public static RoadmapCategory convertToRoadmapCategory(final RoadmapCategorySaveRequest request) {
+        return new RoadmapCategory(request.name());
     }
 }
