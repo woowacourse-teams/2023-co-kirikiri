@@ -33,11 +33,11 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class GoalRoomCreateService {
 
+    private final EntityManager em;
     private final FileService fileService;
     private final FilePathGenerator filePathGenerator;
     private final MemberRepository memberRepository;
@@ -319,13 +320,9 @@ public class GoalRoomCreateService {
         final GoalRoomMember goalRoomMember = findGoalRoomMember(new Identifier(identifier), goalRoom);
         final CheckFeed checkFeed = findCheckFeedById(checkFeedId);
 
-        final CheckFeedReport checkFeedReport = new CheckFeedReport(checkFeed, goalRoomMember);
-        try {
-            checkFeedReportRepository.save(checkFeedReport);
-        } catch (DataIntegrityViolationException e) {}
-
-        if (judgeRemoveCheckFeed(goalRoom, checkFeed)) {
-            checkFeedRepository.delete(checkFeed);
+        if (checkFeedReportRepository.findByGoalRoomMemberAndCheckFeed(goalRoomMember, checkFeed).isEmpty()) {
+            checkFeedReportRepository.save(new CheckFeedReport(checkFeed, goalRoomMember));
+            judgeRemoveCheckFeed(goalRoom, checkFeed);
         }
     }
 
@@ -334,8 +331,10 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 인증 피드입니다."));
     }
 
-    private boolean judgeRemoveCheckFeed(final GoalRoom goalRoom, final CheckFeed checkFeed) {
+    private void judgeRemoveCheckFeed(final GoalRoom goalRoom, final CheckFeed checkFeed) {
         final int reportCount = checkFeedReportRepository.countAllByCheckFeed(checkFeed);
-        return reportCount >= Math.min(3, goalRoom.getCurrentMemberCount() - 1);
+        if (reportCount >= Math.min(3, goalRoom.getCurrentMemberCount() - 1)) {
+            checkFeedRepository.delete(checkFeed);
+        }
     }
 }

@@ -300,4 +300,14 @@ public class GoalRoomAPIFixture {
                 .log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 인증_피드_신고(final Long 골룸_아이디, final Long 인증피드_아이디, final String 로그인_토큰) {
+        return given().log().all()
+                .header(AUTHORIZATION, 로그인_토큰)
+                .when()
+                .post(API_PREFIX + "/goal-rooms/{goalRoomId}/checkFeeds/{checkFeedId}/report", 골룸_아이디, 인증피드_아이디)
+                .then()
+                .log().all()
+                .extract();
+    }
 }
