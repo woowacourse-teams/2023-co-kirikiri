@@ -199,11 +199,12 @@ public class GoalRoomCreateService {
         final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(
                 goalRoomMember.getId(), currentNode.getId());
         validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
-        updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
 
         final String path = filePathGenerator.makeFilePath(ImageDirType.CHECK_FEED,
                 fileInformation.originalFileName());
         saveCheckFeed(checkFeedRequest, checkFeedImage, goalRoomMember, currentNode, path);
+        updateAccomplishmentRate(goalRoom, goalRoomMember);
+
         fileService.save(path, fileInformation);
         return fileService.generateUrl(path, HttpMethod.GET).toExternalForm();
     }
@@ -246,11 +247,10 @@ public class GoalRoomCreateService {
         }
     }
 
-    private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember,
-                                          final int pastCheckCount) {
+    private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember) {
         final int wholeCheckCount = goalRoom.getAllCheckCount();
-        final int memberCheckCount = pastCheckCount + 1;
-        final Double accomplishmentRate = 100 * memberCheckCount / (double) wholeCheckCount;
+        final int currentCheckCount = checkFeedRepository.countByGoalRoomMember(goalRoomMember);
+        final Double accomplishmentRate = 100 * currentCheckCount / (double) wholeCheckCount;
         goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
     }
 
@@ -322,7 +322,11 @@ public class GoalRoomCreateService {
 
         if (checkFeedReportRepository.findByGoalRoomMemberAndCheckFeed(goalRoomMember, checkFeed).isEmpty()) {
             checkFeedReportRepository.save(new CheckFeedReport(checkFeed, goalRoomMember));
-            judgeRemoveCheckFeed(goalRoom, checkFeed);
+            if (judgeRemoveCheckFeed(goalRoom, checkFeed)) {
+                final GoalRoomMember reportedMember = checkFeed.getGoalRoomMember();
+                checkFeedRepository.delete(checkFeed);
+                updateAccomplishmentRate(goalRoom, reportedMember);
+            }
         }
     }
 
@@ -331,10 +335,8 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 인증 피드입니다."));
     }
 
-    private void judgeRemoveCheckFeed(final GoalRoom goalRoom, final CheckFeed checkFeed) {
+    private boolean judgeRemoveCheckFeed(final GoalRoom goalRoom, final CheckFeed checkFeed) {
         final int reportCount = checkFeedReportRepository.countAllByCheckFeed(checkFeed);
-        if (reportCount >= Math.min(3, goalRoom.getCurrentMemberCount() - 1)) {
-            checkFeedRepository.delete(checkFeed);
-        }
+        return reportCount >= Math.min(3, goalRoom.getCurrentMemberCount() - 1);
     }
 }

@@ -11,6 +11,7 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_투두�
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_투두리스트를_체크한다;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_생성하고_아이디를_반환한다;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_시작한다;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸의_사용자_정보를_전체_조회;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸의_사용자_정보를_정렬_기준없이_조회;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.사용자의_특정_골룸_정보를_조회한다;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.십일_후;
@@ -36,6 +37,7 @@ import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
+import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
@@ -1424,6 +1426,82 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
                 .isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(errorResponse.message())
                 .isEqualTo("존재하지 않는 인증 피드입니다.");
+    }
+
+    @Test
+    void 인증_피드_신고로_인증피드가_삭제되어도_인증_피드_등록여부_계산에_영향을_미친다() throws IOException {
+        //given
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
+
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(기본_로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
+                골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
+        멤버를_생성하고_골룸에_가입한_뒤_액세스_토큰을_반환한다("identifier2", "follow1", "010-1234-1234", 골룸_아이디);
+        골룸을_시작한다(기본_로그인_토큰, 골룸_아이디);
+
+        final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
+                "image/jpeg", "tempImage".getBytes());
+        final CheckFeedRequest 인증_피드_등록_요청 = new CheckFeedRequest(가짜_이미지_객체, "image description");
+        인증_피드_등록(골룸_아이디, 가짜_이미지_객체, 인증_피드_등록_요청, 기본_로그인_토큰);
+
+        final List<GoalRoomCheckFeedResponse> 인증_피드_전체_조회_응답 = 인증_피드_전체_조회_요청(기본_로그인_토큰, 골룸_아이디)
+                .as(new TypeRef<>() {
+                });
+        final Long 인증_피드_아이디 = 인증_피드_전체_조회_응답.get(0).checkFeed().id();
+
+        인증_피드_신고(골룸_아이디, 인증_피드_아이디, 기본_로그인_토큰);
+
+        // when
+        final ExtractableResponse<Response> 인증_피드_등록_응답 = 인증_피드_등록(골룸_아이디, 가짜_이미지_객체, 인증_피드_등록_요청,기본_로그인_토큰);
+        final ErrorResponse 예외_메세지 = 인증_피드_등록_응답.as(ErrorResponse.class);
+
+        // then
+        assertThat(인증_피드_등록_응답.statusCode())
+                .isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(예외_메세지.message())
+                .isEqualTo("이미 오늘 인증 피드를 등록하였습니다.");
+    }
+
+    @Test
+    void 인증_피드_신고로_삭제된_인증피드는_달성률_계산에서_제외된다() throws IOException {
+        //given
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
+
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
+        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
+        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(기본_로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
+                골룸_투두_요청, 골룸_노드_별_기간_요청);
+        final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
+        final String 팔로워_액세스_토큰 = 멤버를_생성하고_골룸에_가입한_뒤_액세스_토큰을_반환한다("identifier2", "follow1", "010-1234-1234", 골룸_아이디);
+        골룸을_시작한다(기본_로그인_토큰, 골룸_아이디);
+
+        final MockMultipartFile 가짜_이미지_객체 = new MockMultipartFile("image", "originalFileName.jpeg",
+                "image/jpeg", "tempImage".getBytes());
+        final CheckFeedRequest 인증_피드_등록_요청 = new CheckFeedRequest(가짜_이미지_객체, "image description");
+        인증_피드_등록(골룸_아이디, 가짜_이미지_객체, 인증_피드_등록_요청, 기본_로그인_토큰);
+        인증_피드_등록(골룸_아이디, 가짜_이미지_객체, 인증_피드_등록_요청, 팔로워_액세스_토큰);
+
+        final List<GoalRoomCheckFeedResponse> 인증_피드_전체_조회_응답 = 인증_피드_전체_조회_요청(기본_로그인_토큰, 골룸_아이디)
+                .as(new TypeRef<>() {
+                });
+        final Long 인증_피드_아이디 = 인증_피드_전체_조회_응답.get(0).checkFeed().id();
+        // 가장 최신에 등록된 인증피드(팔로워의) 인증피드 신고 및 삭제
+        인증_피드_신고(골룸_아이디, 인증_피드_아이디, 기본_로그인_토큰);
+
+        // when
+        final List<GoalRoomMemberResponse> 골룸_사용자_응답 = 골룸의_사용자_정보를_전체_조회(골룸_아이디, 기본_로그인_토큰,
+                GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE.name()).as(new TypeRef<>() {
+        });
+
+        // then
+        assertThat(골룸_사용자_응답.get(0).memberId()).isEqualTo(기본_회원_아이디);
+        assertThat(골룸_사용자_응답.get(1).memberId()).isEqualTo(2L);
     }
 
     private String 멤버를_생성하고_골룸에_가입한_뒤_액세스_토큰을_반환한다(final String 아이디, final String 닉네임, final String 전화번호, final Long 골룸_아이디) {

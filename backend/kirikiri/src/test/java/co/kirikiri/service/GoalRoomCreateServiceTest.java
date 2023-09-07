@@ -603,12 +603,14 @@ class GoalRoomCreateServiceTest {
                 .thenReturn(Optional.of(goalRoom));
         when(goalRoomMemberRepository.findByGoalRoomAndMemberIdentifier(any(), any()))
                 .thenReturn(Optional.of(goalRoomLeader));
-        when(checkFeedRepository.findByGoalRoomMemberAndDateTime(any(), any(), any()))
-                .thenReturn(Optional.empty());
         when(checkFeedRepository.countByGoalRoomMemberAndGoalRoomRoadmapNode(any(), any()))
                 .thenReturn(0);
+        when(checkFeedRepository.findByGoalRoomMemberAndDateTime(any(), any(), any()))
+                .thenReturn(Optional.empty());
         when(checkFeedRepository.save(any()))
                 .thenReturn(checkFeed);
+        when(checkFeedRepository.countByGoalRoomMember(any()))
+                .thenReturn(1);
         when(filePathGenerator.makeFilePath(any(), any()))
                 .thenReturn("originalFileName.jpeg");
         when(fileService.generateUrl(anyString(), any()))
