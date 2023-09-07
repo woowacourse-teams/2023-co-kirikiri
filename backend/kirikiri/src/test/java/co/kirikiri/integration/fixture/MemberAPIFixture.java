@@ -47,6 +47,23 @@ public class MemberAPIFixture {
         return 회원가입(회원가입_요청);
     }
 
+    public static Long 어드민_회원가입(final MemberJoinRequest 회원가입_요청) {
+        final Response 회원가입_응답 = 요청을_받는_어드민_회원가입(회원가입_요청).response();
+        final String Location_헤더 = 회원가입_응답.header("Location");
+        return Long.parseLong(Location_헤더.substring(13));
+    }
+
+    public static ExtractableResponse<Response> 요청을_받는_어드민_회원가입(final MemberJoinRequest 회원가입_요청) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .body(회원가입_요청)
+                .post(API_PREFIX + "/members/join/admin")
+                .then()
+                .log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> 요청을_받는_사용자_자신의_정보_조회_요청(final String 액세스_토큰) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

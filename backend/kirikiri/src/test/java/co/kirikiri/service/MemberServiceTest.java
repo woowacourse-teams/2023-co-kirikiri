@@ -75,8 +75,37 @@ class MemberServiceTest {
                 .willReturn(7);
 
         //when
+        final boolean isAdmin = false;
+
         //then
-        assertThat(memberService.join(request))
+        assertThat(memberService.join(request, isAdmin))
+                .isEqualTo(1L);
+    }
+
+    @Test
+    void 어드민_역할로_회원가입을_한다() {
+        //given
+        final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
+                "010-1234-5678", GenderType.MALE, LocalDate.now());
+
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.empty());
+        given(memberRepository.save(any()))
+                .willReturn(new Member(1L, null, null, null, null, null));
+        given(environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY))
+                .willReturn("default-member-image");
+        given(environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY))
+                .willReturn("https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg");
+        given(environment.getProperty(IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY))
+                .willReturn("JPG");
+        given(numberGenerator.generate())
+                .willReturn(7);
+
+        //when
+        final boolean isAdmin = true;
+
+        //then
+        assertThat(memberService.join(request, isAdmin))
                 .isEqualTo(1L);
     }
 
@@ -97,7 +126,7 @@ class MemberServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> memberService.join(request))
+        assertThatThrownBy(() -> memberService.join(request, false))
                 .isInstanceOf(ConflictException.class);
     }
 
@@ -108,11 +137,11 @@ class MemberServiceTest {
                 "010-1234-5678", GenderType.MALE, LocalDate.now());
 
         given(memberRepository.findByNickname(any()))
-                .willReturn(Optional.of(new Member(null, null, null, null, null, null)));
+                .willReturn(Optional.of(new Member(null, null, new Nickname("nickname"), null, null)));
 
         //when
         //then
-        assertThatThrownBy(() -> memberService.join(request))
+        assertThatThrownBy(() -> memberService.join(request, false))
                 .isInstanceOf(ConflictException.class);
     }
 

@@ -26,7 +26,15 @@ public class MemberController {
 
     @PostMapping("/join")
     public ResponseEntity<Void> join(@RequestBody @Valid final MemberJoinRequest request) {
-        final Long memberId = memberService.join(request);
+        final boolean isAdmin = false;
+        final Long memberId = memberService.join(request, isAdmin);
+        return ResponseEntity.created(URI.create("/api/members/" + memberId)).build();
+    }
+
+    @PostMapping("/join/admin")
+    public ResponseEntity<Void> joinAdmin(@RequestBody @Valid final MemberJoinRequest request) {
+        final boolean isAdmin = true;
+        final Long memberId = memberService.join(request, isAdmin);
         return ResponseEntity.created(URI.create("/api/members/" + memberId)).build();
     }
 

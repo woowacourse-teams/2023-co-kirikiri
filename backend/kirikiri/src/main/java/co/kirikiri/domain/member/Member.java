@@ -5,8 +5,11 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -26,6 +29,10 @@ public class Member extends BaseUpdatedTimeEntity {
     @Embedded
     private Nickname nickname;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(length = 10, nullable = false)
+    private MemberRole role = MemberRole.USER;
+
     @OneToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
@@ -40,15 +47,27 @@ public class Member extends BaseUpdatedTimeEntity {
 
     public Member(final Identifier identifier, final EncryptedPassword encryptedPassword, final Nickname nickname,
                   final MemberImage image, final MemberProfile memberProfile) {
-        this(null, identifier, encryptedPassword, nickname, image, memberProfile);
+        this(null, identifier, encryptedPassword, nickname, MemberRole.USER, image, memberProfile);
+    }
+
+    public Member(final Identifier identifier, final EncryptedPassword encryptedPassword, final Nickname nickname,
+                  final MemberRole role, final MemberImage image, final MemberProfile memberProfile) {
+        this(null, identifier, encryptedPassword, nickname, role, image, memberProfile);
     }
 
     public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
                   final Nickname nickname, final MemberImage image, final MemberProfile memberProfile) {
+        this(id, identifier, encryptedPassword, nickname, MemberRole.USER, image, memberProfile);
+    }
+
+    public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
+                  final Nickname nickname, final MemberRole role, final MemberImage image,
+                  final MemberProfile memberProfile) {
         this.id = id;
         this.identifier = identifier;
         this.encryptedPassword = encryptedPassword;
         this.nickname = nickname;
+        this.role = role;
         this.image = image;
         this.memberProfile = memberProfile;
     }

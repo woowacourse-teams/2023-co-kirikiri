@@ -2,6 +2,7 @@ package co.kirikiri.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -63,7 +64,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
         //when
         doThrow(new BadRequestException("제약 조건에 맞지 않는 아이디입니다."))
                 .when(memberService)
-                .join(any());
+                .join(any(), anyBoolean());
 
         //then
         회원가입(jsonRequest, status().isBadRequest());
@@ -79,7 +80,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
         //when
         doThrow(new BadRequestException("제약 조건에 맞지 않는 비밀번호입니다."))
                 .when(memberService)
-                .join(any());
+                .join(any(), anyBoolean());
 
         //then
         회원가입(jsonRequest, status().isBadRequest());
@@ -95,7 +96,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
         //when
         doThrow(new BadRequestException("제약 조건에 맞지 않는 닉네임입니다."))
                 .when(memberService)
-                .join(any());
+                .join(any(), anyBoolean());
 
         //then
         회원가입(jsonRequest, status().isBadRequest());
@@ -265,7 +266,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
         //when
         doThrow(new ConflictException("이미 존재하는 아이디입니다."))
                 .when(memberService)
-                .join(any());
+                .join(any(), anyBoolean());
 
         //then
         회원가입(jsonRequest, status().isConflict());
@@ -281,7 +282,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
         //when
         doThrow(new ConflictException("이미 존재하는 닉네임입니다."))
                 .when(memberService)
-                .join(any());
+                .join(any(), anyBoolean());
 
         //then
         회원가입(jsonRequest, status().isConflict());

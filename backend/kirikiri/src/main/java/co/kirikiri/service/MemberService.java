@@ -5,6 +5,7 @@ import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
+import co.kirikiri.domain.member.MemberRole;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
@@ -40,7 +41,7 @@ public class MemberService {
     private final FileService fileService;
 
     @Transactional
-    public Long join(final MemberJoinRequest memberJoinRequest) {
+    public Long join(final MemberJoinRequest memberJoinRequest, final boolean isAdmin) {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
         checkIdentifierDuplicate(memberJoinDto.identifier());
         checkNicknameDuplicate(memberJoinDto.nickname());
@@ -48,8 +49,9 @@ public class MemberService {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(),
                 memberJoinDto.birthday(), memberJoinDto.phoneNumber());
+        final MemberRole role = getMemberRole(isAdmin);
         final Member member = new Member(memberJoinDto.identifier(), encryptedPassword,
-                memberJoinDto.nickname(), findDefaultMemberImage(), memberProfile);
+                memberJoinDto.nickname(), role, findDefaultMemberImage(), memberProfile);
         return memberRepository.save(member).getId();
     }
 
@@ -63,6 +65,13 @@ public class MemberService {
         if (memberRepository.findByIdentifier(identifier).isPresent()) {
             throw new ConflictException("이미 존재하는 아이디입니다.");
         }
+    }
+
+    private MemberRole getMemberRole(final boolean isAdmin) {
+        if (isAdmin) {
+            return MemberRole.ADMIN;
+        }
+        return MemberRole.USER;
     }
 
     private MemberImage findDefaultMemberImage() {

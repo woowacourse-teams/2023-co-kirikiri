@@ -1,5 +1,6 @@
 package co.kirikiri.integration;
 
+import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_어드민_회원가입;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_회원가입;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +28,19 @@ class MemberCreateIntegrationTest extends InitIntegrationTest {
 
         //when
         final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
+
+        //then
+        assertThat(회원가입_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+    }
+
+    @Test
+    void 정상적으로_어드민_역할로_회원가입을_성공한다() {
+        //given
+        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", "hello", "010-1234-5678",
+                GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+
+        //when
+        final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_어드민_회원가입(회원가입_요청);
 
         //then
         assertThat(회원가입_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
