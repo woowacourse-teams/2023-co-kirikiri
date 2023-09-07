@@ -23,6 +23,10 @@ public class MemberAPIFixture {
     public static final String DEFAULT_PHONE_NUMBER = "010-1234-5678";
     public static final LocalDate DEFAULT_BIRTHDAY = LocalDate.of(2023, Month.JULY, 12);
     public static final GenderType DEFAULT_GENDER_TYPE = GenderType.MALE;
+    public static final String DEFAULT_ADMIN_IDENTIFIER = "admin1";
+    public static final String DEFAULT_ADMIN_PASSWORD = "admin1234!";
+    public static final String DEFAULT_ADMIN_NICKNAME = "admin";
+    public static final String DEFAULT_ADMIN_PHONE_NUMBER = "010-9876-5432";
 
     public static ExtractableResponse<Response> 요청을_받는_회원가입(final MemberJoinRequest 회원가입_요청) {
         return given().log().all()
@@ -47,7 +51,9 @@ public class MemberAPIFixture {
         return 회원가입(회원가입_요청);
     }
 
-    public static Long 어드민_회원가입(final MemberJoinRequest 회원가입_요청) {
+    public static Long 어드민_회원가입() {
+        final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(DEFAULT_ADMIN_IDENTIFIER, DEFAULT_ADMIN_PASSWORD,
+                DEFAULT_ADMIN_NICKNAME, DEFAULT_ADMIN_PHONE_NUMBER, DEFAULT_GENDER_TYPE, DEFAULT_BIRTHDAY);
         final Response 회원가입_응답 = 요청을_받는_어드민_회원가입(회원가입_요청).response();
         final String Location_헤더 = 회원가입_응답.header("Location");
         return Long.parseLong(Location_헤더.substring(13));

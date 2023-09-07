@@ -40,7 +40,7 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵에_대한_리뷰를_최신순으로_조회한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 리더_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -104,11 +104,11 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
         assertAll(
                 () -> assertThat(첫번째_로드맵_리뷰_조회_응답값)
                         .usingRecursiveComparison()
-                        .ignoringFields("createdAt")
+                        .ignoringFields("member.id", "createdAt")
                         .isEqualTo(첫번째_로드맵_리뷰_조회_요청_예상값),
                 () -> assertThat(두번째_로드맵_리뷰_조회_응답값)
                         .usingRecursiveComparison()
-                        .ignoringFields("createdAt")
+                        .ignoringFields("member.id", "createdAt")
                         .isEqualTo(두번째_로드맵_리뷰_조회_요청_예상값)
         );
     }
@@ -116,7 +116,7 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_리뷰_조회_요청_시_작성된_리뷰가_없다면_빈_값을_반환한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 리더_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",

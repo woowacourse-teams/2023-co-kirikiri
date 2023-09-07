@@ -57,7 +57,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸이_시작되면_골룸_대기_사용자에서_골룸_사용자로_이동하고_대기_사용자에서는_제거된다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -84,7 +84,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸의_시작날짜가_오늘보다_이후이면_아무일도_일어나지_않는다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -112,7 +112,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_종료시_종료_날짜가_어제인_골룸의_상태가_COMPLETED로_변경된다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -138,7 +138,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_종료시_종료_날짜가_어제가_아니면_아무_일도_일어나지_않는다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -163,7 +163,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 진행_중인_사용자_단일_골룸을_조회할_때_진행_중인_노드_기간이_아니면_빈_인증피드를_반환한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 십일_후에_시작하는_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -189,7 +189,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 모집_중인_사용자_단일_골룸_조회_시_인증_피드가_빈_응답을_반환한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);

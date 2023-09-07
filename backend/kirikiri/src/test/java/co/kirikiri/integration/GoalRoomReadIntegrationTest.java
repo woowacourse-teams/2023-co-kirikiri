@@ -74,7 +74,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_아이디로_골룸_정보를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -91,7 +91,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_아이디와_사용자_아이디로_골룸_정보를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -108,7 +108,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_투두리스트를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -146,7 +146,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_투두리스트_조회시_참여하지_않은_사용자일_경우() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -176,7 +176,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 진행중인_사용자_단일_골룸을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -219,7 +219,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_시작_전에_사용자_단일_골룸_조회_시_인증_피드가_빈_응답을_반환한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -234,7 +234,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 사용자의_모든_골룸_목록을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -243,7 +243,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
                 "두번째_로드맵 본문",
                 RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("두번째_로드맵 1주차", "두번째_로드맵 1주차 내용", null)), null);
-        로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
+        로드맵_생성(두번째_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 두번째_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 두번째_로드맵_응답);
@@ -264,12 +264,12 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 사용자가_참여한_골룸_중_모집_중인_골룸_목록을_조회한다() throws IOException {
         // given
-        final Long 첫번쨰_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 첫번쨰_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 첫번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(첫번쨰_로드맵_아이디);
 
         final Long 첫번째_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 첫번째_로드맵_응답);
 
-        final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(두번째_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("Content", 십일_후, 이십일_후);
@@ -295,12 +295,12 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 사용자가_참여한_골룸_중_진행_중인_골룸_목록을_조회한다() throws IOException {
         // given
-        final Long 첫번쨰_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 첫번쨰_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 첫번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(첫번쨰_로드맵_아이디);
 
         final Long 첫번째_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 첫번째_로드맵_응답);
 
-        final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(두번째_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("Content", 십일_후, 이십일_후);
@@ -326,7 +326,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_노드를_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -359,7 +359,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸_노드_조회시_참여하지_않은_사용자일_경우_예외가_발생한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -391,7 +391,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -440,7 +440,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         회원가입(다른_회원_회원_가입_요청);
         final String 다른_회원_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_회원_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -478,7 +478,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -520,7 +520,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -555,7 +555,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
 
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
@@ -589,7 +589,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵의_골룸_목록을_마감임박순으로_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);

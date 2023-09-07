@@ -41,7 +41,7 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 삭제된_상태의_로드맵을_삭제시_모든_골룸이_종료된지_3개월이_지났으면_정상적으로_삭제한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -50,7 +50,7 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.roadmapId(), 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
                 골룸_투두_요청, 골룸_노드_별_기간_요청);
 
-        final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
+        final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 어드민_로그인_토큰);
 
         final GoalRoomTodoRequest 골룸_투두_요청2 = new GoalRoomTodoRequest("골룸 투두", 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청2 = List.of(
@@ -58,9 +58,9 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청2 = new GoalRoomCreateRequest(로드맵_응답.roadmapId(), 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
                 골룸_투두_요청2, 골룸_노드_별_기간_요청2);
 
-        final Long 골룸_아이디2 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청2, 기본_로그인_토큰);
+        final Long 골룸_아이디2 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청2, 어드민_로그인_토큰);
 
-        로드맵_삭제(기본_로드맵_아이디, 기본_로그인_토큰);
+        로드맵_삭제(기본_로드맵_아이디, 어드민_로그인_토큰);
 
         testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
         testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디2, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
@@ -75,7 +75,7 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 삭제된_상태의_로드맵_삭제시_종료되지_않은_골룸이_있으면_삭제되지_않는다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -84,7 +84,7 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.roadmapId(), 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
                 골룸_투두_요청, 골룸_노드_별_기간_요청);
 
-        final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
+        final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 어드민_로그인_토큰);
 
         final GoalRoomTodoRequest 골룸_투두_요청2 = new GoalRoomTodoRequest("골룸 투두", 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청2 = List.of(
@@ -92,9 +92,9 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청2 = new GoalRoomCreateRequest(로드맵_응답.roadmapId(), 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
                 골룸_투두_요청2, 골룸_노드_별_기간_요청2);
 
-        final Long 골룸_아이디2 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청2, 기본_로그인_토큰);
+        final Long 골룸_아이디2 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청2, 어드민_로그인_토큰);
 
-        로드맵_삭제(기본_로드맵_아이디, 기본_로그인_토큰);
+        로드맵_삭제(기본_로드맵_아이디, 어드민_로그인_토큰);
 
         testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
 
@@ -108,7 +108,7 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
     @Test
     void 삭제된_상태의_로드맵_삭제시_종료된지_3개월이_지나지_않은_골룸이_있으면_삭제되지_않는다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
@@ -117,7 +117,7 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.roadmapId(), 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
                 골룸_투두_요청, 골룸_노드_별_기간_요청);
 
-        final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
+        final Long 골룸_아이디1 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 어드민_로그인_토큰);
 
         final GoalRoomTodoRequest 골룸_투두_요청2 = new GoalRoomTodoRequest("골룸 투두", 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청2 = List.of(
@@ -125,9 +125,9 @@ public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoomCreateRequest 골룸_생성_요청2 = new GoalRoomCreateRequest(로드맵_응답.roadmapId(), 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
                 골룸_투두_요청2, 골룸_노드_별_기간_요청2);
 
-        final Long 골룸_아이디2 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청2, 기본_로그인_토큰);
+        final Long 골룸_아이디2 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청2, 어드민_로그인_토큰);
 
-        로드맵_삭제(기본_로드맵_아이디, 기본_로그인_토큰);
+        로드맵_삭제(기본_로드맵_아이디, 어드민_로그인_토큰);
 
         testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디1, GoalRoomStatus.COMPLETED, 현재부터_3개월_1일_전);
         testTransactionService.골룸의_상태와_종료날짜를_변경한다(골룸_아이디2, GoalRoomStatus.COMPLETED, 오늘);

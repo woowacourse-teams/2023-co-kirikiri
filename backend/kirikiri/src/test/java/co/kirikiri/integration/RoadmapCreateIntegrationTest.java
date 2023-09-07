@@ -36,12 +36,24 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 정상적으로_로드맵을_생성한다() throws IOException {
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
 
         // expect
         응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.CREATED);
         final Long 로드맵_아이디 = 아이디를_반환한다(로드맵_생성_응답값);
         assertThat(로드맵_아이디).isEqualTo(1L);
+    }
+
+    @Test
+    void 어드민_권한이_없는_사용자는_로드맵을_생성하면_예외가_발생한다() throws IOException {
+        // when
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+
+        // then
+        final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
+        });
+        응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.UNAUTHORIZED);
+        assertThat(에러_메세지.message()).isEqualTo("어드민 권한이 필요합니다.");
     }
 
     @Test
@@ -54,7 +66,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         응답_상태_코드_검증(로드맵_생성_응답값, HttpStatus.CREATED);
@@ -79,7 +91,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final List<ErrorResponse> 에러_메시지들 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -109,7 +121,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -130,7 +142,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapTagSaveRequest("태그")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -150,7 +162,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -170,7 +182,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -191,7 +203,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -209,7 +221,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final List<ErrorResponse> 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -229,7 +241,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -250,7 +262,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -270,7 +282,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -292,7 +304,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -313,7 +325,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
                 List.of(new RoadmapNodeSaveRequest("로드맵 노드 제목", "로드맵 노드 설명", Collections.emptyList())), 태그_저장_요청);
 
         // when
-        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_생성_응답값 = 요청을_받는_이미지가_포함된_로드맵_생성(로드맵_생성_요청값, 어드민_로그인_토큰);
 
         // then
         final ErrorResponse 에러_메세지 = 로드맵_생성_응답값.as(new TypeRef<>() {
@@ -325,10 +337,10 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 골룸이_생성된_적이_없는_로드맵을_정상적으로_삭제한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
 
         // when
-        final ExtractableResponse<Response> 로드맵_삭제_응답 = 로드맵_삭제(로드맵_아이디, 기본_로그인_토큰);
+        final ExtractableResponse<Response> 로드맵_삭제_응답 = 로드맵_삭제(로드맵_아이디, 어드민_로그인_토큰);
 
         // then
         응답_상태_코드_검증(로드맵_삭제_응답, HttpStatus.NO_CONTENT);
@@ -352,7 +364,7 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵을_삭제할_때_자신이_생성한_로드맵이_아니면_예외가_발생한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
 
         회원가입(new MemberJoinRequest("identifier2", "password2!", "name2", "010-1111-2222", GenderType.FEMALE,
                 LocalDate.now()));

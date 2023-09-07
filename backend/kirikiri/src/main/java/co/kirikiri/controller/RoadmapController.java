@@ -1,5 +1,6 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.common.interceptor.AdminPermission;
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.service.RoadmapCreateService;
@@ -41,7 +42,7 @@ public class RoadmapController {
     private final RoadmapCreateService roadmapCreateService;
     private final RoadmapReadService roadmapReadService;
 
-    @Authenticated
+    @AdminPermission
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> create(final RoadmapSaveRequest request, @MemberIdentifier final String identifier) {
         final Long roadmapId = roadmapCreateService.create(request, identifier);

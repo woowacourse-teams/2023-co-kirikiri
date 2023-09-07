@@ -1,6 +1,8 @@
 package co.kirikiri.integration.fixture;
 
 import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_ADMIN_IDENTIFIER;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_ADMIN_PASSWORD;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static io.restassured.RestAssured.given;
@@ -31,6 +33,11 @@ public class AuthenticationAPIFixture {
 
     public static AuthenticationResponse 기본_로그인() {
         final LoginRequest request = new LoginRequest(DEFAULT_IDENTIFIER, DEFAULT_PASSWORD);
+        return 로그인(request);
+    }
+
+    public static AuthenticationResponse 기본_어드민_로그인() {
+        final LoginRequest request = new LoginRequest(DEFAULT_ADMIN_IDENTIFIER, DEFAULT_ADMIN_PASSWORD);
         return 로그인(request);
     }
 

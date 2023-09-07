@@ -70,13 +70,13 @@ class MemberReadIntegrationTest extends InitIntegrationTest {
     void 특정_사용자의_정보를_조회시_존재하지_않는_회원이면_실패한다() throws JsonProcessingException {
         // given
         // when
-        final ExtractableResponse<Response> 특정_사용자의_정보_조회_응답 = 요청을_받는_특정_사용자의_정보_조회(기본_로그인_토큰, 2L);
+        final ExtractableResponse<Response> 특정_사용자의_정보_조회_응답 = 요청을_받는_특정_사용자의_정보_조회(기본_로그인_토큰, 100L);
 
         // then
         final ErrorResponse 에러_메세지 = jsonToClass(특정_사용자의_정보_조회_응답.asString(),
                 new TypeReference<>() {
                 });
         assertThat(특정_사용자의_정보_조회_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(에러_메세지.message()).isEqualTo("존재하지 않는 회원입니다. memberId = 2");
+        assertThat(에러_메세지.message()).isEqualTo("존재하지 않는 회원입니다. memberId = 100");
     }
 }

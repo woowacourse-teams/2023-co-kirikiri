@@ -42,7 +42,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_리뷰를_생성한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -53,7 +53,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final MemberInformationResponse 팔로워_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
         });
 
-        final MemberInformationResponse 리더_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰).as(new TypeRef<>() {
+        final MemberInformationResponse 리더_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(어드민_로그인_토큰).as(new TypeRef<>() {
         });
         final GoalRoom 골룸 = testTransactionService.완료한_골룸을_생성한다(로드맵_응답);
         testTransactionService.골룸에_대한_참여자_리스트를_생성한다(리더_정보, 골룸, 팔로워_정보);
@@ -71,7 +71,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_리뷰_생성시_별점이_null이면_예외가_발생한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -82,7 +82,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final MemberInformationResponse 팔로워_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
         });
 
-        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰).as(new TypeRef<>() {
+        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(어드민_로그인_토큰).as(new TypeRef<>() {
         });
         final GoalRoom 골룸 = testTransactionService.완료한_골룸을_생성한다(로드맵_응답);
         testTransactionService.골룸에_대한_참여자_리스트를_생성한다(사용자_정보, 골룸, 팔로워_정보);
@@ -102,7 +102,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_리뷰_생성시_별점이_잘못된_값이면_예외가_발생한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -113,7 +113,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final MemberInformationResponse 팔로워_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
         });
 
-        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰).as(new TypeRef<>() {
+        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(어드민_로그인_토큰).as(new TypeRef<>() {
         });
         final GoalRoom 골룸 = testTransactionService.완료한_골룸을_생성한다(로드맵_응답);
         testTransactionService.골룸에_대한_참여자_리스트를_생성한다(사용자_정보, 골룸, 팔로워_정보);
@@ -132,7 +132,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_리뷰_생성시_내용이_1000자가_넘으면_예외가_발생한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -143,7 +143,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final MemberInformationResponse 팔로워_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
         });
 
-        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰).as(new TypeRef<>() {
+        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(어드민_로그인_토큰).as(new TypeRef<>() {
         });
         final GoalRoom 골룸 = testTransactionService.완료한_골룸을_생성한다(로드맵_응답);
         testTransactionService.골룸에_대한_참여자_리스트를_생성한다(사용자_정보, 골룸, 팔로워_정보);
@@ -183,7 +183,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_리뷰_생성시_완료한_골룸이_없다면_예외가_발생한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -197,7 +197,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
                 new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.roadmapId(), 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
                 골룸_투두_요청, 골룸_노드_별_기간_요청);
-        골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
+        골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 어드민_로그인_토큰);
         final RoadmapReviewSaveRequest 로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
 
         // when
@@ -213,7 +213,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_리뷰_생성시_로드맵_생성자가_리뷰를_달려고_하면_예외가_발생한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -224,7 +224,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final MemberInformationResponse 팔로워_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
         });
 
-        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰).as(new TypeRef<>() {
+        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(어드민_로그인_토큰).as(new TypeRef<>() {
         });
         final GoalRoom 골룸 = testTransactionService.완료한_골룸을_생성한다(로드맵_응답);
         testTransactionService.골룸에_대한_참여자_리스트를_생성한다(사용자_정보, 골룸, 팔로워_정보);
@@ -232,19 +232,19 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapReviewSaveRequest 로드맵_리뷰_생성_요청 = new RoadmapReviewSaveRequest("리뷰 내용", 5.0);
 
         // when
-        final ExtractableResponse<Response> 리뷰_생성_요청_결과 = 리뷰를_생성한다(기본_로그인_토큰, 로드맵_아이디, 로드맵_리뷰_생성_요청);
+        final ExtractableResponse<Response> 리뷰_생성_요청_결과 = 리뷰를_생성한다(어드민_로그인_토큰, 로드맵_아이디, 로드맵_리뷰_생성_요청);
 
         // then
         final ErrorResponse 예외_응답 = 리뷰_생성_요청_결과.as(ErrorResponse.class);
         assertThat(리뷰_생성_요청_결과.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(예외_응답.message()).isEqualTo("로드맵 생성자는 리뷰를 달 수 없습니다. roadmapId = " + 로드맵_아이디 +
-                " memberId = " + 기본_회원_아이디);
+                " memberId = " + 어드민_회원_아이디);
     }
 
     @Test
     void 로드맵_리뷰_생성시_이미_리뷰를_단적이_있으면_예외가_발생한다() throws IOException {
         // given
-        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
@@ -255,7 +255,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final MemberInformationResponse 팔로워_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(팔로워_액세스_토큰).as(new TypeRef<>() {
         });
 
-        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(기본_로그인_토큰).as(new TypeRef<>() {
+        final MemberInformationResponse 사용자_정보 = 요청을_받는_사용자_자신의_정보_조회_요청(어드민_로그인_토큰).as(new TypeRef<>() {
         });
         final GoalRoom 골룸 = testTransactionService.완료한_골룸을_생성한다(로드맵_응답);
         testTransactionService.골룸에_대한_참여자_리스트를_생성한다(사용자_정보, 골룸, 팔로워_정보);

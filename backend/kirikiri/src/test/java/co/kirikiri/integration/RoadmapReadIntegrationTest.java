@@ -36,12 +36,12 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 존재하는_로드맵_아이디로_요청했을_때_단일_로드맵_정보_조회를_성공한다() throws IOException {
         //given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapSaveRequest 다른_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "다른 로드맵 제목", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        로드맵_생성(다른_로드맵_생성_요청, 기본_로그인_토큰);
+        로드맵_생성(다른_로드맵_생성_요청, 어드민_로그인_토큰);
 
         //when
         final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = 로드맵을_아이디로_조회한다(기본_로드맵_아이디);
@@ -78,18 +78,18 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 사이즈_조건으로_로드맵_목록을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapCategory 다른_카테고리 = testTransactionService.로드맵_카테고리를_저장한다("여가");
         final RoadmapSaveRequest 세번째_로드맵_생성_요청 = new RoadmapSaveRequest(다른_카테고리.getId(), "thrid roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        final Long 세번째_로드맵_아이디 = 로드맵_생성(세번째_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 세번째_로드맵_아이디 = 로드맵_생성(세번째_로드맵_생성_요청, 어드민_로그인_토큰);
 
         // when
         final RoadmapForListResponses 로드맵_리스트_응답 = 사이즈별로_로드맵을_조회한다(10)
@@ -141,20 +141,20 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 사용자가_생성한_로드맵을_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapSaveRequest 세번쨰_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "세번쨰 로드맵", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        final Long 세번째_로드맵_아이디 = 로드맵_생성(세번쨰_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 세번째_로드맵_아이디 = 로드맵_생성(세번쨰_로드맵_생성_요청, 어드민_로그인_토큰);
 
         // when
-        final MemberRoadmapResponses 사용자_로드맵_응답_리스트 = 로그인한_사용자가_생성한_로드맵을_조회한다(기본_로그인_토큰, 10)
+        final MemberRoadmapResponses 사용자_로드맵_응답_리스트 = 로그인한_사용자가_생성한_로드맵을_조회한다(어드민_로그인_토큰, 10)
                 .response()
                 .as(new TypeRef<>() {
                 });
@@ -169,12 +169,12 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 로드맵_목록_조회시_다음_요소가_존재하면_hasNext가_true로_반환된다() throws IOException {
         // given
-        로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 어드민_로그인_토큰);
 
         // when
         final RoadmapForListResponses 로드맵_리스트_응답 = 정렬된_카테고리별_로드맵_리스트_조회(RoadmapOrderType.LATEST, 기본_카테고리.getId(), 1)
@@ -190,21 +190,21 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
     @Test
     void 사용자가_생성한_로드맵을_이전에_받아온_리스트_이후로_조회한다() throws IOException {
         // given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "second roadmap", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 두번째_로드맵_아이디 = 로드맵_생성(두번째_로드맵_생성_요청, 어드민_로그인_토큰);
         final RoadmapSaveRequest 세번쨰_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "세번쨰 로드맵", "다른 로드맵 소개글",
                 "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
                 List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
                 List.of(new RoadmapTagSaveRequest("다른 태그1")));
-        final Long 세번째_로드맵_아이디 = 로드맵_생성(세번쨰_로드맵_생성_요청, 기본_로그인_토큰);
+        final Long 세번째_로드맵_아이디 = 로드맵_생성(세번쨰_로드맵_생성_요청, 어드민_로그인_토큰);
 
         // when
         final MemberRoadmapResponses 사용자_로드맵_응답_리스트 = 로그인한_사용자가_생성한_로드맵을_이전에_받은_로드맵의_제일마지막_아이디_이후의_조건으로_조회한다(
-                기본_로그인_토큰, 10, 두번째_로드맵_아이디
+                어드민_로그인_토큰, 10, 두번째_로드맵_아이디
         )
                 .response()
                 .as(new TypeRef<>() {
