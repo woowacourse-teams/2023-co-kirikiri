@@ -3,6 +3,7 @@ package co.kirikiri.service;
 import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberRole;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
@@ -64,6 +65,11 @@ public class AuthService {
 
     public boolean isCertified(final String token) {
         return tokenProvider.isValidToken(token);
+    }
+
+    public boolean isAdminUser(final String token) {
+        final String role = tokenProvider.findRole(token);
+        return MemberRole.ADMIN.equals(MemberRole.valueOf(role));
     }
 
     @Transactional

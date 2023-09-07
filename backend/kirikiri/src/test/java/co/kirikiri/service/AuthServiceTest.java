@@ -12,6 +12,7 @@ import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberProfile;
+import co.kirikiri.domain.member.MemberRole;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -179,5 +180,19 @@ class AuthServiceTest {
         //then
         assertThatThrownBy(() -> authService.reissueToken(reissueTokenRequest))
                 .isInstanceOf(AuthenticationException.class);
+    }
+
+    @Test
+    void 어드민_권한을_가진_사용자인지_확인한다() {
+        // given
+        given(tokenProvider.findRole(any()))
+                .willReturn(MemberRole.ADMIN.name());
+
+        // when
+        final String token = "token";
+        final boolean result = authService.isAdminUser(token);
+
+        // then
+        assertThat(result).isTrue();
     }
 }

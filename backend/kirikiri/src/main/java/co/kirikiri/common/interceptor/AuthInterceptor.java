@@ -30,6 +30,13 @@ public class AuthInterceptor implements HandlerInterceptor {
             final String token = authorizationHeader.substring(BEARER.length());
             checkTokenCertify(token);
         }
+        if (handlerMethod.hasMethodAnnotation(AdminPermission.class)) {
+            final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            checkHeader(authorizationHeader);
+            final String token = authorizationHeader.substring(BEARER.length());
+            checkTokenCertify(token);
+            checkAdminUser(token);
+        }
         return true;
     }
 
@@ -42,6 +49,12 @@ public class AuthInterceptor implements HandlerInterceptor {
     private void checkTokenCertify(final String token) {
         if (!authService.isCertified(token)) {
             throw new AuthenticationException("토큰이 유효하지 않습니다.");
+        }
+    }
+
+    private void checkAdminUser(final String token) {
+        if (!authService.isAdminUser(token)) {
+            throw new AuthenticationException("어드민 권한이 필요합니다.");
         }
     }
 }

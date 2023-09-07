@@ -42,52 +42,89 @@ class AuthInterceptorTest {
 
     @Test
     void 인증이_필요한_요청에서_정상적으로_유효한_토큰을_검사한다() {
-        //given
-        when(handlerMethod.hasMethodAnnotation(any()))
+        // given
+        when(handlerMethod.hasMethodAnnotation(Authenticated.class))
                 .thenReturn(true);
+        when(handlerMethod.hasMethodAnnotation(AdminPermission.class))
+                .thenReturn(false);
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer test-token");
         when(authService.isCertified(anyString())).thenReturn(true);
 
-        //when
+        // when
         final boolean result = authInterceptor.preHandle(request, response, handlerMethod);
 
-        //then
+        // then
         assertThat(result).isTrue();
     }
 
     @Test
     void 인증이_필요한_요청에서_Authorization_헤더가_없을때_예외를_던진다() {
-        //given
+        // given
         when(handlerMethod.hasMethodAnnotation(any()))
                 .thenReturn(true);
 
-        //when
-        //then
+        // when
+        // then
         assertThatThrownBy(() -> authInterceptor.preHandle(request, response, handlerMethod))
                 .isInstanceOf(AuthenticationException.class);
     }
 
     @Test
     void 인증이_필요한_요청에서_Authorization_헤더가_Bearer가_없을때_예외를_던진다() {
-        //given
+        // given
         when(handlerMethod.hasMethodAnnotation(any()))
                 .thenReturn(true);
         request.addHeader(HttpHeaders.AUTHORIZATION, "test-token");
 
-        //when
+        // when
         assertThatThrownBy(() -> authInterceptor.preHandle(request, response, handlerMethod))
                 .isInstanceOf(AuthenticationException.class);
     }
 
     @Test
     void 인증이_필요한_요청에서_토큰이_유효하지_않을때_예외를_던진다() {
-        //given
+        // given
         when(handlerMethod.hasMethodAnnotation(any()))
                 .thenReturn(true);
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer test-token");
         when(authService.isCertified(anyString())).thenReturn(false);
 
-        //when
+        // when
+        assertThatThrownBy(() -> authInterceptor.preHandle(request, response, handlerMethod))
+                .isInstanceOf(AuthenticationException.class);
+    }
+
+    @Test
+    void 어드민_권한이_필요한_요청에서_정상적으로_유효한_토큰을_검사한다() {
+        // given
+        when(handlerMethod.hasMethodAnnotation(Authenticated.class))
+                .thenReturn(false);
+        when(handlerMethod.hasMethodAnnotation(AdminPermission.class))
+                .thenReturn(true);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer test-token");
+        when(authService.isCertified(anyString())).thenReturn(true);
+        when(authService.isAdminUser(anyString())).thenReturn(true);
+
+        // when
+        final boolean result = authInterceptor.preHandle(request, response, handlerMethod);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 어드민_권한이_필요한_요청에서_어드민_계정이_아니면_예외가_발생한다_유효한_토큰을_검사한다() {
+        // given
+        when(handlerMethod.hasMethodAnnotation(Authenticated.class))
+                .thenReturn(false);
+        when(handlerMethod.hasMethodAnnotation(AdminPermission.class))
+                .thenReturn(true);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer test-token");
+        when(authService.isCertified(anyString())).thenReturn(true);
+        when(authService.isAdminUser(anyString())).thenReturn(false);
+
+        // when
+        // then
         assertThatThrownBy(() -> authInterceptor.preHandle(request, response, handlerMethod))
                 .isInstanceOf(AuthenticationException.class);
     }
