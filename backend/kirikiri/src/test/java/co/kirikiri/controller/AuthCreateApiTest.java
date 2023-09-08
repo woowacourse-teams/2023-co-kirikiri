@@ -41,7 +41,8 @@ class AuthCreateApiTest extends ControllerTestHelper {
     void 정상적으로_로그인에_성공한다() throws Exception {
         //given
         final LoginRequest request = new LoginRequest(IDENTIFIER, PASSWORD);
-        final AuthenticationResponse expectedResponse = new AuthenticationResponse("refreshToken", "accessToken");
+        final AuthenticationResponse expectedResponse = new AuthenticationResponse("refreshToken", "accessToken",
+                false);
         final String jsonRequest = objectMapper.writeValueAsString(request);
         given(authService.login(request))
                 .willReturn(expectedResponse);
@@ -172,7 +173,7 @@ class AuthCreateApiTest extends ControllerTestHelper {
         //given
         final ReissueTokenRequest request = new ReissueTokenRequest("refreshToken");
         final AuthenticationResponse expectedResponse = new AuthenticationResponse("reIssuedRefreshToken",
-                "reIssuedAccessToken");
+                "reIssuedAccessToken", false);
         final String jsonRequest = objectMapper.writeValueAsString(request);
         given(authService.reissueToken(request))
                 .willReturn(expectedResponse);
@@ -186,7 +187,8 @@ class AuthCreateApiTest extends ControllerTestHelper {
                                 ),
                                 responseFields(
                                         fieldWithPath("refreshToken").description("리프레시 토큰"),
-                                        fieldWithPath("accessToken").description("액세스 토큰")
+                                        fieldWithPath("accessToken").description("액세스 토큰"),
+                                        fieldWithPath("isAdmin").description("어드민 계정 여부")
                                 )
                         )
                 )
@@ -291,7 +293,8 @@ class AuthCreateApiTest extends ControllerTestHelper {
     private List<FieldDescription> makeSuccessResponseFieldDescription() {
         return List.of(
                 new FieldDescription("refreshToken", "리프레시 토큰"),
-                new FieldDescription("accessToken", "액세스 토큰")
+                new FieldDescription("accessToken", "액세스 토큰"),
+                new FieldDescription("isAdmin", "어드민 계정 여부")
         );
     }
 }

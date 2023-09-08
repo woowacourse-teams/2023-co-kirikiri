@@ -2,6 +2,8 @@ package co.kirikiri.integration;
 
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.응답을_반환하는_로그인;
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.토큰_재발행;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_ADMIN_IDENTIFIER;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_ADMIN_PASSWORD;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +37,24 @@ class AuthenticationIntegrationTest extends InitIntegrationTest {
         final AuthenticationResponse 로그인_응답_바디 = 로그인_응답.as(AuthenticationResponse.class);
         assertThat(로그인_응답_바디.accessToken()).isNotEmpty();
         assertThat(로그인_응답_바디.refreshToken()).isNotEmpty();
+        assertThat(로그인_응답_바디.isAdmin()).isFalse();
+    }
+
+    @Test
+    void 어드민_계정으로_정상적으로_로그인에_성공한다() {
+        //given
+        final LoginRequest 로그인_요청 = new LoginRequest(DEFAULT_ADMIN_IDENTIFIER, DEFAULT_ADMIN_PASSWORD);
+
+        //when
+        final ExtractableResponse<Response> 로그인_응답 = 응답을_반환하는_로그인(로그인_요청);
+
+        //then
+        assertThat(로그인_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        final AuthenticationResponse 로그인_응답_바디 = 로그인_응답.as(AuthenticationResponse.class);
+        assertThat(로그인_응답_바디.accessToken()).isNotEmpty();
+        assertThat(로그인_응답_바디.refreshToken()).isNotEmpty();
+        assertThat(로그인_응답_바디.isAdmin()).isTrue();
     }
 
     @Test

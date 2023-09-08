@@ -30,5 +30,4 @@ public class AuthController {
         final AuthenticationResponse response = authService.reissueToken(request);
         return ResponseEntity.ok(response);
     }
-
 }

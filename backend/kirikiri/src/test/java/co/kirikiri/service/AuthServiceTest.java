@@ -79,7 +79,7 @@ class AuthServiceTest {
         final AuthenticationResponse authenticationResponse = authService.login(loginRequest);
 
         //then
-        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken));
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken, false));
     }
 
     @Test
@@ -131,7 +131,8 @@ class AuthServiceTest {
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
 
         //then
-        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(rawRefreshToken, rawAccessToken));
+        assertThat(authenticationResponse).isEqualTo(
+                new AuthenticationResponse(rawRefreshToken, rawAccessToken, false));
     }
 
     @Test
