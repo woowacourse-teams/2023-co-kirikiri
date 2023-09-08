@@ -30,7 +30,7 @@ public class Member extends BaseUpdatedTimeEntity {
     private Nickname nickname;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(length = 10, nullable = false)
+    @Column(length = 10)
     private MemberRole role = MemberRole.USER;
 
     @OneToOne(fetch = FetchType.LAZY,
