@@ -53,7 +53,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +64,7 @@ class RoadmapCreateServiceTest {
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             null,
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock
     private MemberRepository memberRepository;
@@ -159,7 +158,7 @@ class RoadmapCreateServiceTest {
         final Member follower = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
 
@@ -222,7 +221,7 @@ class RoadmapCreateServiceTest {
         final Member follower = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
 
@@ -270,7 +269,7 @@ class RoadmapCreateServiceTest {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
         final Roadmap roadmap = 로드맵을_생성한다(MEMBER, category);

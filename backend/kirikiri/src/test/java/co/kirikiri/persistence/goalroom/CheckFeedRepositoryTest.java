@@ -34,10 +34,10 @@ import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class CheckFeedRepositoryTest {
@@ -436,8 +436,7 @@ class CheckFeedRepositoryTest {
 
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
-                LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname), memberImage, memberProfile);
         return memberRepository.save(creator);

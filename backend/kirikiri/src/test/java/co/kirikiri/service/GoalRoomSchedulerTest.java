@@ -38,15 +38,15 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class GoalRoomSchedulerTest {
@@ -78,9 +78,9 @@ public class GoalRoomSchedulerTest {
         final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
         final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
 
-        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "010-1111-1111");
-        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "010-1111-1112");
-        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "010-1111-1113");
+        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "kirikiri@email.com");
+        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
+        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "kirikiri@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember = 골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
         final GoalRoomPendingMember goalRoomPendingMember1 = 골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
@@ -106,7 +106,7 @@ public class GoalRoomSchedulerTest {
     @Test
     void 골룸의_시작날짜가_아직_지나지_않았다면_골룸의_상태가_변경되지_않는다() {
         // given
-        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "kirikiri@email.com");
         final Roadmap roadmap = 로드맵을_생성한다(creator);
 
         final RoadmapContents roadmapContents = roadmap.getContents();
@@ -114,9 +114,9 @@ public class GoalRoomSchedulerTest {
         final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
         final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
 
-        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "010-1111-1111");
-        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "010-1111-1112");
-        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "010-1111-1113");
+        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "kirikiri@email.com");
+        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
+        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "kirikiri@email.com");
 
         goalRoom1.join(follower1);
         goalRoom1.join(follower2);
@@ -140,9 +140,8 @@ public class GoalRoomSchedulerTest {
     }
 
     private Member 사용자를_생성한다(final Long memberId, final String identifier, final String password, final String nickname,
-                             final String phoneNumber) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
-                LocalDate.of(1995, 9, 30), phoneNumber);
+                             final String email) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
 
         return new Member(memberId, new Identifier(identifier), new EncryptedPassword(new Password(password)),
                 new Nickname(nickname), null, memberProfile);

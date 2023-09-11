@@ -37,11 +37,11 @@ import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
+import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapRepositoryTest {
@@ -546,7 +546,7 @@ class RoadmapRepositoryTest {
     }
 
     private Member 사용자를_생성한다(final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         final MemberImage memberImage = new MemberImage("file-name", "file-path", ImageContentType.PNG);
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname), memberImage, memberProfile);

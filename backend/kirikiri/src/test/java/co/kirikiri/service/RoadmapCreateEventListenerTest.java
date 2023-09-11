@@ -34,7 +34,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +41,7 @@ class RoadmapCreateEventListenerTest {
 
     private static final Member member = new Member(1L, new Identifier("identifier1"),
             new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"), null,
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock
     private RoadmapContentRepository roadmapContentRepository;

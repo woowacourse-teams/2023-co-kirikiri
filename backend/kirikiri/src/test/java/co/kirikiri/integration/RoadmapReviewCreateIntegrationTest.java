@@ -9,6 +9,7 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_�
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_투두_컨텐츠;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
@@ -31,11 +32,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import java.io.IOException;
+import java.util.List;
 
 class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
 
@@ -46,7 +46,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -75,7 +75,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -106,7 +106,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -136,7 +136,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -164,7 +164,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
     void 로드맵_리뷰_생성시_존재하지_않은_로드맵이면_예외가_발생한다() {
         // given
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -187,7 +187,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -217,7 +217,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -248,7 +248,7 @@ class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         final Long 팔로워_아이디 = 회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());

@@ -26,6 +26,7 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.인증_피드_�
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
@@ -62,12 +63,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 
 class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 
@@ -155,7 +156,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         골룸_투두리스트_추가(기본_로그인_토큰, 기본_골룸_아이디, 골룸_투두_생성_요청);
 
         final MemberJoinRequest 다른_사용자_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 다른_사용자_로그인_요청 = new LoginRequest(다른_사용자_회원_가입_요청.identifier(), 다른_사용자_회원_가입_요청.password());
         회원가입(다른_사용자_회원_가입_요청);
         final String 다른_사용자_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_사용자_로그인_요청).accessToken());
@@ -182,7 +183,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -365,7 +366,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 다른_사용자_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -386,7 +387,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 골룸의_인증피드를_전체_조회한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -435,7 +436,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 골룸의_인증피드를_전체_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() throws IOException {
         // given
         final MemberJoinRequest 다른_회원_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 다른_회원_로그인_요청 = new LoginRequest(다른_회원_회원_가입_요청.identifier(), 다른_회원_회원_가입_요청.password());
         회원가입(다른_회원_회원_가입_요청);
         final String 다른_회원_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_회원_로그인_요청).accessToken());
@@ -466,9 +467,9 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 골룸의_사용자_정보를_달성률순으로_전체_조회한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
         final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
 
@@ -508,9 +509,9 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 모집중인_골룸의_사용자_정보를_참가한_최신순으로_전체_조회한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
         final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
 
@@ -543,9 +544,9 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 모집중인_골룸의_사용자_정보_조회시_정렬기준을_입력하지_않으면_참여한지_오래된순으로_정렬한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
         final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
 

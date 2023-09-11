@@ -21,10 +21,9 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import java.time.LocalDate;
+import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapReviewRepositoryTest {
@@ -141,7 +140,7 @@ class RoadmapReviewRepositoryTest {
     }
 
     private Member 사용자를_저장한다(final String name, final String identifier) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         final MemberImage memberImage = new MemberImage("test-name", "test-path", ImageContentType.PNG);
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
                 new Nickname(name), memberImage, memberProfile);

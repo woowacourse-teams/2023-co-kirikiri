@@ -85,8 +85,7 @@ public class TestTransactionService {
     }
 
     private Member 사용자_정보에서_사용자를_생성한다(final MemberInformationResponse 사용자_정보) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(사용자_정보.gender()), 사용자_정보.birthday(),
-                사용자_정보.phoneNumber());
+        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(사용자_정보.gender()), 사용자_정보.email());
         return new Member(사용자_정보.id(), new Identifier(사용자_정보.identifier()), new EncryptedPassword(new Password(
                 DEFAULT_PASSWORD)), new Nickname(사용자_정보.nickname()), null, memberProfile);
     }

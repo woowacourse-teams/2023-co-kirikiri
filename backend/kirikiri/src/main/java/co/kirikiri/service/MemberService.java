@@ -17,12 +17,12 @@ import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.mapper.MemberMapper;
-import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.net.URL;
 
 @Service
 @Transactional(readOnly = true)
@@ -46,8 +46,7 @@ public class MemberService {
         checkNicknameDuplicate(memberJoinDto.nickname());
 
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
-        final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(),
-                memberJoinDto.birthday(), memberJoinDto.phoneNumber());
+        final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.email());
         final Member member = new Member(memberJoinDto.identifier(), encryptedPassword,
                 memberJoinDto.nickname(), findDefaultMemberImage(), memberProfile);
         return memberRepository.save(member).getId();
@@ -87,8 +86,7 @@ public class MemberService {
         final MemberProfile memberProfile = member.getMemberProfile();
         final URL imageUrl = fileService.generateUrl(memberImage.getServerFilePath(), HttpMethod.GET);
         return new MemberInformationDto(member.getId(), member.getNickname().getValue(),
-                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(),
-                memberProfile.getPhoneNumber(), memberProfile.getBirthday());
+                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getEmail());
     }
 
     private Member findMemberInformationByIdentifier(final String identifier) {

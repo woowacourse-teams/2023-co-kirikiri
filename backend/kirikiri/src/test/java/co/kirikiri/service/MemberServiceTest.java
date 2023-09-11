@@ -22,16 +22,15 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -59,7 +58,7 @@ class MemberServiceTest {
     void 회원가입을_한다() {
         //given
         final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
-                "010-1234-5678", GenderType.MALE, LocalDate.now());
+                GenderType.MALE, "kirikiri@email.com");
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
@@ -84,14 +83,14 @@ class MemberServiceTest {
     void 회원가입_시_이미_존재하는_아이디가_존재할때_예외를_던진다() {
         //given
         final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
-                "010-1234-5678", GenderType.MALE, LocalDate.now());
+                GenderType.MALE, "kirikiri@email.com");
         final Identifier identifier = new Identifier("identifier1");
         final Password password = new Password("password1!");
         final Nickname nickname = new Nickname("nickname");
         final String phoneNumber = "010-1234-5678";
 
         final Member member = new Member(identifier, new EncryptedPassword(password), nickname, null,
-                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
+                new MemberProfile(Gender.MALE, "kirikiri@email.com"));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
 
@@ -105,7 +104,7 @@ class MemberServiceTest {
     void 회원가입_시_이미_존재하는_닉네임_존재할때_예외를_던진다() {
         //given
         final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
-                "010-1234-5678", GenderType.MALE, LocalDate.now());
+                GenderType.MALE, "kirikiri@email.com");
 
         given(memberRepository.findByNickname(any()))
                 .willReturn(Optional.of(new Member(null, null, null, null, null, null)));
@@ -125,7 +124,7 @@ class MemberServiceTest {
         final String phoneNumber = "010-1234-5678";
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         final Member member = new Member(1L, identifier, new EncryptedPassword(password), nickname, memberImage,
-                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
+                new MemberProfile(Gender.MALE, "kirikiri@email.com"));
 
         given(memberRepository.findWithMemberProfileAndImageByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -139,7 +138,7 @@ class MemberServiceTest {
         final MemberInformationResponse expected = new MemberInformationResponse(1L, "nickname",
                 "http://example.com/serverFilePath",
                 Gender.MALE.name(),
-                "identifier1", "010-1234-5678", LocalDate.now());
+                "identifier1", "kirikiri@email.com");
 
         assertThat(response).isEqualTo(expected);
     }
@@ -168,7 +167,7 @@ class MemberServiceTest {
         final String phoneNumber = "010-1234-5678";
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
-                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
+                new MemberProfile(Gender.MALE, "kirikiri@email.com"));
 
         given(memberRepository.findWithMemberProfileAndImageById(any()))
                 .willReturn(Optional.of(member));
@@ -205,7 +204,7 @@ class MemberServiceTest {
         final String phoneNumber = "010-1234-5678";
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         final Member member = new Member(identifier, new EncryptedPassword(password), nickname, memberImage,
-                new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber));
+                new MemberProfile(Gender.MALE, "kirikiri@email.com"));
 
         given(memberRepository.findWithMemberProfileAndImageById(any()))
                 .willReturn(Optional.empty());

@@ -13,11 +13,10 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RepositoryTest
 class RefreshTokenRepositoryTest {
@@ -39,8 +38,8 @@ class RefreshTokenRepositoryTest {
         final Password password = new Password("password1!");
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        final String email = "kirikiri1@email.com";
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
         member = new Member(identifier, encryptedPassword, nickname, null, memberProfile);
     }
 

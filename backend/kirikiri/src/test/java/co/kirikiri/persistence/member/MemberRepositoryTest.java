@@ -13,10 +13,9 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.helper.RepositoryTest;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import java.util.Optional;
 
 @RepositoryTest
 class MemberRepositoryTest {
@@ -35,8 +34,7 @@ class MemberRepositoryTest {
         final Password password = new Password("password1!");
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         member = new Member(identifier, encryptedPassword, nickname, memberImage, memberProfile);
     }
@@ -69,8 +67,7 @@ class MemberRepositoryTest {
         assertAll(
                 () -> assertThat(member.getIdentifier().getValue()).isEqualTo("identifier1"),
                 () -> assertThat(memberProfile.getGender()).isEqualTo(Gender.MALE),
-                () -> assertThat(memberProfile.getPhoneNumber()).isEqualTo("010-1234-5678"),
-                () -> assertThat(memberProfile.getBirthday()).isEqualTo(LocalDate.now()),
+                () -> assertThat(memberProfile.getEmail()).isEqualTo("kirikiri1@email.com"),
                 () -> assertThat(memberImage.getServerFilePath()).isEqualTo("serverFilePath")
         );
     }
@@ -90,8 +87,7 @@ class MemberRepositoryTest {
         assertAll(
                 () -> assertThat(member.getIdentifier().getValue()).isEqualTo("identifier1"),
                 () -> assertThat(memberProfile.getGender()).isEqualTo(Gender.MALE),
-                () -> assertThat(memberProfile.getPhoneNumber()).isEqualTo("010-1234-5678"),
-                () -> assertThat(memberProfile.getBirthday()).isEqualTo(LocalDate.now()),
+                () -> assertThat(memberProfile.getEmail()).isEqualTo("kirikiri1@email.com"),
                 () -> assertThat(memberImage.getServerFilePath()).isEqualTo("serverFilePath")
         );
     }

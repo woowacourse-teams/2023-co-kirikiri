@@ -30,10 +30,10 @@ import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class GoalRoomToDoCheckRepositoryTest {
@@ -160,8 +160,7 @@ class GoalRoomToDoCheckRepositoryTest {
 
     private Member 사용자를_생성한다(final String nickname, final String phoneNumber, final String identifier,
                              final String password) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                phoneNumber);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         final Member creator = new Member(new Identifier(identifier),
                 new EncryptedPassword(new Password(password)), new Nickname(nickname), null, memberProfile);
         return memberRepository.save(creator);
