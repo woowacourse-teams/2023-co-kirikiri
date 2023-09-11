@@ -13,9 +13,7 @@ const SignUpForm = () => {
       identifier: '',
       password: '',
       nickname: '',
-      phoneNumber: '',
       genderType: '',
-      birthday: '',
     });
 
   const { signUp } = useSignUp();
@@ -56,14 +54,6 @@ const SignUpForm = () => {
 
         <S.FormList>
           <S.FormItem>
-            <SVGIcon name='PhoneIcon' />
-            <input
-              name='phoneNumber'
-              onChange={handleInputChange}
-              placeholder='휴대전화번호 ex) 010-1234-5678'
-            />
-          </S.FormItem>
-          <S.FormItem>
             <SVGIcon name='GenderIcon' />
             <select name='genderType' onChange={handleInputChange}>
               <option value='' selected disabled>
@@ -72,15 +62,6 @@ const SignUpForm = () => {
               <option value='male'>남성</option>
               <option value='female'>여성</option>
             </select>
-          </S.FormItem>
-          <S.FormItem>
-            <SVGIcon name='CalendarIcon' />
-            <input
-              name='birthday'
-              onChange={handleInputChange}
-              placeholder='생년월일 8자리 ex) 19950101'
-              type='number'
-            />
           </S.FormItem>
         </S.FormList>
         <S.InfoText>

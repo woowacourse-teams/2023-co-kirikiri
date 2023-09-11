@@ -1,12 +1,5 @@
 import { useValidateInput } from '@hooks/_common/useValidateInput';
-import {
-  BIRTHDAY,
-  IDENTIFIER,
-  NICKNAME,
-  PASSWORD,
-  PHONE_NUMBER,
-  GENDER,
-} from '@constants/user/regex';
+import { IDENTIFIER, NICKNAME, PASSWORD, GENDER } from '@constants/user/regex';
 import { useEffect, useState } from 'react';
 
 import { MemberJoinRequest } from '@myTypes/user/remote';
@@ -16,17 +9,13 @@ export const useSignUpFormValidation = () => {
   const identifierValidation = useValidateInput(IDENTIFIER);
   const passwordValidation = useValidateInput(PASSWORD);
   const nicknameValidation = useValidateInput(NICKNAME);
-  const phoneNumberValidation = useValidateInput(PHONE_NUMBER);
-  const birthdayValidation = useValidateInput(BIRTHDAY);
   const genderValidation = useValidateInput(GENDER);
 
   const [formState, setFormState] = useState<MemberJoinRequest>({
     identifier: '',
     password: '',
     nickname: '',
-    phoneNumber: '',
     genderType: '',
-    birthday: '',
   });
 
   useEffect(() => {
@@ -34,16 +23,12 @@ export const useSignUpFormValidation = () => {
       identifier: identifierValidation.value,
       password: passwordValidation.value,
       nickname: nicknameValidation.value,
-      phoneNumber: phoneNumberValidation.value,
       genderType: genderValidation.value,
-      birthday: birthdayValidation.value,
     });
   }, [
     identifierValidation.value,
     passwordValidation.value,
     nicknameValidation.value,
-    phoneNumberValidation.value,
-    birthdayValidation.value,
     genderValidation.value,
   ]);
 
@@ -58,10 +43,6 @@ export const useSignUpFormValidation = () => {
           return passwordValidation;
         case 'nickname':
           return nicknameValidation;
-        case 'phoneNumber':
-          return phoneNumberValidation;
-        case 'birthday':
-          return birthdayValidation;
         case 'genderType':
           return genderValidation;
         default:
@@ -93,8 +74,6 @@ export const useSignUpFormValidation = () => {
     identifierValidation,
     passwordValidation,
     nicknameValidation,
-    phoneNumberValidation,
-    birthdayValidation,
     genderValidation,
   };
 };
