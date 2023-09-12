@@ -141,8 +141,7 @@ class GoalRoomCreateServiceTest {
     void 정상적으로_골룸을_생성한다() {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+                20, new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
@@ -159,8 +158,7 @@ class GoalRoomCreateServiceTest {
     void 골룸_생성_시_삭제된_로드맵이면_예외를_던진다() {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+                20, new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(DELETED_ROADMAP_CONTENT));
@@ -175,8 +173,7 @@ class GoalRoomCreateServiceTest {
     void 골룸_생성_시_존재하지_않은_로드맵_컨텐츠가_들어올때_예외를_던진다() {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+                20, new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.empty());
@@ -194,8 +191,7 @@ class GoalRoomCreateServiceTest {
                 new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER),
                 new GoalRoomRoadmapNodeRequest(2L, 10, TODAY, TEN_DAY_LATER)));
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
-                wrongSizeGoalRoomRoadmapNodeRequest);
+                20, wrongSizeGoalRoomRoadmapNodeRequest);
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
@@ -211,7 +207,7 @@ class GoalRoomCreateServiceTest {
         //given
         final long wrongRoadmapNodId = 2L;
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
+                20,
                 new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(wrongRoadmapNodId, 10, TODAY, TEN_DAY_LATER))));
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
@@ -227,8 +223,7 @@ class GoalRoomCreateServiceTest {
     void 골룸_생성_시_존재하지_않은_회원의_Identifier가_들어올때_예외를_던진다() {
         //given
         final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new GoalRoomTodoRequest("content", TODAY, TEN_DAY_LATER),
-                new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
+                20, new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));

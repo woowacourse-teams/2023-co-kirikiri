@@ -20,9 +20,6 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 @Import(TestConfig.class)
 public class IntegrationTest {
 
-//    @Value("${server.servlet.contextPath}")
-//    protected String API_PREFIX;
-
     @LocalServerPort
     private int port;
 
