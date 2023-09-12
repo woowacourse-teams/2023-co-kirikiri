@@ -59,3 +59,14 @@ export const StyledLink = styled(Link)`
     text-decoration: underline;
   }
 `;
+
+export const ErrorBox = styled.div`
+  ${({ theme }) => theme.fonts.description4}
+  padding: 1rem 1rem;
+  color: ${({ theme }) => theme.colors.red};
+  p {
+    &:not(:last-child) {
+      margin-bottom: 0.6rem;
+    }
+  }
+`;

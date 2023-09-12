@@ -5,6 +5,7 @@ import logo from '@assets/images/logo.png';
 import { SingleCardWrapper } from '@components/_common/SingleCard/SingleCard.styles';
 import useFormInput from '@hooks/_common/useFormInput';
 import * as S from './SignUpForm.styles';
+import { staticValidations } from './signUpValidations';
 
 const SignUpForm = () => {
   const {
@@ -12,13 +13,16 @@ const SignUpForm = () => {
     handleInputChange,
     handleSubmit,
     error,
-  } = useFormInput<MemberJoinRequest>({
-    identifier: '',
-    password: '',
-    email: '',
-    nickname: '',
-    genderType: '',
-  });
+  } = useFormInput<MemberJoinRequest>(
+    {
+      identifier: '',
+      password: '',
+      email: '',
+      nickname: '',
+      genderType: '',
+    },
+    staticValidations
+  );
 
   const { signUp } = useSignUp();
 
@@ -76,12 +80,11 @@ const SignUpForm = () => {
             </select>
           </S.FormItem>
         </S.FormList>
-        <div style={{ color: 'red' }}>
-          {error?.identifier && <p>{error.identifier}</p>}
-          {error?.password && <p>{error.password}</p>}
-          {error?.nickname && <p>{error.nickname}</p>}
-          {error?.genderType && <p>{error.genderType}</p>}
-        </div>
+        <S.ErrorBox>
+          {Object.values(error).map((message: string) => (
+            <p>{message}</p>
+          ))}
+        </S.ErrorBox>
         <S.InfoText>
           가입을 진행하시는 것은 우리의 <S.BoldText>이용 약관</S.BoldText> 및{' '}
           <S.BoldText>개인정보 보호 정책</S.BoldText>에 동의하신 것으로 간주됩니다.
