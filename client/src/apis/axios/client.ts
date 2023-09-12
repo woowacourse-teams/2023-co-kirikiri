@@ -59,10 +59,9 @@ client.interceptors.response.use(
           }
         }
       } else {
-        throw new Error(error.response.data.message);
+        throw error;
       }
     }
-
     throw error;
   }
 );
