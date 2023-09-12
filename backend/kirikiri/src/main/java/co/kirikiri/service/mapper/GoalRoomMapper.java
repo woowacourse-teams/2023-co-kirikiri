@@ -45,15 +45,15 @@ import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -62,8 +62,6 @@ public class GoalRoomMapper {
     private static final int MAX_MEMBER_GOAL_ROOM_CHECK_FEED_NUMBER = 4;
 
     public static GoalRoomCreateDto convertToGoalRoomCreateDto(final GoalRoomCreateRequest goalRoomCreateRequest) {
-        final GoalRoomTodoRequest goalRoomTodoRequest = goalRoomCreateRequest.goalRoomTodo();
-        final GoalRoomToDo goalRoomToDo = convertToGoalRoomTodo(goalRoomTodoRequest);
         final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests = goalRoomCreateRequest.goalRoomRoadmapNodeRequests();
         final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos = makeGoalRoomRoadmapNodeDtos(
                 goalRoomRoadmapNodeRequests);
@@ -72,7 +70,7 @@ public class GoalRoomMapper {
                 goalRoomCreateRequest.roadmapContentId(),
                 new GoalRoomName(goalRoomCreateRequest.name()),
                 new LimitedMemberCount(goalRoomCreateRequest.limitedMemberCount()),
-                goalRoomToDo, goalRoomRoadmapNodeDtos);
+                goalRoomRoadmapNodeDtos);
     }
 
     public static GoalRoomToDo convertToGoalRoomTodo(final GoalRoomTodoRequest goalRoomTodoRequest) {

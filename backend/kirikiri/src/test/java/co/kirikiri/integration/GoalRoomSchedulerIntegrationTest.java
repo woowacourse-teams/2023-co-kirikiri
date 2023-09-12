@@ -14,7 +14,6 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.이십일_후;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_투두_컨텐츠;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
@@ -30,7 +29,6 @@ import co.kirikiri.service.GoalRoomScheduler;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
@@ -210,12 +208,10 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     }
 
     private Long 십일_후에_시작하는_골룸_생성(final String 액세스_토큰, final RoadmapResponse 로드맵_응답) {
-        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 십일_후, 이십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
                 new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 정상적인_골룸_노드_인증_횟수, 십일_후, 이십일_후));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), 정상적인_골룸_이름,
-                정상적인_골룸_제한_인원, 골룸_투두_요청,
-                골룸_노드_별_기간_요청);
+                정상적인_골룸_제한_인원, 골룸_노드_별_기간_요청);
         final String Location_헤더 = 골룸_생성(골룸_생성_요청, 액세스_토큰).response().header(LOCATION);
         return Long.parseLong(Location_헤더.substring(16));
     }

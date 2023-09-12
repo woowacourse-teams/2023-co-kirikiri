@@ -39,6 +39,10 @@ public class GoalRoomToDos {
                 .findFirst();
     }
 
+    public int size() {
+        return values.size();
+    }
+
     public List<GoalRoomToDo> getValues() {
         return new ArrayList<>(values);
     }

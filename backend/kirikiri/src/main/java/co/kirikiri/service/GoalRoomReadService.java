@@ -184,7 +184,7 @@ public class GoalRoomReadService {
 
     private GoalRoom findMemberGoalRoomById(final Long goalRoomId) {
         return goalRoomRepository.findByIdWithContentAndTodos(goalRoomId)
-                .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId));
+                .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId + "뿌잉"));
     }
 
     private Member findMemberByIdentifier(final Identifier identifier) {
@@ -216,7 +216,8 @@ public class GoalRoomReadService {
     public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMember(member);
-        final List<MemberGoalRoomForListDto> memberGoalRoomForListDtos = makeMemberGoalRoomForListDto(memberGoalRooms);
+        final List<MemberGoalRoomForListDto> memberGoalRoomForListDtos = makeMemberGoalRoomForListDto(
+                memberGoalRooms);
         return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRoomForListDtos);
     }
 
@@ -241,7 +242,8 @@ public class GoalRoomReadService {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         final GoalRoomStatus goalRoomStatus = GoalRoomMapper.convertToGoalRoomStatus(goalRoomStatusTypeRequest);
         final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMemberAndStatus(member, goalRoomStatus);
-        final List<MemberGoalRoomForListDto> memberGoalRoomForListDtos = makeMemberGoalRoomForListDto(memberGoalRooms);
+        final List<MemberGoalRoomForListDto> memberGoalRoomForListDtos = makeMemberGoalRoomForListDto(
+                memberGoalRooms);
         return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRoomForListDtos);
     }
 
