@@ -1,7 +1,12 @@
 import { UserInfoResponse } from '@myTypes/user/remote';
 
 const isValidUserInfo = (userInfo: UserInfoResponse): boolean => {
-  return Object.values(userInfo).every((value) => Boolean(value));
+  return Object.entries(userInfo).every(([key, value]) => {
+    if (key === 'email') {
+      return true;
+    }
+    return Boolean(value);
+  });
 };
 
 export default isValidUserInfo;
