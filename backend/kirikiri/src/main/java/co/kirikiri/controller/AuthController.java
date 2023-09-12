@@ -8,6 +8,8 @@ import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.net.URI;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -44,16 +44,16 @@ public class AuthController {
     public ResponseEntity<Void> loginOauth() {
         final OauthRedirectDto oauthRedirectDto = naverOauthService.makeOauthUrl();
         return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Set-Cookie", oauthRedirectDto.state())
                 .location(URI.create(oauthRedirectDto.url()))
                 .build();
     }
 
-    @GetMapping("/oauth/login/callback")
-    public ResponseEntity<AuthenticationResponse> callback(@RequestParam(value = "code", required = false) final String code,
-                                                           @RequestParam("state") final String state,
-                                                           @RequestParam(value = "error", required = false) final String error,
-                                                           @RequestParam(value = "error_description", required = false) final String errorDescription) {
+    @GetMapping("/oauth/naver/login/callback")
+    public ResponseEntity<AuthenticationResponse> callback(
+            @RequestParam(value = "code", required = false) final String code,
+            @RequestParam("state") final String state,
+            @RequestParam(value = "error", required = false) final String error,
+            @RequestParam(value = "error_description", required = false) final String errorDescription) {
         if (error != null) {
             throw new ServerException(errorDescription);
         }
