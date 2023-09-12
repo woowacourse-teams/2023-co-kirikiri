@@ -59,6 +59,11 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -66,11 +71,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapReadServiceTest {
@@ -78,9 +78,9 @@ class RoadmapReadServiceTest {
     private static final LocalDate TODAY = LocalDate.now();
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             new MemberImage("originalFileName", "default-member-image", ImageContentType.JPG),
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+            new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
     private final LocalDateTime now = LocalDateTime.now();
 
     @Mock
@@ -588,10 +588,10 @@ class RoadmapReadServiceTest {
 
     private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
         return new Member(id, new Identifier(identifier),
-                new EncryptedPassword(new Password("password1!")),
+                null, new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname),
                 new MemberImage("originalFileName", "default-profile-image", ImageContentType.JPG),
-                new MemberProfile(Gender.FEMALE, LocalDate.of(2000, 7, 20), "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
     }
 
     private Roadmap 로드맵을_생성한다(final String roadmapTitle, final RoadmapCategory category) {

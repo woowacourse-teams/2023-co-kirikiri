@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.exception.BadRequestException;
-import java.util.List;
 import org.junit.jupiter.api.Test;
+import java.util.List;
 
 class RoadmapNodeImagesTest {
 

@@ -58,3 +58,14 @@ operation::auth-create-api-test/토큰_재발행_시_토큰이_만료_됐을_때
 === *2-4* 실패 - 토큰 재발행 시 토큰이 유효하지 않을 때
 
 operation::auth-create-api-test/토큰_재발행_시_토큰이_유효하지_않을_때_예외를_던진다[snippets='http-request,http-response']
+
+[[네이버OAuth로그인-API]]
+== *3. 네이버 OAuth 로그인*
+
+=== *3-1* 성공 - 네이버 로그인 페이지 리다이렉트를 성공한다
+
+operation::auth-create-api-test/네이버_로그인_페이지를_정상적으로_반환한다[snippets='http-request,http-response']
+
+=== *3-2* 성공 - 네이버 사용자 정보 요청을 성공한다
+
+operation::auth-create-api-test/네이버에서_콜백요청을_받아_사용자_정보를_반환한다[snippets='http-request,http-response']

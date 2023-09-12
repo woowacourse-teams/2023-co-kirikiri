@@ -8,9 +8,9 @@ import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
 
 class JwtTokenProviderTest {
 

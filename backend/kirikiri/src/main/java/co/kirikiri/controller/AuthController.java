@@ -1,15 +1,23 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.AuthService;
+import co.kirikiri.service.NaverOauthService;
+import co.kirikiri.service.dto.auth.OauthRedirectDto;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final NaverOauthService naverOauthService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid final LoginRequest request) {
@@ -31,4 +40,29 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/oauth/naver")
+    public ResponseEntity<Void> loginOauth() {
+        final OauthRedirectDto oauthRedirectDto = naverOauthService.makeOauthUrl();
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(oauthRedirectDto.url()))
+                .build();
+    }
+
+    @GetMapping("/oauth/naver/login/callback")
+    public ResponseEntity<AuthenticationResponse> callback(
+            @RequestParam(value = "code", required = false) final String code,
+            @RequestParam("state") final String state,
+            @RequestParam(value = "error", required = false) final String error,
+            @RequestParam(value = "error_description", required = false) final String errorDescription) {
+        if (error != null) {
+            throw new ServerException(errorDescription);
+        }
+        final Map<String, String> headers = Map.of(
+                "code", code,
+                "state", state,
+                "grant_type", "authorization_code"
+        );
+        final AuthenticationResponse response = naverOauthService.login(headers);
+        return ResponseEntity.ok(response);
+    }
 }

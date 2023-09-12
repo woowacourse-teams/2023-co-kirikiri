@@ -7,8 +7,8 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDateTime;
 
 class GoalRoomMemberTest {
 
@@ -57,10 +57,10 @@ class GoalRoomMemberTest {
     void 입력받은_멤버가_자신과_다른_멤버이면_false를_반환한다() {
         // given
         final Member member1 = new Member(1L, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1!")),
+                null, new EncryptedPassword(new Password("password1!")),
                 new Nickname("name1"), null, null);
         final Member member2 = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password2!")),
+                null, new EncryptedPassword(new Password("password2!")),
                 new Nickname("name2"), null, null);
 
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), null,

@@ -14,6 +14,8 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.이십일_후;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_투두_컨텐츠;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
@@ -33,10 +35,9 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.Test;
+import java.io.IOException;
+import java.util.List;
 
 class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
 
@@ -62,7 +63,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -89,7 +90,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -116,7 +117,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = 로그인(팔로워_로그인_요청).accessToken();
@@ -142,7 +143,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = 로그인(팔로워_로그인_요청).accessToken();
@@ -167,7 +168,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 십일_후에_시작하는_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = 로그인(팔로워_로그인_요청).accessToken();
@@ -193,7 +194,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = 로그인(팔로워_로그인_요청).accessToken();

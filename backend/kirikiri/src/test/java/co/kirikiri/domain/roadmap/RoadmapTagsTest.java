@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.BadRequestException;
-import java.util.List;
 import org.junit.jupiter.api.Test;
+import java.util.List;
 
 class RoadmapTagsTest {
 

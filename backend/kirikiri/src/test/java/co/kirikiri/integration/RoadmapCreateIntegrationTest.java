@@ -4,6 +4,7 @@ import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인
 import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
 import static co.kirikiri.integration.fixture.CommonFixture.아이디를_반환한다;
 import static co.kirikiri.integration.fixture.CommonFixture.응답_상태_코드_검증;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_삭제;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
@@ -29,7 +30,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -355,8 +355,8 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
         // given
         final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
 
-        회원가입(new MemberJoinRequest("identifier2", "password2!", "name2", "010-1111-2222", GenderType.FEMALE,
-                LocalDate.now()));
+        회원가입(new MemberJoinRequest("identifier2", "password2!", "name2",
+                GenderType.FEMALE, DEFAULT_EMAIL));
         final String 다른_사용자_로그인_토큰 = String.format(BEARER_TOKEN_FORMAT,
                 로그인(new LoginRequest("identifier2", "password2!")).accessToken());
 

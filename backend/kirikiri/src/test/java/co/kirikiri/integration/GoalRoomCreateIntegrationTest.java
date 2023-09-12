@@ -22,6 +22,7 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_�
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_투두_컨텐츠;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
@@ -49,16 +50,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
+import java.io.IOException;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 
 class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
 
@@ -232,7 +231,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -274,7 +273,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -305,7 +304,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         골룸을_시작한다(기본_로그인_토큰, 골룸_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -521,7 +520,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final MemberJoinRequest 팔로워_회원가입_요청 = new MemberJoinRequest("identifier2", "password12!@#$%", "follower",
-                "010-2345-6789", GenderType.MALE, LocalDate.of(2023, Month.JULY, 12));
+                GenderType.MALE, DEFAULT_EMAIL);
         회원가입(팔로워_회원가입_요청);
         final String 팔로워_로그인_토큰 = String.format(BEARER_TOKEN_FORMAT,
                 로그인(new LoginRequest(팔로워_회원가입_요청.identifier(), 팔로워_회원가입_요청.password())).accessToken());
@@ -631,7 +630,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 투두_아이디 = 골룸_투두리스트_추가후_아이디를_반환한다(기본_로그인_토큰, 골룸_아이디);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -661,7 +660,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -689,7 +688,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -747,7 +746,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         final Long 팔로워_아이디 = 회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -777,7 +776,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         final Long 팔로워_아이디 = 회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -837,13 +836,13 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워1_로그인_요청 = new LoginRequest(팔로워1_회원_가입_요청.identifier(), 팔로워1_회원_가입_요청.password());
         회원가입(팔로워1_회원_가입_요청);
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
 
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워2_로그인_요청 = new LoginRequest(팔로워2_회원_가입_요청.identifier(), 팔로워2_회원_가입_요청.password());
         회원가입(팔로워2_회원_가입_요청);
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
@@ -879,7 +878,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워1_로그인_요청 = new LoginRequest(팔로워1_회원_가입_요청.identifier(), 팔로워1_회원_가입_요청.password());
         회원가입(팔로워1_회원_가입_요청);
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
@@ -887,7 +886,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         });
 
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워2_로그인_요청 = new LoginRequest(팔로워2_회원_가입_요청.identifier(), 팔로워2_회원_가입_요청.password());
         회원가입(팔로워2_회원_가입_요청);
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
@@ -922,7 +921,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -952,7 +951,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -1070,7 +1069,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
 
         final MemberJoinRequest 다른_사용자_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         회원가입(다른_사용자_회원_가입_요청);
         final LoginRequest 다른_사용자_로그인_요청 = new LoginRequest(다른_사용자_회원_가입_요청.identifier(), 다른_사용자_회원_가입_요청.password());
         final String 다른_사용자_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_사용자_로그인_요청).accessToken());

@@ -12,11 +12,11 @@ import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
-import java.time.LocalDateTime;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -58,6 +58,10 @@ public class AuthService {
         final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
         final RefreshToken refreshToken = new RefreshToken(encryptedToken, expiredAt, member);
         refreshTokenRepository.save(refreshToken);
+    }
+
+    public AuthenticationResponse oauthLogin(final Member member) {
+        return makeAuthenticationResponse(member);
     }
 
     public boolean isCertified(final String token) {

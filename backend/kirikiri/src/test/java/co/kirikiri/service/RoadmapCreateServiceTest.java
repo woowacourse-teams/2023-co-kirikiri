@@ -53,7 +53,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -63,9 +62,9 @@ import java.util.Optional;
 class RoadmapCreateServiceTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             null,
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock
     private MemberRepository memberRepository;
@@ -157,9 +156,9 @@ class RoadmapCreateServiceTest {
     void 로드맵에_대한_리뷰를_추가한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
 
@@ -220,9 +219,9 @@ class RoadmapCreateServiceTest {
     void 로드맵_리뷰_작성시_이미_작성을_완료했으면_예외가_발생한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
 
@@ -269,8 +268,8 @@ class RoadmapCreateServiceTest {
     void 골룸이_생성된_적이_있는_로드맵을_삭제한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
         final Roadmap roadmap = 로드맵을_생성한다(MEMBER, category);

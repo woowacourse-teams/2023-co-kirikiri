@@ -2,16 +2,16 @@ package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
-import java.util.Objects;
 import lombok.NoArgsConstructor;
+import java.util.Objects;
 
 @NoArgsConstructor
 public class Nickname {
 
     private static final int MIN_LENGTH = 2;
-    private static final int MAX_LENGTH = 8;
+    private static final int MAX_LENGTH = 20;
 
-    @Column(name = "nickname", length = 15, unique = true, nullable = false)
+    @Column(name = "nickname", length = 30, unique = true, nullable = false)
     private String value;
 
     public Nickname(final String value) {

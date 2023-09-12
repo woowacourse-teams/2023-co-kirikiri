@@ -1,9 +1,9 @@
 package co.kirikiri.service;
 
+import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UUIDFilePathGenerator implements FilePathGenerator {

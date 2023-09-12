@@ -16,7 +16,6 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest
@@ -87,7 +86,7 @@ class RoadmapContentRepositoryTest {
     }
 
     private Member 사용자를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1995, 9, 30), "010-0000-0000");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         final Member member = new Member(new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("썬샷"), null, memberProfile);
 

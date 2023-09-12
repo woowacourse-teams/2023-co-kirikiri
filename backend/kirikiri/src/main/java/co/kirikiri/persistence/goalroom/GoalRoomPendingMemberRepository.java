@@ -3,11 +3,11 @@ package co.kirikiri.persistence.goalroom;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.member.vo.Identifier;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.List;
+import java.util.Optional;
 
 public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomPendingMember, Long>,
         GoalRoomPendingMemberQueryRepository {

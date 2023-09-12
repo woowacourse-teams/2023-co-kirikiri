@@ -63,6 +63,11 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -70,11 +75,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomReadServiceTest {
@@ -1177,17 +1177,16 @@ class GoalRoomReadServiceTest {
     private Member 크리에이터를_생성한다() {
         final MemberImage memberImage = new MemberImage("originalFileName", "default-member-image",
                 ImageContentType.JPG);
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
-        return new Member(1L, new Identifier("cokirikiri"), new EncryptedPassword(new Password("password1!")),
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri@email.com");
+        return new Member(1L, new Identifier("cokirikiri"), null, new EncryptedPassword(new Password("password1!")),
                 new Nickname("코끼리"), memberImage, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id) {
         return new Member(id, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1")), new Nickname("name1"),
+                null, new EncryptedPassword(new Password("password1")), new Nickname("name1"),
                 new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPEG),
-                new MemberProfile(Gender.FEMALE, LocalDate.of(2000, 7, 20),
-                        "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {

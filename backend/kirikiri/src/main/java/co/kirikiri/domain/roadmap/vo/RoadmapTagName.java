@@ -2,9 +2,9 @@ package co.kirikiri.domain.roadmap.vo;
 
 import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadmapTagName {
