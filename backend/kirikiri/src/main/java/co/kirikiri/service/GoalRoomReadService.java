@@ -184,7 +184,7 @@ public class GoalRoomReadService {
 
     private GoalRoom findMemberGoalRoomById(final Long goalRoomId) {
         return goalRoomRepository.findByIdWithContentAndTodos(goalRoomId)
-                .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId + "뿌잉"));
+                .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId));
     }
 
     private Member findMemberByIdentifier(final Identifier identifier) {

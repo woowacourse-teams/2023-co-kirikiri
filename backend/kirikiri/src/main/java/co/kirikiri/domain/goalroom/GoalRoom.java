@@ -255,10 +255,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return currentDate.isAfter(endDate.plusMonths(numberOfMonth));
     }
 
-    public boolean isExistGoalRoomToDo() {
-        return getGoalRoomToDos().size() > 0;
-    }
-
     public GoalRoomName getName() {
         return name;
     }
