@@ -84,7 +84,6 @@ export const useCreateRoadmap = () => {
       await queryClient.refetchQueries([QUERY_KEYS.roadmap.list]);
       navigate('/roadmap-list');
     },
-    onError() {},
   });
 
   return {
