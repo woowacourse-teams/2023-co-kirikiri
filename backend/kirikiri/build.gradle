@@ -80,7 +80,8 @@ jacocoTestReport {
                             "**/*Request*",
                             "**/*Response*",
                             "**/*Interceptor*",
-                            "**/*Exception*"
+                            "**/*Exception*",
+                            "**/*Mapper*",
                     ] + QDomains)
                 })
         )

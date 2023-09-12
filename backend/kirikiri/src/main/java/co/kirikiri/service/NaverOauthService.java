@@ -10,7 +10,8 @@ import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.mapper.OauthMapper;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,36 +22,25 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class NaverOauthService {
 
+    private static final String OAUTH_NAVER_REDIRECT_URL_PROPERTY = "oauth.naver.redirect-url";
+    private static final String OAUTH_NAVER_CALLBACK_URL_PROPERTY = "oauth.naver.callback-url";
+    private static final String OAUTH_NAVER_CLIENT_ID_PROPERTY = "oauth.naver.client-id";
     private static final String BEARER = "Bearer ";
 
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final AuthService authService;
     private final OauthNetworkService oauthNetworkService;
-    private final String redirectUrl;
-    private final String callBackUrl;
-    private final String clientId;
-
-    public NaverOauthService(final MemberRepository memberRepository,
-                             final MemberService memberService,
-                             final AuthService authService,
-                             final OauthNetworkService oauthNetworkService,
-                             @Value("${oauth.naver.redirect-url}") final String redirectUrl,
-                             @Value("${oauth.naver.callback-url}") final String callBackUrl,
-                             @Value("${oauth.naver.client-id}") final String clientId) {
-        this.memberRepository = memberRepository;
-        this.memberService = memberService;
-        this.authService = authService;
-        this.oauthNetworkService = oauthNetworkService;
-        this.redirectUrl = redirectUrl;
-        this.callBackUrl = callBackUrl;
-        this.clientId = clientId;
-    }
+    private final Environment environment;
 
     public OauthRedirectDto makeOauthUrl() {
         final String state = generateState();
+        final String redirectUrl = getProperty(OAUTH_NAVER_REDIRECT_URL_PROPERTY);
+        final String clientId = getProperty(OAUTH_NAVER_CLIENT_ID_PROPERTY);
+        final String callBackUrl = getProperty(OAUTH_NAVER_CALLBACK_URL_PROPERTY);
         final String url = String.format(redirectUrl, clientId, callBackUrl, state);
         return OauthMapper.convertToOauthRedirectDto(url, state);
     }
@@ -58,6 +48,10 @@ public class NaverOauthService {
     private String generateState() {
         final SecureRandom random = new SecureRandom();
         return new BigInteger(130, random).toString(32);
+    }
+
+    private String getProperty(final String property) {
+        return environment.getProperty(property);
     }
 
     @Transactional
@@ -76,6 +70,7 @@ public class NaverOauthService {
 
     private NaverMemberProfileDto getNaverMemberProfileDto(final String accessToken) {
         final Map<String, String> headers = Map.of(HttpHeaders.AUTHORIZATION, BEARER + accessToken);
-        return oauthNetworkService.requestMemberInfo(NaverMemberProfileDto.class, headers).getBody();
+        return oauthNetworkService.requestMemberInfo(NaverMemberProfileDto.class, headers)
+                .getBody();
     }
 }
