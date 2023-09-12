@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,7 +49,11 @@ class NaverOauthNetworkServiceTest {
 
         // when
         final ResponseEntity<NaverOauthTokenDto> 응답 = naverOauthNetworkService.requestToken(
-                NaverOauthTokenDto.class, Map.of());
+                NaverOauthTokenDto.class, Map.of(
+                        "code", "code",
+                        "state", "state",
+                        "grant_type", "authorization_code"
+                ));
 
         // then
         assertThat(응답.getBody())
@@ -69,7 +73,7 @@ class NaverOauthNetworkServiceTest {
 
         // when
         final ResponseEntity<AuthenticationResponse> 응답 = naverOauthNetworkService.requestMemberInfo(
-                AuthenticationResponse.class, Map.of());
+                AuthenticationResponse.class, Map.of(HttpHeaders.AUTHORIZATION, "token"));
 
         // then
         assertThat(응답.getBody())

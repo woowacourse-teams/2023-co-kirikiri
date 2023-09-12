@@ -81,7 +81,7 @@ jacocoTestReport {
                             "**/*Response*",
                             "**/*Interceptor*",
                             "**/*Exception*",
-                            "**/*Mapper*",
+                            "**/*Mapper*"
                     ] + QDomains)
                 })
         )
@@ -123,7 +123,8 @@ jacocoTestCoverageVerification {
                     "**.*Request*",
                     "**.*Response*",
                     "**.*Interceptor*",
-                    "**.*Exception*"
+                    "**.*Exception*",
+                    "**.*Mapper*"
             ] + QDomains
         }
     }
