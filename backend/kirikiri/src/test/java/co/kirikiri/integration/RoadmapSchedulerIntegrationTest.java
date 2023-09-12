@@ -20,10 +20,10 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 public class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
 

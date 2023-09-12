@@ -16,7 +16,8 @@ public class MemberProfile extends BaseUpdatedTimeEntity {
     @Column(length = 10, nullable = false)
     private Gender gender;
 
-    @Column(length = 100, nullable = false)
+    // todo: 기본값 모두 수정 후 nullable = false로 변경
+    @Column(length = 100)
     private String email;
 
     public MemberProfile(final Gender gender, final String email) {

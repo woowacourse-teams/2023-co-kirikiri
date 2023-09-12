@@ -51,7 +51,7 @@ class MemberReadApiTest extends ControllerTestHelper {
                                 headerWithName(AUTHORIZATION).description("액세스 토큰")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("사용자 id (PK)"),
+                                fieldWithPath("id").description("사용자 oauthId (PK)"),
                                 fieldWithPath("nickname").description("사용자 닉네임"),
                                 fieldWithPath("profileImageUrl").description("사용자 이미지 Url"),
                                 fieldWithPath("gender").description("사용자 성별"),

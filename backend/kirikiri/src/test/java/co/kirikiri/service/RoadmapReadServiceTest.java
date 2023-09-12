@@ -78,7 +78,7 @@ class RoadmapReadServiceTest {
     private static final LocalDate TODAY = LocalDate.now();
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             new MemberImage("originalFileName", "default-member-image", ImageContentType.JPG),
             new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
     private final LocalDateTime now = LocalDateTime.now();
@@ -588,7 +588,7 @@ class RoadmapReadServiceTest {
 
     private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
         return new Member(id, new Identifier(identifier),
-                new EncryptedPassword(new Password("password1!")),
+                null, new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname),
                 new MemberImage("originalFileName", "default-profile-image", ImageContentType.JPG),
                 new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));

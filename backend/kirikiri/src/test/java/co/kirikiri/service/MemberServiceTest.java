@@ -63,7 +63,7 @@ class MemberServiceTest {
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.empty());
         given(memberRepository.save(any()))
-                .willReturn(new Member(1L, null, null, null, null, null));
+                .willReturn(new Member(1L, null, null, null, null, null, null));
         given(environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY))
                 .willReturn("default-member-image");
         given(environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY))
@@ -101,29 +101,13 @@ class MemberServiceTest {
     }
 
     @Test
-    void 회원가입_시_이미_존재하는_닉네임_존재할때_예외를_던진다() {
-        //given
-        final MemberJoinRequest request = new MemberJoinRequest("identifier1", "password1!", "nickname",
-                GenderType.MALE, "kirikiri@email.com");
-
-        given(memberRepository.findByNickname(any()))
-                .willReturn(Optional.of(new Member(null, null, null, null, null, null)));
-
-        //when
-        //then
-        assertThatThrownBy(() -> memberService.join(request))
-                .isInstanceOf(ConflictException.class);
-    }
-
-    @Test
     void 로그인한_사용자_자신의_정보를_조회한다() throws MalformedURLException {
         // given
         final Identifier identifier = new Identifier("identifier1");
         final Password password = new Password("password1!");
         final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
-        final Member member = new Member(1L, identifier, new EncryptedPassword(password), nickname, memberImage,
+        final Member member = new Member(1L, identifier, null, new EncryptedPassword(password), nickname, memberImage,
                 new MemberProfile(Gender.MALE, "kirikiri@email.com"));
 
         given(memberRepository.findWithMemberProfileAndImageByIdentifier(any()))

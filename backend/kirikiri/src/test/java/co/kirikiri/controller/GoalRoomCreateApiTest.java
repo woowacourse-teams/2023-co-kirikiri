@@ -36,9 +36,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -49,6 +46,9 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomCreateApiTest extends ControllerTestHelper {
@@ -1261,7 +1261,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
 
     private List<FieldDescription> makeCreateGoalRoomSuccessRequestFieldDescription() {
         return List.of(
-                new FieldDescription("roadmapContentId", "로드맵 컨텐츠 id"),
+                new FieldDescription("roadmapContentId", "로드맵 컨텐츠 oauthId"),
                 new FieldDescription("name", "골룸 이름", "- 길이 : 1 ~ 40"),
                 new FieldDescription("limitedMemberCount", "최대 제한 인원", "- 길이 : 1 ~ 20"),
                 new FieldDescription("goalRoomTodo", "최초 골룸 투두"),
@@ -1269,7 +1269,7 @@ class GoalRoomCreateApiTest extends ControllerTestHelper {
                 new FieldDescription("goalRoomTodo.startDate", "골룸 투두 시작일", "- yyyyMMdd 형식"),
                 new FieldDescription("goalRoomTodo.endDate", "골룸 투두 종료일", "- yyyyMMdd 형식"),
                 new FieldDescription("goalRoomRoadmapNodeRequests", "골룸 노드 정보"),
-                new FieldDescription("goalRoomRoadmapNodeRequests[].roadmapNodeId", "설정할 로드맵 노드의 id"),
+                new FieldDescription("goalRoomRoadmapNodeRequests[].roadmapNodeId", "설정할 로드맵 노드의 oauthId"),
                 new FieldDescription("goalRoomRoadmapNodeRequests[].checkCount", "골룸 노드의 인증 횟수"),
                 new FieldDescription("goalRoomRoadmapNodeRequests[].startDate", "골룸 노드의 시작일", "- yyyyMMdd 형식"),
                 new FieldDescription("goalRoomRoadmapNodeRequests[].endDate", "골룸 노드의 종료일", "- yyyyMMdd 형식")

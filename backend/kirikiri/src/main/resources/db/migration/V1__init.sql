@@ -7,7 +7,7 @@ create table member_profile
     created_at   datetime(6) not null,
     updated_at   datetime(6) not null,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table member_image
 (
@@ -16,7 +16,7 @@ create table member_image
     original_file_name varchar(100) not null,
     server_file_path   varchar(255) not null,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table member
 (
@@ -25,8 +25,8 @@ create table member
     password          varchar(255) not null,
     salt              varchar(255) not null,
     nickname          varchar(15)  not null,
-    created_at        datetime(6) not null,
-    updated_at        datetime(6) not null,
+    created_at        datetime(6)  not null,
+    updated_at        datetime(6)  not null,
     member_profile_id bigint       not null,
     member_image_id   bigint       not null,
     primary key (id),
@@ -38,26 +38,26 @@ create table member
         foreign key (member_profile_id) references member_profile (id),
     constraint FK_member_member_image_id
         foreign key (member_image_id) references member_image (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table refresh_token
 (
     id         bigint       not null auto_increment,
     token      varchar(255) not null,
-    expired_at datetime(6) not null,
+    expired_at datetime(6)  not null,
     is_revoked bit          not null,
     member_id  bigint       not null,
     primary key (id),
     constraint FK_refresh_token_member_id
         foreign key (member_id) references member (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table roadmap_category
 (
     id   bigint      not null auto_increment,
     name varchar(15) not null,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table roadmap
 (
@@ -67,7 +67,7 @@ create table roadmap
     difficulty      varchar(30)  not null,
     required_period integer      not null,
     status          varchar(10)  not null,
-    created_at      datetime(6) not null,
+    created_at      datetime(6)  not null,
     category_id     bigint       not null,
     member_id       bigint       not null,
     primary key (id),
@@ -75,19 +75,19 @@ create table roadmap
         foreign key (category_id) references roadmap_category (id),
     constraint FK_roadmap_member_id
         foreign key (member_id) references member (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table roadmap_content
 (
-    id         bigint not null auto_increment,
+    id         bigint      not null auto_increment,
     content    varchar(2200),
     created_at datetime(6) not null,
     updated_at datetime(6) not null,
-    roadmap_id bigint not null,
+    roadmap_id bigint      not null,
     primary key (id),
     constraint FK_roadmap_content_roadmap_id
         foreign key (roadmap_id) references roadmap (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table roadmap_node
 (
@@ -98,7 +98,7 @@ create table roadmap_node
     primary key (id),
     constraint FK_roadmap_node_roadmap_content_id
         foreign key (roadmap_content_id) references roadmap_content (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table roadmap_node_image
 (
@@ -110,7 +110,7 @@ create table roadmap_node_image
     primary key (id),
     constraint FK_roadmap_node_image_roadmap_node_id
         foreign key (roadmap_node_id) references roadmap_node (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table goal_room
 (
@@ -126,7 +126,7 @@ create table goal_room
     primary key (id),
     constraint FK_goal_room_roadmap_content_id
         foreign key (roadmap_content_id) references roadmap_content (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table goal_room_pending_member
 (
@@ -140,7 +140,7 @@ create table goal_room_pending_member
         foreign key (goal_room_id) references goal_room (id),
     constraint FK_goal_room_pending_member_member_id
         foreign key (member_id) references member (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table goal_room_member
 (
@@ -155,7 +155,7 @@ create table goal_room_member
         foreign key (goal_room_id) references goal_room (id),
     constraint FK_goal_room_member_member_id
         foreign key (member_id) references member (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table goal_room_to_do
 (
@@ -163,13 +163,13 @@ create table goal_room_to_do
     content      varchar(300) not null,
     start_date   date         not null,
     end_date     date         not null,
-    created_at   datetime(6) not null,
-    updated_at   datetime(6) not null,
+    created_at   datetime(6)  not null,
+    updated_at   datetime(6)  not null,
     goal_room_id bigint       not null,
     primary key (id),
     constraint FK_goal_room_to_do_goal_room_id
         foreign key (goal_room_id) references goal_room (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table goal_room_roadmap_node
 (
@@ -184,7 +184,7 @@ create table goal_room_roadmap_node
         foreign key (roadmap_node_id) references roadmap_node (id),
     constraint goal_room_roadmap_node_goal_room_id
         foreign key (goal_room_id) references goal_room (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table check_feed
 (
@@ -201,23 +201,23 @@ create table check_feed
         foreign key (goal_room_roadmap_node_id) references goal_room_roadmap_node (id),
     constraint FK_check_feed_goal_room_member_id
         foreign key (goal_room_member_id) references goal_room_member (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table roadmap_review
 (
-    id         bigint    not null auto_increment,
-    rate       float(53) not null,
+    id         bigint      not null auto_increment,
+    rate       float(53)   not null,
     content    varchar(1200),
     created_at datetime(6) not null,
     updated_at datetime(6) not null,
-    member_id  bigint    not null,
-    roadmap_id bigint    not null,
+    member_id  bigint      not null,
+    roadmap_id bigint      not null,
     primary key (id),
     constraint FK_roadmap_review_roadmap_id
         foreign key (roadmap_id) references roadmap (id),
     constraint FK_roadmap_review_member_id
         foreign key (member_id) references member (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table roadmap_tag
 (
@@ -227,7 +227,7 @@ create table roadmap_tag
     primary key (id),
     constraint FK_roadmap_tag_roadmap_id
         foreign key (roadmap_id) references roadmap (id)
-) engine=InnoDB;
+) engine = InnoDB;
 
 create table goal_room_to_do_check
 (
@@ -239,4 +239,4 @@ create table goal_room_to_do_check
         foreign key (goal_room_member_id) references goal_room_member (id),
     constraint FK_goal_room_to_do_check_goal_room_to_do_id
         foreign key (goal_room_to_do_id) references goal_room_to_do (id)
-) engine=InnoDB;
+) engine = InnoDB;

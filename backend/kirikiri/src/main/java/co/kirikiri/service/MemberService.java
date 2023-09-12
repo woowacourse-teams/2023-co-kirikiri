@@ -1,7 +1,10 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.auth.EncryptedToken;
+import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
+import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
@@ -9,13 +12,17 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.MemberInformationDto;
 import co.kirikiri.service.dto.member.MemberInformationForPublicDto;
 import co.kirikiri.service.dto.member.MemberJoinDto;
+import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -23,6 +30,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,12 +47,13 @@ public class MemberService {
     private final Environment environment;
     private final NumberGenerator numberGenerator;
     private final FileService fileService;
+    private final TokenProvider tokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public Long join(final MemberJoinRequest memberJoinRequest) {
         final MemberJoinDto memberJoinDto = MemberMapper.convertToMemberJoinDto(memberJoinRequest);
         checkIdentifierDuplicate(memberJoinDto.identifier());
-        checkNicknameDuplicate(memberJoinDto.nickname());
 
         final EncryptedPassword encryptedPassword = new EncryptedPassword(memberJoinDto.password());
         final MemberProfile memberProfile = new MemberProfile(memberJoinDto.gender(), memberJoinDto.email());
@@ -52,16 +62,40 @@ public class MemberService {
         return memberRepository.save(member).getId();
     }
 
-    private void checkNicknameDuplicate(final Nickname nickname) {
-        if (memberRepository.findByNickname(nickname).isPresent()) {
-            throw new ConflictException("이미 존재하는 닉네임입니다.");
-        }
-    }
-
     private void checkIdentifierDuplicate(final Identifier identifier) {
         if (memberRepository.findByIdentifier(identifier).isPresent()) {
             throw new ConflictException("이미 존재하는 아이디입니다.");
         }
+    }
+
+    @Transactional
+    public AuthenticationResponse oauthJoin(final OauthMemberJoinDto oauthMemberJoinDto) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(oauthMemberJoinDto.gender().name()), oauthMemberJoinDto.email());
+        final Identifier identifier = makeIdentifier(oauthMemberJoinDto);
+        final Nickname nickname = new Nickname(oauthMemberJoinDto.nickname());
+        final Member member = new Member(identifier, oauthMemberJoinDto.oauthId(), nickname, findDefaultMemberImage(), memberProfile);
+        memberRepository.save(member);
+        return makeAuthenticationResponse(member);
+    }
+
+    private Identifier makeIdentifier(final OauthMemberJoinDto oauthMemberJoinDto) {
+        return new Identifier(oauthMemberJoinDto.email()
+                .split("@")[0]
+                .toLowerCase());
+    }
+
+    private AuthenticationResponse makeAuthenticationResponse(final Member member) {
+        final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
+        saveRefreshToken(member, refreshToken);
+        final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
+        return AuthMapper.convertToAuthenticationResponse(refreshToken, accessToken);
+    }
+
+    private void saveRefreshToken(final Member member, final String rawRefreshToken) {
+        final EncryptedToken encryptedToken = new EncryptedToken(rawRefreshToken);
+        final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
+        final RefreshToken refreshToken = new RefreshToken(encryptedToken, expiredAt, member);
+        refreshTokenRepository.save(refreshToken);
     }
 
     private MemberImage findDefaultMemberImage() {

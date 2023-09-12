@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class MemberIdentifierArgumentResolverTest {

@@ -1178,13 +1178,13 @@ class GoalRoomReadServiceTest {
         final MemberImage memberImage = new MemberImage("originalFileName", "default-member-image",
                 ImageContentType.JPG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri@email.com");
-        return new Member(1L, new Identifier("cokirikiri"), new EncryptedPassword(new Password("password1!")),
+        return new Member(1L, new Identifier("cokirikiri"), null, new EncryptedPassword(new Password("password1!")),
                 new Nickname("코끼리"), memberImage, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id) {
         return new Member(id, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1")), new Nickname("name1"),
+                null, new EncryptedPassword(new Password("password1")), new Nickname("name1"),
                 new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPEG),
                 new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
     }

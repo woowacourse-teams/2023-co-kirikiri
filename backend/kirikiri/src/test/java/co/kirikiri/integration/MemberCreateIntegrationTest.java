@@ -138,7 +138,7 @@ class MemberCreateIntegrationTest extends InitIntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"a", "abcdefghi"})
+    @ValueSource(strings = {"a", "123456789012345678901"})
     void 닉네임_길이가_틀린_경우_회원가입에_실패한다(final String nickname) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest("ab12", "password12!@#$%", nickname, GenderType.MALE, DEFAULT_EMAIL);

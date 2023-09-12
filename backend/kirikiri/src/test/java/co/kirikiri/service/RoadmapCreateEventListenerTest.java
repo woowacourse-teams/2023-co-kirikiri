@@ -40,7 +40,7 @@ import java.util.List;
 class RoadmapCreateEventListenerTest {
 
     private static final Member member = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"), null,
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"), null,
             new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock

@@ -14,12 +14,12 @@ import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.AuthService;
+import co.kirikiri.service.NaverOauthService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import java.util.List;
 
 @WebMvcTest(AuthController.class)
 class AuthCreateApiTest extends ControllerTestHelper {
@@ -36,6 +37,10 @@ class AuthCreateApiTest extends ControllerTestHelper {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private NaverOauthService naverOauthService;
+
 
     @Test
     void 정상적으로_로그인에_성공한다() throws Exception {

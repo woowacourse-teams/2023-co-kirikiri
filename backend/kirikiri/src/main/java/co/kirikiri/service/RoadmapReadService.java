@@ -45,12 +45,12 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import co.kirikiri.service.mapper.ScrollResponseMapper;
-import java.net.URL;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.net.URL;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

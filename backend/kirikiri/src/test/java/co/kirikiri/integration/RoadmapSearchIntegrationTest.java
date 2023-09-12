@@ -15,9 +15,9 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import io.restassured.common.mapper.TypeRef;
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 class RoadmapSearchIntegrationTest extends InitIntegrationTest {
 

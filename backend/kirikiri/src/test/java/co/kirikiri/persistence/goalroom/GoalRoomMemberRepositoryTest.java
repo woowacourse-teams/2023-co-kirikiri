@@ -296,8 +296,7 @@ class GoalRoomMemberRepositoryTest {
     private Member 크리에이터를_저장한다() {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
-        final Member creator = new Member(1L, new Identifier("cokirikiri"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberImage, memberProfile);
+        final Member creator = new Member(1L, new Identifier("cokirikiri"), null, new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberImage, memberProfile);
         return memberRepository.save(creator);
     }
 

@@ -8,9 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.regex.Pattern;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

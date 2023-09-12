@@ -62,7 +62,7 @@ import java.util.Optional;
 class RoadmapCreateServiceTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             null,
             new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
@@ -156,7 +156,7 @@ class RoadmapCreateServiceTest {
     void 로드맵에_대한_리뷰를_추가한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
                 new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
@@ -219,7 +219,7 @@ class RoadmapCreateServiceTest {
     void 로드맵_리뷰_작성시_이미_작성을_완료했으면_예외가_발생한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
                 new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
@@ -268,7 +268,7 @@ class RoadmapCreateServiceTest {
     void 골룸이_생성된_적이_있는_로드맵을_삭제한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
                 new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");

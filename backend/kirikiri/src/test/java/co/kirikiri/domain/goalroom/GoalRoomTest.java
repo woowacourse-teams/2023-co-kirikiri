@@ -46,7 +46,7 @@ class GoalRoomTest {
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
-        member = new Member(1L, identifier, encryptedPassword, nickname, null, memberProfile);
+        member = new Member(1L, identifier, null, encryptedPassword, nickname, null, memberProfile);
     }
 
     @Test
@@ -73,11 +73,11 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
                 new RoadmapContent("content"), member);
         final Member member1 = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
                 null,
                 new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
         final Member member2 = new Member(3L, new Identifier("identifier3"),
-                new EncryptedPassword(new Password("password1")), new Nickname("닉네임3"),
+                null, new EncryptedPassword(new Password("password1")), new Nickname("닉네임3"),
                 null,
                 new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
 
@@ -251,7 +251,7 @@ class GoalRoomTest {
 
     private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
-        return new Member(id, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+        return new Member(id, new Identifier(identifier), null, new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname), null, memberProfile);
     }
 

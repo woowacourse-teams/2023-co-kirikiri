@@ -993,7 +993,7 @@ class GoalRoomCreateServiceTest {
                              final String email) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
 
-        return new Member(memberId, new Identifier(identifier), new EncryptedPassword(new Password(password)),
+        return new Member(memberId, new Identifier(identifier), null, new EncryptedPassword(new Password(password)),
                 new Nickname(nickname), null, memberProfile);
     }
 
