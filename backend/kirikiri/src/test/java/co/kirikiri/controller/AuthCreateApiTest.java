@@ -1,6 +1,7 @@
 package co.kirikiri.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -23,10 +24,12 @@ import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -274,6 +277,17 @@ class AuthCreateApiTest extends ControllerTestHelper {
                 .andReturn();
     }
 
+    @Test
+    void 네이버에서_콜백요청을_받아_사용자_정보를_반환한다() throws Exception {
+        // given
+        final AuthenticationResponse expectedResponse = new AuthenticationResponse("refresh_token", "access_token");
+        given(naverOauthService.login(any()))
+                .willReturn(expectedResponse);
+
+        네이버_사용자_정보_요청(status().isOk())
+                .andReturn();
+    }
+
     private ResultActions 로그인(final String jsonRequest, final ResultMatcher result) throws Exception {
         return mockMvc.perform(post(API_PREFIX + "/auth/login")
                         .content(jsonRequest)
@@ -294,6 +308,16 @@ class AuthCreateApiTest extends ControllerTestHelper {
 
     private ResultActions 네이버_로그인_페이지(final ResultMatcher result) throws Exception {
         return mockMvc.perform(get(API_PREFIX + "/auth/oauth/naver")
+                        .param("code", "code")
+                        .param("state", "state")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contextPath(API_PREFIX))
+                .andExpect(result)
+                .andDo(print());
+    }
+
+    private ResultActions 네이버_사용자_정보_요청(final ResultMatcher result) throws Exception {
+        return mockMvc.perform(get(API_PREFIX + "/auth/oauth/naver/login/callback")
                         .param("code", "code")
                         .param("state", "state")
                         .contentType(MediaType.APPLICATION_JSON)

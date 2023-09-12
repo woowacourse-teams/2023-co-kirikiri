@@ -17,20 +17,23 @@ import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -47,6 +50,12 @@ class MemberServiceTest {
 
     @Mock
     private NumberGenerator numberGenerator;
+
+    @Mock
+    private TokenProvider tokenProvider;
+
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Mock
     private FileService fileService;
@@ -198,5 +207,33 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.findMemberInformationForPublic(1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다. memberId = 1");
+    }
+
+    @Test
+    void oauth_회원가입을_한다() {
+        //given
+        final OauthMemberJoinDto request = new OauthMemberJoinDto("oauthId", "kirikiri@email.com", "nickname",
+                GenderType.UNDEFINED);
+
+        given(memberRepository.save(any()))
+                .willReturn(new Member(1L, null, null, null, null, null, null));
+        given(environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY))
+                .willReturn("default-member-image");
+        given(environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY))
+                .willReturn("https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg");
+        given(environment.getProperty(IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY))
+                .willReturn("JPG");
+        given(numberGenerator.generate())
+                .willReturn(7);
+        given(tokenProvider.createRefreshToken(any(), any()))
+                .willReturn("refreshToken");
+        given(tokenProvider.createAccessToken(any(), any()))
+                .willReturn("accessToken");
+
+        //when
+        final AuthenticationResponse result = memberService.oauthJoin(request);
+
+        //then
+        assertThat(result).isEqualTo(new AuthenticationResponse("refreshToken", "accessToken"));
     }
 }
