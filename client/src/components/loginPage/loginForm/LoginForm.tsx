@@ -5,24 +5,27 @@ import useFormInput from '@hooks/_common/useFormInput';
 import * as S from './LoginForm.styles';
 
 const LoginForm = () => {
-  const { formState: loginData, handleInputChange } = useFormInput<UserLoginRequest>({
+  const {
+    formState: loginData,
+    handleInputChange,
+    handleSubmit,
+  } = useFormInput<UserLoginRequest>({
     identifier: '',
     password: '',
   });
 
   const { login } = useLogin();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = () => {
     login(loginData);
   };
 
   return (
-    <S.LoginForm onSubmit={handleSubmit}>
+    <S.LoginForm onSubmit={handleSubmit(onSubmit)}>
       <div>
         <S.FormItem>
           <SVGIcon name='PersonIcon' />
-          <input name='identifier' onChange={handleInputChange} placeholder='아이디' />
+          <input name='identifier' onChange={handleInputChange} placeholder='이메일' />
         </S.FormItem>
         <S.FormItem>
           <SVGIcon name='LockIcon' />

@@ -1,6 +1,7 @@
 export type MemberJoinRequest = {
   identifier: string;
   password: string;
+  email: string;
   nickname: string;
   genderType: string;
 };
