@@ -6,7 +6,7 @@ import * as S from './CreateGoalRoomForm.styles';
 import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
 import { NodeType } from '@myTypes/roadmap/internal';
 import InputField from '@components/_common/InputField/InputField';
-import TodoListSection from '../todoListSection/TodoListSection';
+// import TodoListSection from '../todoListSection/TodoListSection';
 import NodeSection from '../nodeSection/NodeSection';
 import { transformDateStringsIn } from '@utils/_common/transformDateStringsIn';
 import { generateNodesValidations, staticValidations } from './createGoalRoomValidations';
@@ -24,11 +24,6 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
         roadmapContentId: Number(roadmapContentId),
         name: '',
         limitedMemberCount: 10,
-        goalRoomTodo: {
-          content: '',
-          startDate: '',
-          endDate: '',
-        },
         goalRoomRoadmapNodeRequests: nodes.map(({ id }) => ({
           roadmapNodeId: id,
           checkCount: 1,
@@ -87,13 +82,13 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
           handleInputChange={handleInputChange}
         />
       </PageSection>
-      <PageSection isRequired title='투두리스트 생성'>
+      {/* <PageSection isRequired title='투두리스트 생성'>
         <TodoListSection
           formState={formState}
           error={error}
           handleInputChange={handleInputChange}
         />
-      </PageSection>
+      </PageSection> */}
       <S.SubmitButtonWrapper>
         <button>생성하기</button>
       </S.SubmitButtonWrapper>

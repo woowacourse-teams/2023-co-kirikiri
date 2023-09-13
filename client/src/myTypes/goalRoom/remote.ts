@@ -44,7 +44,6 @@ export type CreateGoalRoomRequest = {
   roadmapContentId: number;
   name: string;
   limitedMemberCount: number;
-  goalRoomTodo: Partial<GoalRoomTodo>;
   goalRoomRoadmapNodeRequests: GoalRoomRoadmapNodeRequestsType[];
 };
 
