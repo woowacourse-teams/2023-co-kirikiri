@@ -25,15 +25,17 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -213,6 +215,64 @@ class MemberServiceTest {
     void oauth_회원가입을_한다() {
         //given
         final OauthMemberJoinDto request = new OauthMemberJoinDto("oauthId", "kirikiri@email.com", "nickname",
+                GenderType.UNDEFINED);
+
+        given(memberRepository.save(any()))
+                .willReturn(new Member(1L, null, null, null, null, null, null));
+        given(environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY))
+                .willReturn("default-member-image");
+        given(environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY))
+                .willReturn("https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg");
+        given(environment.getProperty(IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY))
+                .willReturn("JPG");
+        given(numberGenerator.generate())
+                .willReturn(7);
+        given(tokenProvider.createRefreshToken(any(), any()))
+                .willReturn("refreshToken");
+        given(tokenProvider.createAccessToken(any(), any()))
+                .willReturn("accessToken");
+
+        //when
+        final AuthenticationResponse result = memberService.oauthJoin(request);
+
+        //then
+        assertThat(result).isEqualTo(new AuthenticationResponse("refreshToken", "accessToken"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"k", "kk", "kkk", "kkkk"})
+    void oauth_회원가입_시_이메일의_아이디와_UUID_길이의_합이_40이하일때_회원을_생성한다(final String value) {
+        //given
+        final OauthMemberJoinDto request = new OauthMemberJoinDto("oauthId", value + "@email.com", "nickname",
+                GenderType.UNDEFINED);
+
+        given(memberRepository.save(any()))
+                .willReturn(new Member(1L, null, null, null, null, null, null));
+        given(environment.getProperty(IMAGE_DEFAULT_ORIGINAL_FILE_NAME_PROPERTY))
+                .willReturn("default-member-image");
+        given(environment.getProperty(IMAGE_DEFAULT_SERVER_FILE_PATH_PROPERTY))
+                .willReturn("https://blog.kakaocdn.net/dn/GHYFr/btrsSwcSDQV/UQZxkayGyAXrPACyf0MaV1/img.jpg");
+        given(environment.getProperty(IMAGE_DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY))
+                .willReturn("JPG");
+        given(numberGenerator.generate())
+                .willReturn(7);
+        given(tokenProvider.createRefreshToken(any(), any()))
+                .willReturn("refreshToken");
+        given(tokenProvider.createAccessToken(any(), any()))
+                .willReturn("accessToken");
+
+        //when
+        final AuthenticationResponse result = memberService.oauthJoin(request);
+
+        //then
+        assertThat(result).isEqualTo(new AuthenticationResponse("refreshToken", "accessToken"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"kkkkk", "kkkkkk", "kkkkkkkkkkkkkkkkk"})
+    void oauth_회원가입_시_이메일의_아이디와_UUID_길이의_합이_40초과일때_회원을_생성한다(final String value) {
+        //given
+        final OauthMemberJoinDto request = new OauthMemberJoinDto("oauthId", value + "@email.com", "nickname",
                 GenderType.UNDEFINED);
 
         given(memberRepository.save(any()))

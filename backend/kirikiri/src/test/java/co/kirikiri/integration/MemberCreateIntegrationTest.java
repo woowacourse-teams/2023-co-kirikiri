@@ -31,7 +31,7 @@ class MemberCreateIntegrationTest extends InitIntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"abc", "abcdefghijklmnopqrstu"})
+    @ValueSource(strings = {"abc", "abcdefghijklmnopqrstuabcdefghijklmnopqrst"})
     void 아이디_길이가_틀린_경우_회원가입에_실패한다(final String 회원_아이디) {
         //given
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(회원_아이디, "password12!", "nickname", GenderType.MALE, DEFAULT_EMAIL);
@@ -56,9 +56,9 @@ class MemberCreateIntegrationTest extends InitIntegrationTest {
         final ExtractableResponse<Response> 회원가입_응답 = 요청을_받는_회원가입(회원가입_요청);
 
         //then
-        final ErrorResponse 에러_메세지 = 회원가입_응답.as(ErrorResponse.class);
+        final ErrorResponse[] 에러_메세지 = 회원가입_응답.as(ErrorResponse[].class);
         assertThat(회원가입_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(에러_메세지.message()).isEqualTo("제약 조건에 맞지 않는 아이디입니다.");
+        assertThat(에러_메세지[0].message()).isEqualTo("형식에 맞지 않는 아이디입니다.");
     }
 
     @Test

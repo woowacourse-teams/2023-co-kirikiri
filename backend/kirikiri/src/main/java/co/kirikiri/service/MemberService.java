@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -42,6 +43,7 @@ public class MemberService {
     private static final String DEFAULT_SERVER_FILE_PATH_PROPERTY = "image.default.serverFilePath";
     private static final String DEFAULT_IMAGE_CONTENT_TYPE_PROPERTY = "image.default.imageContentType";
     private static final String DEFAULT_EXTENSION = "image.default.extension";
+    private static final int MAX_IDENTIFIER_LENGTH = 40;
 
     private final MemberRepository memberRepository;
     private final Environment environment;
@@ -79,9 +81,14 @@ public class MemberService {
     }
 
     private Identifier makeIdentifier(final OauthMemberJoinDto oauthMemberJoinDto) {
-        return new Identifier(oauthMemberJoinDto.email()
-                .split("@")[0]
-                .toLowerCase());
+        final String originalIdentifier = oauthMemberJoinDto.email()
+                .split("@")[0];
+        final String uuid = UUID.randomUUID().toString();
+        final String identifierWithUUID = originalIdentifier + uuid;
+        if (identifierWithUUID.length() > MAX_IDENTIFIER_LENGTH) {
+            return new Identifier(identifierWithUUID.substring(0, MAX_IDENTIFIER_LENGTH));
+        }
+        return new Identifier(identifierWithUUID);
     }
 
     private AuthenticationResponse makeAuthenticationResponse(final Member member) {

@@ -142,7 +142,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
                 .andDo(print())
                 .andReturn();
 
-        final ErrorResponse expectedResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
+        final ErrorResponse expectedResponse = new ErrorResponse("형식에 맞지 않는 아이디입니다.");
         final List<ErrorResponse> responses = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
@@ -224,7 +224,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
     }
 
     @Test
-    void 회원가입_시_아이디_비밀번호_닉네임_전화번호_필드에_빈값이_들어올_때() throws Exception {
+    void 회원가입_시_아이디_비밀번호_닉네임_이메일_필드에_빈값이_들어올_때() throws Exception {
         //given
         final MemberJoinRequest memberJoinRequest = new MemberJoinRequest("", "",
                 "", GenderType.MALE, "");
@@ -240,7 +240,7 @@ class MemberCreateApiTest extends ControllerTestHelper {
                 .andDo(print())
                 .andReturn();
 
-        final ErrorResponse identifierResponse = new ErrorResponse("아이디는 빈 값일 수 없습니다.");
+        final ErrorResponse identifierResponse = new ErrorResponse("형식에 맞지 않는 아이디입니다.");
         final ErrorResponse passwordResponse = new ErrorResponse("비밀번호는 빈 값일 수 없습니다.");
         final ErrorResponse nicknameResponse = new ErrorResponse("닉네임은 빈 값일 수 없습니다.");
         final ErrorResponse emailResponse = new ErrorResponse("이메일은 빈 값일 수 없습니다.");
