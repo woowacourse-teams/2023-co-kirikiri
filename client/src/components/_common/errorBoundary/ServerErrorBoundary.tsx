@@ -1,4 +1,5 @@
 import { ErrorInfo } from 'react';
+import { ServerError } from '../error/ErrorComponents';
 import ErrorBoundary from './ErrorBoundary';
 
 class ServerErrorBoundary extends ErrorBoundary {
@@ -9,9 +10,9 @@ class ServerErrorBoundary extends ErrorBoundary {
 
   render() {
     const { didCatch } = this.state;
-    const { children, fallbackRender } = this.props;
+    const { children } = this.props;
     if (didCatch) {
-      return fallbackRender();
+      return <ServerError />;
     }
     return children;
   }

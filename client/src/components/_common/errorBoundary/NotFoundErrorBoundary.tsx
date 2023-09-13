@@ -1,4 +1,5 @@
 import { ErrorInfo } from 'react';
+import { NotFound } from '../error/ErrorComponents';
 import ErrorBoundary from './ErrorBoundary';
 
 class NotFoundErrorBoundary extends ErrorBoundary {
@@ -8,9 +9,9 @@ class NotFoundErrorBoundary extends ErrorBoundary {
 
   render() {
     const { didCatch } = this.state;
-    const { children, fallbackRender } = this.props;
+    const { children } = this.props;
     if (didCatch) {
-      return fallbackRender();
+      return <NotFound />;
     }
     return children;
   }

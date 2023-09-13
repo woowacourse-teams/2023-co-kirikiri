@@ -1,16 +1,15 @@
 import { ErrorInfo } from 'react';
+import { Runtime } from '../error/ErrorComponents';
 import ErrorBoundary from './ErrorBoundary';
 
 class RuntimeErrorBoundary extends ErrorBoundary {
-  componentDidCatch(error: any, _errorInfo: ErrorInfo): void {
-    if (error.response.status !== 404) throw error;
-  }
+  componentDidCatch(_error: any, _errorInfo: ErrorInfo): void {}
 
   render() {
     const { didCatch } = this.state;
-    const { children, fallbackRender } = this.props;
+    const { children } = this.props;
     if (didCatch) {
-      return fallbackRender();
+      return <Runtime />;
     }
     return children;
   }
