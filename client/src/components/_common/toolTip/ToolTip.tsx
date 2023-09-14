@@ -20,7 +20,7 @@ const ToolTip = ({ children }: PropsWithChildren) => {
         onMouseLeave={setHoverOff}
         onClick={toggleActive}
       >
-        !
+        ?
       </S.ToolTipButton>
       <S.ToolTipContent isShow={isShow}>{children}</S.ToolTipContent>
     </S.ToolTip>
