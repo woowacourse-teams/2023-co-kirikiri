@@ -116,5 +116,7 @@ module.exports = {
     'react/no-unescaped-entities': 'off',
     'no-else-return': 'off',
     'react/no-unstable-nested-components': 'off',
+    'react/no-unused-class-component-methods': 'off',
+    'react/destructuring-assignment': 'off',
   },
 };

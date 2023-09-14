@@ -17,13 +17,11 @@ class ErrorBoundary extends Component<any, any> {
     return { didCatch: true, error };
   }
 
-  // eslint-disable-next-line react/no-unused-class-component-methods
-  resetError = () => {
-    // eslint-disable-next-line react/destructuring-assignment
+  resetError() {
     if (this.state.didCatch) {
       this.setState(initialState);
     }
-  };
+  }
 }
 
 export default ErrorBoundary;
