@@ -9,8 +9,6 @@ describe('사용자 정보 검증', () => {
       profileImageUrl: 'http://example.com/profile.jpg',
       gender: 'MALE',
       identifier: 'test',
-      phoneNumber: '010-1234-5678',
-      birthday: '1990-01-01',
     };
 
     expect(isValidUserInfo(userInfo)).toBe(true);
@@ -23,8 +21,6 @@ describe('사용자 정보 검증', () => {
       profileImageUrl: 'http://example.com/profile.jpg',
       gender: null,
       identifier: '',
-      phoneNumber: '',
-      birthday: '',
     };
 
     expect(isValidUserInfo(userInfo)).toBe(false);

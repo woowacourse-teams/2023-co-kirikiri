@@ -9,22 +9,17 @@ export const PASSWORD = {
     '-비밀번호는 8~15자리여야 하며, 영어 소문자, 숫자, [!,@,#,$,%,^,&,*,(,),~] 특수문자만 포함해야 합니다.',
 };
 
+export const EMAIL = {
+  rule: /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+  message: '-유효하지 않은 이메일 형식입니다.',
+};
+
 export const NICKNAME = {
   rule: /^.{2,8}$/,
   message: '-닉네임은 2~8자리여야 합니다.',
 };
 
-export const PHONE_NUMBER = {
-  rule: /^010-\d{4}-\d{4}$/,
-  message: "-전화번호는 '010-xxxx-xxxx' 형식이어야 합니다.",
-};
-
 export const GENDER = {
-  rule: /^(MALE|FEMALE)$/,
+  rule: /^(male|female)$/,
   message: "-성별은 '남자' 또는 '여자'만 선택 가능합니다.",
-};
-
-export const BIRTHDAY = {
-  rule: /^(?:19|20)?\d{2}(?:(?:0[1-9]|1[0-2])(?:0[1-9]|1\d|2[0-8])|(?:0[13-9]|1[0-2])(?:29|30)|(?:0[13578]|1[02])31)$/,
-  message: "-생년월일은 'yyMMdd' 형식의 올바른 날짜여야 합니다.",
 };

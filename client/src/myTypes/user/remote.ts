@@ -1,15 +1,19 @@
 export type MemberJoinRequest = {
   identifier: string;
   password: string;
+  email: string;
   nickname: string;
-  phoneNumber: string;
   genderType: string;
-  birthday: string;
 };
 
 export type UserLoginRequest = {
   identifier: string;
   password: string;
+};
+
+export type OAuthResponse = {
+  accessToken: string;
+  refreshToken: string;
 };
 
 export type UserLoginResponse = {
@@ -25,6 +29,4 @@ export type UserInfoResponse = {
   profileImageUrl: string;
   gender: UserGender | null;
   identifier: string;
-  phoneNumber: string;
-  birthday: string;
 };

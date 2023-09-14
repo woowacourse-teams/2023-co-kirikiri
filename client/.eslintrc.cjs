@@ -109,8 +109,6 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'import/no-unresolved': 'off',
     'import/order': 'off',
-    'react/jsx-no-constructed-context-values': 'off',
-    'react/jsx-props-no-spreading': 'off',
     'no-nested-ternary': 'off',
     'react/jsx-no-useless-fragment': 'off',
     'react/no-unescaped-entities': 'off',
@@ -118,5 +116,6 @@ module.exports = {
     'react/no-unstable-nested-components': 'off',
     'react/no-unused-class-component-methods': 'off',
     'react/destructuring-assignment': 'off',
+    'consistent-return': 'off',
   },
 };
