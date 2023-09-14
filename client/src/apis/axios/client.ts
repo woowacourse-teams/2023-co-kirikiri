@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
-import { getCookie } from '@utils/_common/cookies';
+import { getCookie, setCookie } from '@utils/_common/cookies';
 
-export type ErrorResponse = {
+type ErrorData = {
   message: string;
 };
 
@@ -31,38 +31,46 @@ client.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (!originalRequest.retryCount) {
+      originalRequest.retryCount = 0;
+    }
+
     if (error.response) {
-      if (error.response.status === 401 && error.response.data.message === 'Token') {
-        if (!originalRequest.shouldRetry) {
-          originalRequest.shouldRetry = true;
-          const refreshToken = getCookie('refresh_token');
-          try {
-            // refresh token으로 새로운 access token을 발급받는 API를 호출합니다.
-            const { data } = await client.post('/auth/reissue', { refreshToken });
-            // 새로 받은 access token으로 기본 header를 설정합니다.
-            client.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
-            // 원래의 요청에도 새로운 access token을 설정합니다.
-            originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+      if (
+        error.response.status === 401 &&
+        error.response.data.message === 'Expired Token'
+      ) {
+        if (originalRequest.retryCount >= 3) {
+          window.location.href = '/login';
+          return;
+        }
+        originalRequest.retryCount++;
 
-            // 원래의 요청을 재시도합니다.
+        const refreshToken = getCookie('refresh_token');
+
+        try {
+          const { data } = await client.post('/auth/reissue', { refreshToken });
+
+          setCookie('access_token', data.accessToken);
+          setCookie('refresh_token', data.refreshToken);
+
+          return client(originalRequest);
+        } catch (reissueError) {
+          const axiosError = reissueError as AxiosError<ErrorData>;
+
+          if (
+            axiosError.response?.status === 401 &&
+            axiosError.response?.data?.message === '토큰이 유효하지 않습니다.'
+          ) {
             return client(originalRequest);
-          } catch (reissueError) {
-            // refresh token으로도 실패하면 로그인 페이지로 리다이렉트합니다.
-            const axiosError = reissueError as AxiosError;
-
-            if (
-              axiosError.response?.status === 401 &&
-              (axiosError.response.data as ErrorResponse).message === 'Expired Token'
-            ) {
-              window.location.href = '/login';
-            }
+          } else {
+            throw reissueError;
           }
         }
       } else {
-        throw new Error(error.response.data.message);
+        throw error;
       }
     }
-
     throw error;
   }
 );
