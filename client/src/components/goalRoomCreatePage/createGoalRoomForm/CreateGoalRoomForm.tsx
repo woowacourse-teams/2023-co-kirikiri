@@ -82,13 +82,6 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
           handleInputChange={handleInputChange}
         />
       </PageSection>
-      {/* <PageSection isRequired title='투두리스트 생성'>
-        <TodoListSection
-          formState={formState}
-          error={error}
-          handleInputChange={handleInputChange}
-        />
-      </PageSection> */}
       <S.SubmitButtonWrapper>
         <button>생성하기</button>
       </S.SubmitButtonWrapper>
