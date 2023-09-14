@@ -1,10 +1,9 @@
 export type MemberJoinRequest = {
   identifier: string;
   password: string;
+  email: string;
   nickname: string;
-  phoneNumber: string;
   genderType: string;
-  birthday: string;
 };
 
 export type UserLoginRequest = {
@@ -30,6 +29,4 @@ export type UserInfoResponse = {
   profileImageUrl: string;
   gender: UserGender | null;
   identifier: string;
-  phoneNumber: string;
-  birthday: string;
 };

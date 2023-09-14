@@ -42,5 +42,3 @@ export const SearchCategoryOption = styled.li<{ isSelected?: boolean }>`
   background-color: ${({ theme, isSelected }) =>
     isSelected !== undefined && isSelected ? theme.colors.main_dark : theme.colors.white};
 `;
-
-
