@@ -5,7 +5,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.NaverMemberProfileDto;
 import co.kirikiri.service.dto.auth.NaverMemberProfileResponseDto;
 import co.kirikiri.service.dto.auth.NaverOauthTokenDto;
-import co.kirikiri.service.dto.auth.OauthRedirectDto;
+import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.GenderType;
@@ -36,7 +36,7 @@ public class NaverOauthService {
     private final OauthNetworkService oauthNetworkService;
     private final Environment environment;
 
-    public OauthRedirectDto makeOauthUrl() {
+    public OauthRedirectResponse makeOauthUrl() {
         final String state = generateState();
         final String redirectUrl = getProperty(OAUTH_NAVER_REDIRECT_URL_PROPERTY);
         final String clientId = getProperty(OAUTH_NAVER_CLIENT_ID_PROPERTY);

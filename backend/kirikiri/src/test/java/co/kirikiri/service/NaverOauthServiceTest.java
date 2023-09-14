@@ -10,7 +10,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.NaverMemberProfileDto;
 import co.kirikiri.service.dto.auth.NaverMemberProfileResponseDto;
 import co.kirikiri.service.dto.auth.NaverOauthTokenDto;
-import co.kirikiri.service.dto.auth.OauthRedirectDto;
+import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +59,7 @@ class NaverOauthServiceTest {
                 .thenReturn("http://localhost:8080/api/auth/oauth/login/callback");
 
         //when
-        final OauthRedirectDto result = naverOauthService.makeOauthUrl();
+        final OauthRedirectResponse result = naverOauthService.makeOauthUrl();
 
         //then
         assertThat(result.url()).contains("https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=clientId&redirect_uri=http://localhost:8080/api/auth/oauth/login/callback&state=");

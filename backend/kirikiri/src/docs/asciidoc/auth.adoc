@@ -64,7 +64,7 @@ operation::auth-create-api-test/토큰_재발행_시_토큰이_유효하지_않�
 
 === *3-1* 성공 - 네이버 로그인 페이지 리다이렉트를 성공한다
 
-operation::auth-create-api-test/네이버_로그인_페이지를_정상적으로_반환한다[snippets='http-request,http-response']
+operation::auth-create-api-test/네이버_로그인_페이지를_정상적으로_반환한다[snippets='http-request,http-response,response-fields']
 
 === *3-2* 성공 - 네이버 사용자 정보 요청을 성공한다
 

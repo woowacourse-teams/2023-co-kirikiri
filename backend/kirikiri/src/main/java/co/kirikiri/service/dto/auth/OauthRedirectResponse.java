@@ -1,6 +1,6 @@
 package co.kirikiri.service.dto.auth;
 
-public record OauthRedirectDto(
+public record OauthRedirectResponse(
         String url,
         String state
 ) {

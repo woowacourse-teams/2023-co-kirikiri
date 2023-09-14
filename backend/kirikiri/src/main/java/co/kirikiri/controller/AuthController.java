@@ -3,15 +3,12 @@ package co.kirikiri.controller;
 import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.NaverOauthService;
-import co.kirikiri.service.dto.auth.OauthRedirectDto;
+import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import jakarta.validation.Valid;
-import java.net.URI;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -41,11 +39,9 @@ public class AuthController {
     }
 
     @GetMapping("/oauth/naver")
-    public ResponseEntity<Void> loginOauth() {
-        final OauthRedirectDto oauthRedirectDto = naverOauthService.makeOauthUrl();
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(oauthRedirectDto.url()))
-                .build();
+    public ResponseEntity<OauthRedirectResponse> loginOauth() {
+        final OauthRedirectResponse oauthRedirectResponse = naverOauthService.makeOauthUrl();
+        return ResponseEntity.ok(oauthRedirectResponse);
     }
 
     @GetMapping("/oauth/naver/login/callback")
