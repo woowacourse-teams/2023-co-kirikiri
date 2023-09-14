@@ -21,8 +21,8 @@ import UserInfoProvider, {
 } from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
-import ErrorBoundary from '@components/_common/errorBoundary/ErrorBoundary';
 import useToast from '@hooks/_common/useToast';
+import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 
 const PrivateRouter = (props: PropsWithChildren) => {
   const { children } = props;
@@ -49,7 +49,7 @@ const App = () => {
           <BrowserRouter>
             <ResponsiveContainer>
               <PageLayout>
-                <ErrorBoundary>
+                <AsyncBoundary>
                   <Routes>
                     <Route path='/' element={<MainPage />} />
                     <Route path='/login' element={<LoginPage />} />
@@ -98,7 +98,7 @@ const App = () => {
                       }
                     />
                   </Routes>
-                </ErrorBoundary>
+                </AsyncBoundary>
               </PageLayout>
             </ResponsiveContainer>
           </BrowserRouter>
