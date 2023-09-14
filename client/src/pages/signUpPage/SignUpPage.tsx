@@ -1,4 +1,4 @@
-import SignUpForm from '@components/signUpPage/SignUpForm';
+import SignUpForm from '@/components/signUpPage/signUpForm/SignUpForm';
 
 import * as S from './SignUpPage.styles';
 

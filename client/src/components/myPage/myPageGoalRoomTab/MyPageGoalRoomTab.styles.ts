@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { StyledLink } from '@components/signUpPage/SignUpForm.styles';
+import { StyledLink } from '@components/signUpPage/signUpForm/SignUpForm.styles';
 
 export const ContentHeader = styled.div`
   ${({ theme }) => theme.fonts.h2};
