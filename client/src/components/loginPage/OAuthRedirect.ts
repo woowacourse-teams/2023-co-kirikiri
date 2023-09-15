@@ -1,15 +1,10 @@
-import { useNaverOAuth } from '@/hooks/queries/user';
+import { useNaverOAuth } from '@hooks/queries/user';
 
 const OAuthRedirect = () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const { code, state } = Object.entries(urlParams).reduce(
-    (acc, [key, value]) => {
-      if (key === 'error') throw Error();
+  const { code, state, error } = Object.fromEntries(urlParams.entries());
 
-      return { ...acc, [key]: value };
-    },
-    { code: '', state: '' }
-  );
+  if (error) throw Error();
 
   useNaverOAuth(code, state);
 

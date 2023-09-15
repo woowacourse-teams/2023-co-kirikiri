@@ -10,8 +10,10 @@ export const signUp = (body: MemberJoinRequest) => {
   return client.post('/members/join', body);
 };
 
-export const naverLogin = () => {
-  client.get('/auth/oauth/naver');
+export const getNaverLoginRedirectUrl = async () => {
+  const { data } = await client.get('/auth/oauth/naver');
+
+  return data;
 };
 
 export const naverOAuthToken = async (code: string, state: string) => {
