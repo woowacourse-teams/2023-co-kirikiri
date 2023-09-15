@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
-export { InfoText, StyledLink } from '@components/signUpPage/SignUpForm.styles';
+export {
+  InfoText,
+  StyledLink,
+} from '@components/signUpPage/signUpForm/SignUpForm.styles';
 
 export const OathButtonContainer = styled.div`
   display: flex;

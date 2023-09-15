@@ -1,4 +1,3 @@
-import { FormEvent } from 'react';
 import { MemberJoinRequest } from '@myTypes/user/remote';
 import { useSignUp } from '@hooks/queries/user';
 import SVGIcon from '@components/icons/SVGIcon';
@@ -6,22 +5,28 @@ import logo from '@assets/images/logo.png';
 import { SingleCardWrapper } from '@components/_common/SingleCard/SingleCard.styles';
 import useFormInput from '@hooks/_common/useFormInput';
 import * as S from './SignUpForm.styles';
+import { staticValidations } from './signUpValidations';
 
 const SignUpForm = () => {
-  const { formState: signUpFormData, handleInputChange } =
-    useFormInput<MemberJoinRequest>({
+  const {
+    formState: signUpFormData,
+    handleInputChange,
+    handleSubmit,
+    error,
+  } = useFormInput<MemberJoinRequest>(
+    {
       identifier: '',
       password: '',
+      email: '',
       nickname: '',
-      phoneNumber: '',
       genderType: '',
-      birthday: '',
-    });
+    },
+    staticValidations
+  );
 
   const { signUp } = useSignUp();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = () => {
     signUp({
       ...signUpFormData,
       genderType: signUpFormData.genderType.toUpperCase(),
@@ -33,7 +38,7 @@ const SignUpForm = () => {
       <h1>
         <img src={logo} alt='코끼리 로고' />
       </h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <S.FormList>
           <S.FormItem>
             <SVGIcon name='PersonIcon' />
@@ -49,20 +54,21 @@ const SignUpForm = () => {
             />
           </S.FormItem>
           <S.FormItem>
+            <SVGIcon name='EmailIcon' />
+            <input
+              name='email'
+              onChange={handleInputChange}
+              placeholder='이메일'
+              type='email'
+            />
+          </S.FormItem>
+          <S.FormItem>
             <SVGIcon name='StandingPersonIcon' />
             <input name='nickname' onChange={handleInputChange} placeholder='닉네임' />
           </S.FormItem>
         </S.FormList>
 
         <S.FormList>
-          <S.FormItem>
-            <SVGIcon name='PhoneIcon' />
-            <input
-              name='phoneNumber'
-              onChange={handleInputChange}
-              placeholder='휴대전화번호 ex) 010-1234-5678'
-            />
-          </S.FormItem>
           <S.FormItem>
             <SVGIcon name='GenderIcon' />
             <select name='genderType' onChange={handleInputChange}>
@@ -73,16 +79,12 @@ const SignUpForm = () => {
               <option value='female'>여성</option>
             </select>
           </S.FormItem>
-          <S.FormItem>
-            <SVGIcon name='CalendarIcon' />
-            <input
-              name='birthday'
-              onChange={handleInputChange}
-              placeholder='생년월일 8자리 ex) 19950101'
-              type='number'
-            />
-          </S.FormItem>
         </S.FormList>
+        <S.ErrorBox>
+          {Object.values(error).map((message: string) => (
+            <p>{message}</p>
+          ))}
+        </S.ErrorBox>
         <S.InfoText>
           가입을 진행하시는 것은 우리의 <S.BoldText>이용 약관</S.BoldText> 및{' '}
           <S.BoldText>개인정보 보호 정책</S.BoldText>에 동의하신 것으로 간주됩니다.

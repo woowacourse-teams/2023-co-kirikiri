@@ -1,4 +1,4 @@
-import { PropsWithChildren, Suspense, useContext, useEffect } from 'react';
+import { PropsWithChildren, Suspense, useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
@@ -17,17 +17,17 @@ import GoalRoomListPage from './pages/goalRoomListPage/GoalRoomListPage';
 import GoalRoomCreatePage from './pages/goalRoomCreatePage/GoalRoomCreatePage';
 import MyPage from '@pages/myPage/MyPage';
 import UserInfoProvider, {
-  userInfoContext,
+  useUserInfoContext,
 } from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
-import ErrorBoundary from '@components/_common/errorBoundary/ErrorBoundary';
 import useToast from '@hooks/_common/useToast';
 import OAuthRedirect from './components/loginPage/OAuthRedirect';
+import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 
 const PrivateRouter = (props: PropsWithChildren) => {
   const { children } = props;
-  const { userInfo } = useContext(userInfoContext);
+  const { userInfo } = useUserInfoContext();
   const { triggerToast } = useToast();
   const navigate = useNavigate();
 
@@ -50,7 +50,7 @@ const App = () => {
           <BrowserRouter>
             <ResponsiveContainer>
               <PageLayout>
-                <ErrorBoundary>
+                <AsyncBoundary>
                   <Routes>
                     <Route path='/' element={<MainPage />} />
                     <Route path='/login' element={<LoginPage />} />
@@ -100,7 +100,7 @@ const App = () => {
                     />
                     <Route path='/oauth/redirect' element={<OAuthRedirect />} />
                   </Routes>
-                </ErrorBoundary>
+                </AsyncBoundary>
               </PageLayout>
             </ResponsiveContainer>
           </BrowserRouter>
