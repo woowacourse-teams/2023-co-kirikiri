@@ -8,7 +8,6 @@ import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -40,23 +38,21 @@ public class AuthController {
     }
 
     @GetMapping("/oauth/naver")
-    public ResponseEntity<Void> loginOauth() {
+    public ResponseEntity<OauthRedirectResponse> loginOauth() {
         final OauthRedirectResponse oauthRedirectResponse = naverOauthService.makeOauthUrl();
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(oauthRedirectResponse.url()))
-                .build();
+        return ResponseEntity.ok(oauthRedirectResponse);
     }
 
     @GetMapping("/login/oauth")
     public ResponseEntity<AuthenticationResponse> loginOauth(
-            @RequestParam(value = "code", required = false) final String code,
+            @RequestParam(value = "code") final String code,
             @RequestParam("state") final String state) {
-        final Map<String, String> headers = Map.of(
+        final Map<String, String> queryParams = Map.of(
                 "code", code,
                 "state", state,
                 "grant_type", "authorization_code"
         );
-        final AuthenticationResponse response = naverOauthService.login(headers);
+        final AuthenticationResponse response = naverOauthService.login(queryParams);
         return ResponseEntity.ok(response);
     }
 }
