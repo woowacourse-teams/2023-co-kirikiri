@@ -271,15 +271,7 @@ class AuthCreateApiTest extends ControllerTestHelper {
         final OauthRedirectResponse expectedResponse = new OauthRedirectResponse("Naver_Login_Redirect_Page_URL", "state");
         given(naverOauthService.makeOauthUrl()).willReturn(expectedResponse);
 
-        네이버_로그인_페이지(status().isOk())
-                .andDo(documentationResultHandler.document(
-                        responseFields(makeFieldDescriptor(
-                                List.of(
-                                        new FieldDescription("url", "네이버 로그인 페이지 url"),
-                                        new FieldDescription("state", "csrf 방지를 위한 state")
-                                )
-                        )))
-                );
+        네이버_로그인_페이지(status().isFound());
     }
 
     @Test
@@ -321,7 +313,7 @@ class AuthCreateApiTest extends ControllerTestHelper {
     }
 
     private ResultActions 네이버_사용자_정보_요청(final ResultMatcher result) throws Exception {
-        return mockMvc.perform(get(API_PREFIX + "/auth/oauth/naver/login/callback")
+        return mockMvc.perform(get(API_PREFIX + "/auth/login/oauth")
                         .param("code", "code")
                         .param("state", "state")
                         .contentType(MediaType.APPLICATION_JSON)

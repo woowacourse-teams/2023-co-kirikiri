@@ -1,6 +1,5 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.AuthService;
 import co.kirikiri.service.NaverOauthService;
 import co.kirikiri.service.dto.auth.OauthRedirectResponse;
@@ -9,6 +8,7 @@ import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -39,20 +40,17 @@ public class AuthController {
     }
 
     @GetMapping("/oauth/naver")
-    public ResponseEntity<OauthRedirectResponse> loginOauth() {
+    public ResponseEntity<Void> loginOauth() {
         final OauthRedirectResponse oauthRedirectResponse = naverOauthService.makeOauthUrl();
-        return ResponseEntity.ok(oauthRedirectResponse);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(oauthRedirectResponse.url()))
+                .build();
     }
 
-    @GetMapping("/oauth/naver/login/callback")
-    public ResponseEntity<AuthenticationResponse> callback(
+    @GetMapping("/login/oauth")
+    public ResponseEntity<AuthenticationResponse> loginOauth(
             @RequestParam(value = "code", required = false) final String code,
-            @RequestParam("state") final String state,
-            @RequestParam(value = "error", required = false) final String error,
-            @RequestParam(value = "error_description", required = false) final String errorDescription) {
-        if (error != null) {
-            throw new ServerException(errorDescription);
-        }
+            @RequestParam("state") final String state) {
         final Map<String, String> headers = Map.of(
                 "code", code,
                 "state", state,
