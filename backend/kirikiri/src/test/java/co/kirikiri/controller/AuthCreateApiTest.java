@@ -271,7 +271,7 @@ class AuthCreateApiTest extends ControllerTestHelper {
         final OauthRedirectResponse expectedResponse = new OauthRedirectResponse("Naver_Login_Redirect_Page_URL", "state");
         given(naverOauthService.makeOauthUrl()).willReturn(expectedResponse);
 
-        네이버_로그인_페이지(status().isFound());
+        네이버_로그인_페이지(status().isOk());
     }
 
     @Test

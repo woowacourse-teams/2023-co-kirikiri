@@ -1,7 +1,6 @@
 package co.kirikiri.infra;
 
 import co.kirikiri.service.OauthNetworkService;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -10,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +36,8 @@ public class NaverOauthNetworkService implements OauthNetworkService {
                     .append(entry.getValue())
                     .append(QUERY_PARAMETER_DELIMITER);
         }
-        return restTemplate.getForEntity(stringBuilder.toString(), clazz);
+        final String url = stringBuilder.substring(0, stringBuilder.lastIndexOf(QUERY_PARAMETER_DELIMITER));
+        return restTemplate.getForEntity(url, clazz);
     }
 
     @Override
