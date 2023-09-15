@@ -11,7 +11,5 @@ public interface GoalRoomRepository extends JpaRepository<GoalRoom, Long>, GoalR
     @Override
     Optional<GoalRoom> findById(final Long goalRoomId);
 
-    List<GoalRoom> findAllByStartDate(final LocalDate startDate);
-
     List<GoalRoom> findAllByEndDate(final LocalDate endDate);
 }

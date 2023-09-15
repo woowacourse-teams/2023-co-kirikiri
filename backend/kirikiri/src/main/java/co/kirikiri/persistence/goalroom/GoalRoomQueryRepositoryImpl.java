@@ -17,6 +17,7 @@ import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,6 +119,14 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .fetch();
     }
 
+    @Override
+    public List<GoalRoom> findAllRecruitingGoalRoomsByStartDateEarlierThan(final LocalDate date) {
+        return selectFrom(goalRoom)
+                .where(statusCond(GoalRoomStatus.RECRUITING))
+                .where(equalOrEarlierStartDateThan(date))
+                .fetch();
+    }
+
     private BooleanExpression goalRoomIdCond(final Long goalRoomId) {
         return goalRoom.id.eq(goalRoomId);
     }
@@ -152,5 +161,9 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression roadmapCond(final Roadmap roadmap) {
         return goalRoom.roadmapContent.roadmap.eq(roadmap);
+    }
+
+    private BooleanExpression equalOrEarlierStartDateThan(final LocalDate date) {
+        return goalRoom.startDate.loe(date);
     }
 }

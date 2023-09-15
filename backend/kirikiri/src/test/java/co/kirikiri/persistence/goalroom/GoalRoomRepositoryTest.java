@@ -25,6 +25,7 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
+import co.kirikiri.integration.helper.TestTransactionService;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -193,7 +194,7 @@ class GoalRoomRepositoryTest {
         goalRoomRepository.save(goalRoom3);
 
         // when
-        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllByStartDate(LocalDate.now());
+        final List<GoalRoom> findGoalRooms = goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now());
 
         // then
         assertThat(findGoalRooms)
@@ -501,6 +502,35 @@ class GoalRoomRepositoryTest {
 
         // then
         assertThat(goalRooms).isEqualTo(List.of(goalRoom1, goalRoom2));
+    }
+
+    @Test
+    void 시작날짜가_오늘보다_작거나_같은_모집중인_골룸들을_조회한다() {
+        //given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final RoadmapNode roadmapNode = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode));
+        로드맵을_생성한다(creator, category, roadmapContent);
+
+        final GoalRoomRoadmapNode todayGoalRoomRoadmapNode = 골룸_로드맵_노드를_생성한다(TODAY, TEN_DAY_LATER,
+                roadmapNode);
+        final GoalRoomRoadmapNode afterTodayGoalRoomRoadmapNode = 골룸_로드맵_노드를_생성한다(TEN_DAY_LATER, TWENTY_DAY_LAYER,
+                roadmapNode);
+
+        final GoalRoom todayStartGoalRoom1 = 골룸을_생성한다("goalroom1", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(todayGoalRoomRoadmapNode)), creator);
+        final GoalRoom futureStartGoalRoom = 골룸을_생성한다("goalroom2", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(afterTodayGoalRoomRoadmapNode)), creator);
+        final GoalRoom todayStartGoalRoom2 = 골룸을_생성한다("goalroom3", 20, roadmapContent,
+                new GoalRoomRoadmapNodes(List.of(todayGoalRoomRoadmapNode)), creator);
+        goalRoomRepository.saveAll(List.of(todayStartGoalRoom1, futureStartGoalRoom, todayStartGoalRoom2));
+
+        // when
+        final List<GoalRoom> goalRooms = goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now());
+
+        // then
+        assertThat(goalRooms).isEqualTo(List.of(todayStartGoalRoom1, todayStartGoalRoom2));
     }
 
     private Member 크리에이터를_저장한다() {

@@ -52,9 +52,9 @@ operation::member-create-api-test/회원가입_시_비밀번호에_빈값이_들
 
 operation::member-create-api-test/회원가입_시_닉네임에_빈값이_들어올_때[snippets='http-request,http-response']
 
-=== *1-10* 실패 - 회원가입 시 아이디 비밀번호 닉네임 전화번호 필드에 빈값이 들어올 때
+=== *1-10* 실패 - 회원가입_시_아이디_비밀번호_닉네임_이메일_필드에_빈값이_들어올_때
 
-operation::member-create-api-test/회원가입_시_아이디_비밀번호_닉네임_전화번호_필드에_빈값이_들어올_때[snippets='http-request,http-response']
+operation::member-create-api-test/회원가입_시_아이디_비밀번호_닉네임_이메일_필드에_빈값이_들어올_때[snippets='http-request,http-response']
 
 [[사용자정보조회-API]]
 == *2. 사용자 정보 조회*

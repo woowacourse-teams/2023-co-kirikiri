@@ -49,7 +49,7 @@ import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class GoalRoomSchedulerTest {
+class GoalRoomSchedulerTest {
 
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
@@ -90,7 +90,7 @@ public class GoalRoomSchedulerTest {
         goalRoom1.join(follower2);
         goalRoom2.join(follower3);
 
-        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
+        when(goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now()))
                 .thenReturn(List.of(goalRoom1));
 
         // when
@@ -122,7 +122,7 @@ public class GoalRoomSchedulerTest {
         goalRoom1.join(follower2);
         goalRoom2.join(follower3);
 
-        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
+        when(goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now()))
                 .thenReturn(Collections.emptyList());
 
         // when
