@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   MemberJoinRequest,
   UserInfoResponse,
   UserLoginRequest,
 } from '@myTypes/user/remote';
-import { getUserInfo, login, naverLogin, signUp } from '@apis/user';
+import { getUserInfo, login, naverLogin, naverOAuthToken, signUp } from '@apis/user';
 import useToast from '@hooks/_common/useToast';
 import {
   defaultUserInfo,
@@ -37,22 +37,24 @@ export const useSignUp = () => {
 };
 
 export const useNaverLogin = async () => {
+  useQuery([QUERY_KEYS.user.naver_oauth], () => naverLogin());
+};
+
+export const useNaverOAuth = async (code: string, state: string) => {
   const navigate = useNavigate();
   const { triggerToast } = useToast();
   const { setUserInfo } = useUserInfoContext();
 
-  useSuspendedQuery([QUERY_KEYS.user.naver_oauth], () => naverLogin(), {
-    onSuccess({ accessToken, refreshToken }) {
-      setCookie('access_token', accessToken);
-      setCookie('refresh_token', refreshToken);
-      triggerToast({ message: '로그인 성공!' });
+  useSuspendedQuery(['naver_oauth_token'], async () => {
+    const { accessToken, refreshToken } = await naverOAuthToken(code, state);
 
-      getUserInfo().then((response: AxiosResponse<UserInfoResponse>) => {
-        setUserInfo(response.data);
-      });
-
-      navigate('/roadmap-list');
-    },
+    setCookie('access_token', accessToken);
+    setCookie('refresh_token', refreshToken);
+    triggerToast({ message: '로그인 성공!' });
+    getUserInfo().then((response: AxiosResponse<UserInfoResponse>) => {
+      setUserInfo(response.data);
+    });
+    navigate('/roadmap-list');
   });
 };
 

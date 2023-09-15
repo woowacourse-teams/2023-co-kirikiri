@@ -23,6 +23,7 @@ import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/Road
 import MainPage from '@pages/mainPage/MainPage';
 import ErrorBoundary from '@components/_common/errorBoundary/ErrorBoundary';
 import useToast from '@hooks/_common/useToast';
+import OAuthRedirect from './components/loginPage/OAuthRedirect';
 
 const PrivateRouter = (props: PropsWithChildren) => {
   const { children } = props;
@@ -97,6 +98,7 @@ const App = () => {
                         </PrivateRouter>
                       }
                     />
+                    <Route path='/oauth/redirect' element={<OAuthRedirect />} />
                   </Routes>
                 </ErrorBoundary>
               </PageLayout>

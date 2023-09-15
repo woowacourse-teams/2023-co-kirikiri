@@ -1,7 +1,6 @@
 import client from '@apis/axios/client';
 import {
   MemberJoinRequest,
-  OAuthResponse,
   UserLoginRequest,
   UserLoginResponse,
   UserInfoResponse,
@@ -11,11 +10,17 @@ export const signUp = (body: MemberJoinRequest) => {
   return client.post('/members/join', body);
 };
 
-export const naverLogin = async () => {
-  const {
-    data: { url },
-  } = await client.get('/auth/oauth/naver');
-  const { data } = await client.get<OAuthResponse>(url);
+export const naverLogin = () => {
+  client.get('/auth/oauth/naver');
+};
+
+export const naverOAuthToken = async (code: string, state: string) => {
+  const { data } = await client.get('/auth/login/oauth', {
+    params: {
+      code,
+      state,
+    },
+  });
 
   return data;
 };
