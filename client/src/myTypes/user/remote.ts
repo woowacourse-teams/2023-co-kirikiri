@@ -16,6 +16,11 @@ export type UserLoginResponse = {
   refreshToken: string;
 };
 
+export type NaverLoginRedirectResponse = {
+  url: string;
+  state: string;
+};
+
 export type OAuthResponse = UserLoginResponse;
 
 export type UserGender = 'MALE' | 'FEMALE';

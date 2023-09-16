@@ -4,6 +4,7 @@ import {
   UserLoginRequest,
   UserLoginResponse,
   UserInfoResponse,
+  NaverLoginRedirectResponse,
 } from '@myTypes/user/remote';
 
 export const signUp = (body: MemberJoinRequest) => {
@@ -11,7 +12,7 @@ export const signUp = (body: MemberJoinRequest) => {
 };
 
 export const getNaverLoginRedirectUrl = async () => {
-  const { data } = await client.get('/auth/oauth/naver');
+  const { data } = await client.get<NaverLoginRedirectResponse>('/auth/oauth/naver');
 
   return data;
 };
