@@ -3,6 +3,7 @@ import InputField from '@components/_common/InputField/InputField';
 import { HandleInputChangeType, FormErrorType } from '@hooks/_common/useFormInput';
 import { NodeType } from '@myTypes/roadmap/internal';
 import * as S from './NodeSection.styles';
+// import ToolTip from '@/components/_common/toolTip/ToolTip';
 
 type NodeSectionProps = {
   nodes: NodeType[];
@@ -54,6 +55,12 @@ const NodeSection = (props: NodeSectionProps) => {
               value={String(formState.goalRoomRoadmapNodeRequests[index].checkCount)}
               onChange={handleInputChange}
               errorMessage={error?.[`goalRoomRoadmapNodeRequests[${index}][checkCount]`]}
+              toolTip={
+                <>
+                  해당 <strong>단계</strong>에서 활동을 <strong>인증할 횟수</strong>를
+                  입력해주세요
+                </>
+              }
             />
           </S.NodeConfigs>
         </S.Node>

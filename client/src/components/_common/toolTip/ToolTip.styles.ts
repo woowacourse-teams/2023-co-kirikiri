@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const ToolTip = styled.div`
   position: relative;
   display: inline-block;
+  box-sizing: border-box;
   width: 18px;
 `;
 
@@ -26,7 +27,7 @@ export const ToolTipButton = styled.button<{ isActive: boolean }>`
 export const ToolTipContent = styled.p<{ isShow: boolean }>`
   ${({ theme }) => theme.fonts.description4}
   position: absolute;
-  top: 150%;
+  top: 30px;
   left: 50%;
 
   width: 16rem;

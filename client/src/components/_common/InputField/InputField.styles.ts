@@ -11,7 +11,10 @@ export const FieldHeader = styled.div<{ size?: 'small' | 'normal' }>`
 export const Label = styled.label<{ size?: 'small' | 'normal' }>`
   ${({ theme, size }) =>
     size === 'small' ? theme.fonts.nav_text : theme.fonts.nav_title};
-  & > span {
+  display: flex;
+  align-items: center;
+
+  span {
     color: ${({ theme }) => theme.colors.red};
   }
 `;
@@ -28,7 +31,7 @@ export const InputBox = styled.div<{
   & > input {
     ${({ theme, size }) => (size === 'small' ? theme.fonts.button1 : theme.fonts.h2)};
     width: ${({ size, type }) =>
-      type === 'number' ? '7rem' : size === 'small' ? '' : '100%'};
+      type === 'number' ? '9rem' : size === 'small' ? '' : '100%'};
     padding: ${({ size, type }) =>
       type === 'number' ? '0.4rem' : size === 'small' ? '0.1rem' : '0.4rem'};
 
