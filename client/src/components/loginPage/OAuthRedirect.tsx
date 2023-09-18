@@ -1,5 +1,6 @@
 import { useNaverOAuth } from '@hooks/queries/user';
 import { useEffect } from 'react';
+import Spinner from '../_common/spinner/Spinner';
 
 const OAuthRedirect = () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -13,7 +14,7 @@ const OAuthRedirect = () => {
     naverLogin();
   }, []);
 
-  return null;
+  return <Spinner />;
 };
 
 export default OAuthRedirect;
