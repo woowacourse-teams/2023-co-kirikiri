@@ -6,8 +6,8 @@ import {
 import styled from 'styled-components';
 
 export const CertificationModalWrapper = styled(ModalWrapper)`
-  max-height: 80vh;
   overflow-y: scroll;
+  max-height: 80vh;
 `;
 
 export const CertificationHeader = styled(ModalHeader)``;

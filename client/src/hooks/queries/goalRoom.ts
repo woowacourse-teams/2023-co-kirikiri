@@ -100,15 +100,16 @@ export const useCreateGoalRoom = (roadmapContentId: number) => {
 
 export const useCreateTodo = (goalRoomId: string) => {
   const queryClient = useQueryClient();
+  const { triggerToast } = useToast();
 
   const { mutate } = useMutation(
     (body: newTodoPayload) => postCreateNewTodo(goalRoomId, body),
     {
       onSuccess() {
-        queryClient.invalidateQueries([
-          [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
-          [QUERY_KEYS.goalRoom.todos, goalRoomId],
-        ]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.todos, goalRoomId]);
+
+        triggerToast({ message: '새로운 투두리스트가 등록되었습니다.' });
       },
     }
   );
