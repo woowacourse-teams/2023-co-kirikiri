@@ -11,9 +11,6 @@ export const BASE_URL = `${
 
 const client = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 client.interceptors.request.use((config) => {
@@ -53,6 +50,8 @@ client.interceptors.response.use(
 
           setCookie('access_token', data.accessToken);
           setCookie('refresh_token', data.refreshToken);
+
+          console.log(originalRequest, 'ORRRRRRRR');
 
           return client(originalRequest);
         } catch (reissueError) {
