@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from '@components/_common/dialog/dialog';
 import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/certificationFeedModal/CertificationFeedModal';
+import ToolTip from '@components/_common/toolTip/ToolTip';
 
 type GoalRoomCertificationFeedProps = {
   goalRoomData: GoalRoomBrowseResponse;
@@ -23,6 +24,11 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
         <div>
           <S.CertificationTitleWrapper>
             <h2>인증 피드</h2>
+            <ToolTip>
+              <p>
+                인증피드는 하루에 한 번만 <br /> 등록할 수 있습니다.
+              </p>
+            </ToolTip>
           </S.CertificationTitleWrapper>
 
           <DialogTrigger asChild>

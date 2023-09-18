@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from '@components/_common/dialog/dialog';
 import TodoModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/todoModal/TodoModal';
+import ToolTip from '@components/_common/toolTip/ToolTip';
 
 type GoalRoomDashboardTodoProps = {
   goalRoomData: GoalRoomBrowseResponse;
@@ -27,6 +28,9 @@ const GoalRoomDashboardTodo = ({
         <div>
           <S.TitleWrapper>
             <h2>투두 리스트</h2>
+            <ToolTip>
+              <p>모임 생성자만 투두리스트를 등록할 수 있습니다.</p>
+            </ToolTip>
           </S.TitleWrapper>
 
           <DialogTrigger asChild>
