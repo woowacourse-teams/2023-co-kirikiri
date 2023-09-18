@@ -57,8 +57,11 @@ const NodeSection = (props: NodeSectionProps) => {
               errorMessage={error?.[`goalRoomRoadmapNodeRequests[${index}][checkCount]`]}
               toolTip={
                 <>
-                  해당 <strong>단계</strong>에서 활동을 <strong>인증할 횟수</strong>를
-                  입력해주세요
+                  인증 횟수가 해당 단계가 진행되는 기간보다 적어야 합니다
+                  <strong>(예시) 9/1 ~ 9/10, 10번 이하</strong>
+                  <br />
+                  <br />
+                  해당 단계에서 활동을 인증할 횟수를 입력해주세요
                 </>
               }
             />
