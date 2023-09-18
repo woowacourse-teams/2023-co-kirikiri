@@ -13,7 +13,6 @@ import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCe
 type GoalRoomCertificationFeedProps = {
   goalRoomData: GoalRoomBrowseResponse;
 };
-// TODO: 사진 누르면 모달로 사진 크게 보여주기
 
 const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedProps) => {
   const { checkFeeds } = goalRoomData;
@@ -24,7 +23,6 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
         <div>
           <S.CertificationTitleWrapper>
             <h2>인증 피드</h2>
-            <S.CertificationCountBox>{checkFeeds.length}</S.CertificationCountBox>
           </S.CertificationTitleWrapper>
 
           <DialogTrigger asChild>
