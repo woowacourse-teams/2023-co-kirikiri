@@ -73,7 +73,7 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
       <PageSection
         isRequired
         title='로드맵 일정 지정'
-        description='단계별 로드맵의 수행 일정과 일증 횟수를 지정해주세요'
+        description='단계별 로드맵의 수행 일정과 인증 횟수를 지정해주세요'
       >
         <NodeSection
           nodes={nodes}
