@@ -11,9 +11,6 @@ export const BASE_URL = `${
 
 const client = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 client.interceptors.request.use((config) => {

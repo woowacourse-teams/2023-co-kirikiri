@@ -1,18 +1,30 @@
 import client from '@apis/axios/client';
 import {
   MemberJoinRequest,
-  OAuthResponse,
   UserLoginRequest,
   UserLoginResponse,
   UserInfoResponse,
+  NaverLoginRedirectResponse,
+  OAuthResponse,
 } from '@myTypes/user/remote';
 
 export const signUp = (body: MemberJoinRequest) => {
   return client.post('/members/join', body);
 };
 
-export const naverLogin = async () => {
-  const { data } = await client.get<OAuthResponse>('/auth/oauth/naver');
+export const getNaverLoginRedirectUrl = async () => {
+  const { data } = await client.get<NaverLoginRedirectResponse>('/auth/oauth/naver');
+
+  return data;
+};
+
+export const naverOAuthToken = async (code: string, state: string) => {
+  const { data } = await client.get<OAuthResponse>('/auth/login/oauth', {
+    params: {
+      code,
+      state,
+    },
+  });
 
   return data;
 };

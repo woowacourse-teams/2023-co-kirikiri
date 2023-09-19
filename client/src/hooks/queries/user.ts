@@ -4,7 +4,13 @@ import {
   UserInfoResponse,
   UserLoginRequest,
 } from '@myTypes/user/remote';
-import { getUserInfo, login, naverLogin, signUp } from '@apis/user';
+import {
+  getNaverLoginRedirectUrl,
+  getUserInfo,
+  login,
+  naverOAuthToken,
+  signUp,
+} from '@apis/user';
 import useToast from '@hooks/_common/useToast';
 import {
   defaultUserInfo,
@@ -14,8 +20,6 @@ import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { setCookie } from '@/utils/_common/cookies';
 import logout from '@utils/user/logout';
-import { useSuspendedQuery } from './useSuspendedQuery';
-import QUERY_KEYS from '@/constants/@queryKeys/queryKeys';
 
 export const useSignUp = () => {
   const { triggerToast } = useToast();
@@ -36,13 +40,24 @@ export const useSignUp = () => {
   };
 };
 
-export const useNaverLogin = async () => {
+export const useNaverLogin = () => {
+  // get 요청임에도 사용자와의 상호작용에 의해 명시적으로 제어해야 하기 때문에 mutation을 사용
+  const { mutate } = useMutation(() => getNaverLoginRedirectUrl(), {
+    onSuccess({ url }) {
+      window.location.href = url;
+    },
+  });
+
+  return { redirectToNaverLoginPage: mutate };
+};
+
+export const useNaverOAuth = (code: string, state: string) => {
   const navigate = useNavigate();
   const { triggerToast } = useToast();
   const { setUserInfo } = useUserInfoContext();
 
-  useSuspendedQuery([QUERY_KEYS.user.naver_oauth], () => naverLogin(), {
-    onSuccess({ accessToken, refreshToken }) {
+  const { mutate } = useMutation(() => naverOAuthToken(code, state), {
+    onSuccess: ({ accessToken, refreshToken }) => {
       setCookie('access_token', accessToken);
       setCookie('refresh_token', refreshToken);
       triggerToast({ message: '로그인 성공!' });
@@ -54,6 +69,8 @@ export const useNaverLogin = async () => {
       navigate('/roadmap-list');
     },
   });
+
+  return { naverLogin: mutate };
 };
 
 export const useLogin = () => {

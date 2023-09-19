@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const ToolTip = styled.div`
   position: relative;
   display: inline-block;
+  box-sizing: border-box;
   width: 18px;
 `;
 
@@ -26,12 +27,14 @@ export const ToolTipButton = styled.button<{ isActive: boolean }>`
 export const ToolTipContent = styled.p<{ isShow: boolean }>`
   ${({ theme }) => theme.fonts.description4}
   position: absolute;
-  top: 150%;
+  top: 30px;
   left: 50%;
 
   width: 16rem;
   margin-left: -8rem;
   padding: 0.5rem;
+
+  z-index: ${({ theme }) => theme.zIndex.toolTip};
 
   color: ${({ theme }) => theme.colors.black};
   text-align: center;
@@ -39,10 +42,6 @@ export const ToolTipContent = styled.p<{ isShow: boolean }>`
   visibility: ${({ isShow }) => (isShow ? 'visible' : 'hidden')};
   background-color: ${({ theme }) => theme.colors.gray200};
   border-radius: 6px;
-
-  & > strong {
-    color: ${({ theme }) => theme.colors.main_dark};
-  }
 
   &::after {
     content: '';
@@ -57,5 +56,9 @@ export const ToolTipContent = styled.p<{ isShow: boolean }>`
       `transparent transparent ${theme.colors.gray200} transparent`};
     border-style: solid;
     border-width: 0.5rem;
+  }
+
+  & > strong {
+    color: ${({ theme }) => theme.colors.main_dark};
   }
 `;
