@@ -2,7 +2,7 @@ import { useRoadmapList } from '@hooks/queries/roadmap';
 import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
 import * as S from './RoadmapList.styles';
 import { SelectedCategoryId } from '@myTypes/roadmap/internal';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useInfiniteScroll } from '@hooks/_common/useInfiniteScroll';
 import WavyLoading from '@/components/_common/wavyLoading/WavyLoading';
 
@@ -24,11 +24,11 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
     fetchNextPage,
   });
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const moveRoadmapCreatePage = () => {
-  //   navigate('/roadmap-create');
-  // };
+  const moveRoadmapCreatePage = () => {
+    navigate('/roadmap-create');
+  };
   console.log(selectedCategoryId);
   return (
     <S.RoadmapList aria-label='로드맵 목록'>
@@ -36,7 +36,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}
       {roadmapListResponse?.hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
-      {/* <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton> */}
+      <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
     </S.RoadmapList>
   );
 };
