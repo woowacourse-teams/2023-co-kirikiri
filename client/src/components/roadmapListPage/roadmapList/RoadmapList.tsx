@@ -2,7 +2,7 @@ import { useRoadmapList } from '@hooks/queries/roadmap';
 import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
 import * as S from './RoadmapList.styles';
 import { SelectedCategoryId } from '@myTypes/roadmap/internal';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useInfiniteScroll } from '@hooks/_common/useInfiniteScroll';
 import WavyLoading from '@/components/_common/wavyLoading/WavyLoading';
 
@@ -24,7 +24,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
     fetchNextPage,
   });
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // const moveRoadmapCreatePage = () => {
   //   navigate('/roadmap-create');
