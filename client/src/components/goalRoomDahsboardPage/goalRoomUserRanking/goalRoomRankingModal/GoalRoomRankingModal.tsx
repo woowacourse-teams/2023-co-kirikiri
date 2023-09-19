@@ -8,7 +8,7 @@ type GoalRoomRankingModalProps = {
 const GoalRoomRankingModal = ({ userRanking }: GoalRoomRankingModalProps) => {
   return (
     <S.RankingUserWrapper>
-      <S.RankingTitle>골룸 유저 랭킹</S.RankingTitle>
+      <S.RankingTitle>모임 유저 랭킹</S.RankingTitle>
 
       <ul>
         {userRanking.map((user, idx) => {

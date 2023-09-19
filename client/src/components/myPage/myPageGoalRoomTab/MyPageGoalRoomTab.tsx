@@ -21,7 +21,7 @@ const MyPageGoalRoomTab = () => {
   return (
     <>
       <S.ContentHeader>
-        <span>나의 골룸</span>
+        <span>나의 모임</span>
         <SVGIcon name='GoalRoomIcon' />
       </S.ContentHeader>
       <S.TabView>
@@ -31,21 +31,21 @@ const MyPageGoalRoomTab = () => {
             isActive={activeTab === 'RECRUITING'}
             onClick={handleTabClick}
           >
-            모집중인 골룸
+            모집중인 모임
           </S.Tab>
           <S.Tab
             data-tab='RUNNING'
             isActive={activeTab === 'RUNNING'}
             onClick={handleTabClick}
           >
-            진행중인 골룸
+            진행중인 모임
           </S.Tab>
           <S.Tab
             data-tab='COMPLETED'
             isActive={activeTab === 'COMPLETED'}
             onClick={handleTabClick}
           >
-            완료된 골룸
+            완료된 모임
           </S.Tab>
         </S.TabList>
 
@@ -54,8 +54,8 @@ const MyPageGoalRoomTab = () => {
             <div>이름</div>
             <div>모집 상태</div>
             <div>참여 인원 / 모집 인원</div>
-            <div>골룸 시작일</div>
-            <div>골룸 종료일</div>
+            <div>모임 시작일</div>
+            <div>모임 종료일</div>
           </S.RoomHeader>
 
           {myGoalRoomList?.map((room, index) => (

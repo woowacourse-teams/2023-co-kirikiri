@@ -56,7 +56,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
         </S.RecommendedRoadmapPeriod>
       </S.ItemExtraInfos>
       <Button onClick={moveGoalRoomListPage}>
-        {hasBorder ? '자세히 보기' : '진행중인 골룸 보기'}
+        {hasBorder ? '자세히 보기' : '진행중인 모임 보기'}
       </Button>
       <S.ItemFooter>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>

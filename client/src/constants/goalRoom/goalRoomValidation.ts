@@ -7,7 +7,7 @@ export const GOALROOM = {
 };
 
 export const ERROR_MESSAGE = {
-  NAME_REQUIRED: '골룸 이름은 필수 항목입니다',
+  NAME_REQUIRED: '모임 이름은 필수 항목입니다',
   NAME_MAX_LENGTH: `최대 ${GOALROOM.MAX_NAME_LENGTH}글자까지 입력할 수 있습니다`,
 
   MEMBER_COUNT_REQUIRED: '최대 인원수는 필수 항목입니다',

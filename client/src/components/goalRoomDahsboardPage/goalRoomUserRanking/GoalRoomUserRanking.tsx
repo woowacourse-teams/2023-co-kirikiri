@@ -12,6 +12,7 @@ import {
 } from '@components/_common/dialog/dialog';
 import SVGIcon from '@components/icons/SVGIcon';
 import GoalRoomRankingModal from '@components/goalRoomDahsboardPage/goalRoomUserRanking/goalRoomRankingModal/GoalRoomRankingModal';
+import ToolTip from '@components/_common/toolTip/ToolTip';
 
 const GoalRoomUserRanking = () => {
   const { goalroomId } = useValidParams<GoalRoomDashboardContentParams>();
@@ -34,7 +35,12 @@ const GoalRoomUserRanking = () => {
     <DialogBox>
       <S.CalenderWrapper>
         <div>
-          <h2>골룸 유저 랭킹</h2>
+          <h2>모임 유저 랭킹</h2>
+          <ToolTip>
+            <p>
+              인증 피드 개수를 기반으로 <br /> 랭킹이 측정됩니다.
+            </p>
+          </ToolTip>
 
           <DialogTrigger asChild>
             <button aria-labelledby='유저 랭킹 전체보기'>

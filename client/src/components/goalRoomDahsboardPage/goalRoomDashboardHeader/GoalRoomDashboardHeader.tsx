@@ -43,7 +43,7 @@ const GoalRoomDashboardHeader = ({
         <S.GoalRoomDashboardTitle>{name}</S.GoalRoomDashboardTitle>
         {isStartButtonVisible && (
           <S.GoalRoomStartButton onClick={handleGoalRoomStartButton}>
-            골룸 시작하기
+            모임 시작하기
           </S.GoalRoomStartButton>
         )}
         <S.GoalRoomLabel>

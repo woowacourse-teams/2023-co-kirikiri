@@ -16,24 +16,6 @@ const RoadmapListView = () => {
 
   return (
     <S.RoadmapListView aria-label='로드맵 뷰'>
-      {/* <S.SelectWrapper>
-        <Select defaultOpen>
-          <Select.OptionGroup asChild>
-            <S.SearchCategoryOptionGroup>
-              <Select.Option id={1} asChild>
-                <S.SearchCategoryOption>태그명</S.SearchCategoryOption>
-              </Select.Option>
-              <Select.Option id={2} asChild>
-                <S.SearchCategoryOption>로드맵 제목</S.SearchCategoryOption>
-              </Select.Option>
-              <Select.Option id={3} asChild>
-                <S.SearchCategoryOption>크리에이터</S.SearchCategoryOption>
-              </Select.Option>
-            </S.SearchCategoryOptionGroup>
-          </Select.OptionGroup>
-        </Select>
-        <p>(으)로 검색하기</p>
-      </S.SelectWrapper> */}
       <RoadmapSearch />
       <Categories
         selectedCategoryId={selectedCategoryId}
