@@ -168,7 +168,6 @@ export const useCreateCertificationFeed = (
           QUERY_KEYS.goalRoom.certificationFeeds,
           goalRoomId,
         ]);
-        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
         onSuccessCallbackFunc();
       },
     }
