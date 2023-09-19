@@ -85,9 +85,10 @@ export const useCreateGoalRoom = (roadmapContentId: number) => {
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
       async onSuccess() {
-        await queryClient.refetchQueries([[QUERY_KEYS.goalRoom.my, roadmapContentId]]);
+        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.list, roadmapContentId]);
+        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.my, roadmapContentId]);
         navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
-        triggerToast({ message: '골룸을 생성했습니다!' });
+        triggerToast({ message: '모임을 생성했습니다!' });
       },
       onError() {},
     }
@@ -169,7 +170,6 @@ export const useCreateCertificationFeed = (
           QUERY_KEYS.goalRoom.certificationFeeds,
           goalRoomId,
         ]);
-        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
         onSuccessCallbackFunc();
       },
     }
@@ -188,7 +188,7 @@ export const useJoinGoalRoom = ({ goalRoomId }: JoinGoalRoomRequest) => {
   const { mutate } = useMutation(() => postJoinGoalRoom(goalRoomId), {
     onSuccess() {
       navigate(`/goalroom-dashboard/${goalRoomId}`);
-      triggerToast({ message: '골룸에 참여하였습니다!' });
+      triggerToast({ message: '모임에 참여하였습니다!' });
       queryClient.invalidateQueries([QUERY_KEYS.goalRoom.detail, goalRoomId]);
     },
   });
@@ -228,7 +228,7 @@ export const useStartGoalRoom = (goalRoomId: string) => {
 
   const { mutate } = useMutation(() => postStartGoalRoom(goalRoomId), {
     onSuccess() {
-      triggerToast({ message: '골룸이 시작되었습니다' });
+      triggerToast({ message: '모임이 시작되었습니다' });
       queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
     },
   });

@@ -35,7 +35,7 @@ const GoalRoomUserRanking = () => {
     <DialogBox>
       <S.CalenderWrapper>
         <div>
-          <h2>골룸 유저 랭킹</h2>
+          <h2>모임 유저 랭킹</h2>
           <ToolTip>
             <p>
               인증 피드 개수를 기반으로 <br /> 랭킹이 측정됩니다.

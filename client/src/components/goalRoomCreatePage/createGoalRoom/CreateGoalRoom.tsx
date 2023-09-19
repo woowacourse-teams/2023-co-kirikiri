@@ -10,7 +10,7 @@ const CreateGoalRoom = () => {
 
   return (
     <div>
-      <PageSection title='선택된 로드맵' description='생성할 골룸이 연결된 로드맵입니다'>
+      <PageSection title='선택된 로드맵' description='생성할 모임이 연결된 로드맵입니다'>
         <S.RoadmapInfo>
           &gt; {roadmapInfo.roadmapTitle} / 생성자: {roadmapInfo.creator.name}
         </S.RoadmapInfo>

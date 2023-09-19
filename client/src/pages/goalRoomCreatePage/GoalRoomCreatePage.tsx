@@ -6,7 +6,7 @@ import * as S from './GoalRoomCreatePage.styles';
 const GoalRoomCreatePage = () => {
   return (
     <S.GoalRoomCreatePage>
-      <S.PageTitle>골룸을 생성해주세요!</S.PageTitle>
+      <S.PageTitle>모임을 생성해주세요!</S.PageTitle>
       <Suspense fallback={<Spinner />}>
         <CreateGoalRoom />
       </Suspense>
