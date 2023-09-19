@@ -5,7 +5,10 @@ import {
 } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/todoModal/TodoModal.styles';
 import styled from 'styled-components';
 
-export const CertificationModalWrapper = styled(ModalWrapper)``;
+export const CertificationModalWrapper = styled(ModalWrapper)`
+  overflow-y: scroll;
+  max-height: 80vh;
+`;
 
 export const CertificationHeader = styled(ModalHeader)``;
 
@@ -99,7 +102,6 @@ export const CertificationFeedsWrapper = styled.div`
 `;
 
 export const CertificationFeedCard = styled.div`
-  overflow: hidden;
   flex: 0 0 calc(33.33% - 1.5rem);
 
   width: 20rem;

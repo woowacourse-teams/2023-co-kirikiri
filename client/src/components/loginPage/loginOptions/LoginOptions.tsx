@@ -1,4 +1,4 @@
-import { naverLogin } from '@apis/user';
+import { useNaverLogin } from '@/hooks/queries/user';
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './LoginOptions.styles';
 
@@ -7,15 +7,17 @@ type LoginOptionsProps = {
 };
 
 const LoginOptions = ({ toggleLoginForm }: LoginOptionsProps) => {
-  const onClickNaverLoginButton = () => {
-    naverLogin();
+  const { redirectToNaverLoginPage } = useNaverLogin();
+
+  const handleNaverLoginButtonClick = () => {
+    redirectToNaverLoginPage();
   };
 
   return (
     <>
       <S.OathButtonContainer>
         <div>
-          <S.OathButton type='naver' onClick={onClickNaverLoginButton}>
+          <S.OathButton type='naver' onClick={handleNaverLoginButtonClick}>
             <SVGIcon name='NaverIcon' size={12} />
             <span>네이버 로그인</span>
           </S.OathButton>

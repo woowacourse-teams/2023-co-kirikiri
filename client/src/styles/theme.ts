@@ -42,6 +42,7 @@ const theme: DefaultTheme = {
     navBarOverlay: 3,
     toast: 4,
     modal: 5,
+    toolTip: 6,
   },
 
   shadows: {

@@ -25,7 +25,7 @@ const LoginForm = () => {
       <div>
         <S.FormItem>
           <SVGIcon name='PersonIcon' />
-          <input name='identifier' onChange={handleInputChange} placeholder='이메일' />
+          <input name='identifier' onChange={handleInputChange} placeholder='아이디' />
         </S.FormItem>
         <S.FormItem>
           <SVGIcon name='LockIcon' />

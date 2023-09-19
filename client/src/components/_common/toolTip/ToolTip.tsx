@@ -1,5 +1,5 @@
 import { useSwitch } from '@/hooks/_common/useSwitch';
-import { PropsWithChildren } from 'react';
+import React, { PropsWithChildren } from 'react';
 import * as S from './ToolTip.styles';
 
 const ToolTip = ({ children }: PropsWithChildren) => {
@@ -12,13 +12,18 @@ const ToolTip = ({ children }: PropsWithChildren) => {
 
   const isShow = isHover || isActive;
 
+  const onClickToolTipButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    toggleActive();
+    e.stopPropagation();
+  };
+
   return (
     <S.ToolTip>
       <S.ToolTipButton
         isActive={isActive}
         onMouseEnter={setHoverOn}
         onMouseLeave={setHoverOff}
-        onClick={toggleActive}
+        onClick={onClickToolTipButton}
       >
         ?
       </S.ToolTipButton>
