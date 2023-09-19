@@ -26,9 +26,9 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
 
   const navigate = useNavigate();
 
-  const moveRoadmapCreatePage = () => {
-    navigate('/roadmap-create');
-  };
+  // const moveRoadmapCreatePage = () => {
+  //   navigate('/roadmap-create');
+  // };
   console.log(selectedCategoryId);
   return (
     <S.RoadmapList aria-label='로드맵 목록'>
@@ -36,7 +36,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}
       {roadmapListResponse?.hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
-      <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
+      {/* <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton> */}
     </S.RoadmapList>
   );
 };
