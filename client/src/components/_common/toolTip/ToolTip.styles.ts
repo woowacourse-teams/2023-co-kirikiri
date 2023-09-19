@@ -41,10 +41,6 @@ export const ToolTipContent = styled.p<{ isShow: boolean }>`
   background-color: ${({ theme }) => theme.colors.gray200};
   border-radius: 6px;
 
-  & > strong {
-    color: ${({ theme }) => theme.colors.main_dark};
-  }
-
   &::after {
     content: '';
 
@@ -58,5 +54,9 @@ export const ToolTipContent = styled.p<{ isShow: boolean }>`
       `transparent transparent ${theme.colors.gray200} transparent`};
     border-style: solid;
     border-width: 0.5rem;
+  }
+
+  & > strong {
+    color: ${({ theme }) => theme.colors.main_dark};
   }
 `;
