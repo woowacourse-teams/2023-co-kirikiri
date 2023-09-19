@@ -85,11 +85,8 @@ export const useCreateGoalRoom = (roadmapContentId: number) => {
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
       async onSuccess() {
-        await queryClient.refetchQueries([
-          QUERY_KEYS.goalRoom.list,
-          QUERY_KEYS.goalRoom.my,
-          roadmapContentId,
-        ]);
+        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.list, roadmapContentId]);
+        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.my, roadmapContentId]);
         navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
         triggerToast({ message: '모임을 생성했습니다!' });
       },
