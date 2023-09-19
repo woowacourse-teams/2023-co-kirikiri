@@ -3,7 +3,6 @@ import InputField from '@components/_common/InputField/InputField';
 import { HandleInputChangeType, FormErrorType } from '@hooks/_common/useFormInput';
 import { NodeType } from '@myTypes/roadmap/internal';
 import * as S from './NodeSection.styles';
-// import ToolTip from '@/components/_common/toolTip/ToolTip';
 
 type NodeSectionProps = {
   nodes: NodeType[];
