@@ -33,17 +33,17 @@ export const NodeItemContainer = styled.article`
 
 export const NodeIndicator = styled.div`
   ${({ theme }) => theme.fonts.nav_title}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 4rem;
   height: 4rem;
 
+  color: ${({ theme }) => theme.colors.white};
+
   background-color: ${({ theme }) => theme.colors.main_dark};
   border-radius: 50%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  color: ${({ theme }) => theme.colors.white};
 `;
 
 export const NodeContent = styled.div`

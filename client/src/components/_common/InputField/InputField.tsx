@@ -1,4 +1,6 @@
 import { HandleInputChangeType } from '@hooks/_common/useFormInput';
+import { ReactNode } from 'react';
+import ToolTip from '../toolTip/ToolTip';
 import * as S from './InputField.styles';
 
 type InputFieldProps = {
@@ -13,6 +15,7 @@ type InputFieldProps = {
   placeholder?: string;
   errorMessage?: string;
   style?: { [key: string]: string };
+  toolTip?: ReactNode;
 };
 
 const InputField = ({ ...props }: InputFieldProps) => {
@@ -20,8 +23,11 @@ const InputField = ({ ...props }: InputFieldProps) => {
     <S.InputField style={props.style}>
       <S.FieldHeader size={props.size}>
         <S.Label htmlFor={props.name} size={props.size}>
-          {props.label}
-          {props.isRequired && <span>*</span>}
+          <div>
+            {props.label}
+            {props.isRequired && <span>*</span>}
+          </div>
+          {props.toolTip && <ToolTip>{props.toolTip}</ToolTip>}
         </S.Label>
         {props.description && <S.Description>{props.description}</S.Description>}
       </S.FieldHeader>
