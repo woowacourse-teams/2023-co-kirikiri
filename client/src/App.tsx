@@ -22,6 +22,7 @@ import UserInfoProvider, {
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
 import useToast from '@hooks/_common/useToast';
+import OAuthRedirect from './components/loginPage/OAuthRedirect';
 import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 
 const PrivateRouter = (props: PropsWithChildren) => {
@@ -97,6 +98,7 @@ const App = () => {
                         </PrivateRouter>
                       }
                     />
+                    <Route path='/oauth/redirect' element={<OAuthRedirect />} />
                   </Routes>
                 </AsyncBoundary>
               </PageLayout>
