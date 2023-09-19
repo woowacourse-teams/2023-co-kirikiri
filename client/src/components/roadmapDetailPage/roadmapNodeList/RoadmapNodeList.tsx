@@ -10,7 +10,7 @@ const RoadmapNodeList = ({ roadmapTitle, nodeInfo }: RoadmapNodeListProps) => {
   return (
     <S.RoadmapNodeList>
       <S.Title>
-        🐘 <strong>{roadmapTitle}</strong>의 로드맵🐘
+        🐘 <strong>{roadmapTitle}</strong>의 로드맵 🐘
       </S.Title>
       {nodeInfo.map((node, index) => {
         return (
