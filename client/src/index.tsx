@@ -28,7 +28,7 @@ const startApp = async () => {
         onError: (e) => {
           const error = e as any;
           if (error.response.status === 400) {
-            alert(error.response.data.message);
+            alert(error.response.data[0].message);
           }
         },
       },
