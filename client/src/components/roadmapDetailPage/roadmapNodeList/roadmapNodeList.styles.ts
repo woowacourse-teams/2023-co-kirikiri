@@ -35,6 +35,7 @@ export const NodeIndicator = styled.div`
   ${({ theme }) => theme.fonts.nav_title}
   position: relative;
   left: 2rem;
+
   width: 4rem;
   height: 4rem;
 
