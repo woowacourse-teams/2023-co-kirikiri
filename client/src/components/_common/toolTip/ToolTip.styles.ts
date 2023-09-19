@@ -34,6 +34,8 @@ export const ToolTipContent = styled.p<{ isShow: boolean }>`
   margin-left: -8rem;
   padding: 0.5rem;
 
+  z-index: ${({ theme }) => theme.zIndex.toolTip};
+
   color: ${({ theme }) => theme.colors.black};
   text-align: center;
 
