@@ -82,7 +82,9 @@ const CertificationFeedModal = () => {
           )}
           {!imagePreview && (
             <S.FileUploadCard htmlFor='fileInput'>
-              <S.PlusButton>인증피드 사진 업로드</S.PlusButton>
+              <S.PlusButton>
+                인증피드 사진 업로드 <br /> <p>+</p>
+              </S.PlusButton>
               <input
                 id='fileInput'
                 type='file'

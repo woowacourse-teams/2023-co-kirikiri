@@ -41,7 +41,16 @@ export const FileUploadCard = styled.label`
 
 export const PlusButton = styled.span`
   ${({ theme }) => theme.fonts.h2};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   color: ${({ theme }) => theme.colors.gray200};
+
+  & > p {
+    color: ${({ theme }) => theme.colors.main_dark};
+  }
 `;
 
 export const PreviewWrapper = styled.div`
