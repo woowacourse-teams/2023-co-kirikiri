@@ -62,9 +62,9 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
         style={{ marginBottom: '2rem' }}
       />
       <InputField
-        label='골룸 이름'
+        label='모임 이름'
         isRequired
-        placeholder='골룸의 이름을 작성해주세요'
+        placeholder='모임의 이름을 작성해주세요'
         name='name'
         value={formState.name}
         onChange={handleInputChange}

@@ -27,11 +27,11 @@ const GoalRoomDashboardBarricade = ({
   return (
     <S.GoalRoomStatusBarricade>
       <S.GoalRoomBarricadeWrapper>
-        <p>아쉽지만 현재 활성화된 골룸이 아닙니다.</p>
+        <p>아쉽지만 현재 활성화된 모임이 아닙니다.</p>
         {canStartGoalRoom && (
           <>
             <p>시작 예정일 {startDate}</p>
-            <button onClick={goalRoomStartButtonHandler}>지금 골룸 시작하기</button>
+            <button onClick={goalRoomStartButtonHandler}>지금 모임 시작하기</button>
           </>
         )}
       </S.GoalRoomBarricadeWrapper>

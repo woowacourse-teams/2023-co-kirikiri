@@ -34,7 +34,7 @@ const GoalRoomUserRanking = () => {
     <DialogBox>
       <S.CalenderWrapper>
         <div>
-          <h2>골룸 유저 랭킹</h2>
+          <h2>모임 유저 랭킹</h2>
 
           <DialogTrigger asChild>
             <button aria-labelledby='유저 랭킹 전체보기'>
