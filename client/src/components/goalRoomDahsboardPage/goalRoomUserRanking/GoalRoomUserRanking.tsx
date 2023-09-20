@@ -3,6 +3,7 @@ import { useFetchGoalRoomParticipants } from '@hooks/queries/goalRoom';
 import useValidParams from '@hooks/_common/useValidParams';
 import { GoalRoomDashboardContentParams } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent';
 import podiumImg from '@assets/images/podium.png';
+import podiumImgAV from '@assets/images/podium.avif';
 import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
 import {
   DialogBackdrop,
@@ -50,7 +51,10 @@ const GoalRoomUserRanking = () => {
           </DialogTrigger>
         </div>
         <S.PodiumWrapper>
-          <S.PodiumImage src={podiumImg} alt='Podium' />
+          <picture>
+            <source srcSet={podiumImgAV} />
+            <S.PodiumImage src={podiumImg} alt='Podium' />
+          </picture>
           {goalRoomParticipants.slice(0, 3).map((participant, index) => {
             return (
               <S.Participant key={participant.memberId} position={index}>

@@ -1,4 +1,5 @@
 import logo from '@assets/images/logo.png';
+import logoAV from '@assets/images/logo.avif';
 import { Link } from 'react-router-dom';
 import BackButton from '@components/_common/backButton/BackButton';
 import LoginOptions from '@components/loginPage/loginOptions/LoginOptions';
@@ -13,7 +14,10 @@ const LoginContent = () => {
   return (
     <S.LoginContentWrapper>
       <Link to='/roadmap-list'>
-        <img src={logo} alt='코끼리 로고' />
+        <picture>
+          <source srcSet={logoAV} />
+          <img src={logo} alt='코끼리 로고' />
+        </picture>
       </Link>
       {isLoginFormVisible ? (
         <LoginForm />

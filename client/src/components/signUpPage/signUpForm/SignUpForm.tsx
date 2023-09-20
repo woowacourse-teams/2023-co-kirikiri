@@ -2,6 +2,7 @@ import { MemberJoinRequest } from '@myTypes/user/remote';
 import { useSignUp } from '@hooks/queries/user';
 import SVGIcon from '@components/icons/SVGIcon';
 import logo from '@assets/images/logo.png';
+import logoAV from '@assets/images/logo.avif';
 import { SingleCardWrapper } from '@components/_common/SingleCard/SingleCard.styles';
 import useFormInput from '@hooks/_common/useFormInput';
 import * as S from './SignUpForm.styles';
@@ -36,7 +37,10 @@ const SignUpForm = () => {
   return (
     <SingleCardWrapper>
       <h1>
-        <img src={logo} alt='코끼리 로고' />
+        <picture>
+          <source srcSet={logoAV} />
+          <img src={logo} alt='코끼리 로고' />
+        </picture>
       </h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <S.FormList>
