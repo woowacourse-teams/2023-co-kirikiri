@@ -1,3 +1,4 @@
+import LazyImage from '@/components/_common/lazyImage/lazyImage';
 import { NodeType } from '@/myTypes/roadmap/internal';
 import * as S from './roadmapNodeList.styles';
 
@@ -19,11 +20,16 @@ const RoadmapNodeList = ({ roadmapTitle, nodeInfo }: RoadmapNodeListProps) => {
             <S.NodeContent>
               <S.NodeTitle>{node.title}</S.NodeTitle>
               <S.NodeDescription>{node.description}</S.NodeDescription>
-              <S.ImageWrapper>
-                {node.imageUrls.map((nodeImage) => {
-                  return <S.NodeImage src={nodeImage} alt='노드 이미지' />;
-                })}
-              </S.ImageWrapper>
+              {node.imageUrls.map((nodeImage) => {
+                return (
+                  <S.ImageWrapper>
+                    <LazyImage
+                      src={nodeImage}
+                      style={{ width: '100%', height: '30rem' }}
+                    />
+                  </S.ImageWrapper>
+                );
+              })}
             </S.NodeContent>
           </S.NodeItemContainer>
         );
