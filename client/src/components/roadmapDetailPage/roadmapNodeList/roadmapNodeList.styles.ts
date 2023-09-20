@@ -58,8 +58,12 @@ export const NodeContent = styled.div`
   width: 50rem;
   padding: 2rem 0;
 
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+
   border: 0.3rem solid ${({ theme }) => theme.colors.main_dark};
-  border-radius: 30px;
+  border-radius: 24px;
 `;
 
 export const NodeTitle = styled.h2`

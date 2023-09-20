@@ -6,7 +6,7 @@ import recruitmentStatus from '@constants/goalRoom/recruitmentStatus';
 import SVGIcon from '@components/icons/SVGIcon';
 
 const MyPageGoalRoomTab = () => {
-  const [activeTab, setActiveTab] = useState<GoalRoomRecruitmentStatus>('RECRUITING');
+  const [activeTab, setActiveTab] = useState<GoalRoomRecruitmentStatus>('RUNNING');
 
   const { myGoalRoomList } = useMyPageGoalRoomList(activeTab);
 

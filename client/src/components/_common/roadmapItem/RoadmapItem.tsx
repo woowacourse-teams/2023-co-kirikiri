@@ -6,6 +6,7 @@ import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
 import { CategoriesInfo } from '@constants/roadmap/category';
 import Button from '../button/Button';
 import * as S from './RoadmapItem.styles';
+import useHover from '@/hooks/_common/useHover';
 
 type RoadmapItemProps = {
   item: Omit<RoadmapDetailType, 'content'>;
@@ -25,6 +26,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
     </div>
   );
   const navigate = useNavigate();
+  const { isHovered, handleMouseEnter, handleMouseLeave } = useHover();
 
   const moveGoalRoomListPage = () => {
     if (hasBorder) {
@@ -38,7 +40,14 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
     <S.RoadmapItem hasBorder={hasBorder} aria-label='로드맵 항목'>
       <div>
         <S.RoadmapTitle aria-label='로드맵 제목'>{item.roadmapTitle}</S.RoadmapTitle>
-        <S.Description aria-label='로드맵 소개'>{item.introduction}</S.Description>
+        <S.Description
+          aria-label='로드맵 소개'
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {item.introduction}
+        </S.Description>
+        {isHovered && <S.HoverDescription>{item.introduction}</S.HoverDescription>}
       </div>
       <S.ExtraHeader>
         <S.ExtraHeaderText>카테고리</S.ExtraHeaderText>
