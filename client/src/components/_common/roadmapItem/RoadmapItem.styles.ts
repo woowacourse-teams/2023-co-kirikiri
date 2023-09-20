@@ -1,6 +1,8 @@
 import { styled } from 'styled-components';
 
 export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
+  position: relative;
+
   flex-shrink: 0;
 
   width: 30rem;
@@ -30,6 +32,9 @@ export const ReviewersCount = styled.div`
 
 export const RoadmapTitle = styled.div`
   ${({ theme }) => theme.fonts.h1}
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const Description = styled.div`
@@ -38,6 +43,24 @@ export const Description = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+export const HoverDescription = styled.article`
+  ${({ theme }) => theme.fonts.description2};
+  position: absolute;
+  top: 11rem;
+
+  width: 25rem;
+  padding: 2rem 2rem;
+
+  color: ${({ theme }) => theme.colors.gray300};
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+
+  background-color: ${({ theme }) => theme.colors.gray100};
+  border: 0.2rem solid ${({ theme }) => theme.colors.gray300};
+  border-radius: 10px;
 `;
 
 export const ExtraHeader = styled.div`

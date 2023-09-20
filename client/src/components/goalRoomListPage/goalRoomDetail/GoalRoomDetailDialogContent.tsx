@@ -43,11 +43,11 @@ const GoalRoomDetailDialogContent = ({
       </S.Container>
       {goalRoomInfo.isJoined ? (
         <Link to={`/goalroom-dashboard/${goalRoomId}`}>
-          <S.EnterGoalRoomButton>골룸 대시보드 입장하기</S.EnterGoalRoomButton>
+          <S.EnterGoalRoomButton>모임 대시보드 입장하기</S.EnterGoalRoomButton>
         </Link>
       ) : (
         <S.EnterGoalRoomButton onClick={() => joinGoalRoom()}>
-          골룸 참여하기
+          모임 참여하기
         </S.EnterGoalRoomButton>
       )}
     </>

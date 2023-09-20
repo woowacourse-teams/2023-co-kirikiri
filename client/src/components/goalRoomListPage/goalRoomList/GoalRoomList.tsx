@@ -32,7 +32,7 @@ const GoalRoomList = () => {
   return (
     <S.ListContainer role='main' aria-label='골룸 리스트'>
       <S.FilterBar>
-        <p aria-live='polite'>모집중인 골룸 {goalRoomList.length}개</p>
+        <p aria-live='polite'>모집중인 모임 {goalRoomList.length}개</p>
         <GoalRoomFilter>
           {(selectedOption) => {
             setSortedOption(selectedOption);
@@ -58,7 +58,7 @@ const GoalRoomList = () => {
       </S.ListWrapper>
       {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
       <Link to={`/roadmap/${Number(id)}/goalroom-create`}>
-        <S.CreateGoalRoomButton>골룸 생성하러 가기</S.CreateGoalRoomButton>
+        <S.CreateGoalRoomButton>모임 생성하러 가기</S.CreateGoalRoomButton>
       </Link>
     </S.ListContainer>
   );

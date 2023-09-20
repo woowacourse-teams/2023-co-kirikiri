@@ -9,7 +9,7 @@ export const RoadmapNodeList = styled.div`
   width: 100%;
   min-height: 30rem;
   margin-top: 3rem;
-  padding-top: 2rem;
+  padding: 2rem 0;
 
   border-radius: 12px;
   box-shadow: ${({ theme }) => theme.shadows.box};
@@ -33,17 +33,20 @@ export const NodeItemContainer = styled.article`
 
 export const NodeIndicator = styled.div`
   ${({ theme }) => theme.fonts.nav_title}
+  position: relative;
+  left: 2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 4rem;
   height: 4rem;
 
+  color: ${({ theme }) => theme.colors.white};
+
   background-color: ${({ theme }) => theme.colors.main_dark};
   border-radius: 50%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  color: ${({ theme }) => theme.colors.white};
 `;
 
 export const NodeContent = styled.div`
@@ -53,12 +56,14 @@ export const NodeContent = styled.div`
   align-items: center;
 
   width: 50rem;
-  height: 15rem;
   padding: 2rem 0;
 
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+
   border: 0.3rem solid ${({ theme }) => theme.colors.main_dark};
-  border-left: none;
-  border-radius: 30px;
+  border-radius: 24px;
 `;
 
 export const NodeTitle = styled.h2`

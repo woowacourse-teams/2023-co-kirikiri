@@ -30,7 +30,7 @@ const RoadmapDetail = () => {
         roadmapTitle={roadmapInfo.roadmapTitle}
         nodeInfo={roadmapInfo.content.nodes}
       />
-      <Button onClick={moveToGoalRoomCreatePage}>골룸 생성하러 가기</Button>
+      <Button onClick={moveToGoalRoomCreatePage}>모임 생성하러 가기</Button>
     </S.RoadmapDetail>
   );
 };

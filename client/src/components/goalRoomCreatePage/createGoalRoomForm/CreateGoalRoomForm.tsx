@@ -6,7 +6,7 @@ import * as S from './CreateGoalRoomForm.styles';
 import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
 import { NodeType } from '@myTypes/roadmap/internal';
 import InputField from '@components/_common/InputField/InputField';
-import TodoListSection from '../todoListSection/TodoListSection';
+// import TodoListSection from '../todoListSection/TodoListSection';
 import NodeSection from '../nodeSection/NodeSection';
 import { transformDateStringsIn } from '@utils/_common/transformDateStringsIn';
 import { generateNodesValidations, staticValidations } from './createGoalRoomValidations';
@@ -24,11 +24,6 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
         roadmapContentId: Number(roadmapContentId),
         name: '',
         limitedMemberCount: 10,
-        goalRoomTodo: {
-          content: '',
-          startDate: '',
-          endDate: '',
-        },
         goalRoomRoadmapNodeRequests: nodes.map(({ id }) => ({
           roadmapNodeId: id,
           checkCount: 1,
@@ -67,9 +62,9 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
         style={{ marginBottom: '2rem' }}
       />
       <InputField
-        label='골룸 이름'
+        label='모임 이름'
         isRequired
-        placeholder='골룸의 이름을 작성해주세요'
+        placeholder='모임의 이름을 작성해주세요'
         name='name'
         value={formState.name}
         onChange={handleInputChange}
@@ -78,17 +73,10 @@ const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps
       <PageSection
         isRequired
         title='로드맵 일정 지정'
-        description='단계별 로드맵의 수행 일정과 일증 횟수를 지정해주세요'
+        description='단계별 로드맵의 수행 일정과 인증 횟수를 지정해주세요'
       >
         <NodeSection
           nodes={nodes}
-          formState={formState}
-          error={error}
-          handleInputChange={handleInputChange}
-        />
-      </PageSection>
-      <PageSection isRequired title='투두리스트 생성'>
-        <TodoListSection
           formState={formState}
           error={error}
           handleInputChange={handleInputChange}
