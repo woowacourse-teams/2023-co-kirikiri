@@ -53,7 +53,7 @@ const GoalRoomUserRanking = () => {
         <S.PodiumWrapper>
           <picture>
             <source srcSet={podiumImgAV} />
-            <S.PodiumImage src={podiumImg} alt='Podium' />
+            <S.PodiumImage src={podiumImg} alt='Podium' loading='lazy' />
           </picture>
           {goalRoomParticipants.slice(0, 3).map((participant, index) => {
             return (
@@ -62,6 +62,7 @@ const GoalRoomUserRanking = () => {
                   <img
                     src={participant.imagePath}
                     alt={`${participant.nickname} 의 프로필 이미지`}
+                    loading='lazy'
                   />
                   <p>{participant.nickname}</p>
                 </S.UserInfoLabel>
