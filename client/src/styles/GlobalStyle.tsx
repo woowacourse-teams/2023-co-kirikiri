@@ -31,14 +31,6 @@ const GlobalStyle = createGlobalStyle`
     border: none;
   }
 
-  * {
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none; /* 크롬, 사파리, 오페라, 엣지 */
-    }
-  }
-
   *, :after, :before {
     box-sizing: inherit;
   }
@@ -71,7 +63,7 @@ const GlobalStyle = createGlobalStyle`
 
   @font-face {
     font-family: 'Noto Sans';
-    font-display: swap;
+    font-display: optional;
     src: url(${require('../assets/fonts/NotoSans-Regular.woff')}) format('woff');
     unicode-range: U+0041-005A, U+0061-007A;
   }
@@ -90,11 +82,13 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  body {
+  * {
+    scrollbar-width: none;
     font-family: 'Noto Sans KR', 'Noto Sans' , sans-serif;
 
-    button {
-      border:none;
+
+    &::-webkit-scrollbar {
+      display: none; /* 크롬, 사파리, 오페라, 엣지 */
     }
   }
 
