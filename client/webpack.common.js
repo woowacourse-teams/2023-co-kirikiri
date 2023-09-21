@@ -43,7 +43,7 @@ module.exports = {
         use: ['babel-loader', 'ts-loader'],
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
+        test: /\.(png|jpe?g|gif|svg|avif)$/i,
         type: 'asset/resource',
         generator: {
           filename: 'images/[hash][ext][query]',
@@ -59,7 +59,7 @@ module.exports = {
         test: /\.(woff(2)?|ttf|eot|svg|otf)(\?v=\d+\.\d+\.\d+)?$/,
         type: 'asset/resource',
         generator: {
-          filename: 'static/fonts/[hash][ext][query]',
+          filename: 'static/fonts/[name][ext][query]',
         },
       },
     ],
