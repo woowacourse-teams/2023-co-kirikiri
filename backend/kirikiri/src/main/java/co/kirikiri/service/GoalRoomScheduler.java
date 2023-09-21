@@ -4,12 +4,12 @@ import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDate;
-import java.util.List;
 
 @Component
 @Transactional
@@ -20,7 +20,8 @@ public class GoalRoomScheduler {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void startGoalRooms() {
-        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllByStartDate(LocalDate.now());
+        final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(
+                LocalDate.now());
         for (final GoalRoom goalRoom : goalRoomsToStart) {
             final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoom.getGoalRoomPendingMembers().getValues();
             saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers, goalRoom);

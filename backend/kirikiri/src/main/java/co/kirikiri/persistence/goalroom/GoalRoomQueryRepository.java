@@ -5,6 +5,7 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,6 @@ public interface GoalRoomQueryRepository {
     Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId);
 
     List<GoalRoom> findByRoadmap(final Roadmap roadmap);
+
+    List<GoalRoom> findAllRecruitingGoalRoomsByStartDateEarlierThan(final LocalDate startDate);
 }

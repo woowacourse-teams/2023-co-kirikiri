@@ -81,6 +81,34 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
     }
 
     @Test
+    void 자정에_시작_날짜가_오늘_이전이면서_모집_중인_골룸들도_시작된다() throws IOException {
+        // given
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
+
+        final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
+        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null);
+
+        final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
+        final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
+        회원가입(팔로워_회원_가입_요청);
+        final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
+
+        골룸_참가_요청(기본_골룸_아이디, 팔로워_액세스_토큰);
+        testTransactionService.골룸의_시작날짜를_변경한다(기본_골룸_아이디, 오늘.minusDays(10));
+
+        // when
+        goalRoomScheduler.startGoalRooms();
+
+        // then
+        assertAll(
+                () -> assertThat(goalRoomPendingMemberRepository.findAllByGoalRoom(골룸)).isEmpty(),
+                () -> assertThat(goalRoomMemberRepository.findAllByGoalRoom(골룸)).hasSize(2)
+        );
+    }
+
+    @Test
     void 골룸의_시작날짜가_오늘보다_이후이면_아무일도_일어나지_않는다() throws IOException {
         // given
         final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
