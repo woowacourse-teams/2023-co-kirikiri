@@ -16,7 +16,7 @@ const NavBar = ({ isSwitchOn }: NavBarProps) => {
     <S.NavBar isNavBarOpen={isSwitchOn}>
       <S.Nav>
         <S.Links>
-          <S.NavTitle to='/'>
+          <S.NavTitle to='/' aria-label='메인페이지로 이동'>
             <S.ItemIcon>
               <SVGIcon name='CokiriIcon' />
             </S.ItemIcon>

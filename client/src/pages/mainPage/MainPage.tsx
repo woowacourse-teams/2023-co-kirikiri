@@ -37,6 +37,7 @@ const MainPage = () => {
                 tilt.isLeftSide ? '-1' : '1'
               })`,
             }}
+            alt='메인페이지 코끼리 이미지'
           />
         </picture>
         <S.MainPageDesc>
