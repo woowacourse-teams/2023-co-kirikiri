@@ -60,7 +60,7 @@ const RoadmapSearch = () => {
               ref={searchWordRef}
             />
           </S.InputWrapper>
-          <S.SearchButton onClick={searchRoadmap}>
+          <S.SearchButton onClick={searchRoadmap} aria-label='검색버튼'>
             <SearchIcon width='30px' height='30px' />
           </S.SearchButton>
         </S.Wrapper>
