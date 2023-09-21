@@ -61,6 +61,8 @@ cloud:
       root-directory: 2023-co-kirikiri
       sub-directory: prod
       url-expiration: 60000
+    cloud-front:
+      distribution-domain: https://d3pqwmpjbeqywx.cloudfront.net
 
 oauth:
   naver:

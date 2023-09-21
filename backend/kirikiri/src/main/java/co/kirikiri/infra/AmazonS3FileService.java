@@ -7,6 +7,7 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class AmazonS3FileService implements FileService {
 
     private static final String ROOT_DIRECTORY_PROPERTY = "cloud.aws.s3.root-directory";
@@ -25,17 +27,21 @@ public class AmazonS3FileService implements FileService {
 
     private final AmazonS3 amazonS3;
     private final Environment environment;
-
-    public AmazonS3FileService(final AmazonS3 amazonS3, final Environment environment) {
-        this.amazonS3 = amazonS3;
-        this.environment = environment;
-    }
+    private final CloudFrontService cloudFrontService;
 
     @Override
     public void save(final String path, final FileInformation fileInformation) {
-        final String key = makeKey(path);
+        final String realPath = makeRealPath(path);
+        final String key = makeKey(realPath);
         final ObjectMetadata objectMetadata = makeObjectMetadata(fileInformation);
         putObjectToS3(key, fileInformation.inputStream(), objectMetadata);
+    }
+
+    private String makeRealPath(final String path) {
+        if (path.startsWith(DIRECTORY_SEPARATOR)) {
+            return path;
+        }
+        return DIRECTORY_SEPARATOR + path;
     }
 
     private String makeKey(final String path) {
@@ -68,7 +74,11 @@ public class AmazonS3FileService implements FileService {
 
     @Override
     public URL generateUrl(final String path, final HttpMethod httpMethod) {
-        final String key = makeKey(path);
+        if (httpMethod.equals(HttpMethod.GET)) {
+            return cloudFrontService.generateGetUrl(path);
+        }
+        final String realPath = makeRealPath(path);
+        final String key = makeKey(realPath);
         final Date expiration = createExpiration(Long.parseLong(findProperty(EXPIRATION_PROPERTY)));
         final GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(getBucketName(), key)
