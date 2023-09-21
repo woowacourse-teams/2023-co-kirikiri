@@ -51,8 +51,8 @@ const App = () => {
           <BrowserRouter>
             <ResponsiveContainer>
               <PageLayout>
-                <SessionHandler>
-                  <AsyncBoundary>
+                <AsyncBoundary>
+                  <SessionHandler>
                     <Routes>
                       <Route path='/' element={<MainPage />} />
                       <Route path='/login' element={<LoginPage />} />
@@ -105,8 +105,8 @@ const App = () => {
                       />
                       <Route path='/oauth/redirect' element={<OAuthRedirect />} />
                     </Routes>
-                  </AsyncBoundary>
-                </SessionHandler>
+                  </SessionHandler>
+                </AsyncBoundary>
               </PageLayout>
             </ResponsiveContainer>
           </BrowserRouter>
