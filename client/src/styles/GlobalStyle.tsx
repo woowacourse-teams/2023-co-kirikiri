@@ -33,10 +33,15 @@ const GlobalStyle = createGlobalStyle`
 
   * {
     scrollbar-width: none;
+    font-family: 'Noto Sans KR', 'Noto Sans' , sans-serif;
 
     &::-webkit-scrollbar {
       display: none; /* 크롬, 사파리, 오페라, 엣지 */
     }
+  }
+
+  body {
+    font-family: 'Noto Sans KR', 'Noto Sans' , sans-serif;
   }
 
   *, :after, :before {
@@ -67,13 +72,14 @@ const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Noto Sans KR';
     src: url(${require('../assets/fonts/NotoSansKR-Regular.woff')}) format('woff');
+    unicode-range: U+0020-007E;
   }
 
   @font-face {
     font-family: 'Noto Sans';
     font-display: swap;
     src: url(${require('../assets/fonts/NotoSans-Regular.woff')}) format('woff');
-    unicode-range: U+0041-005A, U+0061-007A;
+    unicode-range: U+0020-007E;
   }
 
   :root {
@@ -91,11 +97,6 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Noto Sans KR', 'Noto Sans' , sans-serif;
-
-    button {
-      border:none;
-    }
   }
 
   input {
