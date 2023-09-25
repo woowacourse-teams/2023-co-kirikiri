@@ -28,7 +28,7 @@ const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => 
     return (
       <S.Category
         key={id}
-        id={String(id)}
+        id={`${name}-${id}`}
         onClick={() => handleClickCategory(id)}
         selected={selectedCategoryId === id}
         aria-label={name}

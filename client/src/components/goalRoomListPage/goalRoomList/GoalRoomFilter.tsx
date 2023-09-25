@@ -15,7 +15,8 @@ const GoalRoomFilter = ({
   >(goalRoomFilter['1']);
 
   const selectFilterOption = (id: number) => {
-    if (Object.hasOwn(goalRoomFilter, id)) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (goalRoomFilter.hasOwnProperty(id)) {
       setSelectedOption(goalRoomFilter[id as keyof typeof goalRoomFilter]);
     }
   };
