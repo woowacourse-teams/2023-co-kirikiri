@@ -1,4 +1,3 @@
-import LazyImage from '@/components/_common/lazyImage/lazyImage';
 import { styled } from 'styled-components';
 
 export const RoadmapNodeList = styled.div`
@@ -88,10 +87,5 @@ export const ImageWrapper = styled.div`
 export const NodeImage = styled.img`
   width: 15rem;
   height: 20rem;
-  object-fit: cover;
-`;
-
-export const LazyImageImg = styled(LazyImage)`
-  height: 30rem;
   object-fit: cover;
 `;
