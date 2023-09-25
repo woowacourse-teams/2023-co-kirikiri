@@ -58,6 +58,7 @@ const GlobalStyle = createGlobalStyle`
 
   @font-face {
     font-family: 'Noto Sans KR';
+    font-display: optional;
     src: url(${require('../assets/fonts/NotoSansKR-Regular.woff')}) format('woff');
   }
 
