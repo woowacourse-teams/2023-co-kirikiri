@@ -5,6 +5,7 @@ export const RoadmapDetail = styled.div`
   position: relative;
   margin: 4rem 0;
   padding: 0 2rem;
+  white-space: pre-line;
 
   ${media.mobile`
     flex-direction: column;

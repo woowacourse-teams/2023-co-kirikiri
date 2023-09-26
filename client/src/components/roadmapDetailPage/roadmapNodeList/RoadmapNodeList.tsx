@@ -19,11 +19,13 @@ const RoadmapNodeList = ({ roadmapTitle, nodeInfo }: RoadmapNodeListProps) => {
             <S.NodeContent>
               <S.NodeTitle>{node.title}</S.NodeTitle>
               <S.NodeDescription>{node.description}</S.NodeDescription>
-              <S.ImageWrapper>
-                {node.imageUrls.map((nodeImage) => {
-                  return <S.NodeImage src={nodeImage} alt='노드 이미지' />;
-                })}
-              </S.ImageWrapper>
+              {node.imageUrls.map((nodeImage) => {
+                return (
+                  <S.ImageWrapper>
+                    <img src={nodeImage} alt='노드 이미지' loading='lazy' />
+                  </S.ImageWrapper>
+                );
+              })}
             </S.NodeContent>
           </S.NodeItemContainer>
         );

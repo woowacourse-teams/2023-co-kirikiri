@@ -25,6 +25,7 @@ export const PodiumImage = styled.img`
   width: 100%;
   height: 50%;
   margin-top: 5rem;
+  object-fit: cover;
 `;
 
 export const Participant = styled.div<{ position: number }>`
@@ -58,6 +59,7 @@ export const UserInfoLabel = styled.div`
   & > img {
     width: 5rem;
     height: 5rem;
+    object-fit: cover;
   }
 `;
 

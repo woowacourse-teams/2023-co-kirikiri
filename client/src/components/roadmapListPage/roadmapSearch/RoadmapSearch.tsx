@@ -18,7 +18,8 @@ const RoadmapSearch = () => {
   >('roadmapTitle');
 
   const selectSearchCategory = (id: number) => {
-    if (Object.hasOwn(searchCategoryKeyword, id)) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (searchCategory.hasOwnProperty(id)) {
       setSearchCategory(searchCategoryKeyword[id as keyof typeof searchCategoryKeyword]);
     }
   };
@@ -60,7 +61,7 @@ const RoadmapSearch = () => {
               ref={searchWordRef}
             />
           </S.InputWrapper>
-          <S.SearchButton onClick={searchRoadmap}>
+          <S.SearchButton onClick={searchRoadmap} aria-label='검색버튼'>
             <SearchIcon width='30px' height='30px' />
           </S.SearchButton>
         </S.Wrapper>

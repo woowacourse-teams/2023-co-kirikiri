@@ -28,6 +28,8 @@ export const NodeItemContainer = styled.article`
   display: flex;
   align-items: center;
   justify-content: space-around;
+
+  min-height: 30rem;
   margin-top: 2rem;
 `;
 

@@ -9,6 +9,7 @@ export const defaultUserInfo: UserInfoResponse = {
   profileImageUrl: '',
   gender: null,
   identifier: '',
+  email: '',
 };
 
 export const userInfoContext = createContext<UserInfoContextType>({

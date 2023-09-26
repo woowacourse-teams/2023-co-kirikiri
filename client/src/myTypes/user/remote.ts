@@ -31,4 +31,5 @@ export type UserInfoResponse = {
   profileImageUrl: string;
   gender: UserGender | null;
   identifier: string;
+  email: string;
 };
