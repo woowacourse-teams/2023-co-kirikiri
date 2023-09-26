@@ -371,33 +371,36 @@ class RoadmapRepositoryTest {
     void 로드맵을_크리에이터_닉네임으로_검색한다() {
         // given
         final Member creator1 = 사용자를_생성한다("cokirikiri", "코끼리");
-        final Member creator2 = 사용자를_생성한다("cokirikiri2", "끼리코");
+        final Member creator2 = 사용자를_생성한다("cokirikiri2", "코코끼");
+        final Member creator3 = 사용자를_생성한다("cokirikiri3", "코끼코");
         final RoadmapCategory category = 카테고리를_생성한다("여가");
 
         final Roadmap roadmap1 = 로드맵을_저장한다("로드맵", creator1, category);
         final Roadmap roadmap2 = 로드맵을_저장한다("로드맵", creator1, category);
+        final Roadmap roadmap3 = 로드맵을_저장한다("로드맵", creator1, category);
         로드맵을_저장한다("로드맵", creator2, category);
-        final Roadmap roadmap4 = 로드맵을_저장한다("로드맵", creator1, category);
         로드맵을_저장한다("로드맵", creator2, category);
+        final Roadmap roadmap4 = 로드맵을_저장한다("로드맵", creator3, category);
+        final Roadmap roadmap5 = 로드맵을_저장한다("로드맵", creator3, category);
         삭제된_로드맵을_저장한다("로드맵", creator1, category);
 
         final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
-        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(creator1.getNickname().getValue(), null, null);
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create("코끼", null, null);
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
-                null, 2);
+                null, 4);
         final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
                 roadmap2.getId(), 3);
 
         // then
         assertAll(
-                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(3),
+                () -> assertThat(firstRoadmapRequest).hasSize(5),
                 () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(roadmap4, roadmap2, roadmap1)),
+                        .isEqualTo(List.of(roadmap5, roadmap4, roadmap3, roadmap2, roadmap1)),
 
-                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(1),
+                () -> assertThat(secondRoadmapRequest).hasSize(1),
                 () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(roadmap1))
@@ -415,11 +418,23 @@ class RoadmapRepositoryTest {
                         new RoadmapTag(new RoadmapTagName("자바")),
                         new RoadmapTag(new RoadmapTagName("스프링")))));
 
-        로드맵을_저장한다("로드맵", creator, category);
+        final Roadmap roadmap2 = 로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("자바")))));
 
         final Roadmap roadmap3 = 로드맵을_태그와_저장한다("로드맵", creator, category,
                 new RoadmapTags(List.of(
-                        new RoadmapTag(new RoadmapTagName("자바")))));
+                        new RoadmapTag(new RoadmapTagName("자바스크립트")))));
+
+        로드맵을_저장한다("로드맵", creator, category);
+
+        로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("왕자바")))));
+
+        로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("야자바위")))));
 
         로드맵을_태그와_저장한다("로드맵", creator, category, new RoadmapTags(List.of(
                 new RoadmapTag(new RoadmapTagName("스프링")))));
@@ -429,18 +444,18 @@ class RoadmapRepositoryTest {
 
         // when
         final List<Roadmap> firstRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
-                null, 1);
+                null, 2);
         final List<Roadmap> secondRoadmapRequest = roadmapRepository.findRoadmapsByCond(searchRequest, orderType,
-                roadmap3.getId(), 1);
+                roadmap2.getId(), 2);
 
         // then
         assertAll(
-                () -> assertThat(firstRoadmapRequest.size()).isEqualTo(2),
+                () -> assertThat(firstRoadmapRequest).hasSize(3),
                 () -> assertThat(firstRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(roadmap3, roadmap1)),
+                        .isEqualTo(List.of(roadmap3, roadmap2, roadmap1)),
 
-                () -> assertThat(secondRoadmapRequest.size()).isEqualTo(1),
+                () -> assertThat(secondRoadmapRequest).hasSize(1),
                 () -> assertThat(secondRoadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(roadmap1))

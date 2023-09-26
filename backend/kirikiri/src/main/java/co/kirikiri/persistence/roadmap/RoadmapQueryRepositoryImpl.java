@@ -159,7 +159,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (creatorName == null) {
             return null;
         }
-        return roadmap.creator.nickname.value.eq(creatorName.value());
+        return roadmap.creator.nickname.value.startsWith(creatorName.value());
     }
 
     private BooleanExpression tagCond(final RoadmapSearchTagName tagName) {
@@ -169,7 +169,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         return roadmap.tags.values
                 .any()
                 .name.value
-                .equalsIgnoreCase(tagName.value());
+                .startsWithIgnoreCase(tagName.value());
     }
 
     private OrderSpecifier<?> sortCond(final RoadmapOrderType orderType) {

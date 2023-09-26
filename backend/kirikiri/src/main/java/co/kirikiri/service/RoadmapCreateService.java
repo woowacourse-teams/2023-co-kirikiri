@@ -60,7 +60,6 @@ public class RoadmapCreateService {
         final RoadmapSaveDto roadmapSaveDto = RoadmapMapper.convertToRoadmapSaveDto(request);
         final Roadmap roadmap = createRoadmap(member, roadmapSaveDto, roadmapCategory);
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
-
         applicationEventPublisher.publishEvent(new RoadmapCreateEvent(savedRoadmap, roadmapSaveDto));
 
         return savedRoadmap.getId();
