@@ -22,6 +22,7 @@ import useToast from '@hooks/_common/useToast';
 import OAuthRedirect from './components/loginPage/OAuthRedirect';
 import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 import SessionHandler from '@components/_common/sessionHandler/SessionHandler';
+import { getCookie } from '@utils/_common/cookies';
 
 const GoalRoomDashboardPage = lazy(
   () => import('@pages/goalRoomDashboardPage/GoalRoomDashboardPage')
@@ -36,9 +37,10 @@ const PrivateRouter = (props: PropsWithChildren) => {
   const { userInfo } = useUserInfoContext();
   const { triggerToast } = useToast();
   const navigate = useNavigate();
+  const accessToken = getCookie('access_token');
 
   useEffect(() => {
-    if (userInfo.id === null) {
+    if (userInfo.id === null && !accessToken) {
       navigate('/login');
       triggerToast({ message: '로그인이 필요한 서비스입니다.' });
     }
