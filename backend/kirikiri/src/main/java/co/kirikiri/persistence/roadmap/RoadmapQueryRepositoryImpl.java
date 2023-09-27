@@ -46,6 +46,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
+                .fetchJoin()
                 .where(roadmapCond(roadmapId))
                 .fetchOne());
     }
@@ -60,6 +61,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .innerJoin(roadmap.creator, member)
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
+                .fetchJoin()
                 .where(
                         lessThanLastId(lastId, orderType),
                         statusCond(RoadmapStatus.CREATED),
@@ -78,6 +80,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .innerJoin(roadmap.creator, member)
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
+                .fetchJoin()
                 .where(
                         lessThanLastId(lastId, orderType),
                         statusCond(RoadmapStatus.CREATED),

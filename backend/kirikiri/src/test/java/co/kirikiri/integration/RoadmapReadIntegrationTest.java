@@ -28,10 +28,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class RoadmapReadIntegrationTest extends InitIntegrationTest {
 
@@ -57,6 +57,34 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
                         .isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(단일_로드맵_응답.roadmapId())
                         .isEqualTo(기본_로드맵_아이디)
+        );
+    }
+
+    @Test
+    void 여러개의_태그를_가지는_로드맵_생성_요청을_성공한다() throws IOException {
+        //given
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final RoadmapSaveRequest 다른_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "다른 로드맵 제목", "다른 로드맵 소개글",
+                "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
+                List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
+                List.of(new RoadmapTagSaveRequest("다른 태그1"),
+                        new RoadmapTagSaveRequest("다른 태그2"),
+                        new RoadmapTagSaveRequest("다른 태그3")));
+        로드맵_생성(다른_로드맵_생성_요청, 기본_로그인_토큰);
+
+        //when
+        final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = 로드맵을_아이디로_조회한다(기본_로드맵_아이디);
+
+        //then
+        final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
+        });
+
+        assertAll(
+                () -> assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode())
+                        .isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(단일_로드맵_응답.roadmapId())
+                        .isEqualTo(기본_로드맵_아이디),
+                () -> assertThat(단일_로드맵_응답.tags()).hasSize(3)
         );
     }
 

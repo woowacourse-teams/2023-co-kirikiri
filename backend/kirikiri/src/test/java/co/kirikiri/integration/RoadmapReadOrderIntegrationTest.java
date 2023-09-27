@@ -114,7 +114,6 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         로드맵_생성(세번째_로드맵_생성_요청, 기본_로그인_토큰);
 
         // when
-        System.out.println("여기서부터");
         final RoadmapForListResponses 로드맵_리스트_응답 = 정렬된_카테고리별_로드맵_리스트_조회(RoadmapOrderType.REVIEW_RATE, 기본_카테고리.getId(),
                 10)
                 .response()
@@ -154,7 +153,6 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         로드맵_생성(세번째_로드맵_생성_요청, 기본_로그인_토큰);
 
         // when
-        System.out.println("여기서부터");
         final RoadmapForListResponses 로드맵_리스트_응답 = 정렬된_카테고리별_로드맵_리스트_조회(RoadmapOrderType.GOAL_ROOM_COUNT,
                 기본_카테고리.getId(), 10)
                 .response()
@@ -197,7 +195,6 @@ class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
         로드맵_생성(세번째_로드맵_생성_요청, 기본_로그인_토큰);
 
         // when
-        System.out.println("여기서부터");
         final RoadmapForListResponses 로드맵_리스트_응답 = 정렬된_카테고리별_로드맵_리스트_조회(RoadmapOrderType.PARTICIPANT_COUNT,
                 기본_카테고리.getId(), 10)
                 .response()

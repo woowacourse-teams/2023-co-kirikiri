@@ -192,6 +192,9 @@ public class RoadmapReadService {
                 searchRequest.creatorName(), searchRequest.roadmapTitle(), searchRequest.tagName());
         final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType,
                 scrollRequest.lastId(), scrollRequest.size());
+
+        // 정렬
+
         final RoadmapForListScrollDto roadmapForListScrollDto = makeRoadmapForListScrollDto(roadmaps,
                 scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmapForListScrollDto);
