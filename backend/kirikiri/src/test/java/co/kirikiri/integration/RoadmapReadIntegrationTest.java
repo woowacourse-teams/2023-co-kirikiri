@@ -23,6 +23,7 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
@@ -104,6 +105,33 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
         assertThat(로드맵_리스트_응답.responses().get(0).roadmapId()).isEqualTo(세번째_로드맵_아이디);
         assertThat(로드맵_리스트_응답.responses().get(1).roadmapId()).isEqualTo(두번째_로드맵_아이디);
         assertThat(로드맵_리스트_응답.responses().get(2).roadmapId()).isEqualTo(기본_로드맵_아이디);
+    }
+
+    @Test
+    void 로드맵_태그가_여러개일_경우_로드맵을_조회한다() throws IOException {
+        // given
+        for (int i = 0; i < 10; i++) {
+            final RoadmapSaveRequest 두번째_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "roadmap" + i,
+                    "다른 로드맵 소개글", "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
+                    List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
+                    List.of(new RoadmapTagSaveRequest("다른 태그1"),
+                            new RoadmapTagSaveRequest("다른 태그2"),
+                            new RoadmapTagSaveRequest("다른 태그3")));
+            로드맵_생성(두번째_로드맵_생성_요청, 기본_로그인_토큰);
+        }
+
+        // when
+        final RoadmapForListResponses 로드맵_리스트_응답 = 사이즈별로_로드맵을_조회한다(10)
+                .response()
+                .as(new TypeRef<>() {
+                });
+
+        // then
+        assertThat(로드맵_리스트_응답.hasNext()).isFalse();
+        assertThat(로드맵_리스트_응답.responses().size()).isEqualTo(10);
+        for (final RoadmapForListResponse response : 로드맵_리스트_응답.responses()) {
+            assertThat(response.tags().size()).isEqualTo(3);
+        }
     }
 
     @Test
