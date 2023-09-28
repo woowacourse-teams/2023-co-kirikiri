@@ -51,7 +51,7 @@ const GoalRoomList = () => {
           }}
         </GoalRoomFilter>
       </S.FilterBar>
-      <S.ListWrapper role='list' aria-label='골룸 리스트'>
+      <S.ListWrapper aria-label='골룸 리스트'>
         {goalRoomList.map((goalRoomInfo) => {
           return <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />;
         })}

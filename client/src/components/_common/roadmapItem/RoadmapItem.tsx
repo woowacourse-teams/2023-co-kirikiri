@@ -17,11 +17,11 @@ type RoadmapItemProps = {
 const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) => {
   const categoryIcon = <SVGIcon name={CategoriesInfo[item.category.id].iconName} />;
   const difficultyIcon = (
-    <div aria-label={DIFFICULTY_ICON_NAME[item.difficulty]}>
+    <div>
       <SVGIcon
         name={DIFFICULTY_ICON_NAME[item.difficulty]}
         size={50}
-        aria-hidden='true'
+        aria-label={DIFFICULTY_ICON_NAME[item.difficulty]}
       />
     </div>
   );
@@ -55,9 +55,9 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
         <S.ExtraHeaderText>권장 소요기간</S.ExtraHeaderText>
       </S.ExtraHeader>
       <S.ItemExtraInfos aria-label='로드맵 속성'>
-        <S.ExtraInfoBox aria-label='로드맵 카테고리 분류'>{categoryIcon}</S.ExtraInfoBox>
-        <S.Difficulty aria-label='로드맵 난이도'>{difficultyIcon}</S.Difficulty>
-        <S.RecommendedRoadmapPeriod aria-label='로드맵 진행 기간'>
+        <S.ExtraInfoBox>{categoryIcon}</S.ExtraInfoBox>
+        <S.Difficulty>{difficultyIcon}</S.Difficulty>
+        <S.RecommendedRoadmapPeriod>
           <S.RecommendedRoadmapPeriodNumber>
             {item.recommendedRoadmapPeriod}
           </S.RecommendedRoadmapPeriodNumber>
