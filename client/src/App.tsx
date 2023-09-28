@@ -22,6 +22,7 @@ import useToast from '@hooks/_common/useToast';
 import OAuthRedirect from './components/loginPage/OAuthRedirect';
 import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 import SessionHandler from '@components/_common/sessionHandler/SessionHandler';
+import RouteChangeTracker from '@components/_common/routeChangeTracker/RouteChangeTracker';
 
 const GoalRoomDashboardPage = lazy(
   () => import('@pages/goalRoomDashboardPage/GoalRoomDashboardPage')
@@ -54,66 +55,68 @@ const App = () => {
       <UserInfoProvider>
         <ToastProvider>
           <BrowserRouter>
-            <ResponsiveContainer>
-              <PageLayout>
-                <AsyncBoundary>
-                  <SessionHandler>
-                    <Routes>
-                      <Route path='/' element={<MainPage />} />
-                      <Route path='/login' element={<LoginPage />} />
-                      <Route path='/join' element={<SignUpPage />} />
-                      <Route path='/roadmap-list' element={<RoadmapListPage />}>
+            <RouteChangeTracker>
+              <ResponsiveContainer>
+                <PageLayout>
+                  <AsyncBoundary>
+                    <SessionHandler>
+                      <Routes>
+                        <Route path='/' element={<MainPage />} />
+                        <Route path='/login' element={<LoginPage />} />
+                        <Route path='/join' element={<SignUpPage />} />
+                        <Route path='/roadmap-list' element={<RoadmapListPage />}>
+                          <Route
+                            path=':category/:search'
+                            element={<RoadmapSearchResult />}
+                          />
+                        </Route>
                         <Route
-                          path=':category/:search'
-                          element={<RoadmapSearchResult />}
+                          path='/roadmap/:id'
+                          element={
+                            <Suspense fallback={<Fallback />}>
+                              <RoadmapDetailPage />
+                            </Suspense>
+                          }
                         />
-                      </Route>
-                      <Route
-                        path='/roadmap/:id'
-                        element={
-                          <Suspense fallback={<Fallback />}>
-                            <RoadmapDetailPage />
-                          </Suspense>
-                        }
-                      />
-                      <Route
-                        path='/roadmap/:id/goalroom-list'
-                        element={<GoalRoomListPage />}
-                      />
-                      <Route
-                        path='/roadmap-create'
-                        element={
-                          <PrivateRouter>
-                            <RoadmapCreatePage />
-                          </PrivateRouter>
-                        }
-                      />
-                      <Route
-                        path='/roadmap/:id/goalroom-create'
-                        element={
-                          <PrivateRouter>
-                            <GoalRoomCreatePage />
-                          </PrivateRouter>
-                        }
-                      />
-                      <Route
-                        path='/goalroom-dashboard/:goalroomId'
-                        element={<GoalRoomDashboardPage />}
-                      />
-                      <Route
-                        path='/myPage'
-                        element={
-                          <PrivateRouter>
-                            <MyPage />
-                          </PrivateRouter>
-                        }
-                      />
-                      <Route path='/oauth/redirect' element={<OAuthRedirect />} />
-                    </Routes>
-                  </SessionHandler>
-                </AsyncBoundary>
-              </PageLayout>
-            </ResponsiveContainer>
+                        <Route
+                          path='/roadmap/:id/goalroom-list'
+                          element={<GoalRoomListPage />}
+                        />
+                        <Route
+                          path='/roadmap-create'
+                          element={
+                            <PrivateRouter>
+                              <RoadmapCreatePage />
+                            </PrivateRouter>
+                          }
+                        />
+                        <Route
+                          path='/roadmap/:id/goalroom-create'
+                          element={
+                            <PrivateRouter>
+                              <GoalRoomCreatePage />
+                            </PrivateRouter>
+                          }
+                        />
+                        <Route
+                          path='/goalroom-dashboard/:goalroomId'
+                          element={<GoalRoomDashboardPage />}
+                        />
+                        <Route
+                          path='/myPage'
+                          element={
+                            <PrivateRouter>
+                              <MyPage />
+                            </PrivateRouter>
+                          }
+                        />
+                        <Route path='/oauth/redirect' element={<OAuthRedirect />} />
+                      </Routes>
+                    </SessionHandler>
+                  </AsyncBoundary>
+                </PageLayout>
+              </ResponsiveContainer>
+            </RouteChangeTracker>
           </BrowserRouter>
         </ToastProvider>
       </UserInfoProvider>
