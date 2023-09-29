@@ -17,7 +17,6 @@ export const Button = styled.button<{
   height: number;
 }>`
   position: absolute;
-  z-index: 1;
 
   display: flex;
   align-items: center;
