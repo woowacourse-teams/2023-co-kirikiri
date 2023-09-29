@@ -30,7 +30,7 @@ const media = {
   `,
 
   desktop: (styles: TemplateStringsArray) => css`
-    @media (max-width: ${BREAK_POINTS.DESKTOP}px) {
+    @media (min-width: ${BREAK_POINTS.DESKTOP}px) {
       ${styles}
     }
   `,
