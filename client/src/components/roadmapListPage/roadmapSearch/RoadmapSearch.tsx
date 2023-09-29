@@ -1,6 +1,6 @@
 import { SearchIcon } from '@/components/icons/svgIcons';
 import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
-import { useRef, useState } from 'react';
+import { KeyboardEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './roadmapSearch.styles';
 
@@ -24,7 +24,13 @@ const RoadmapSearch = () => {
     }
   };
 
+  const checkIsEnterKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    return e.code === 'Enter';
+  };
+
   const searchRoadmap = () => {
+    if (searchWordRef.current?.value === '') return;
+
     navigate(`/roadmap-list/${searchCategory}/${searchWordRef.current?.value}`);
   };
 
@@ -59,6 +65,9 @@ const RoadmapSearch = () => {
               placeholder='로드맵을 검색해주세요'
               maxLength={20}
               ref={searchWordRef}
+              onKeyPress={(e: KeyboardEvent<HTMLInputElement>) =>
+                checkIsEnterKey(e) && searchRoadmap()
+              }
             />
           </S.InputWrapper>
           <S.SearchButton onClick={searchRoadmap} aria-label='검색버튼'>
