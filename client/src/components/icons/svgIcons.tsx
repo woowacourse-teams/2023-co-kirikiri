@@ -2454,3 +2454,67 @@ export const ImageUploadIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) =>
     />
   </svg>
 );
+
+export const TriangleLeftIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 20 20'
+  >
+    <path
+      fill='currentColor'
+      d='M2.786 8.68a1.5 1.5 0 0 0 0 2.638l11.998 6.5A1.5 1.5 0 0 0 17 16.498V3.5a1.5 1.5 0 0 0-2.215-1.32L2.786 8.68Z'
+    />
+  </svg>
+);
+
+export const TriangleRightIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 20 20'
+  >
+    <path
+      fill='currentColor'
+      d='M17.215 8.68c1.047.568 1.047 2.07 0 2.638l-11.999 6.5a1.5 1.5 0 0 1-2.214-1.32V3.5a1.5 1.5 0 0 1 2.214-1.32l11.999 6.5Z'
+    />
+  </svg>
+);
+
+export const LeftIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='#000000'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
+  >
+    <path d='M15 18l-6-6 6-6' />
+  </svg>
+);
+
+export const RightIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='#000000'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
+  >
+    <path d='M9 18l6-6-6-6' />
+  </svg>
+);
