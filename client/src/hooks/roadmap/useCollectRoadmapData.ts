@@ -106,6 +106,7 @@ export const useCollectRoadmapData = () => {
     if (isSumbited) {
       createRoadmap(formData);
     }
+    setIsSubmited(false);
   }, [isSumbited]);
 
   return {
