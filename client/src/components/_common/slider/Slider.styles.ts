@@ -11,19 +11,15 @@ export const Slider = styled.div`
   width: 100%;
 `;
 
-export const Button = styled.button<{
-  isHovered: boolean;
-  width: number;
-  height: number;
-}>`
+export const Button = styled.button<{ isHovered: boolean }>`
   position: absolute;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: ${({ width }) => `${width}rem`};
-  height: ${({ height }) => `${height}rem`};
+  width: 7rem;
+  height: 12rem;
 
   background-color: rgba(1, 1, 1, 0.2);
   border-radius: 8px;
@@ -36,13 +32,13 @@ export const Button = styled.button<{
     `)}
 `;
 
-export const PrevButton = styled(Button)<{ isFirstContentIndex: boolean; left: number }>`
-  left: ${({ left }) => `${left}rem` || 0};
+export const PrevButton = styled(Button)<{ isFirstContentIndex: boolean }>`
+  left: 2rem;
   display: ${({ isFirstContentIndex }) => isFirstContentIndex && 'none'};
 `;
 
-export const NextButton = styled(Button)<{ isLastContentIndex: boolean; right: number }>`
-  right: ${({ right }) => `${right}rem` || 0};
+export const NextButton = styled(Button)<{ isLastContentIndex: boolean }>`
+  right: 2rem;
   display: ${({ isLastContentIndex }) => isLastContentIndex && 'none'};
 `;
 
@@ -56,4 +52,7 @@ export const Contents = styled.article<{ curIndex: number; length: number }>`
 export const Content = styled.div`
   flex-shrink: 0;
   width: 100%;
+  & > * {
+    min-height: 12rem;
+  }
 `;
