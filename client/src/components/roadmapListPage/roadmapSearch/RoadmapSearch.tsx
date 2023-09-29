@@ -35,6 +35,9 @@ const RoadmapSearch = () => {
   };
 
   const resetSearchResult = () => {
+    if (searchWordRef.current === null) return;
+
+    searchWordRef.current.value = '';
     navigate('/roadmap-list');
   };
 
