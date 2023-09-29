@@ -8,6 +8,7 @@ export const useCreateTag = () => {
   const getAddedTagText = () => {
     if (ref.current === null) return;
     if (ref.current.value === '') return;
+    if (tags.includes(ref.current.value)) return;
 
     setTags((prev) => {
       return [...prev, ref.current?.value as string];
