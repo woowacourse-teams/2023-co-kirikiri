@@ -1,28 +1,19 @@
-/* eslint-disable react/no-array-index-key */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, {
-  Dispatch,
-  PropsWithChildren,
-  SetStateAction,
-  createContext,
-  useContext,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, createContext, useContext, useState } from 'react';
 import * as S from './Sliders.styles';
-
-type SliderContextType = {
-  curIndex: number;
-  slideToPrevContent: () => void;
-  slideToNextContent: () => void;
-  setCurIndex: Dispatch<SetStateAction<number>>;
-  setContentLength: Dispatch<SetStateAction<number>>;
-};
+import type {
+  NextButtonProps,
+  PrevButtonProps,
+  SliderContextType,
+} from '@myTypes/_common/slider';
+import useHover from '@hooks/_common/useHover';
 
 const SliderContext = createContext<SliderContextType | null>(null);
 
 const Slider = ({ children }: PropsWithChildren) => {
   const [curIndex, setCurIndex] = useState(0);
   const [contentLength, setContentLength] = useState(1);
+  const { isHovered, handleMouseEnter, handleMouseLeave } = useHover();
 
   const isFirstContentIndex = curIndex === 0;
   const isLastContentIndex = curIndex === contentLength - 1;
@@ -47,47 +38,52 @@ const Slider = ({ children }: PropsWithChildren) => {
         slideToPrevContent,
         slideToNextContent,
         setContentLength,
+        isHovered,
+        isFirstContentIndex,
+        isLastContentIndex,
       }}
     >
-      <S.Slider>{children}</S.Slider>
+      <S.Slider onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        {children}
+      </S.Slider>
     </SliderContext.Provider>
   );
 };
 
-const PrevButton = ({ children }: PropsWithChildren) => {
-  const { slideToPrevContent } = useContext(SliderContext)!;
+const PrevButton = ({ children, left, width, height }: PrevButtonProps) => {
+  const { slideToPrevContent, isHovered, isFirstContentIndex } =
+    useContext(SliderContext)!;
 
-  if (!React.isValidElement(children)) {
-    throw new Error('React Element children이 필요합니다');
-  }
-
-  // React.isValidElement는 런타임에 대상이 유요한 React Element인지 확인하기 때문에 as 키워드를 사용한 타입 단언이 필요합니다
-  return React.cloneElement(children as React.ReactElement, {
-    onClick: slideToPrevContent,
-    style: {
-      position: 'absolute',
-      zIndex: 1,
-      ...children.props.style,
-    },
-  });
+  return (
+    <S.PrevButton
+      onClick={slideToPrevContent}
+      isHovered={isHovered}
+      isFirstContentIndex={isFirstContentIndex}
+      left={left}
+      width={width}
+      height={height}
+    >
+      {children}
+    </S.PrevButton>
+  );
 };
 
-const NextButton = ({ children }: PropsWithChildren) => {
-  const { slideToNextContent } = useContext(SliderContext)!;
+const NextButton = ({ children, right, width, height }: NextButtonProps) => {
+  const { slideToNextContent, isHovered, isLastContentIndex } =
+    useContext(SliderContext)!;
 
-  if (!React.isValidElement(children)) {
-    throw new Error('React Element children이 필요합니다');
-  }
-
-  return React.cloneElement(children as React.ReactElement, {
-    onClick: slideToNextContent,
-    style: {
-      position: 'absolute',
-      zIndex: 1,
-      right: 0,
-      ...children.props.style,
-    },
-  });
+  return (
+    <S.NextButton
+      onClick={slideToNextContent}
+      isHovered={isHovered}
+      isLastContentIndex={isLastContentIndex}
+      right={right}
+      width={width}
+      height={height}
+    >
+      {children}
+    </S.NextButton>
+  );
 };
 
 const Contents = ({ children }: PropsWithChildren) => {
