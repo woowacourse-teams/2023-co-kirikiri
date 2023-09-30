@@ -2454,3 +2454,37 @@ export const ImageUploadIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) =>
     />
   </svg>
 );
+
+export const LeftIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='#000000'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
+  >
+    <path d='M15 18l-6-6 6-6' />
+  </svg>
+);
+
+export const RightIcon = ({ width, ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns='http://www.w3.org/2000/svg'
+    width={width}
+    height={width}
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='#000000'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
+  >
+    <path d='M9 18l6-6-6-6' />
+  </svg>
+);

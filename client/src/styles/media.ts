@@ -1,4 +1,4 @@
-import { css } from 'styled-components';
+import { RuleSet, css } from 'styled-components';
 import BREAK_POINTS from '@constants/_common/breakPoints';
 
 /*
@@ -17,20 +17,20 @@ import BREAK_POINTS from '@constants/_common/breakPoints';
  */
 
 const media = {
-  mobile: (styles: TemplateStringsArray) => css`
+  mobile: (styles: TemplateStringsArray | RuleSet<object>) => css`
     @media (max-width: ${BREAK_POINTS.MOBILE}px) {
       ${styles}
     }
   `,
 
-  tablet: (styles: TemplateStringsArray) => css`
+  tablet: (styles: TemplateStringsArray | RuleSet<object>) => css`
     @media (max-width: ${BREAK_POINTS.TABLET}px) {
       ${styles}
     }
   `,
 
-  desktop: (styles: TemplateStringsArray) => css`
-    @media (max-width: ${BREAK_POINTS.DESKTOP}px) {
+  desktop: (styles: TemplateStringsArray | RuleSet<object>) => css`
+    @media (min-width: ${BREAK_POINTS.DESKTOP}px) {
       ${styles}
     }
   `,
