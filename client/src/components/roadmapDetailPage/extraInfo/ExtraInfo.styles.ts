@@ -41,4 +41,8 @@ export const RecommendedRoadmapPeriod = styled.div`
 
 export const Tags = styled.div`
   color: ${({ theme }) => theme.colors.main_dark};
+
+  & > div {
+    text-align: end;
+  }
 `;
