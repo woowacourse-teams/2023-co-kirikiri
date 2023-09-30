@@ -92,7 +92,7 @@ export const CreateRoadmapButton = styled.button`
   border-radius: 50%;
 `;
 
-export const InputFlex = styled.div`
+export const InputFlex = styled.form`
   display: flex;
   align-items: flex-end;
 `;

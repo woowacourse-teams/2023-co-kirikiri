@@ -1,6 +1,6 @@
 import { SearchIcon } from '@/components/icons/svgIcons';
 import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
-import { KeyboardEvent, useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './roadmapSearch.styles';
 
@@ -24,11 +24,8 @@ const RoadmapSearch = () => {
     }
   };
 
-  const checkIsEnterKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    return e.code === 'Enter';
-  };
-
-  const searchRoadmap = () => {
+  const searchRoadmap = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (searchWordRef.current?.value === '') return;
 
     navigate(`/roadmap-list/${searchCategory}/${searchWordRef.current?.value}`);
@@ -61,19 +58,16 @@ const RoadmapSearch = () => {
         </Select>
         <p>(으)로 검색하기</p>
       </S.SelectWrapper>
-      <S.InputFlex>
+      <S.InputFlex onSubmit={(e: FormEvent<HTMLFormElement>) => searchRoadmap(e)}>
         <S.Wrapper>
           <S.InputWrapper>
             <S.SearchInput
               placeholder='로드맵을 검색해주세요'
               maxLength={20}
               ref={searchWordRef}
-              onKeyPress={(e: KeyboardEvent<HTMLInputElement>) =>
-                checkIsEnterKey(e) && searchRoadmap()
-              }
             />
           </S.InputWrapper>
-          <S.SearchButton onClick={searchRoadmap} aria-label='검색버튼'>
+          <S.SearchButton aria-label='검색버튼' type='submit'>
             <SearchIcon width='30px' height='30px' />
           </S.SearchButton>
         </S.Wrapper>
