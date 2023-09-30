@@ -1,31 +1,32 @@
 /* eslint-disable react/no-unused-prop-types */
 import { useSelect } from '@/hooks/_common/useSelect';
+import { DifficultiesType, DifficultyKeyType } from '@/myTypes/roadmap/internal';
+import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
 import { useEffect } from 'react';
 import { Select, SelectBox } from '../selector/SelectBox';
 import * as S from './difficulty.styles';
 
-// 임시 더미데이터
-export type DummyDifficultyType = {
-  [key: number]: string;
+const Difficulties: DifficultiesType = {
+  VERY_EASY: '매우쉬움',
+  EASY: '쉬움',
+  NORMAL: '보통',
+  DIFFICULT: '어려움',
+  VERY_DIFFICULT: '매우어려움',
 };
 
-const DummyDifficulty: DummyDifficultyType = {
-  1: '매우쉬움',
-  2: '쉬움',
-  3: '보통',
-  4: '어려움',
-  5: '매우어려움',
+type DifficultyProps = {
+  getSelectedDifficulty: (difficulty: DifficultyKeyType | null) => void;
 };
 
-type DifficultyType = {
-  getSelectedDifficulty: (difficulty: keyof DummyDifficultyType | null) => void;
-};
-
-const Difficulty = ({ getSelectedDifficulty }: DifficultyType) => {
+const Difficulty = ({ getSelectedDifficulty }: DifficultyProps) => {
   const { selectOption, selectedOption } = useSelect<number>();
 
   useEffect(() => {
-    getSelectedDifficulty(selectedOption);
+    if (selectedOption === null) return;
+
+    getSelectedDifficulty(
+      getInvariantObjectKeys(invariantOf(Difficulties))[selectedOption]
+    );
   }, [selectedOption]);
 
   return (
@@ -46,7 +47,11 @@ const Difficulty = ({ getSelectedDifficulty }: DifficultyType) => {
             {({ selectedId }: { selectedId: number | null }) => {
               return (
                 <S.DifficultyValue>
-                  {selectedId === null ? '선택안함' : DummyDifficulty[selectedId]}
+                  {selectedId === null
+                    ? '선택안함'
+                    : Difficulties[
+                        getInvariantObjectKeys(invariantOf(Difficulties))[selectedId]
+                      ]}
                 </S.DifficultyValue>
               );
             }}
@@ -55,14 +60,14 @@ const Difficulty = ({ getSelectedDifficulty }: DifficultyType) => {
       </Select.Trigger>
       <Select.OptionGroup asChild>
         <S.Wrapper>
-          {Object.keys(DummyDifficulty).map((difficultyId) => {
+          {getInvariantObjectKeys(invariantOf(Difficulties)).map((difficulty, idx) => {
             return (
-              <Select.Option id={Number(difficultyId)} asChild>
+              <Select.Option id={idx} asChild>
                 <S.DifficultyOption>
-                  <Select.Indicator id={Number(difficultyId)} asChild>
+                  <Select.Indicator id={idx} asChild>
                     <S.OptionIndicator />
                   </Select.Indicator>
-                  {DummyDifficulty[Number(difficultyId)]}
+                  {Difficulties[difficulty]}
                 </S.DifficultyOption>
               </Select.Option>
             );
