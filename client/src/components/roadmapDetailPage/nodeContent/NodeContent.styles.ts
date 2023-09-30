@@ -8,17 +8,15 @@ export const SliderContent = styled.div`
   border-radius: 8px;
 
   ${media.mobile`
-    flex-direction: column;
     aspect-ratio: 0;
   `}
 `;
 
 export const LeftContent = styled.div`
-  flex-shrink: 0;
   width: 45%;
 
   ${media.mobile`
-    display:none;
+    display: none;
   `}
 `;
 
