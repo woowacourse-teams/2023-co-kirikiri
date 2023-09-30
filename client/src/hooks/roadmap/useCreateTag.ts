@@ -6,8 +6,8 @@ export const useCreateTag = () => {
   const ref = useRef<HTMLInputElement | null>(null);
 
   const getAddedTagText = () => {
-    if (ref.current === null) return;
-    if (ref.current.value === '') return;
+    if (!ref.current?.value) return;
+
     if (tags.includes(ref.current.value)) return;
 
     setTags((prev) => {
