@@ -92,12 +92,26 @@ export const CreateRoadmapButton = styled.button`
   border-radius: 50%;
 `;
 
-export const InputFlex = styled.div`
+export const InputFlex = styled.form`
   display: flex;
   align-items: flex-end;
 `;
 
 export const ResetSearchButton = styled.button`
   ${({ theme }) => theme.fonts.description3}
+  color: ${({ theme }) => theme.colors.main_dark};
+`;
+
+export const NoResultWrapper = styled.h1`
+  ${({ theme }) => theme.fonts.title_large};
+  width: 100%;
+  height: 10rem;
+
+  text-align: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   color: ${({ theme }) => theme.colors.main_dark};
 `;
