@@ -14,8 +14,9 @@ const RoadmapSearchResult = () => {
     category,
     search,
   });
+  const { hasNext, responses: roadmapList } = searchRoadmapListResponse;
   const loadMoreRef = useInfiniteScroll({
-    hasNextPage: searchRoadmapListResponse?.hasNext,
+    hasNextPage: hasNext,
     fetchNextPage,
   });
 
@@ -25,12 +26,12 @@ const RoadmapSearchResult = () => {
 
   return (
     <>
-      {searchRoadmapListResponse.responses.length === 0 && <NoResult />}
+      {roadmapList.length === 0 && <NoResult />}
       <S.RoadmapList aria-label='로드맵 목록'>
-        {searchRoadmapListResponse.responses.map((item) => (
+        {roadmapList.map((item) => (
           <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
         ))}
-        {searchRoadmapListResponse?.hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
+        {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
         <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
       </S.RoadmapList>
     </>
