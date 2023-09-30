@@ -16,6 +16,7 @@ const MyPageUserInfo = () => {
           <h2>{userInfo.nickname}</h2>
         </S.UserNickname>
         <S.UserIdentifier>@ {userInfo.identifier}</S.UserIdentifier>
+        <S.UserIdentifier>{userInfo.email}</S.UserIdentifier>
       </S.UserDetails>
     </S.UserInfoWrapper>
   );

@@ -1,4 +1,5 @@
 import elephantImg from '@assets/images/elephant.png';
+import elephantImgAV from '@assets/images/elephant.avif';
 import * as S from './MainPage.styles';
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
@@ -26,15 +27,19 @@ const MainPage = () => {
   return (
     <S.MainPageWrapper onMouseMove={handleMouseMove}>
       <S.MainPageContent>
-        <S.Elephant
-          src={elephantImg}
-          ref={elephantRef}
-          style={{
-            transform: `rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scaleX(${
-              tilt.isLeftSide ? '-1' : '1'
-            })`,
-          }}
-        />
+        <picture>
+          <source srcSet={elephantImgAV} />
+          <S.Elephant
+            src={elephantImg}
+            ref={elephantRef}
+            style={{
+              transform: `rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scaleX(${
+                tilt.isLeftSide ? '-1' : '1'
+              })`,
+            }}
+            alt='메인페이지 코끼리 이미지'
+          />
+        </picture>
         <S.MainPageDesc>
           우리들이 함께 만들어가는 로드맵 기반 스터디 플랫폼.
         </S.MainPageDesc>

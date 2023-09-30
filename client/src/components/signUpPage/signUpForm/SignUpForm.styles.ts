@@ -39,12 +39,16 @@ export const BoldText = styled.span`
 `;
 
 export const SubmitButton = styled.button`
+  ${({ theme }) => theme.fonts.button1};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 100%;
   height: 3rem;
   margin-top: 1rem;
-  padding: 1rem;
+  padding: 2rem;
 
-  ${({ theme }) => theme.fonts.button1};
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme }) => theme.colors.main_dark};

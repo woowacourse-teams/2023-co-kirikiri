@@ -1,6 +1,6 @@
 import { SearchIcon } from '@/components/icons/svgIcons';
 import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
-import { useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './roadmapSearch.styles';
 
@@ -18,16 +18,23 @@ const RoadmapSearch = () => {
   >('roadmapTitle');
 
   const selectSearchCategory = (id: number) => {
-    if (Object.hasOwn(searchCategoryKeyword, id)) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (searchCategory.hasOwnProperty(id)) {
       setSearchCategory(searchCategoryKeyword[id as keyof typeof searchCategoryKeyword]);
     }
   };
 
-  const searchRoadmap = () => {
+  const searchRoadmap = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchWordRef.current?.value === '') return;
+
     navigate(`/roadmap-list/${searchCategory}/${searchWordRef.current?.value}`);
   };
 
   const resetSearchResult = () => {
+    if (searchWordRef.current === null) return;
+
+    searchWordRef.current.value = '';
     navigate('/roadmap-list');
   };
 
@@ -51,7 +58,7 @@ const RoadmapSearch = () => {
         </Select>
         <p>(으)로 검색하기</p>
       </S.SelectWrapper>
-      <S.InputFlex>
+      <S.InputFlex onSubmit={(e: FormEvent<HTMLFormElement>) => searchRoadmap(e)}>
         <S.Wrapper>
           <S.InputWrapper>
             <S.SearchInput
@@ -60,7 +67,7 @@ const RoadmapSearch = () => {
               ref={searchWordRef}
             />
           </S.InputWrapper>
-          <S.SearchButton onClick={searchRoadmap}>
+          <S.SearchButton aria-label='검색버튼' type='submit'>
             <SearchIcon width='30px' height='30px' />
           </S.SearchButton>
         </S.Wrapper>

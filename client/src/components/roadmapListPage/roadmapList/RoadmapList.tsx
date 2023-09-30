@@ -20,7 +20,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   });
 
   const loadMoreRef = useInfiniteScroll({
-    hasNextPage: roadmapListResponse?.hasNext,
+    hasNextPage: roadmapListResponse.hasNext,
     fetchNextPage,
   });
 
@@ -35,7 +35,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
       {roadmapListResponse.responses.map((item) => (
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}
-      {roadmapListResponse?.hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
+      {roadmapListResponse.hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
       <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
     </S.RoadmapList>
   );

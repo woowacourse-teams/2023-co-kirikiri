@@ -29,7 +29,7 @@ export const FilterBar = styled.div`
   }
 `;
 
-export const ListWrapper = styled.div`
+export const ListWrapper = styled.section`
   display: grid;
   grid-row-gap: 6rem;
   grid-template-columns: repeat(2, 1fr);
