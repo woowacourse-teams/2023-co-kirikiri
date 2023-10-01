@@ -1,43 +1,52 @@
-import media from '@styles/media';
 import styled from 'styled-components';
 
 export const RoadmapDetail = styled.div`
-  position: relative;
-  margin: 4rem 0;
-  padding: 0 2rem;
-  white-space: pre-line;
-
-  ${media.mobile`
-    flex-direction: column;
-    align-items: center;
-  `}
+  padding: 2rem 0 4rem 0;
 `;
 
-export const RoadmapBody = styled.p`
-  ${({ theme }) => theme.fonts.button1}
-  width: 50%;
-  padding: 4rem 4rem;
-  height: 35rem;
+export const RoadmapInfo = styled.div``;
 
-  overflow: scroll;
+export const Title = styled.div`
+  ${({ theme }) => theme.fonts.title_large};
+  margin-bottom: 2rem;
+  color: ${({ theme }) => theme.colors.main_dark};
+`;
 
-  border-radius: 18px;
-  box-shadow: ${({ theme }) => theme.shadows.box};
+export const Description = styled.div`
+  display: flex;
+`;
 
-  color: ${({ theme }) => theme.colors.gray300};
+export const ButtonsWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
 
-  ${media.mobile`
-    padding: 4rem 4rem;
-  `}
+export const Buttons = styled.div`
+  bottom: 3rem;
 
-  & > strong {
-    ${({ theme }) => theme.fonts.h1};
-    margin-bottom: 4rem;
-    color: ${({ theme }) => theme.colors.main_dark};
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  margin: 2rem 0;
+
+  background-color: ${({ theme }) => theme.colors.main_dark};
+  border-radius: 8px;
+
+  & > div {
+    width: 0.2rem;
+    height: 5.5rem;
+    background-color: ${({ theme }) => theme.colors.white};
   }
 `;
 
-export const PageOnTop = styled.div`
-  display: flex;
-  justify-content: space-around;
+export const Button = styled.button`
+  ${({ theme }) => theme.fonts.nav_text}
+  width: 50%;
+  height: 5.5rem;
+
+  color: ${({ theme }) => theme.colors.white};
+
+  background-color: ${({ theme }) => theme.colors.main_dark};
+  border-radius: 8px;
 `;

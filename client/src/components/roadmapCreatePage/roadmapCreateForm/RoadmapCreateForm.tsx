@@ -50,6 +50,14 @@ const RoadmapCreateForm = () => {
         <Period />
         <Roadmap>
           <>
+            {roadmapValue.roadmapNodes.length === 0 && (
+              <RoadmapItem
+                roadmapNumber={1}
+                itemId={0}
+                getRoadmapItemTitle={getRoadmapItemTitle}
+                getNodeImage={getNodeImage}
+              />
+            )}
             {roadmapValue.roadmapNodes.map((_, index) => {
               return (
                 <RoadmapItem

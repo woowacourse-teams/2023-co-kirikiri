@@ -1,6 +1,9 @@
 import { DummyCategoryType } from '@/components/roadmapCreatePage/category/Category';
-import { DummyDifficultyType } from '@/components/roadmapCreatePage/difficulty/Difficulty';
-import { NodeImagesType, RoadmapValueType } from '@/myTypes/roadmap/internal';
+import {
+  DifficultyKeyType,
+  NodeImagesType,
+  RoadmapValueType,
+} from '@/myTypes/roadmap/internal';
 import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
 import { useEffect, useState } from 'react';
 import { useCreateRoadmap } from '../queries/roadmap';
@@ -27,7 +30,7 @@ export const useCollectRoadmapData = () => {
     }));
   };
 
-  const getSelectedDifficulty = (difficulty: keyof DummyDifficultyType | null) => {
+  const getSelectedDifficulty = (difficulty: DifficultyKeyType | null) => {
     setRoadmapValue((prev) => ({
       ...prev,
       difficulty,
@@ -106,6 +109,7 @@ export const useCollectRoadmapData = () => {
     if (isSumbited) {
       createRoadmap(formData);
     }
+    setIsSubmited(false);
   }, [isSumbited]);
 
   return {
