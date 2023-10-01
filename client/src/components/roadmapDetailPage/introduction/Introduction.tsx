@@ -2,11 +2,11 @@ import { RoadmapDetailType } from '@myTypes/roadmap/internal';
 import * as S from './Introduction.styles';
 import { useEffect, useRef, useState } from 'react';
 
-type IntroductionType = {
+type IntroductionProps = {
   roadmapInfo: RoadmapDetailType;
 };
 
-const Introduction = ({ roadmapInfo }: IntroductionType) => {
+const Introduction = ({ roadmapInfo }: IntroductionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showMoreButton, setShowMoreButton] = useState(false);
   const introRef = useRef<HTMLDivElement>(null);
@@ -21,7 +21,7 @@ const Introduction = ({ roadmapInfo }: IntroductionType) => {
   }, []);
 
   const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+    setIsExpanded((prev) => !prev);
   };
 
   return (
