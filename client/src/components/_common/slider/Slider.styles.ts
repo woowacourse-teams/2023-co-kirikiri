@@ -45,7 +45,7 @@ export const NextButton = styled(Button)<{ isLastContentIndex: boolean }>`
 export const Contents = styled.article<{ curIndex: number; length: number }>`
   transform: ${({ curIndex }) => `translateX(${-curIndex * 100}%)`};
   display: flex;
-  width: ${({ length }) => `${length * 100}%`};
+  width: 100%;
   transition: transform 0.3s ease;
 `;
 
