@@ -87,6 +87,7 @@ const GlobalStyle = createGlobalStyle`
   * {
     scrollbar-width: none;
     font-family: 'Noto Sans KR', 'Noto Sans' , sans-serif;
+    white-space: pre-wrap;
 
 
     &::-webkit-scrollbar {
