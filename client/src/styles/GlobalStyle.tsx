@@ -60,13 +60,14 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Noto Sans KR';
     font-display: optional;
     src: url(${require('../assets/fonts/NotoSansKR-Regular.woff')}) format('woff');
+    unicode-range: U+0020-007E;
   }
 
   @font-face {
     font-family: 'Noto Sans';
     font-display: optional;
     src: url(${require('../assets/fonts/NotoSans-Regular.woff')}) format('woff');
-    unicode-range: U+0041-005A, U+0061-007A;
+    unicode-range: U+0020-007E;
   }
 
   :root {

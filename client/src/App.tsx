@@ -1,5 +1,5 @@
-import { lazy, PropsWithChildren, Suspense, useEffect } from 'react';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
 import { ThemeProvider } from 'styled-components';
@@ -13,16 +13,14 @@ import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
 import ToastProvider from '@components/_common/toastProvider/ToastProvider';
 import MyPage from '@pages/myPage/MyPage';
-import UserInfoProvider, {
-  useUserInfoContext,
-} from './components/_providers/UserInfoProvider';
+import UserInfoProvider from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
-import useToast from '@hooks/_common/useToast';
 import OAuthRedirect from './components/loginPage/OAuthRedirect';
 import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 import SessionHandler from '@components/_common/sessionHandler/SessionHandler';
 import RouteChangeTracker from '@components/_common/routeChangeTracker/RouteChangeTracker';
+import PrivateRouter from '@components/_common/privateRouter/PrivateRouter';
 
 const GoalRoomDashboardPage = lazy(
   () => import('@pages/goalRoomDashboardPage/GoalRoomDashboardPage')
@@ -31,22 +29,6 @@ const GoalRoomListPage = lazy(() => import('@pages/goalRoomListPage/GoalRoomList
 const GoalRoomCreatePage = lazy(
   () => import('@pages/goalRoomCreatePage/GoalRoomCreatePage')
 );
-
-const PrivateRouter = (props: PropsWithChildren) => {
-  const { children } = props;
-  const { userInfo } = useUserInfoContext();
-  const { triggerToast } = useToast();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (userInfo.id === null) {
-      navigate('/login');
-      triggerToast({ message: '로그인이 필요한 서비스입니다.' });
-    }
-  }, [userInfo.id, navigate]);
-
-  return <>{children}</>;
-};
 
 const App = () => {
   return (
