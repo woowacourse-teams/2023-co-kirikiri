@@ -79,6 +79,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.PROD_SERVER': JSON.stringify(process.env.PROD_SERVER),
       'process.env.DEV_SERVER': JSON.stringify(process.env.DEV_SERVER),
+      'process.env.GOOGLE_ANALYTICS': JSON.stringify(process.env.GOOGLE_ANALYTICS),
     }),
   ],
 };
