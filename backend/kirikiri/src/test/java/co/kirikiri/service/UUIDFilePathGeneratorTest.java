@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class UUIDFilePathGeneratorTest {
 
@@ -23,5 +25,31 @@ class UUIDFilePathGeneratorTest {
                 () -> assertTrue(filePath.contains(imageDirType.getDirName())),
                 () -> assertTrue(filePath.contains(originalFileName))
         );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"가.jpg", "나다.jpg", "랅.jpg", "테스트.jpg"})
+    void 파일이름에_한글이_들어간_경우_정상적으로_경로를_쌩성한다(final String originalFileName) {
+        //given
+        final ImageDirType imageDirType = ImageDirType.ROADMAP_NODE;
+
+        //when
+        final String filePath = filePathGenerator.makeFilePath(imageDirType, originalFileName);
+
+        //then
+        assertTrue(filePath.contains(imageDirType.getDirName()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {" .jpg", "가운데 공백.jpg", " 앞에공백.jpg", "뒤에공백 .jpg"})
+    void 파일이름에_공백이_들어간_경우_정상적으로_경로를_쌩성한다(final String originalFileName) {
+        //given
+        final ImageDirType imageDirType = ImageDirType.ROADMAP_NODE;
+
+        //when
+        final String filePath = filePathGenerator.makeFilePath(imageDirType, originalFileName);
+
+        //then
+        assertTrue(filePath.contains(imageDirType.getDirName()));
     }
 }
