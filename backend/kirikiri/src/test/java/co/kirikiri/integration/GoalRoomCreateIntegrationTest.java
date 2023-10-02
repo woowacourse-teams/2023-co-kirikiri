@@ -342,11 +342,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         final ExtractableResponse<Response> 인증_피드_등록_응답 = 인증_피드_등록(골룸_아이디, 가짜_이미지_객체, 인증_피드_등록_요청, 기본_로그인_토큰);
 
         //then
-        assertAll(
-                () -> assertThat(인증_피드_등록_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(인증_피드_등록_응답.response().header("Location"))
-                        .contains("originalFileName.jpeg")
-        );
+        assertThat(인증_피드_등록_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     @Test

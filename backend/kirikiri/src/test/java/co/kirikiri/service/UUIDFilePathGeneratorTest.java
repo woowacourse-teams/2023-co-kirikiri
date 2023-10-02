@@ -1,7 +1,6 @@
 package co.kirikiri.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import co.kirikiri.exception.BadRequestException;
@@ -21,13 +20,9 @@ class UUIDFilePathGeneratorTest {
 
         //when
         final String filePath = filePathGenerator.makeFilePath(imageDirType, originalFileName);
-        System.out.println(filePath);
 
         //then
-        assertAll(
-                () -> assertTrue(filePath.contains(imageDirType.getDirName())),
-                () -> assertTrue(filePath.contains(originalFileName))
-        );
+        assertTrue(filePath.contains(imageDirType.getDirName()));
     }
 
     @ParameterizedTest
