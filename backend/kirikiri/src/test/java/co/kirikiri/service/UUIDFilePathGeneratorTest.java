@@ -1,8 +1,10 @@
 package co.kirikiri.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import co.kirikiri.exception.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -51,5 +53,17 @@ class UUIDFilePathGeneratorTest {
 
         //then
         assertTrue(filePath.contains(imageDirType.getDirName()));
+    }
+
+    @Test
+    void 파일_이름에_확장자가_없을_경우_예외가_발생한다() {
+        //given
+        final ImageDirType imageDirType = ImageDirType.ROADMAP_NODE;
+        final String originalFileName = "originalFileName";
+
+        //when
+        //then
+        assertThatThrownBy(() -> filePathGenerator.makeFilePath(imageDirType, originalFileName))
+                .isInstanceOf(BadRequestException.class);
     }
 }
