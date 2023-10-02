@@ -21,6 +21,7 @@ class UUIDFilePathGeneratorTest {
 
         //when
         final String filePath = filePathGenerator.makeFilePath(imageDirType, originalFileName);
+        System.out.println(filePath);
 
         //then
         assertAll(

@@ -36,10 +36,10 @@ public class UUIDFilePathGenerator implements FilePathGenerator {
 
     private String encodeOriginalFileName(final String originalFileName) {
         try {
-            final String[] seperatedFileName = originalFileName.split(IMAGE_TYPE_REGEX);
-            final String path = seperatedFileName[0];
-            final String imageType = seperatedFileName[1];
-            return URLEncoder.encode(path, CHARSET) + FILE_SEPARATOR + imageType;
+            final int fileSeparatorIndex = originalFileName.lastIndexOf(FILE_SEPARATOR);
+            final String path = originalFileName.substring(0, fileSeparatorIndex);
+            final String imageType = originalFileName.substring(fileSeparatorIndex);
+            return URLEncoder.encode(path, CHARSET) + imageType;
         } catch (final UnsupportedEncodingException e) {
             throw new ServerException(CHARSET + "은 지원되지 않는 인코딩 방식입니다.");
         } catch (final IndexOutOfBoundsException e) {
