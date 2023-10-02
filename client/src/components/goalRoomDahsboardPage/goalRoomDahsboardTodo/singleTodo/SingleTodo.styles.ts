@@ -31,8 +31,7 @@ export const TodoButton = styled.button`
 
 export const TodoContent = styled.span`
   ${({ theme }) => theme.fonts.button1};
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: scroll;
   white-space: nowrap;
 `;
 
