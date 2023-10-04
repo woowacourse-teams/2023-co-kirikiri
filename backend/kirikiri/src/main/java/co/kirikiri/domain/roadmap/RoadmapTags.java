@@ -7,12 +7,13 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,6 +25,7 @@ public class RoadmapTags {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     @JoinColumn(name = "roadmap_id", updatable = false, nullable = false)
+    @BatchSize(size = 20)
     private final Set<RoadmapTag> values = new HashSet<>();
 
     public RoadmapTags(final List<RoadmapTag> roadmapTags) {
