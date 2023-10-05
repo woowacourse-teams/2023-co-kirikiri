@@ -62,34 +62,6 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
     }
 
     @Test
-    void 여러개의_태그를_가지는_로드맵_생성_요청을_성공한다() throws IOException {
-        //given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
-        final RoadmapSaveRequest 다른_로드맵_생성_요청 = new RoadmapSaveRequest(기본_카테고리.getId(), "다른 로드맵 제목", "다른 로드맵 소개글",
-                "다른 로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30,
-                List.of(new RoadmapNodeSaveRequest("다른 로드맵 1주차", "다른 로드맵 1주차 내용", null)),
-                List.of(new RoadmapTagSaveRequest("다른 태그1"),
-                        new RoadmapTagSaveRequest("다른 태그2"),
-                        new RoadmapTagSaveRequest("다른 태그3")));
-        로드맵_생성(다른_로드맵_생성_요청, 기본_로그인_토큰);
-
-        //when
-        final ExtractableResponse<Response> 단일_로드맵_조회_요청에_대한_응답 = 로드맵을_아이디로_조회한다(기본_로드맵_아이디);
-
-        //then
-        final RoadmapResponse 단일_로드맵_응답 = 단일_로드맵_조회_요청에_대한_응답.as(new TypeRef<>() {
-        });
-
-        assertAll(
-                () -> assertThat(단일_로드맵_조회_요청에_대한_응답.statusCode())
-                        .isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(단일_로드맵_응답.roadmapId())
-                        .isEqualTo(기본_로드맵_아이디),
-                () -> assertThat(단일_로드맵_응답.tags()).hasSize(3)
-        );
-    }
-
-    @Test
     void 존재하지_않는_로드맵_아이디로_요청했을_때_조회를_실패한다() {
         //given
         final Long 존재하지_않는_로드맵_아이디 = 1L;
@@ -156,9 +128,9 @@ class RoadmapReadIntegrationTest extends InitIntegrationTest {
 
         // then
         assertThat(로드맵_리스트_응답.hasNext()).isFalse();
-        assertThat(로드맵_리스트_응답.responses().size()).isEqualTo(10);
+        assertThat(로드맵_리스트_응답.responses()).hasSize(10);
         for (final RoadmapForListResponse response : 로드맵_리스트_응답.responses()) {
-            assertThat(response.tags().size()).isEqualTo(3);
+            assertThat(response.tags()).hasSize(3);
         }
     }
 

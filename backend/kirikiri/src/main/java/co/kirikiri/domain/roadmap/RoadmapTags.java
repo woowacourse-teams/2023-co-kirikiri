@@ -61,4 +61,10 @@ public class RoadmapTags {
     public Set<RoadmapTag> getValues() {
         return new HashSet<>(values);
     }
+
+    public List<RoadmapTag> findTagByName(final String tagName) {
+        return values.stream()
+                .filter(tag -> tag.getName().getValue().contains(tagName))
+                .toList();
+    }
 }

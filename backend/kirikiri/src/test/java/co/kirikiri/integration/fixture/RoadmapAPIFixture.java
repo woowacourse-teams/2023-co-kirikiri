@@ -14,15 +14,12 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.restassured.config.HttpClientConfig;
-import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.http.entity.mime.HttpMultipartMode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -200,11 +197,31 @@ public class RoadmapAPIFixture {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 크리에이터_닉네임으로_정렬된_로드맵을_생성한다(final int 페이지_사이즈, final String 크리에이터_닉네임) {
+    public static ExtractableResponse<Response> 이전_검색_결과를_전달받아_태그_이름으로_최신순_정렬된_로드맵을_검색한다
+            (final int 페이지_사이즈, final Long 마지막_로드맵_아이디, final String 태그) {
+        return given()
+                .log().all()
+                .when()
+                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&lastId=" + 마지막_로드맵_아이디 + "&tagName=" + 태그)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 크리에이터_닉네임으로_정렬된_로드맵을_검색한다(final int 페이지_사이즈, final String 크리에이터_닉네임) {
         return given()
                 .log().all()
                 .when()
                 .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&creatorName=" + 크리에이터_닉네임)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 이전_검색_결과를_전달받아_크리에이터_닉네임으로_정렬된_로드맵을_검색한다(
+            final int 페이지_사이즈, final Long 마지막_로드맵_아이디, final String 크리에이터_닉네임) {
+        return given()
+                .log().all()
+                .when()
+                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&lastId=" + 마지막_로드맵_아이디 + "&creatorName=" + 크리에이터_닉네임)
                 .then().log().all()
                 .extract();
     }
@@ -214,6 +231,16 @@ public class RoadmapAPIFixture {
                 .log().all()
                 .when()
                 .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&roadmapTitle=" + 로드맵_제목)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 이전_검색_결과를_전달받아_제목으로_최신순_정렬된_로드맵을_검색한다(
+            final int 페이지_사이즈, final Long 마지막_로드맵_아이디, final String 로드맵_제목) {
+        return given()
+                .log().all()
+                .when()
+                .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&lastId=" + 마지막_로드맵_아이디 + "&roadmapTitle=" + 로드맵_제목)
                 .then().log().all()
                 .extract();
     }

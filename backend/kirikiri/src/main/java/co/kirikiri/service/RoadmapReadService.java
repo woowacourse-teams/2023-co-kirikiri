@@ -45,12 +45,14 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import co.kirikiri.service.mapper.ScrollResponseMapper;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -190,11 +192,37 @@ public class RoadmapReadService {
         final RoadmapOrderType orderType = RoadmapMapper.convertRoadmapOrderType(orderTypeRequest);
         final RoadmapSearchDto roadmapSearchDto = RoadmapSearchDto.create(
                 searchRequest.creatorName(), searchRequest.roadmapTitle(), searchRequest.tagName());
-        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType);
+        final List<Roadmap> roadmaps = new ArrayList<>(
+                roadmapRepository.findRoadmapsByCond(roadmapSearchDto, orderType));
+        List<Roadmap> searchedRoadmaps = new ArrayList<>();
 
-        // todo: scrollRequest.lastId(), scrollRequest.size()만큼 정렬
+        if (!roadmaps.isEmpty()) {
+            if (roadmapSearchDto.getTitle() != null) {
+                roadmaps.sort(Comparator.comparingInt(a -> a.getTitle().length()));
+            }
+            if (roadmapSearchDto.getCreatorName() != null) {
+                roadmaps.sort(Comparator.comparingInt(a -> a.getCreator().getNickname().getValue().length()));
+            }
+            if (roadmapSearchDto.getTagName() != null) {
+                roadmaps.sort((a, b) -> a.getTags().findTagByName(roadmapSearchDto.getTagName().value())
+                        .stream().min(Comparator.comparingInt(tag -> tag.getName().getValue().length()))
+                        .get().getName().getValue().length() -
+                        b.getTags().findTagByName(roadmapSearchDto.getTagName().value())
+                                .stream().min(Comparator.comparingInt(tag -> tag.getName().getValue().length()))
+                                .get().getName().getValue().length());
+            }
 
-        final RoadmapForListScrollDto roadmapForListScrollDto = makeRoadmapForListScrollDto(roadmaps,
+            int startIndex = 0;
+            if (scrollRequest.lastId() != null) {
+                final Roadmap lastRoadmap = findRoadmapById(scrollRequest.lastId());
+                startIndex = roadmaps.indexOf(lastRoadmap) + 1;
+            }
+
+            searchedRoadmaps = roadmaps.subList(startIndex,
+                    Math.min(roadmaps.size(), startIndex + scrollRequest.size() + 1));
+        }
+
+        final RoadmapForListScrollDto roadmapForListScrollDto = makeRoadmapForListScrollDto(searchedRoadmaps,
                 scrollRequest.size());
         return RoadmapMapper.convertRoadmapResponses(roadmapForListScrollDto);
     }
