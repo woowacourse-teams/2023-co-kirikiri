@@ -19,9 +19,7 @@ public interface RoadmapQueryRepository {
                                          final int pageSize);
 
     List<Roadmap> findRoadmapsByCond(final RoadmapSearchDto searchRequest,
-                                     final RoadmapOrderType orderType,
-                                     final Long lastId,
-                                     final int pageSize);
+                                     final RoadmapOrderType orderType);
 
     List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
                                                                 final Long lastId,

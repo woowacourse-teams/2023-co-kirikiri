@@ -372,7 +372,7 @@ class RoadmapReadServiceTest {
                 로드맵을_생성한다("첫 번째 로드맵", category),
                 로드맵을_생성한다("두 번째 로드맵", category));
 
-        when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsByCond(any(), any()))
                 .thenReturn(roadmaps);
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));

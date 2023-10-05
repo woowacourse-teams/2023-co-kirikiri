@@ -72,23 +72,17 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public List<Roadmap> findRoadmapsByCond(final RoadmapSearchDto searchRequest, final RoadmapOrderType orderType,
-                                            final Long lastId, final int pageSize) {
+    public List<Roadmap> findRoadmapsByCond(final RoadmapSearchDto searchRequest, final RoadmapOrderType orderType) {
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
                 .innerJoin(roadmap.creator, member)
                 .fetchJoin()
-                .leftJoin(roadmap.tags.values, roadmapTag)
-                .fetchJoin()
-                .where(
-                        lessThanLastId(lastId, orderType),
-                        statusCond(RoadmapStatus.CREATED),
+                .where(statusCond(RoadmapStatus.CREATED),
                         titleCond(searchRequest.getTitle()),
-                        creatorNicknameCond(searchRequest.getCreatorName()),
-                        tagCond(searchRequest.getTagName()))
-                .limit(pageSize + LIMIT_OFFSET)
-                .orderBy(sortCond(orderType))
+                        tagCond(searchRequest.getTagName()),
+                        creatorNicknameCond(searchRequest.getCreatorName()))
+                .orderBy(sortCond(RoadmapOrderType.LATEST))
                 .fetch();
     }
 
