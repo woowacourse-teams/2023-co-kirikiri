@@ -16,6 +16,7 @@ const theme: DefaultTheme = {
     red: '#ff0000',
     backdrop: 'rgba(220, 220, 220, 0.44)',
     transparent_blue: 'rgba(0, 100, 250, 0.1)',
+    naver: '#5AC466',
   },
 
   fonts: {
@@ -34,6 +35,11 @@ const theme: DefaultTheme = {
     description5: font({ size: 1.8, weight: 400 }),
     caption1: font({ size: 1.05, weight: 400 }),
     body1: font({ size: 1.8, weight: 300 }),
+    // 이 때 모바일 기준 약 11px로 이보다 작아지면 안될 것으로 판단
+    small: font({ size: 1.6, weight: 400 }),
+    small_bold: font({ size: 1.6, weight: 700 }),
+    normal: font({ size: 1.8, weight: 400 }),
+    normal_bold: font({ size: 1.8, weight: 700 }),
   },
 
   zIndex: {
