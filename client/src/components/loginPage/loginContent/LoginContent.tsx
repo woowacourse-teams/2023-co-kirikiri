@@ -1,7 +1,6 @@
 import logo from '@assets/images/logo.png';
 import logoAV from '@assets/images/logo.avif';
 import { Link } from 'react-router-dom';
-// import BackButton from '@components/_common/backButton/BackButton';
 import LoginOptions from '@components/loginPage/loginOptions/LoginOptions';
 import LoginForm from '@components/loginPage/loginForm/LoginForm';
 import { useSwitch } from '@hooks/_common/useSwitch';
