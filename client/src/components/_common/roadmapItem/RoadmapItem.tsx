@@ -68,12 +68,12 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
         {hasBorder ? '자세히 보기' : '진행중인 모임 보기'}
       </Button>
       <S.ItemFooter>
-        <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>
         <S.Tags>
           {item.tags.map((tag) => {
             return <span># {tag.name}</span>;
           })}
         </S.Tags>
+        <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>
       </S.ItemFooter>
     </S.RoadmapItem>
   );

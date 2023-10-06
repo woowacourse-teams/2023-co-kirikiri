@@ -75,7 +75,11 @@ const GlobalStyle = createGlobalStyle`
     background: ${({ theme }) => theme.colors.gray_back};
     background: ${({ theme }) => theme.colors.gray_back};
 
-    @media (min-width: ${BREAK_POINTS.TABLET}px) {
+    @media (max-width: ${BREAK_POINTS.MOBILE}px) {
+      font-size: 47.5%; /* for tablet devices */
+    }
+
+    @media (max-width: ${BREAK_POINTS.TABLET}px) {
       font-size: 55%; /* for tablet devices */
     }
 
