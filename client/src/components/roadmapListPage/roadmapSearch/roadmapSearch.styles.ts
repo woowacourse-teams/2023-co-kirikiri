@@ -42,6 +42,8 @@ export const SelectTrigger = styled.li`
 
   width: 13rem;
   margin-right: 2rem;
+
+  cursor: pointer;
 `;
 
 export const SearchCategoryOptionGroup = styled.ul`
