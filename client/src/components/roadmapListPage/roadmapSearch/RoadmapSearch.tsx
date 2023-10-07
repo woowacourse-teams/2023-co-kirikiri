@@ -37,13 +37,6 @@ const RoadmapSearch = () => {
     navigate(`/roadmap-list/${searchCategory}/${searchWordRef.current?.value}`);
   };
 
-  // const resetSearchResult = () => {
-  //   if (searchWordRef.current === null) return;
-
-  //   searchWordRef.current.value = '';
-  //   navigate('/roadmap-list');
-  // };
-
   return (
     <>
       <form onSubmit={(e: FormEvent<HTMLFormElement>) => searchRoadmap(e)}>
@@ -84,9 +77,6 @@ const RoadmapSearch = () => {
             <SearchIcon width='30px' height='30px' />
           </S.SearchButton>
         </S.Wrapper>
-        {/* <S.ResetSearchButton onClick={resetSearchResult}>
-          전체결과로 돌아가기
-        </S.ResetSearchButton> */}
       </form>
     </>
   );
