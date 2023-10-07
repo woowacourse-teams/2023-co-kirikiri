@@ -10,7 +10,7 @@ const searchCategoryKeyword = {
   3: 'creatorName',
 } as const;
 
-const searchCategorySelction = {
+const searchCategorySelection = {
   tagName: '태그',
   roadmapTitle: '로드맵 제목',
   creatorName: '크리에이터',
@@ -46,7 +46,7 @@ const RoadmapSearch = () => {
               <S.TriggerAndOptionWrapper>
                 <Select.Trigger asChild>
                   <S.SelectTrigger>
-                    ⌵ {searchCategorySelction[searchCategory]}
+                    ⌵ {searchCategorySelection[searchCategory]}
                     <div>|</div>
                   </S.SelectTrigger>
                 </Select.Trigger>
