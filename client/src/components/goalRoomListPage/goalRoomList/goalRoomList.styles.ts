@@ -1,25 +1,26 @@
-import media from '@/styles/media';
 import styled from 'styled-components';
 
 export const ListContainer = styled.section`
   min-height: 100vh;
-  margin-top: 4rem;
+  margin-top: 1rem;
 `;
 
 export const ItemContainer = styled.article`
-  width: 40.7rem;
+  width: 100%;
+  min-width: 35rem;
   height: fit-content;
   padding: 1.7rem 4rem 3rem;
 
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 16px;
-  box-shadow: -1.5653846263885498px 7.826924800872803px 46.961544036865234px 0px
-    rgba(0, 0, 0, 0.13);
+  box-shadow: ${({ theme }) => theme.shadows.box};
 `;
 
 export const FilterBar = styled.div`
   display: flex;
   justify-content: space-between;
+
+  width: 100%;
   margin-right: 9rem;
   margin-bottom: 6rem;
 
@@ -31,13 +32,12 @@ export const FilterBar = styled.div`
 
 export const ListWrapper = styled.section`
   display: grid;
-  grid-row-gap: 6rem;
   grid-template-columns: repeat(2, 1fr);
+  gap: 5rem;
 
-  ${media.mobile`
-  grid-template-columns: repeat(1, 1fr);
-
-  `}
+  @media (max-width: 660px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 `;
 
 export const Recruiting = styled.div`
@@ -74,7 +74,7 @@ export const Period = styled.div`
   }
 `;
 
-export const Particpant = styled.div`
+export const Participant = styled.div`
   ${({ theme }) => theme.fonts.description2};
   display: flex;
   align-items: center;
@@ -93,13 +93,14 @@ export const CreateGoalRoomButton = styled.button`
   left: 50%;
   transform: translate(-50%);
 
+  width: 30rem;
   height: 5rem;
-  padding: 0 10rem;
+  padding: 1rem 0;
 
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme }) => theme.colors.main_middle};
-  border-radius: 20px;
+  border-radius: 8px;
 `;
 
 export const FilterWrapper = styled.div`
@@ -115,16 +116,17 @@ export const FilterWrapper = styled.div`
 
 export const FilterTrigger = styled.button`
   ${({ theme }) => theme.fonts.button1};
-  width: 9rem;
+  width: 12rem;
   height: 1.5rem;
   color: ${({ theme }) => theme.colors.gray300};
+  text-align: end;
 `;
 
 export const FilterOptionWrapper = styled.ul`
   position: absolute;
   top: -1rem;
 
-  width: 9rem;
+  width: 100%;
 
   border: 0.2rem solid ${({ theme }) => theme.colors.main_middle};
   border-radius: 4px;
