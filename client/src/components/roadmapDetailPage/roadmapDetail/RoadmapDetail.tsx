@@ -6,7 +6,6 @@ import { useRoadmapDetail } from '@hooks/queries/roadmap';
 import Slider from '@components/_common/slider/Slider';
 import NodeContent from '../nodeContent/NodeContent';
 import ExtraInfo from '../extraInfo/ExtraInfo';
-import Introduction from '../introduction/Introduction';
 
 const RoadmapDetail = () => {
   const { id: roadmapId } = useValidParams<{ id: string }>();
@@ -16,9 +15,28 @@ const RoadmapDetail = () => {
   return (
     <S.RoadmapDetail>
       <S.RoadmapInfo>
-        <S.Title>{roadmapInfo.roadmapTitle}</S.Title>
+        <S.Title>
+          {roadmapInfo.roadmapTitle}
+          <p>created by {roadmapInfo.creator.name}</p>
+        </S.Title>
+        <S.Tags>
+          {roadmapInfo.tags.map((tag) => {
+            return <li>#{tag.name}</li>;
+          })}
+        </S.Tags>
         <S.Description>
-          <Introduction roadmapInfo={roadmapInfo} />
+          <S.Introduction>
+            <div>소개글</div>
+            <p>{roadmapInfo.introduction}</p>
+          </S.Introduction>
+          <S.Body>
+            <div>본문</div>
+            <p>
+              {roadmapInfo.content.content === ''
+                ? '로드맵에 대한 설명이 없어요🥲'
+                : roadmapInfo.content.content}
+            </p>
+          </S.Body>
           <ExtraInfo roadmapInfo={roadmapInfo} />
         </S.Description>
       </S.RoadmapInfo>
