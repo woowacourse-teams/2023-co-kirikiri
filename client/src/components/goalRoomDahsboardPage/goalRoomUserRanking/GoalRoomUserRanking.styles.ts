@@ -1,6 +1,7 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled, { keyframes } from 'styled-components';
 import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
+import BREAK_POINTS from '@constants/_common/breakPoints';
 
 const bounce = keyframes`
   0%, 20%, 50%, 80%, 100% {
@@ -13,7 +14,12 @@ const bounce = keyframes`
     transform: translateY(-5px);
   }
 `;
-export const CalenderWrapper = styled(DashBoardSection)``;
+export const CalenderWrapper = styled(DashBoardSection)`
+  @media (max-width: ${BREAK_POINTS.TABLET}px) {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+`;
 
 export const PodiumWrapper = styled.div`
   position: relative;

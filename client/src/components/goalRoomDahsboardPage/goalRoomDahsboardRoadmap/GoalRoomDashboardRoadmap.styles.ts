@@ -1,9 +1,14 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
 import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
+import BREAK_POINTS from '@constants/_common/breakPoints';
 
 export const RoadmapWrapper = styled(DashBoardSection)`
   grid-row: span 2;
+
+  @media (max-width: ${BREAK_POINTS.TABLET}px) {
+    grid-column: span 2;
+  }
 `;
 
 export const RoadmapContainer = styled.ul`
