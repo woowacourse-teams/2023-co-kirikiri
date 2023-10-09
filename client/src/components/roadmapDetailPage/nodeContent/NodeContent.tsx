@@ -15,7 +15,7 @@ const NodeContent = ({ node, index }: NodeContentProps) => {
           <S.NodeImg src={node.imageUrls[0]} />
         ) : (
           <S.NoImg>
-            <SVGIcon name='NoImageIcon' size={100} />
+            <SVGIcon name='NoImageIcon' size={50} />
             <div>No Image</div>
           </S.NoImg>
         )}
@@ -23,13 +23,14 @@ const NodeContent = ({ node, index }: NodeContentProps) => {
       <S.Separator>
         <div />
         <div />
+        <div />
       </S.Separator>
       <S.RightContent>
         <S.ContentTitle>
-          <S.Step>{index + 1}</S.Step>
+          <S.Step>{index + 1}.</S.Step>
           <p>{node.title}</p>
         </S.ContentTitle>
-        {node.description}
+        <p>{node.description}</p>
       </S.RightContent>
     </S.SliderContent>
   );
