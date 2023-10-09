@@ -14,10 +14,8 @@ export const FormItem = styled.div`
   display: flex;
   align-items: center;
 
-  min-height: 5rem;
+  min-height: 6rem;
   padding: 0 1rem;
-
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
 
   input,
   select {
@@ -26,10 +24,14 @@ export const FormItem = styled.div`
     margin-left: 1rem;
     border: none;
   }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.gray300};
+  }
 `;
 
 export const InfoText = styled.p<{ centered?: boolean }>`
-  ${({ theme }) => theme.fonts.description2};
+  ${({ theme }) => theme.fonts.small};
   margin-top: 1rem;
   text-align: ${({ centered }) => (centered ? 'center' : 'left')};
 `;
@@ -39,14 +41,14 @@ export const BoldText = styled.span`
 `;
 
 export const SubmitButton = styled.button`
-  ${({ theme }) => theme.fonts.button1};
+  ${({ theme }) => theme.fonts.normal_bold};
   display: flex;
   align-items: center;
   justify-content: center;
 
   width: 100%;
-  height: 3rem;
-  margin-top: 1rem;
+  height: 6rem;
+  margin-top: 1.5rem;
   padding: 2rem;
 
   color: ${({ theme }) => theme.colors.white};
@@ -57,6 +59,7 @@ export const SubmitButton = styled.button`
 `;
 
 export const StyledLink = styled(Link)`
+  ${({ theme }) => theme.fonts.small_bold};
   color: ${({ theme }) => theme.colors.main_dark};
 
   &:hover {

@@ -1,18 +1,18 @@
 import logo from '@assets/images/logo.png';
 import logoAV from '@assets/images/logo.avif';
 import { Link } from 'react-router-dom';
-import BackButton from '@components/_common/backButton/BackButton';
 import LoginOptions from '@components/loginPage/loginOptions/LoginOptions';
 import LoginForm from '@components/loginPage/loginForm/LoginForm';
 import { useSwitch } from '@hooks/_common/useSwitch';
 
 import * as S from './LoginContent.styles';
+import SVGIcon from '@components/icons/SVGIcon';
 
 const LoginContent = () => {
   const { isSwitchOn: isLoginFormVisible, toggleSwitch: toggleLoginForm } = useSwitch();
 
   return (
-    <S.LoginContentWrapper>
+    <S.LoginContentWrapper noneMobileBorder={!isLoginFormVisible}>
       <Link to='/roadmap-list'>
         <picture>
           <source srcSet={logoAV} />
@@ -24,7 +24,12 @@ const LoginContent = () => {
       ) : (
         <LoginOptions toggleLoginForm={toggleLoginForm} />
       )}
-      {isLoginFormVisible && <BackButton action={toggleLoginForm} />}
+      {isLoginFormVisible && (
+        <S.BackGuide onClick={toggleLoginForm}>
+          <SVGIcon name='BackArrowIcon' size={18} />
+          <p>돌아가기</p>
+        </S.BackGuide>
+      )}
     </S.LoginContentWrapper>
   );
 };
