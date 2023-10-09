@@ -7,7 +7,7 @@ export const ListContainer = styled.section`
 
 export const ItemContainer = styled.article`
   width: 100%;
-  min-width: 35rem;
+  min-width: 30rem;
   height: fit-content;
   padding: 1.7rem 4rem 3rem;
 
