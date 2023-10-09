@@ -12,6 +12,6 @@ export const LoginForm = styled.form`
 
 export const FormItemContainer = styled.div`
   overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
+  border: 0.1rem solid ${({ theme }) => theme.colors.gray300};
   border-radius: 8px;
 `;
