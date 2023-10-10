@@ -22,7 +22,7 @@ const LoginForm = () => {
 
   return (
     <S.LoginForm onSubmit={handleSubmit(onSubmit)}>
-      <div>
+      <S.FormItemContainer>
         <S.FormItem>
           <SVGIcon name='PersonIcon' />
           <input name='identifier' onChange={handleInputChange} placeholder='아이디' />
@@ -36,7 +36,7 @@ const LoginForm = () => {
             type='password'
           />
         </S.FormItem>
-      </div>
+      </S.FormItemContainer>
       <S.SubmitButton>로그인하기</S.SubmitButton>
     </S.LoginForm>
   );

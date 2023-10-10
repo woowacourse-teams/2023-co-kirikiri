@@ -3,7 +3,8 @@ import media from '@styles/media';
 
 export const SliderContent = styled.div`
   display: flex;
-  aspect-ratio: 5 / 3.5;
+  /* aspect-ratio: 5 / 3.5; */
+  height: 30rem;
   background-color: ${({ theme }) => theme.colors.gray100};
   border-radius: 8px;
 
@@ -13,7 +14,7 @@ export const SliderContent = styled.div`
 `;
 
 export const LeftContent = styled.div`
-  width: 45%;
+  width: 35%;
 
   ${media.mobile`
     display: none;
@@ -45,20 +46,25 @@ export const Separator = styled.div`
   height: 100%;
 
   & > div {
-    height: 50%;
+    height: 30%;
   }
 
-  & > div:last-child {
+  & > div:nth-child(2) {
+    height: 40%;
     background-color: black;
   }
 `;
 
 export const RightContent = styled.div`
-  ${({ theme }) => theme.fonts.h1}
+  ${({ theme }) => theme.fonts.description4}
   overflow: scroll;
-  width: 55%;
+  width: 65%;
   padding: 1.5rem;
   padding-top: 3rem;
+
+  & > p {
+    margin-left: 4rem;
+  }
 
   ${media.mobile`
     width: 100%;
@@ -68,14 +74,15 @@ export const RightContent = styled.div`
 `;
 
 export const ContentTitle = styled.div`
-  ${({ theme }) => theme.fonts.title_large}
+  ${({ theme }) => theme.fonts.nav_title}
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.main_dark};
 `;
 
 export const Step = styled.div`
-  ${({ theme }) => theme.fonts.h2}
+  ${({ theme }) => theme.fonts.nav_title}
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -85,6 +92,5 @@ export const Step = styled.div`
   height: 3rem;
   margin-right: 0.5rem;
 
-  border: 0.3rem solid black;
   border-radius: 50%;
 `;

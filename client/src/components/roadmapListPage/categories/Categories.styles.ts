@@ -44,6 +44,11 @@ export const Category = styled.button<{ selected: boolean }>`
     color: ${({ theme }) => theme.colors.main_dark};
     transition: all ease-in-out 0.1s;
   }
+
+  ${media.tablet`
+  width: 6rem;
+  height: 6rem;
+  `}
 `;
 
 export const CategoryName = styled.div`

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import BREAK_POINTS from '@constants/_common/breakPoints';
 
 export const GoalRoomWrapper = styled.div`
   position: relative;
@@ -13,6 +14,10 @@ export const GoalRoomGridContainer = styled.div`
   min-height: 90vh;
   margin-top: 1.5rem;
   padding: 1rem 0;
+
+  @media (min-width: ${BREAK_POINTS.TABLET}px) and (max-width: ${BREAK_POINTS.DESKTOP - 1}px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const DashBoardSection = styled.section`

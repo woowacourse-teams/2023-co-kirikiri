@@ -1,8 +1,14 @@
 import { DashBoardSection } from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent.styles';
 import styled from 'styled-components';
+import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
+import BREAK_POINTS from '@constants/_common/breakPoints';
 
 export const RoadmapWrapper = styled(DashBoardSection)`
   grid-row: span 2;
+
+  @media (max-width: ${BREAK_POINTS.TABLET}px) {
+    grid-column: span 2;
+  }
 `;
 
 export const RoadmapContainer = styled.ul`
@@ -13,6 +19,7 @@ export const RoadmapContainer = styled.ul`
   gap: 4rem;
   align-items: center;
 
+  height: 100%;
   min-height: 50rem;
   margin-top: 3.3rem;
   padding-top: 3rem;
@@ -48,3 +55,10 @@ export const FeedCount = styled.div`
   ${({ theme }) => theme.fonts.description4}
   color: ${({ theme }) => theme.colors.gray300};
 `;
+
+export const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const DashboardBackDrop = styled(BackDrop)``;

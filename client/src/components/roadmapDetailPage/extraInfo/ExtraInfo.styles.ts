@@ -1,48 +1,82 @@
 import styled from 'styled-components';
-import media from '@styles/media';
 
 export const ExtraInfo = styled.div`
-  ${({ theme }) => theme.fonts.description5};
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
-
-  width: 30%;
-  height: 55rem;
-
-  ${media.mobile`
-    display: none;
-  `}
+  & > p {
+    ${({ theme }) => theme.fonts.nav_title}
+    color: ${({ theme }) => theme.colors.main_middle}
+  }
 `;
 
 export const RoadmapMetadata = styled.div`
   display: flex;
   flex-direction: column;
-
-  & > div:not(:last-child) {
-    margin-bottom: 3rem;
-  }
 `;
 
 export const Category = styled.div`
+  ${({ theme }) => theme.fonts.description3}
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
+
+  width: 34.4rem;
+  height: 2rem;
+  padding: 1.5rem 0;
+  padding-left: 2.2rem;
+  margin-top: 1.6rem;
+
+  background-color: ${({ theme }) => theme.colors.gray100};
+
+  color: ${({ theme }) => theme.colors.gray300};
+
+  border-radius: 5px;
+
+  & > p {
+    color: ${({ theme }) => theme.colors.main_dark};
+  }
 `;
 
 export const Difficulty = styled.div`
-  text-align: end;
+  ${({ theme }) => theme.fonts.description3}
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 34.4rem;
+  height: 2rem;
+  padding: 1.5rem 0;
+  padding-left: 2.2rem;
+  margin-top: 1.6rem;
+
+  background-color: ${({ theme }) => theme.colors.gray100};
+
+  color: ${({ theme }) => theme.colors.gray300};
+
+  border-radius: 5px;
+
+  & > p {
+    color: ${({ theme }) => theme.colors.main_dark};
+  }
 `;
 
 export const RecommendedRoadmapPeriod = styled.div`
-  text-align: end;
-`;
+  ${({ theme }) => theme.fonts.description3}
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
-export const Tags = styled.div`
-  color: ${({ theme }) => theme.colors.main_dark};
+  width: 34.4rem;
+  height: 2rem;
+  padding: 1.5rem 0;
+  padding-left: 2.2rem;
+  margin-top: 1.6rem;
 
-  & > div {
-    text-align: end;
+  background-color: ${({ theme }) => theme.colors.gray100};
+
+  color: ${({ theme }) => theme.colors.gray300};
+
+  border-radius: 5px;
+
+  & > p {
+    color: ${({ theme }) => theme.colors.main_dark};
   }
 `;

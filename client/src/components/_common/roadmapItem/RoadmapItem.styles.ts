@@ -1,9 +1,7 @@
 import { styled } from 'styled-components';
 
 export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
-  position: relative;
-
-  flex-shrink: 0;
+  /* flex-shrink: 0; */
 
   width: 30rem;
   height: fit-content;
@@ -32,34 +30,39 @@ export const ReviewersCount = styled.div`
 
 export const RoadmapTitle = styled.div`
   ${({ theme }) => theme.fonts.h1}
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
+  height: 6rem;
 `;
 
 export const Description = styled.div`
   ${({ theme }) => theme.fonts.description5}
-  margin: 1.6rem 0 3rem 0;
+  color: ${({ theme }) => theme.colors.gray300};
+
+  margin: 1rem 0 1rem 0;
+
   white-space: nowrap;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
 `;
 
 export const HoverDescription = styled.article`
-  ${({ theme }) => theme.fonts.description2};
+  ${({ theme }) => theme.fonts.description3};
   position: absolute;
   top: 11rem;
 
   width: 25rem;
   padding: 2rem 2rem;
 
-  color: ${({ theme }) => theme.colors.gray300};
+  color: ${({ theme }) => theme.colors.black};
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
 
-  background-color: ${({ theme }) => theme.colors.gray100};
-  border: 0.2rem solid ${({ theme }) => theme.colors.gray300};
+  background-color: ${({ theme }) => theme.colors.main_middle};
   border-radius: 10px;
 `;
 
@@ -92,19 +95,20 @@ export const ItemExtraInfos = styled.div`
 
   width: 100%;
   height: 10rem;
+  padding: 0.5rem;
 
   background: ${({ theme }) => theme.colors.gray100};
   border-radius: 8px;
 `;
 
 export const ExtraInfoBox = styled.div`
-  ${({ theme }) => theme.fonts.description4}
+  ${({ theme }) => theme.fonts.description3}
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 8rem;
-  height: 8rem;
+  width: 6.5rem;
+  height: 6.5rem;
 
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 8px;
@@ -143,8 +147,10 @@ export const ExtraInfoCol = styled.div`
 
 export const ItemFooter = styled.div`
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
+
   margin-top: 2.5rem;
 `;
 
@@ -155,9 +161,12 @@ export const CreatedBy = styled.div`
 `;
 
 export const Tags = styled.div`
-  ${({ theme }) => theme.fonts.description4}
+  ${({ theme }) => theme.fonts.description3}
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  height: 6rem;
+
   color: ${({ theme }) => theme.colors.main_dark};
 `;
