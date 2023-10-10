@@ -20,8 +20,8 @@ const CategoryDescription = styled.p`
 const Wrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 85.8rem;
-  height: 10.5rem;
+  row-gap: 2rem;
+  width: 100%;
 `;
 
 const CategoryBox = styled.article<{ isSelected?: boolean }>`
