@@ -92,15 +92,21 @@ export const Buttons = styled.div`
     height: 5.5rem;
     background-color: ${({ theme }) => theme.colors.white};
   }
+  & > button:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  & > button:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 `;
 
 export const Button = styled.button`
-  ${({ theme }) => theme.fonts.description3}
-  width: 30%;
+  ${({ theme }) => theme.fonts.button1}
+  width: 50%;
   height: 4rem;
-
   color: ${({ theme }) => theme.colors.white};
-
   background-color: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 10px;
 `;

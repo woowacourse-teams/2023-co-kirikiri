@@ -19,7 +19,7 @@ export const Category = styled.div`
   justify-content: flex-start;
 
   width: 34.4rem;
-  height: 1.8rem;
+  height: 2rem;
   padding-left: 2.2rem;
   margin-top: 1.6rem;
 
@@ -41,7 +41,7 @@ export const Difficulty = styled.div`
   justify-content: flex-start;
 
   width: 34.4rem;
-  height: 1.8rem;
+  height: 2rem;
   padding-left: 2.2rem;
   margin-top: 1.6rem;
 
@@ -63,7 +63,7 @@ export const RecommendedRoadmapPeriod = styled.div`
   justify-content: flex-start;
 
   width: 34.4rem;
-  height: 1.8rem;
+  height: 2rem;
   padding-left: 2.2rem;
   margin-top: 1.6rem;
 
