@@ -18,9 +18,6 @@ export const Button = styled.button<{ isHovered: boolean }>`
   align-items: center;
   justify-content: center;
 
-  width: 7rem;
-  height: 12rem;
-
   background-color: rgba(1, 1, 1, 0.2);
   border-radius: 8px;
   box-shadow: ${({ theme }) => theme.shadows.box};
@@ -44,8 +41,12 @@ export const NextButton = styled(Button)<{ isLastContentIndex: boolean }>`
 
 export const Contents = styled.article<{ curIndex: number; length: number }>`
   transform: ${({ curIndex }) => `translateX(${-curIndex * 100}%)`};
+
   display: flex;
+
   width: 100%;
+  height: 30rem;
+
   transition: transform 0.3s ease;
 `;
 
