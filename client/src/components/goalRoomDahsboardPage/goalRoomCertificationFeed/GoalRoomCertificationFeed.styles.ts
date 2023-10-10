@@ -5,8 +5,13 @@ import {
   TitleWrapper,
 } from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/GoalRoomDashboardTodo.styles';
 import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
+import BREAK_POINTS from '@constants/_common/breakPoints';
 
-export const CertificationFeedWrapper = styled(DashBoardSection)``;
+export const CertificationFeedWrapper = styled(DashBoardSection)`
+  @media (max-width: ${BREAK_POINTS.TABLET}px) {
+    grid-column: span 2;
+  }
+`;
 
 export const ImageGrid = styled.div`
   display: grid;
