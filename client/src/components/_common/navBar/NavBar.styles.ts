@@ -35,6 +35,7 @@ export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
 
 export const NavTitle = styled(Link)`
   ${({ theme }) => theme.fonts.nav_title};
+  padding-top: 2rem;
 `;
 
 export const Item = styled(NavLink)`
