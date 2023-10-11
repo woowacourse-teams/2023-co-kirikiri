@@ -46,6 +46,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
@@ -62,12 +63,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 
 class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 
@@ -330,7 +331,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
-        final List<GoalRoomRoadmapNodeResponse> 골룸_노드_응답값 = 골룸_노드_조회(기본_골룸_아이디, 기본_로그인_토큰)
+        final List<GoalRoomRoadmapNodeDetailResponse> 골룸_노드_응답값 = 골룸_노드_조회(기본_골룸_아이디, 기본_로그인_토큰)
                 .as(new TypeRef<>() {
                 });
 

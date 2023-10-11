@@ -56,6 +56,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
@@ -63,11 +64,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -75,6 +71,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomReadServiceTest {
@@ -926,7 +927,7 @@ class GoalRoomReadServiceTest {
     }
 
     @Test
-    void 골룸의_전체_노드를_조회한다() {
+    void 골룸의_전체_노드를_조회한다() throws MalformedURLException {
         // given
         final Member creator = 사용자를_생성한다(1L);
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -938,12 +939,18 @@ class GoalRoomReadServiceTest {
                 .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithNodes(1L))
                 .thenReturn(Optional.of(goalRoom));
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         // when
-        final List<GoalRoomRoadmapNodeResponse> responses = goalRoomReadService.findAllGoalRoomNodes(1L, "identifier");
-        final List<GoalRoomRoadmapNodeResponse> expected = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2)
+        final List<GoalRoomRoadmapNodeDetailResponse> responses = goalRoomReadService.findAllGoalRoomNodes(1L,
+                "identifier");
+        final List<GoalRoomRoadmapNodeDetailResponse> expected = List.of(
+                new GoalRoomRoadmapNodeDetailResponse(1L, "로드맵 1주차", "로드맵 1주차 내용",
+                        List.of("http://example.com/serverFilePath", "http://example.com/serverFilePath"), TODAY,
+                        TEN_DAY_LATER, 10),
+                new GoalRoomRoadmapNodeDetailResponse(2L, "로드맵 2주차", "로드맵 2주차 내용",
+                        Collections.emptyList(), TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2)
         );
 
         // then

@@ -20,6 +20,7 @@ import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
+import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDetailDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.MemberGoalRoomForListDto;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
@@ -33,6 +34,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
@@ -104,6 +106,21 @@ public class GoalRoomMapper {
     private static GoalRoomRoadmapNodeResponse convertGoalRoomNodeResponse(final GoalRoomRoadmapNode node) {
         return new GoalRoomRoadmapNodeResponse(node.getId(), node.getRoadmapNode().getTitle(), node.getStartDate(),
                 node.getEndDate(), node.getCheckCount());
+    }
+
+    public static List<GoalRoomRoadmapNodeDetailResponse> convertGoalRoomNodeDetailResponses(
+            final List<GoalRoomRoadmapNodeDetailDto> goalRoomRoadmapNodeDetailDtos) {
+        return goalRoomRoadmapNodeDetailDtos.stream()
+                .map(GoalRoomMapper::convertGoalRoomNodeDetailResponse)
+                .toList();
+    }
+
+    private static GoalRoomRoadmapNodeDetailResponse convertGoalRoomNodeDetailResponse(
+            final GoalRoomRoadmapNodeDetailDto goalRoomRoadmapNodeDetailDto) {
+        return new GoalRoomRoadmapNodeDetailResponse(goalRoomRoadmapNodeDetailDto.id(),
+                goalRoomRoadmapNodeDetailDto.title(), goalRoomRoadmapNodeDetailDto.description(),
+                goalRoomRoadmapNodeDetailDto.imageUrls(), goalRoomRoadmapNodeDetailDto.startDate(),
+                goalRoomRoadmapNodeDetailDto.endDate(), goalRoomRoadmapNodeDetailDto.checkCount());
     }
 
     public static GoalRoomCertifiedResponse convertGoalRoomCertifiedResponse(final GoalRoom goalRoom,
