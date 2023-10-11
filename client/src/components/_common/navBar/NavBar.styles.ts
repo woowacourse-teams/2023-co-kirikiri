@@ -1,12 +1,10 @@
-import { styled } from 'styled-components';
+import { styled, css } from 'styled-components';
 import media from '@styles/media';
 import { Link, NavLink } from 'react-router-dom';
-import BREAK_POINTS from '@constants/_common/breakPoints';
 
 export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   position: fixed;
   z-index: ${({ theme }) => theme.zIndex.navBar};
-  top: 0;
 
   width: ${({ isNavBarOpen }) => (isNavBarOpen ? '20rem' : '8rem')};
   height: 100vh;
@@ -22,15 +20,17 @@ export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
     width: 20rem;
   }
 
-  @media screen and (max-width: ${BREAK_POINTS.MOBILE}px) {
-    top: 9rem;
-    display: ${({ isNavBarOpen }) => (isNavBarOpen ? 'flex' : 'none')};
-    width: 60%;
-
-    &:hover {
+  ${({ isNavBarOpen }) =>
+    media.mobile(css`
+      top: 9rem;
+      display: ${isNavBarOpen ? 'flex' : 'none'};
       width: 60%;
-    }
-  }
+      height: calc(100vh - 9rem);
+
+      &:hover {
+        width: 60%;
+      }
+    `)}
 `;
 
 export const NavTitle = styled(Link)`
@@ -38,10 +38,10 @@ export const NavTitle = styled(Link)`
 `;
 
 export const Item = styled(NavLink)`
-  width: 100%;
+  ${({ theme }) => theme.fonts.nav_text};
   display: flex;
   align-items: center;
-  ${({ theme }) => theme.fonts.nav_text};
+  width: 100%;
   color: ${({ theme }) => theme.colors.gray300};
 
   &.active {
@@ -89,10 +89,10 @@ export const Text = styled.span`
 `;
 
 export const Logo = styled.div`
-  height: 10rem;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  height: 10rem;
 
   ${media.mobile`
     display: none;
@@ -115,10 +115,6 @@ export const Nav = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: calc(100% - 10rem);
-
-  ${media.mobile`
-    height:100%;
-  `}
 `;
 
 export const Links = styled.div`
