@@ -58,7 +58,9 @@ const GoalRoomList = () => {
       </S.ListWrapper>
       {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
       <Link to={`/roadmap/${Number(id)}/goalroom-create`}>
-        <S.CreateGoalRoomButton>모임 생성하러 가기</S.CreateGoalRoomButton>
+        <S.CreateGoalRoomButton>
+          <div>모임 생성하러 가기</div>
+        </S.CreateGoalRoomButton>
       </Link>
     </S.ListContainer>
   );

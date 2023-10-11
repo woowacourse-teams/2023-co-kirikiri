@@ -73,7 +73,6 @@ const GlobalStyle = createGlobalStyle`
   :root {
     font-size: 41.6%; /* for mobile devices */
     background: ${({ theme }) => theme.colors.gray_back};
-    background: ${({ theme }) => theme.colors.gray_back};
 
     @media (max-width: ${BREAK_POINTS.MOBILE}px) {
       font-size: 47.5%; /* for tablet devices */
