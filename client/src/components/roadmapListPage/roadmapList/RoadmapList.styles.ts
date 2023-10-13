@@ -2,21 +2,26 @@ import media from '@/styles/media';
 import styled from 'styled-components';
 
 export const RoadmapList = styled.div`
+  position: relative;
+
   display: grid;
-  grid-gap: 3rem;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(30rem, auto));
   justify-items: center;
 
   margin-bottom: 8rem;
   min-height: 100vh;
+  padding: 0 2rem;
 
   ${media.tablet`
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(30rem, auto));
+
 
   `}
 
   ${media.mobile`
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(30rem, auto));
+
   
   `}
 `;

@@ -7,8 +7,9 @@ import RoadmapList from '../roadmapList/RoadmapList';
 import Spinner from '@components/_common/spinner/Spinner';
 import RoadmapSearch from '../roadmapSearch/RoadmapSearch';
 // import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import useValidParams from '@/hooks/_common/useValidParams';
+import SVGIcon from '@/components/icons/SVGIcon';
 
 const RoadmapListView = () => {
   const [selectedCategoryId, selectCategory] = useSelectCategory();
@@ -16,6 +17,11 @@ const RoadmapListView = () => {
 
   return (
     <S.RoadmapListView aria-label='로드맵 뷰'>
+      <Link to='/roadmap-list'>
+        <S.ListTitle>
+          로드맵 둘러보기 <SVGIcon name='RoadmapIcon' color='#76a982' />
+        </S.ListTitle>
+      </Link>
       <RoadmapSearch />
       <Categories
         selectedCategoryId={selectedCategoryId}

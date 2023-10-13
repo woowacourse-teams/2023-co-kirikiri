@@ -84,11 +84,9 @@ const GoalRoomUserRanking = () => {
           )}
         </S.PodiumWrapper>
       </S.CalenderWrapper>
-
       <DialogBackdrop asChild>
         <S.ModalBackdrop />
       </DialogBackdrop>
-
       <DialogContent>
         <GoalRoomRankingModal userRanking={goalRoomParticipants} />
       </DialogContent>

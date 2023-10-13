@@ -36,12 +36,10 @@ const SignUpForm = () => {
 
   return (
     <SingleCardWrapper>
-      <h1>
-        <picture>
-          <source srcSet={logoAV} />
-          <img src={logo} alt='코끼리 로고' />
-        </picture>
-      </h1>
+      <picture>
+        <source srcSet={logoAV} />
+        <img src={logo} alt='코끼리 로고' />
+      </picture>
       <form onSubmit={handleSubmit(onSubmit)}>
         <S.FormList>
           <S.FormItem>

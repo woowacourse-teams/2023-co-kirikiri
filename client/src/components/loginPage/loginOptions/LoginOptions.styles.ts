@@ -1,3 +1,4 @@
+import media from '@/styles/media';
 import styled from 'styled-components';
 
 export {
@@ -5,32 +6,33 @@ export {
   StyledLink,
 } from '@components/signUpPage/signUpForm/SignUpForm.styles';
 
+export const LoginOptions = styled.div`
+  width: 100%;
+`;
+
 export const OathButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  margin-top: 2rem;
+  margin-top: 3rem;
 `;
 
 export const OathButton = styled.button<{ type?: string }>`
-  ${({ theme }) => theme.fonts.button1}
+  ${({ theme }) => theme.fonts.h2}
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 100%;
-  height: 4rem;
-  margin-top: 1rem;
-  padding: 1rem;
+  width: 30rem;
+  height: 6rem;
 
-  color: ${({ type, theme }) => type === 'naver' && theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
 
   background: ${({ type, theme }) =>
-    type === 'naver' ? '#5AC466' : theme.colors.main_dark};
-  border: none;
-  border-radius: 1rem;
+    type === 'naver' ? theme.colors.naver : theme.colors.main_dark};
+  border-radius: 8px;
 
   transition: transform 0.2s ease-in-out;
 
@@ -38,7 +40,16 @@ export const OathButton = styled.button<{ type?: string }>`
     transform: scale(1.04);
   }
 
-  & > span {
+  span {
     margin-left: ${({ type }) => type === 'naver' && '1rem'};
   }
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+
+  ${media.mobile`
+    width: 78%;
+    height: 7rem;
+  `}
 `;

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { BackDrop } from '@components/goalRoomListPage/goalRoomDetail/goalRoomDetailDialog.styles';
+import BREAK_POINTS from '@constants/_common/breakPoints';
 
 export const GoalRoomDashboardTitle = styled.h1`
   ${({ theme }) => theme.fonts.nav_title};
@@ -13,7 +14,7 @@ export const GoalRoomLabel = styled.div`
 
   padding: 0.5rem;
   margin-top: 1rem;
-  max-width: 23rem;
+  max-width: 28rem;
 
   border-radius: 10px;
   background: ${({ theme }) => theme.colors.main_middle};
@@ -21,6 +22,10 @@ export const GoalRoomLabel = styled.div`
 
   & > svg {
     width: 3rem;
+  }
+
+  @media (max-width: ${BREAK_POINTS.TABLET}px) {
+    max-width: 40rem;
   }
 `;
 

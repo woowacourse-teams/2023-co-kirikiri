@@ -7,6 +7,13 @@ export const RoadmapListView = styled.div`
   margin-top: 8rem;
 `;
 
+export const ListTitle = styled.h1`
+  ${({ theme }) => theme.fonts.title_large}
+  display: flex;
+  margin-left: 2rem;
+  color: ${({ theme }) => theme.colors.main_dark};
+`;
+
 export const SelectWrapper = styled.div`
   ${({ theme }) => theme.fonts.description5}
   display: flex;

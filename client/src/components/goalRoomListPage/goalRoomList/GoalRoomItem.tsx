@@ -14,12 +14,12 @@ const GoalRoomItem = ({ ...goalRoomInfo }: GoalRoomDetailType) => {
           {goalRoomInfo.startDate} - {goalRoomInfo.endDate}
         </p>
       </S.Period>
-      <S.Particpant>
+      <S.Participant>
         참여인원
         <p>
           {goalRoomInfo.currentMemberCount} / {goalRoomInfo.limitedMemberCount}
         </p>
-      </S.Particpant>
+      </S.Participant>
       <GoalRoomDetailDialog goalRoomId={goalRoomInfo.goalRoomId} />
     </S.ItemContainer>
   );

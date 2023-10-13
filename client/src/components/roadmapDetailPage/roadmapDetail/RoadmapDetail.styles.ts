@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const RoadmapDetail = styled.div`
-  width: 90%;
+  width: 100%;
   padding: 2rem 0 4rem 0;
 `;
 
@@ -11,8 +11,12 @@ export const Title = styled.div`
   ${({ theme }) => theme.fonts.title_large};
   display: flex;
   align-items: flex-end;
+
   margin-bottom: 2rem;
+
   color: ${({ theme }) => theme.colors.main_dark};
+
+  width: 90%;
 
   & > p {
     ${({ theme }) => theme.fonts.description4}
@@ -29,7 +33,7 @@ export const Tags = styled.ul`
   align-items: center;
   justify-content: flex-start;
 
-  width: 100%;
+  width: 90%;
   padding: 0.3rem 1rem;
 
   background-color: ${({ theme }) => theme.colors.gray100};
@@ -92,15 +96,28 @@ export const Buttons = styled.div`
     height: 5.5rem;
     background-color: ${({ theme }) => theme.colors.white};
   }
+  & > button:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  & > button:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 `;
 
 export const Button = styled.button`
-  ${({ theme }) => theme.fonts.description3}
-  width: 30%;
+  ${({ theme }) => theme.fonts.button1}
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 50%;
   height: 4rem;
+  padding: 2.5rem 0;
 
   color: ${({ theme }) => theme.colors.white};
 
   background-color: ${({ theme }) => theme.colors.main_dark};
-  border-radius: 10px;
 `;
