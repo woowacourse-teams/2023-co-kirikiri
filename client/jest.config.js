@@ -23,6 +23,10 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
+    '^@components/(.*)$': '<rootDir>/src/components/$1',
+    '^@myTypes/(.*)$': '<rootDir>/src/types/$1',
+    '^@constants/(.*)$': '<rootDir>/src/constants/$1',
+    '^@styles/(.*)$': '<rootDir>/src/styles/$1',
   },
   resetMocks: false,
   setupFiles: ['dotenv/config'],
@@ -30,4 +34,5 @@ module.exports = {
   globals: {
     PRODUCT_ENV: 'test',
   },
+  coveragePathIgnorePatterns: ['/node_modules/', '/src/components/icons/svgIcons.tsx'],
 };
