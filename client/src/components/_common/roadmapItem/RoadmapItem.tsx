@@ -37,7 +37,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
   };
 
   return (
-    <S.RoadmapItem hasBorder={hasBorder} aria-label='로드맵 항목'>
+    <S.RoadmapItem $hasBorder={hasBorder} aria-label='로드맵 항목'>
       <div>
         <S.RoadmapTitle aria-label='로드맵 제목'>{item.roadmapTitle}</S.RoadmapTitle>
         <S.Description
@@ -70,7 +70,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
       <S.ItemFooter>
         <S.Tags>
           {item.tags.map((tag) => {
-            return <span># {tag.name}</span>;
+            return <span key={tag.id}># {tag.name}</span>;
           })}
         </S.Tags>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>
