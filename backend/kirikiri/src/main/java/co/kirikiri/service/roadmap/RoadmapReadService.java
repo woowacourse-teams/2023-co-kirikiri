@@ -221,9 +221,9 @@ public class RoadmapReadService {
                                                                     final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         final RoadmapGoalRoomsOrderType orderType = GoalRoomMapper.convertToGoalRoomOrderType(orderTypeDto);
-        final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
+        final List<GoalRoom> goalRooms = goalRoomRepository.findGoalRoomsByRoadmapAndCond(
                 roadmap, orderType, scrollRequest.lastId(), scrollRequest.size());
-        final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto = makeGoalRoomDtos(goalRoomsWithPendingMembers,
+        final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto = makeGoalRoomDtos(goalRooms,
                 scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(roadmapGoalRoomScrollDto);
     }
@@ -240,7 +240,7 @@ public class RoadmapReadService {
 
     private RoadmapGoalRoomDto makeGoalRoomDto(final GoalRoom goalRoom) {
         final Member goalRoomLeader = goalRoom.findGoalRoomLeader();
-        return new RoadmapGoalRoomDto(goalRoom.getId(), goalRoom.getName().getValue(),
+        return new RoadmapGoalRoomDto(goalRoom.getId(), goalRoom.getName().getValue(), goalRoom.getStatus(),
                 goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(),
                 goalRoom.getEndDate(), makeMemberDto(goalRoomLeader));
