@@ -8,6 +8,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +21,7 @@ public class GoalRoomPendingMembers {
 
     private static final int MIN_SIZE_TO_FIND_NEXT_LEADER = 1;
 
+    @BatchSize(size=20)
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
