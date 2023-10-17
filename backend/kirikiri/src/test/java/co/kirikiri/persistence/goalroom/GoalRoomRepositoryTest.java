@@ -25,7 +25,6 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.integration.helper.TestTransactionService;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -117,9 +116,9 @@ class GoalRoomRepositoryTest {
         goalRoomRepository.save(goalRoom2);
 
         // when
-        final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+        final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsOrderType.LATEST, null, 1);
-        final List<GoalRoom> goalRooms2 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+        final List<GoalRoom> goalRooms2 = goalRoomRepository.findGoalRoomsByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsOrderType.LATEST, goalRoom2.getId(), 10);
 
         assertThat(goalRooms1)
@@ -156,9 +155,9 @@ class GoalRoomRepositoryTest {
         goalRoomRepository.save(goalRoom2);
 
         // when
-        final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+        final List<GoalRoom> goalRooms1 = goalRoomRepository.findGoalRoomsByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE, null, 1);
-        final List<GoalRoom> goalRooms2 = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+        final List<GoalRoom> goalRooms2 = goalRoomRepository.findGoalRoomsByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE, goalRoom1.getId(), 10);
 
         // then

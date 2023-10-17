@@ -1,12 +1,6 @@
 package co.kirikiri.service.mapper;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.domain.goalroom.GoalRoomToDo;
-import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
-import co.kirikiri.domain.goalroom.GoalRoomToDos;
+import co.kirikiri.domain.goalroom.*;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
@@ -15,30 +9,12 @@ import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.service.dto.FileInformation;
-import co.kirikiri.service.dto.goalroom.CheckFeedDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDetailDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
-import co.kirikiri.service.dto.goalroom.MemberGoalRoomForListDto;
-import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
-import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomScrollDto;
+import co.kirikiri.service.dto.goalroom.*;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
+import co.kirikiri.service.dto.goalroom.response.*;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
@@ -47,15 +23,16 @@ import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -152,7 +129,7 @@ public class GoalRoomMapper {
     private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(
             final RoadmapGoalRoomDto roadmapGoalRoomDto) {
         return new RoadmapGoalRoomResponse(roadmapGoalRoomDto.goalRoomId(), roadmapGoalRoomDto.name(),
-                roadmapGoalRoomDto.currentMemberCount(), roadmapGoalRoomDto.limitedMemberCount(),
+                roadmapGoalRoomDto.status(), roadmapGoalRoomDto.currentMemberCount(), roadmapGoalRoomDto.limitedMemberCount(),
                 roadmapGoalRoomDto.createdAt(), roadmapGoalRoomDto.startDate(),
                 roadmapGoalRoomDto.endDate(), convertToMemberResponse(roadmapGoalRoomDto.goalRoomLeader()));
     }
