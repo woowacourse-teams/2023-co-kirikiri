@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.goalroom;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.CheckFeed;
@@ -23,6 +23,9 @@ import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
+import co.kirikiri.service.FilePathGenerator;
+import co.kirikiri.infra.FileService;
+import co.kirikiri.service.ImageDirType;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;

@@ -1,6 +1,7 @@
-package co.kirikiri.service;
+package co.kirikiri.service.auth;
 
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.infra.OauthNetworkService;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.NaverMemberProfileDto;
 import co.kirikiri.service.dto.auth.NaverMemberProfileResponseDto;
@@ -10,6 +11,7 @@ import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.mapper.OauthMapper;
+import co.kirikiri.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;

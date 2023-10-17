@@ -1,7 +1,6 @@
 package co.kirikiri.infra;
 
 import co.kirikiri.exception.ServerException;
-import co.kirikiri.service.FileService;
 import co.kirikiri.service.dto.FileInformation;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;

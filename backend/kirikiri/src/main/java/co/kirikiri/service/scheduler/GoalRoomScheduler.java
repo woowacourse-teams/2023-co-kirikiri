@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.scheduler;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;

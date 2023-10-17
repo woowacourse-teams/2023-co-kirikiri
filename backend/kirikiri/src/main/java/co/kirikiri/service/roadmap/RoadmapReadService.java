@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.roadmap;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.member.Member;
@@ -20,6 +20,7 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
+import co.kirikiri.infra.FileService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomScrollDto;

@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.RoadmapCreateService;
-import co.kirikiri.service.RoadmapReadService;
+import co.kirikiri.service.roadmap.RoadmapCreateService;
+import co.kirikiri.service.roadmap.RoadmapReadService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;

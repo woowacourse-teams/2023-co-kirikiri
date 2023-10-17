@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.member;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.auth.EncryptedToken;
@@ -14,6 +14,9 @@ import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.infra.FileService;
+import co.kirikiri.service.NumberGenerator;
+import co.kirikiri.service.TokenProvider;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.MemberInformationDto;
 import co.kirikiri.service.dto.member.MemberInformationForPublicDto;
