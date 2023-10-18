@@ -15,7 +15,6 @@ import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.*;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.infra.FileService;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.member.MemberRepository;

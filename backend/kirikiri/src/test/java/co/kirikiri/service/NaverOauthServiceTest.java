@@ -9,7 +9,6 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.auth.AuthService;
 import co.kirikiri.service.auth.NaverOauthService;
-import co.kirikiri.infra.OauthNetworkService;
 import co.kirikiri.service.dto.auth.NaverMemberProfileDto;
 import co.kirikiri.service.dto.auth.NaverMemberProfileResponseDto;
 import co.kirikiri.service.dto.auth.NaverOauthTokenDto;

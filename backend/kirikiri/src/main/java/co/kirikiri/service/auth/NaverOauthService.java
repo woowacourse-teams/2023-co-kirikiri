@@ -1,7 +1,7 @@
 package co.kirikiri.service.auth;
 
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.infra.OauthNetworkService;
+import co.kirikiri.service.OauthNetworkService;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.NaverMemberProfileDto;
 import co.kirikiri.service.dto.auth.NaverMemberProfileResponseDto;

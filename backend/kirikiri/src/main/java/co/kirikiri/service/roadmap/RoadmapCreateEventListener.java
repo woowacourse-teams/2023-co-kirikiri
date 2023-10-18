@@ -10,7 +10,7 @@ import co.kirikiri.exception.BadRequestException;
 import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.FilePathGenerator;
-import co.kirikiri.infra.FileService;
+import co.kirikiri.service.FileService;
 import co.kirikiri.service.ImageDirType;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;

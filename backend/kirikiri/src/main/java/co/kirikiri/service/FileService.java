@@ -1,4 +1,4 @@
-package co.kirikiri.infra;
+package co.kirikiri.service;
 
 import co.kirikiri.service.dto.FileInformation;
 import org.springframework.http.HttpMethod;

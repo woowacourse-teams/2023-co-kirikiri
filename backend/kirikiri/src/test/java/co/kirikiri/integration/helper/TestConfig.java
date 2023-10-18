@@ -2,7 +2,7 @@ package co.kirikiri.integration.helper;
 
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.infra.FileService;
+import co.kirikiri.service.FileService;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 

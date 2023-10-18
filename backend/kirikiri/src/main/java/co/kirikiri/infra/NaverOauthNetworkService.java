@@ -1,5 +1,6 @@
 package co.kirikiri.infra;
 
+import co.kirikiri.service.OauthNetworkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;

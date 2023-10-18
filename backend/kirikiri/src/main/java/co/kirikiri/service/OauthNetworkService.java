@@ -1,4 +1,4 @@
-package co.kirikiri.infra;
+package co.kirikiri.service;
 
 import org.springframework.http.ResponseEntity;
 import java.util.Map;

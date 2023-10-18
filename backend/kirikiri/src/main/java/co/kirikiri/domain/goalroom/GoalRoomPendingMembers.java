@@ -21,7 +21,7 @@ public class GoalRoomPendingMembers {
 
     private static final int MIN_SIZE_TO_FIND_NEXT_LEADER = 1;
 
-    @BatchSize(size=20)
+    @BatchSize(size = 20)
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
