@@ -56,7 +56,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
                 .on(roadmapContent.roadmap.eq(roadmap))
                 .where(
-                        statusCondByOrderType(orderType),
+                        statusCond(orderType),
                         lessThanLastId(lastId, orderType),
                         roadmapCond(roadmap))
                 .limit(pageSize + LIMIT_OFFSET)
@@ -90,7 +90,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                 .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
                 .where(goalRoomPendingMember.member.eq(member)
                         .or(goalRoomMember.member.eq(member)))
-                .where(statusCondByOrderType(goalRoomStatus))
+                .where(statusCond(goalRoomStatus))
                 .fetch();
     }
 
@@ -116,7 +116,7 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     @Override
     public List<GoalRoom> findAllRecruitingGoalRoomsByStartDateEarlierThan(final LocalDate date) {
         return selectFrom(goalRoom)
-                .where(statusCondByOrderType(GoalRoomStatus.RECRUITING))
+                .where(statusCond(GoalRoomStatus.RECRUITING))
                 .where(equalOrEarlierStartDateThan(date))
                 .fetch();
     }
@@ -125,13 +125,13 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return goalRoom.id.eq(goalRoomId);
     }
 
-    private BooleanExpression statusCondByOrderType(final GoalRoomStatus status) {
+    private BooleanExpression statusCond(final GoalRoomStatus status) {
         return goalRoom.status.eq(status);
     }
 
-    private BooleanExpression statusCondByOrderType(final RoadmapGoalRoomsOrderType orderType) {
+    private BooleanExpression statusCond(final RoadmapGoalRoomsOrderType orderType) {
         if (orderType == RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE) {
-            return statusCondByOrderType(GoalRoomStatus.RECRUITING);
+            return statusCond(GoalRoomStatus.RECRUITING);
         }
         return null;
     }
