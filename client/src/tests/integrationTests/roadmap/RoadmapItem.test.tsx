@@ -63,4 +63,32 @@ describe('RoadmapItem 컴포넌트', () => {
     fireEvent.click(screen.getByText('자세히 보기'));
     expect(navigateMock).toHaveBeenCalledWith(`/roadmap/${mockRoadmapId}`);
   });
+
+  it('hasBorder가 false인 경우, "진행중인 모임 보기" 버튼이 렌더링되는지 확인', () => {
+    const componentToRender = (
+      <RoadmapItem item={mockItem} roadmapId={mockRoadmapId} hasBorder={false} />
+    );
+    render(componentToRender);
+
+    expect(screen.getByText('진행중인 모임 보기')).toBeInTheDocument();
+  });
+
+  it('hasBorder가 false일 때, 버튼 클릭 시 올바른 페이지로 이동하는지 확인', () => {
+    const componentToRender = (
+      <RoadmapItem item={mockItem} roadmapId={mockRoadmapId} hasBorder={false} />
+    );
+    render(componentToRender);
+
+    fireEvent.click(screen.getByText('진행중인 모임 보기'));
+    expect(navigateMock).toHaveBeenCalledWith(`/roadmap/${mockRoadmapId}/goalroom-list`);
+  });
+
+  it('Hover 상태일 때, HoverDescription이 보이는지 확인', () => {
+    render(componentToRender);
+
+    const description = screen.getByLabelText('로드맵 소개');
+    fireEvent.mouseOver(description);
+
+    expect(screen.getByLabelText('로드맵 소개-description')).toBeInTheDocument();
+  });
 });
