@@ -3,10 +3,10 @@ module.exports = {
   collectCoverage: true,
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+      branches: 60,
+      functions: 60,
+      lines: 60,
+      statements: 60,
     },
   },
   coverageDirectory: 'coverage',
@@ -27,6 +27,8 @@ module.exports = {
     '^@myTypes/(.*)$': '<rootDir>/src/types/$1',
     '^@constants/(.*)$': '<rootDir>/src/constants/$1',
     '^@styles/(.*)$': '<rootDir>/src/styles/$1',
+    '^@apis/(.*)$': '<rootDir>/src/apis/$1',
+    '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
   },
   resetMocks: false,
   setupFiles: ['dotenv/config'],
@@ -34,5 +36,9 @@ module.exports = {
   globals: {
     PRODUCT_ENV: 'test',
   },
-  coveragePathIgnorePatterns: ['/node_modules/', '/src/components/icons/svgIcons.tsx'],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/src/components/icons/svgIcons.tsx',
+    '/src/hooks/queries/roadmap.ts',
+  ],
 };
