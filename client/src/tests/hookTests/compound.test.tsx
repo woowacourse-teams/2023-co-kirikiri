@@ -29,7 +29,6 @@ test('combineStates는 externalState와 innerState 둘 다 null일 경우', () =
 
   const combinedState = combineStates(null, null);
 
-  // 이 경우에는 아무 것도 호출되지 않으므로, 별도의 expect가 필요하지 않을 수 있습니다.
   combinedState(params);
 });
 

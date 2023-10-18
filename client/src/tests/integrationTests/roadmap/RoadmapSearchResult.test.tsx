@@ -42,10 +42,10 @@ describe('RoadmapSearchResult 컴포넌트', () => {
   jest.mock('@/hooks/queries/roadmap', () => ({
     useSearchRoadmapList: jest.fn(() => ({
       searchRoadmapListResponse: {
-        hasNext: true, // hasNext 값 설정
-        responses: mockRoadmapList, // 모킹할 roadmapList 데이터 설정
+        hasNext: true,
+        responses: mockRoadmapList,
       },
-      fetchNextPage: jest.fn(), // fetchNextPage 함수도 모킹합니다.
+      fetchNextPage: jest.fn(),
     })),
   }));
 
