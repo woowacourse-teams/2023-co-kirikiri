@@ -15,7 +15,8 @@ export const GoalRoomGridContainer = styled.div`
   margin-top: 1.5rem;
   padding: 1rem 0;
 
-  @media (min-width: ${BREAK_POINTS.TABLET}px) and (max-width: ${BREAK_POINTS.DESKTOP - 1}px) {
+  @media (min-width: ${BREAK_POINTS.TABLET}px) and (max-width: ${BREAK_POINTS.DESKTOP -
+    1}px) {
     grid-template-columns: 1fr;
   }
 `;

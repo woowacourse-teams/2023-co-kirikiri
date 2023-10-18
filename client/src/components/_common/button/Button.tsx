@@ -8,7 +8,7 @@ type ButtonProps = {
 
 const Button = ({ children, variant = 'primary', onClick }: ButtonProps) => {
   return (
-    <S.Button variant={variant} onClick={onClick}>
+    <S.Button variant={variant} onClick={onClick} data-testid='button'>
       {children}
     </S.Button>
   );

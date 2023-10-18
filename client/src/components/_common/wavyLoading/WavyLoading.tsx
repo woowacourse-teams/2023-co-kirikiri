@@ -7,7 +7,7 @@ type WavyLoadingProps = {
 
 const WavyLoading = ({ loadMoreRef }: WavyLoadingProps) => {
   return (
-    <S.WavyLoading ref={loadMoreRef}>
+    <S.WavyLoading ref={loadMoreRef} data-testid='wavy-loading'>
       <div />
       <div />
       <div />

@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
+export const RoadmapItem = styled.div<{ $hasBorder: boolean }>`
   /* flex-shrink: 0; */
 
   width: 30rem;

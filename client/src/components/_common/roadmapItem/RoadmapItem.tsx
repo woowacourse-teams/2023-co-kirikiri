@@ -37,7 +37,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
   };
 
   return (
-    <S.RoadmapItem hasBorder={hasBorder} aria-label='로드맵 항목'>
+    <S.RoadmapItem $hasBorder={hasBorder} aria-label='로드맵 항목'>
       <div>
         <S.RoadmapTitle aria-label='로드맵 제목'>{item.roadmapTitle}</S.RoadmapTitle>
         <S.Description
@@ -47,7 +47,11 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
         >
           {item.introduction}
         </S.Description>
-        {isHovered && <S.HoverDescription>{item.introduction}</S.HoverDescription>}
+        {isHovered && (
+          <S.HoverDescription aria-label='로드맵 소개-description'>
+            {item.introduction}
+          </S.HoverDescription>
+        )}
       </div>
       <S.ExtraHeader>
         <S.ExtraHeaderText>카테고리</S.ExtraHeaderText>
@@ -70,7 +74,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
       <S.ItemFooter>
         <S.Tags>
           {item.tags.map((tag) => {
-            return <span># {tag.name}</span>;
+            return <span key={tag.id}># {tag.name}</span>;
           })}
         </S.Tags>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>
