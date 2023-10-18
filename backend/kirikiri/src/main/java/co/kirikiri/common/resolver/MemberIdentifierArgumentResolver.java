@@ -1,7 +1,7 @@
 package co.kirikiri.common.resolver;
 
 import co.kirikiri.exception.AuthenticationException;
-import co.kirikiri.service.AuthService;
+import co.kirikiri.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;

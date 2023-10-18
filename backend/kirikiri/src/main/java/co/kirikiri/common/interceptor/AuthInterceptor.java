@@ -1,7 +1,7 @@
 package co.kirikiri.common.interceptor;
 
 import co.kirikiri.exception.AuthenticationException;
-import co.kirikiri.service.AuthService;
+import co.kirikiri.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

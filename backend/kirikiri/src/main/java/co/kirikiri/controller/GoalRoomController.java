@@ -2,8 +2,8 @@ package co.kirikiri.controller;
 
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
-import co.kirikiri.service.GoalRoomCreateService;
-import co.kirikiri.service.GoalRoomReadService;
+import co.kirikiri.service.goalroom.GoalRoomCreateService;
+import co.kirikiri.service.goalroom.GoalRoomReadService;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;

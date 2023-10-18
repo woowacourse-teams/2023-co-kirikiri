@@ -1,7 +1,7 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.service.AuthService;
-import co.kirikiri.service.NaverOauthService;
+import co.kirikiri.service.auth.AuthService;
+import co.kirikiri.service.auth.NaverOauthService;
 import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
