@@ -1,19 +1,19 @@
 import * as S from './RoadmapModal.styles';
 import Slider from '@components/_common/slider/Slider';
-import { RoadmapDetailType } from '@myTypes/roadmap/internal';
 import NodeContent from '@components/roadmapDetailPage/nodeContent/NodeContent';
+import { GoalRoomNodeType } from '@/myTypes/goalRoom/internal';
 
 type RoadmapModalProps = {
-  roadmapInfo: RoadmapDetailType;
+  nodeList: GoalRoomNodeType[];
 };
 
-const RoadmapModal = ({ roadmapInfo }: RoadmapModalProps) => {
+const RoadmapModal = ({ nodeList }: RoadmapModalProps) => {
   return (
     <S.RoadmapModalWrapper>
       <S.RoadmapHeader>로드맵</S.RoadmapHeader>
       <div>
         <Slider>
-          {roadmapInfo.content.nodes.map((node, index) => (
+          {nodeList.map((node, index) => (
             <NodeContent key={node.id} node={node} index={index} />
           ))}
         </Slider>

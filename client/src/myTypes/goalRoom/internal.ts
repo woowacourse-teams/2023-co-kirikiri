@@ -85,6 +85,8 @@ export type GoalRoomNodeType = {
   startData: string[];
   endDate: string[];
   checkCount: number;
+  description: string;
+  imageUrls: string[];
 };
 
 export type GoalRoomNodeListType = GoalRoomNodeType[];

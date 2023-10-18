@@ -1,8 +1,8 @@
 import * as S from './GoalRoomDashboardRoadmap.styles';
 // import SVGIcon from '@components/icons/SVGIcon';
-import { useGoalRoomDetail } from '@/hooks/queries/goalRoom';
+import { useGoalRoomDetail, useGoalRoomNodeList } from '@/hooks/queries/goalRoom';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
-import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
+// import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import {
   DialogBackdrop,
   DialogBox,
@@ -11,16 +11,16 @@ import {
 } from '@components/_common/dialog/dialog';
 import SVGIcon from '@components/icons/SVGIcon';
 import RoadmapModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardRoadmap/roadmapModal/RoadmapModal';
-import { useRoadmapDetail } from '@hooks/queries/roadmap';
 
-type GoalRoomDashboardRoadmapProps = {
-  goalRoomData: GoalRoomBrowseResponse;
-};
+// type GoalRoomDashboardRoadmapProps = {
+//   goalRoomData: GoalRoomBrowseResponse;
+// };
 
-const GoalRoomDashboardRoadmap = ({ goalRoomData }: GoalRoomDashboardRoadmapProps) => {
+// const GoalRoomDashboardRoadmap = ({ goalRoomData }: GoalRoomDashboardRoadmapProps) => {
+const GoalRoomDashboardRoadmap = () => {
   const { goalroomId } = useGoalRoomDashboardContext();
   const { goalRoomInfo } = useGoalRoomDetail(Number(goalroomId));
-  const { roadmapInfo } = useRoadmapDetail(goalRoomData.roadmapContentId);
+  const { goalRoomNodeList } = useGoalRoomNodeList(goalroomId);
 
   return (
     <DialogBox>
@@ -57,7 +57,7 @@ const GoalRoomDashboardRoadmap = ({ goalRoomData }: GoalRoomDashboardRoadmapProp
       </DialogBackdrop>
 
       <DialogContent>
-        <RoadmapModal roadmapInfo={roadmapInfo} />
+        <RoadmapModal nodeList={goalRoomNodeList} />
       </DialogContent>
     </DialogBox>
   );
