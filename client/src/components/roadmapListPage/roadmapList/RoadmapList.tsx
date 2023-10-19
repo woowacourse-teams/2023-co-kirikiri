@@ -30,7 +30,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   const moveRoadmapCreatePage = () => {
     navigate('/roadmap-create');
   };
-  console.log(selectedCategoryId);
+
   return (
     <S.RoadmapList aria-label='로드맵 목록'>
       {!roadmapListResponse.responses.length && <NoResult />}

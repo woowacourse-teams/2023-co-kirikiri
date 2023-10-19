@@ -87,7 +87,6 @@ export const Trigger = (props: PropsWithChildren<TriggerProps>) => {
 
 export const Value = (props: ValueProps) => {
   const { asChild = false, children, ...restProps } = props;
-  console.log(restProps);
   const { selectedId } = useContextScope(SelectContext);
   return cloneElement(children({ selectedId }));
 };
