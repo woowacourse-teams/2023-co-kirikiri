@@ -46,6 +46,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
@@ -62,12 +63,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 
 class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 
@@ -330,7 +331,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
-        final List<GoalRoomRoadmapNodeResponse> 골룸_노드_응답값 = 골룸_노드_조회(기본_골룸_아이디, 기본_로그인_토큰)
+        final List<GoalRoomRoadmapNodeDetailResponse> 골룸_노드_응답값 = 골룸_노드_조회(기본_골룸_아이디, 기본_로그인_토큰)
                 .as(new TypeRef<>() {
                 });
 
@@ -579,6 +580,40 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 
         // then
         assertThat(예외_응답.message()).isEqualTo("존재하지 않는 골룸입니다. goalRoomId = 1");
+    }
+
+    @Test
+    void 로드맵의_골룸_목록을_최신순으로_조회한다() throws IOException {
+        // given
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
+
+        final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
+
+        final List<GoalRoomRoadmapNodeRequest> 모집_중인_골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 10, 십일_후, 이십일_후));
+        final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), 정상적인_골룸_이름,
+                20, 모집_중인_골룸_노드_별_기간_요청);
+
+        final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(두번째_골룸_생성_요청, 기본_로그인_토큰);
+
+        final List<GoalRoomRoadmapNodeRequest> 진행_중인_골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 10, 오늘, 이십일_후));
+        final GoalRoomCreateRequest 세번째_골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), 정상적인_골룸_이름,
+                20, 진행_중인_골룸_노드_별_기간_요청);
+
+        final Long 세번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(세번째_골룸_생성_요청, 기본_로그인_토큰);
+
+        // when
+        final RoadmapGoalRoomResponses 로드맵_아이디로_골룸_목록_조회_응답1 = 로드맵_아이디로_골룸_목록_조회(기본_로그인_토큰, 기본_로드맵_아이디,
+                RoadmapGoalRoomsOrderType.LATEST.name(), 10).as(
+                new TypeRef<>() {
+                });
+
+        // then
+        assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(0).goalRoomId()).isEqualTo(세번째_골룸_아이디);
+        assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(1).goalRoomId()).isEqualTo(두번째_골룸_아이디);
+        assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(2).goalRoomId()).isEqualTo(기본_골룸_아이디);
     }
 
     @Test

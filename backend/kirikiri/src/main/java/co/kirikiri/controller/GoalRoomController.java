@@ -2,8 +2,8 @@ package co.kirikiri.controller;
 
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
-import co.kirikiri.service.GoalRoomCreateService;
-import co.kirikiri.service.GoalRoomReadService;
+import co.kirikiri.service.goalroom.GoalRoomCreateService;
+import co.kirikiri.service.goalroom.GoalRoomReadService;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
@@ -13,12 +13,14 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/goal-rooms")
@@ -162,12 +162,12 @@ public class GoalRoomController {
 
     @Authenticated
     @GetMapping("/{goalRoomId}/nodes")
-    public ResponseEntity<List<GoalRoomRoadmapNodeResponse>> findAllNodes(
+    public ResponseEntity<List<GoalRoomRoadmapNodeDetailResponse>> findAllNodes(
             @PathVariable final Long goalRoomId,
             @MemberIdentifier final String identifier
     ) {
-        final List<GoalRoomRoadmapNodeResponse> nodeResponses = goalRoomReadService.findAllGoalRoomNodes(goalRoomId,
-                identifier);
+        final List<GoalRoomRoadmapNodeDetailResponse> nodeResponses = goalRoomReadService.findAllGoalRoomNodes(
+                goalRoomId, identifier);
         return ResponseEntity.ok(nodeResponses);
     }
 

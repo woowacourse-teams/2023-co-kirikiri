@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.auth;
 
 import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;

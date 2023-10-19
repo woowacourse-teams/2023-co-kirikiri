@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.goalroom;
 
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
@@ -11,6 +11,7 @@ import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.exception.ForbiddenException;
 import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
@@ -20,32 +21,34 @@ import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.FileService;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
+import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDetailDto;
 import co.kirikiri.service.dto.goalroom.MemberGoalRoomForListDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -247,16 +250,41 @@ public class GoalRoomReadService {
         return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRoomForListDtos);
     }
 
-    public List<GoalRoomRoadmapNodeResponse> findAllGoalRoomNodes(final Long goalRoomId, final String identifier) {
-        final GoalRoomRoadmapNodes goalRoomNodes = findGoalRoomNodesByGoalRoomId(goalRoomId);
+    public List<GoalRoomRoadmapNodeDetailResponse> findAllGoalRoomNodes(final Long goalRoomId,
+                                                                        final String identifier) {
+        final GoalRoom goalRoom = findGoalRoomWithNodesByGoalRoomId(goalRoomId);
+        final GoalRoomRoadmapNodes goalRoomNodes = goalRoom.getGoalRoomRoadmapNodes();
         validateGoalRoomMember(goalRoomId, identifier);
-        return GoalRoomMapper.convertGoalRoomNodeResponses(goalRoomNodes);
+        final List<GoalRoomRoadmapNodeDetailDto> goalRoomRoadmapNodeDetailDtos = makeGoalRoomNodeDetailDtos(
+                goalRoomNodes);
+
+        return GoalRoomMapper.convertGoalRoomNodeDetailResponses(goalRoomRoadmapNodeDetailDtos);
     }
 
-    private GoalRoomRoadmapNodes findGoalRoomNodesByGoalRoomId(final Long goalRoomId) {
+    private GoalRoom findGoalRoomWithNodesByGoalRoomId(final Long goalRoomId) {
         return goalRoomRepository.findByIdWithNodes(goalRoomId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId))
-                .getGoalRoomRoadmapNodes();
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
+    }
+
+    public List<GoalRoomRoadmapNodeDetailDto> makeGoalRoomNodeDetailDtos(
+            final GoalRoomRoadmapNodes nodes) {
+        return nodes.getValues().stream()
+                .map(this::makeGoalRoomNodeDetailResponse)
+                .toList();
+    }
+
+    private GoalRoomRoadmapNodeDetailDto makeGoalRoomNodeDetailResponse(final GoalRoomRoadmapNode node) {
+        final RoadmapNode roadmapNode = node.getRoadmapNode();
+        return new GoalRoomRoadmapNodeDetailDto(node.getId(), roadmapNode.getTitle(), roadmapNode.getContent(),
+                makeRoadmapNodeImageUrls(roadmapNode), node.getStartDate(), node.getEndDate(), node.getCheckCount());
+    }
+
+    private List<String> makeRoadmapNodeImageUrls(final RoadmapNode roadmapNode) {
+        return roadmapNode.getRoadmapNodeImages()
+                .getValues()
+                .stream()
+                .map(it -> fileService.generateUrl(it.getServerFilePath(), HttpMethod.GET).toExternalForm())
+                .toList();
     }
 
     public List<GoalRoomCheckFeedResponse> findGoalRoomCheckFeeds(final String identifier, final Long goalRoomId) {

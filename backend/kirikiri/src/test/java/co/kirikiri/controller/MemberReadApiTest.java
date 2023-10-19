@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.MemberService;
+import co.kirikiri.service.member.MemberService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;

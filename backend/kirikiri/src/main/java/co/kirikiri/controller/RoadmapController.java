@@ -2,8 +2,8 @@ package co.kirikiri.controller;
 
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
-import co.kirikiri.service.RoadmapCreateService;
-import co.kirikiri.service.RoadmapReadService;
+import co.kirikiri.service.roadmap.RoadmapCreateService;
+import co.kirikiri.service.roadmap.RoadmapReadService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;

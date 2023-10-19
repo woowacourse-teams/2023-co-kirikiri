@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.roadmap;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.member.Member;
@@ -20,6 +20,7 @@ import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
+import co.kirikiri.service.FileService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomScrollDto;
@@ -220,9 +221,9 @@ public class RoadmapReadService {
                                                                     final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         final RoadmapGoalRoomsOrderType orderType = GoalRoomMapper.convertToGoalRoomOrderType(orderTypeDto);
-        final List<GoalRoom> goalRoomsWithPendingMembers = goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(
+        final List<GoalRoom> goalRooms = goalRoomRepository.findGoalRoomsByRoadmapAndCond(
                 roadmap, orderType, scrollRequest.lastId(), scrollRequest.size());
-        final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto = makeGoalRoomDtos(goalRoomsWithPendingMembers,
+        final RoadmapGoalRoomScrollDto roadmapGoalRoomScrollDto = makeGoalRoomDtos(goalRooms,
                 scrollRequest.size());
         return GoalRoomMapper.convertToRoadmapGoalRoomResponses(roadmapGoalRoomScrollDto);
     }
@@ -239,7 +240,7 @@ public class RoadmapReadService {
 
     private RoadmapGoalRoomDto makeGoalRoomDto(final GoalRoom goalRoom) {
         final Member goalRoomLeader = goalRoom.findGoalRoomLeader();
-        return new RoadmapGoalRoomDto(goalRoom.getId(), goalRoom.getName().getValue(),
+        return new RoadmapGoalRoomDto(goalRoom.getId(), goalRoom.getName().getValue(), goalRoom.getStatus(),
                 goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(),
                 goalRoom.getEndDate(), makeMemberDto(goalRoomLeader));

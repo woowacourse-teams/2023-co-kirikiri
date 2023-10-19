@@ -5,8 +5,6 @@ import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
 import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
-import static co.kirikiri.domain.member.QMember.member;
-import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
@@ -50,21 +48,15 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
-                                                                          final RoadmapGoalRoomsOrderType orderType,
-                                                                          final Long lastId,
-                                                                          final int pageSize) {
+    public List<GoalRoom> findGoalRoomsByRoadmapAndCond(final Roadmap roadmap,
+                                                        final RoadmapGoalRoomsOrderType orderType,
+                                                        final Long lastId,
+                                                        final int pageSize) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
                 .on(roadmapContent.roadmap.eq(roadmap))
-                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .fetchJoin()
-                .innerJoin(goalRoomPendingMember.member, member)
-                .fetchJoin()
-                .innerJoin(member.memberProfile, memberProfile)
-                .fetchJoin()
                 .where(
-                        statusCond(GoalRoomStatus.RECRUITING),
+                        statusCond(orderType),
                         lessThanLastId(lastId, orderType),
                         roadmapCond(roadmap))
                 .limit(pageSize + LIMIT_OFFSET)
@@ -107,6 +99,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
                 .fetchJoin()
+                .innerJoin(goalRoom.roadmapContent, roadmapContent)
+                .fetchJoin()
                 .where(goalRoomIdCond(goalRoomId))
                 .fetchOne());
     }
@@ -133,6 +127,13 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     private BooleanExpression statusCond(final GoalRoomStatus status) {
         return goalRoom.status.eq(status);
+    }
+
+    private BooleanExpression statusCond(final RoadmapGoalRoomsOrderType orderType) {
+        if (orderType == RoadmapGoalRoomsOrderType.CLOSE_TO_DEADLINE) {
+            return statusCond(GoalRoomStatus.RECRUITING);
+        }
+        return null;
     }
 
     private OrderSpecifier<?> sortCond(final RoadmapGoalRoomsOrderType orderType) {

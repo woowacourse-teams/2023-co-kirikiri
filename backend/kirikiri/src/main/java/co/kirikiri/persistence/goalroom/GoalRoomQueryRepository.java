@@ -15,10 +15,10 @@ public interface GoalRoomQueryRepository {
 
     Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId);
 
-    List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
-                                                                   final RoadmapGoalRoomsOrderType filterType,
-                                                                   final Long lastId,
-                                                                   final int pageSize);
+    List<GoalRoom> findGoalRoomsByRoadmapAndCond(final Roadmap roadmap,
+                                                 final RoadmapGoalRoomsOrderType filterType,
+                                                 final Long lastId,
+                                                 final int pageSize);
 
     Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId);
 
