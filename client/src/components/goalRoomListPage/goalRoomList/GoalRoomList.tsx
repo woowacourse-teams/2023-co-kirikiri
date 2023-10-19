@@ -52,9 +52,11 @@ const GoalRoomList = () => {
         </GoalRoomFilter>
       </S.FilterBar>
       <S.ListWrapper aria-label='골룸 리스트'>
-        {goalRoomList.map((goalRoomInfo) => {
-          return <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />;
-        })}
+        {goalRoomList
+          .filter((goalRoomInfo) => goalRoomInfo.status === 'RECRUITING')
+          .map((goalRoomInfo) => (
+            <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />
+          ))}
       </S.ListWrapper>
       {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
       <Link to={`/roadmap/${Number(id)}/goalroom-create`}>
