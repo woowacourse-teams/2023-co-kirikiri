@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 
 export const RoadmapItem = styled.div<{ hasBorder: boolean }>`
-  /* flex-shrink: 0; */
+  position: relative;
 
   width: 30rem;
   height: fit-content;
@@ -41,6 +41,7 @@ export const Description = styled.div`
   color: ${({ theme }) => theme.colors.gray300};
 
   margin: 1rem 0 1rem 0;
+  height: 5rem;
 
   white-space: nowrap;
 

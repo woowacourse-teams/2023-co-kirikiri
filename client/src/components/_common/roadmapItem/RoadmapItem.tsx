@@ -47,7 +47,14 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
         >
           {item.introduction}
         </S.Description>
-        {isHovered && <S.HoverDescription>{item.introduction}</S.HoverDescription>}
+        {isHovered && (
+          <S.HoverDescription
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            {item.introduction}
+          </S.HoverDescription>
+        )}
       </div>
       <S.ExtraHeader>
         <S.ExtraHeaderText>카테고리</S.ExtraHeaderText>
