@@ -1,5 +1,5 @@
 import * as S from './GoalRoomDashboardRoadmap.styles';
-import { useGoalRoomDetail, useGoalRoomNodeList } from '@/hooks/queries/goalRoom';
+import { useGoalRoomDetail } from '@/hooks/queries/goalRoom';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
 import {
   DialogBackdrop,
@@ -9,11 +9,15 @@ import {
 } from '@components/_common/dialog/dialog';
 import SVGIcon from '@components/icons/SVGIcon';
 import RoadmapModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardRoadmap/roadmapModal/RoadmapModal';
+import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 
-const GoalRoomDashboardRoadmap = () => {
+type GoalRoomDashboardRoadmapProps = {
+  goalRoomStatus: GoalRoomRecruitmentStatus;
+};
+
+const GoalRoomDashboardRoadmap = ({ goalRoomStatus }: GoalRoomDashboardRoadmapProps) => {
   const { goalroomId } = useGoalRoomDashboardContext();
   const { goalRoomInfo } = useGoalRoomDetail(Number(goalroomId));
-  const { goalRoomNodeList } = useGoalRoomNodeList(goalroomId);
 
   return (
     <DialogBox>
@@ -50,7 +54,7 @@ const GoalRoomDashboardRoadmap = () => {
       </DialogBackdrop>
 
       <DialogContent>
-        <RoadmapModal nodeList={goalRoomNodeList} />
+        {goalRoomStatus === 'RUNNING' && <RoadmapModal goalroomId={goalroomId} />}
       </DialogContent>
     </DialogBox>
   );
