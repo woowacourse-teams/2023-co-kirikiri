@@ -32,7 +32,14 @@ const GoalRoomList = () => {
   return (
     <S.ListContainer role='main' aria-label='골룸 리스트'>
       <S.FilterBar>
-        <p aria-live='polite'>모집중인 모임 {goalRoomList.length}개</p>
+        <p aria-live='polite'>
+          모집중인 모임{' '}
+          {
+            goalRoomList.filter((goalRoomInfo) => goalRoomInfo.status === 'RECRUITING')
+              .length
+          }
+          개
+        </p>
         <GoalRoomFilter>
           {(selectedOption) => {
             setSortedOption(selectedOption);
