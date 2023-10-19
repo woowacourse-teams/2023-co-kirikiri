@@ -5,8 +5,8 @@ import * as S from './CreateGoalRoom.styles';
 import { useRoadmapDetail } from '@hooks/queries/roadmap';
 
 const CreateGoalRoom = () => {
-  const { id: roadmapContentId } = useValidParams();
-  const { roadmapInfo } = useRoadmapDetail(Number(roadmapContentId));
+  const { id: roadmapId } = useValidParams();
+  const { roadmapInfo } = useRoadmapDetail(Number(roadmapId));
 
   return (
     <div>

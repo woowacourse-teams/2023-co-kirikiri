@@ -1,8 +1,6 @@
 import * as S from './GoalRoomDashboardRoadmap.styles';
-// import SVGIcon from '@components/icons/SVGIcon';
 import { useGoalRoomDetail, useGoalRoomNodeList } from '@/hooks/queries/goalRoom';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
-// import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import {
   DialogBackdrop,
   DialogBox,
@@ -12,11 +10,6 @@ import {
 import SVGIcon from '@components/icons/SVGIcon';
 import RoadmapModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardRoadmap/roadmapModal/RoadmapModal';
 
-// type GoalRoomDashboardRoadmapProps = {
-//   goalRoomData: GoalRoomBrowseResponse;
-// };
-
-// const GoalRoomDashboardRoadmap = ({ goalRoomData }: GoalRoomDashboardRoadmapProps) => {
 const GoalRoomDashboardRoadmap = () => {
   const { goalroomId } = useGoalRoomDashboardContext();
   const { goalRoomInfo } = useGoalRoomDetail(Number(goalroomId));

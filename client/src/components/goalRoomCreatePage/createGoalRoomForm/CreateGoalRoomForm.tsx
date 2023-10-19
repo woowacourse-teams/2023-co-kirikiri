@@ -6,7 +6,6 @@ import * as S from './CreateGoalRoomForm.styles';
 import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
 import { NodeType } from '@myTypes/roadmap/internal';
 import InputField from '@components/_common/InputField/InputField';
-// import TodoListSection from '../todoListSection/TodoListSection';
 import NodeSection from '../nodeSection/NodeSection';
 import { transformDateStringsIn } from '@utils/_common/transformDateStringsIn';
 import { generateNodesValidations, staticValidations } from './createGoalRoomValidations';
