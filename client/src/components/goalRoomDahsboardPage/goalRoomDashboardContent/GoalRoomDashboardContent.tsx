@@ -32,7 +32,7 @@ const GoalRoomDashboardContent = () => {
           <GoalRoomDashboardHeader goalRoomData={goalRoom} isLeader={isLeader} />
           <S.GoalRoomGridContainer>
             <GoalRoomDashboardTodo goalRoomData={goalRoom} isLeader={isLeader} />
-            <GoalRoomDashboardRoadmap goalRoomData={goalRoom} />
+            <GoalRoomDashboardRoadmap />
             <GoalRoomUserRanking />
             <GoalRoomCertificationFeed goalRoomData={goalRoom} />
           </S.GoalRoomGridContainer>
