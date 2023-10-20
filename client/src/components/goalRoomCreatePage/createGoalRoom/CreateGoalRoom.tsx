@@ -16,7 +16,8 @@ const CreateGoalRoom = () => {
         </S.RoadmapInfo>
       </PageSection>
       <CreateGoalRoomForm
-        roadmapContentId={Number(roadmapInfo.roadmapId)}
+        roadmapId={Number(roadmapInfo.roadmapId)}
+        roadmapContentId={Number(roadmapInfo.content.id)}
         nodes={roadmapInfo.content.nodes || []}
       />
     </div>

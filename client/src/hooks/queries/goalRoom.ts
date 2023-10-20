@@ -76,7 +76,7 @@ export const useFetchGoalRoom = (goalRoomId: string) => {
   };
 };
 
-export const useCreateGoalRoom = (roadmapContentId: number) => {
+export const useCreateGoalRoom = (roadmapId: number) => {
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
@@ -85,9 +85,9 @@ export const useCreateGoalRoom = (roadmapContentId: number) => {
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
       async onSuccess() {
-        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.list, roadmapContentId]);
-        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.my, roadmapContentId]);
-        navigate(`/roadmap/${roadmapContentId}/goalroom-list`);
+        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.list, roadmapId]);
+        await queryClient.refetchQueries([QUERY_KEYS.goalRoom.my, roadmapId]);
+        navigate(`/roadmap/${roadmapId}/goalroom-list`);
         triggerToast({ message: '모임을 생성했습니다!' });
       },
       onError() {},

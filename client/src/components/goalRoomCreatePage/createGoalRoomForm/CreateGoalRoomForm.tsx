@@ -12,11 +12,16 @@ import { generateNodesValidations, staticValidations } from './createGoalRoomVal
 
 type CreateGoalRoomFormProps = {
   roadmapContentId: number;
+  roadmapId: number;
   nodes: NodeType[];
 };
 
-const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps) => {
-  const { createGoalRoom } = useCreateGoalRoom(roadmapContentId);
+const CreateGoalRoomForm = ({
+  roadmapContentId,
+  nodes,
+  roadmapId,
+}: CreateGoalRoomFormProps) => {
+  const { createGoalRoom } = useCreateGoalRoom(roadmapId);
   const { formState, handleInputChange, handleSubmit, error } =
     useFormInput<CreateGoalRoomRequest>(
       {
