@@ -228,7 +228,7 @@ public class GoalRoomCreateService {
     private void validateCheckCount(final int memberCheckCount, final GoalRoomMember member,
                                     final GoalRoomRoadmapNode goalRoomRoadmapNode) {
         validateNodeCheckCount(memberCheckCount, goalRoomRoadmapNode);
-        validateTodayCheckCount(member);
+        //validateTodayCheckCount(member);
     }
 
     private void validateNodeCheckCount(final int memberCheckCount,
