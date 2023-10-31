@@ -1,29 +1,28 @@
 package co.kirikiri.service;
 
-import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.AuthenticationException;
-import co.kirikiri.persistence.auth.RefreshTokenRepository;
+import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.LoginDto;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
+import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
 
@@ -54,10 +53,9 @@ public class AuthService {
     }
 
     private void saveRefreshToken(final Member member, final String rawRefreshToken) {
-        final EncryptedToken encryptedToken = new EncryptedToken(rawRefreshToken);
         final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
-        final RefreshToken refreshToken = new RefreshToken(encryptedToken, expiredAt, member);
-        refreshTokenRepository.save(refreshToken);
+        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, expiredAt, member);
+        refreshTokenRedisRepository.save(refreshToken);
     }
 
     public AuthenticationResponse oauthLogin(final Member member) {
@@ -71,10 +69,10 @@ public class AuthService {
     @Transactional
     public AuthenticationResponse reissueToken(final ReissueTokenRequest reissueTokenRequest) {
         checkTokenValid(reissueTokenRequest.refreshToken());
-        final EncryptedToken clientRefreshToken = AuthMapper.convertToEncryptedToken(reissueTokenRequest);
-        final RefreshToken refreshToken = findSavedRefreshToken(clientRefreshToken);
+        final RefreshToken encryptedToken = new RefreshToken(reissueTokenRequest.refreshToken());
+        final RefreshToken refreshToken = findSavedRefreshToken(encryptedToken.getRefreshToken());
         checkTokenExpired(refreshToken);
-        refreshTokenRepository.delete(refreshToken);
+        refreshTokenRedisRepository.delete(refreshToken);
         final Member member = refreshToken.getMember();
         return makeAuthenticationResponse(member);
     }
@@ -85,8 +83,8 @@ public class AuthService {
         }
     }
 
-    private RefreshToken findSavedRefreshToken(final EncryptedToken clientRefreshToken) {
-        return refreshTokenRepository.findByTokenAndIsRevokedFalse(clientRefreshToken)
+    private RefreshToken findSavedRefreshToken(final String clientRefreshToken) {
+        return refreshTokenRedisRepository.findById(clientRefreshToken)
                 .orElseThrow(() -> new AuthenticationException("토큰이 유효하지 않습니다."));
     }
 

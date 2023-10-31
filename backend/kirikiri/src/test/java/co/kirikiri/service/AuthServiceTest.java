@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -16,19 +15,19 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.AuthenticationException;
-import co.kirikiri.persistence.auth.RefreshTokenRepository;
+import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -42,7 +41,7 @@ class AuthServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private RefreshTokenRepository refreshTokenRepository;
+    private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @InjectMocks
     private AuthService authService;
@@ -112,18 +111,17 @@ class AuthServiceTest {
         final String rawAccessToken = "accessToken";
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest("refreshToken");
-        final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MAX,
-                member);
+        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, LocalDateTime.MAX, member);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
-        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
-                .willReturn(Optional.of(refreshToken));
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn(rawAccessToken);
         given(tokenProvider.createRefreshToken(any(), any()))
                 .willReturn(rawRefreshToken);
         given(tokenProvider.findTokenExpiredAt(anyString()))
                 .willReturn(LocalDateTime.now());
+        given(refreshTokenRedisRepository.findById(any()))
+                .willReturn(Optional.of(refreshToken));
 
         //when
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
@@ -153,8 +151,6 @@ class AuthServiceTest {
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
-        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
-                .willReturn(Optional.empty());
 
         //when
         //then
@@ -167,12 +163,8 @@ class AuthServiceTest {
         //given
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
-        final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MIN,
-                member);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
-        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
-                .willReturn(Optional.of(refreshToken));
 
         //when
         //then

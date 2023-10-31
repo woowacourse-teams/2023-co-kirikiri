@@ -1,21 +1,20 @@
-package co.kirikiri.domain.auth.vo;
+package co.kirikiri.domain.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.domain.auth.EncryptedToken;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class EncryptedTokenTest {
+class RefreshTokenTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"a", "abc", "", "token", "abcdefghijklmnopqrstuvwxyz"})
     void 정상적으로_토큰을_암호화한다(final String value) {
         //given
         //when
-        final EncryptedToken encryptedToken = new EncryptedToken(value);
+        final RefreshToken encryptedToken = new RefreshToken(value);
 
         //then
-        assertThat(encryptedToken.getValue()).isNotEqualTo(value);
+        assertThat(encryptedToken.getRefreshToken()).isNotEqualTo(value);
     }
 }

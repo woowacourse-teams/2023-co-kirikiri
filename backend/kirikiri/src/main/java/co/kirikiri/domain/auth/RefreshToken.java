@@ -1,52 +1,60 @@
 package co.kirikiri.domain.auth;
 
 import co.kirikiri.domain.member.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import co.kirikiri.exception.ServerException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.Base64;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
-@Entity
+@RedisHash(value = "refreshToken")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
 
+    private static final String ALGORITHM = "SHA-256";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String refreshToken;
 
-    @Embedded
-    private EncryptedToken token;
-
-    @Column(nullable = false)
     private LocalDateTime expiredAt;
 
-    @Column(nullable = false)
-    private final boolean isRevoked = false;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public RefreshToken(final EncryptedToken token, final LocalDateTime expiredAt, final Member member) {
-        this.token = token;
+    public RefreshToken(final String rawToken) {
+        this.refreshToken = encrypt(rawToken);
+    }
+
+    public RefreshToken(final String rawToken, final LocalDateTime expiredAt, final Member member) {
+        this.refreshToken = encrypt(rawToken);
         this.expiredAt = expiredAt;
         this.member = member;
+    }
+
+    private String encrypt(final String rawToken) {
+        final MessageDigest messageDigest = findMessageDigest();
+        messageDigest.update(rawToken.getBytes());
+        final byte[] hashedToken = messageDigest.digest();
+        return Base64.getEncoder().encodeToString(hashedToken);
+    }
+
+    private MessageDigest findMessageDigest() {
+        try {
+            return MessageDigest.getInstance(ALGORITHM);
+        } catch (final NoSuchAlgorithmException exception) {
+            throw new ServerException(exception.getMessage());
+        }
     }
 
     public boolean isExpired() {
         return expiredAt.isBefore(LocalDateTime.now());
     }
 
-    public EncryptedToken getToken() {
-        return token;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     public Member getMember() {

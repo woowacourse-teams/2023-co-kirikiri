@@ -1,7 +1,6 @@
 package co.kirikiri.service;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.auth.EncryptedToken;
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -12,7 +11,7 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.exception.ConflictException;
 import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.persistence.auth.RefreshTokenRepository;
+import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.MemberInformationDto;
@@ -24,15 +23,15 @@ import co.kirikiri.service.dto.member.response.MemberInformationForPublicRespons
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,12 +44,12 @@ public class MemberService {
     private static final String DEFAULT_EXTENSION = "image.default.extension";
     private static final int MAX_IDENTIFIER_LENGTH = 40;
 
-    private final MemberRepository memberRepository;
     private final Environment environment;
     private final NumberGenerator numberGenerator;
     private final FileService fileService;
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @Transactional
     public Long join(final MemberJoinRequest memberJoinRequest) {
@@ -72,10 +71,12 @@ public class MemberService {
 
     @Transactional
     public AuthenticationResponse oauthJoin(final OauthMemberJoinDto oauthMemberJoinDto) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(oauthMemberJoinDto.gender().name()), oauthMemberJoinDto.email());
+        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(oauthMemberJoinDto.gender().name()),
+                oauthMemberJoinDto.email());
         final Identifier identifier = makeIdentifier(oauthMemberJoinDto);
         final Nickname nickname = new Nickname(oauthMemberJoinDto.nickname());
-        final Member member = new Member(identifier, oauthMemberJoinDto.oauthId(), nickname, findDefaultMemberImage(), memberProfile);
+        final Member member = new Member(identifier, oauthMemberJoinDto.oauthId(), nickname, findDefaultMemberImage(),
+                memberProfile);
         memberRepository.save(member);
         return makeAuthenticationResponse(member);
     }
@@ -99,10 +100,9 @@ public class MemberService {
     }
 
     private void saveRefreshToken(final Member member, final String rawRefreshToken) {
-        final EncryptedToken encryptedToken = new EncryptedToken(rawRefreshToken);
         final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
-        final RefreshToken refreshToken = new RefreshToken(encryptedToken, expiredAt, member);
-        refreshTokenRepository.save(refreshToken);
+        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, expiredAt, member);
+        refreshTokenRedisRepository.save(refreshToken);
     }
 
     private MemberImage findDefaultMemberImage() {
@@ -127,7 +127,8 @@ public class MemberService {
         final MemberProfile memberProfile = member.getMemberProfile();
         final URL imageUrl = fileService.generateUrl(memberImage.getServerFilePath(), HttpMethod.GET);
         return new MemberInformationDto(member.getId(), member.getNickname().getValue(),
-                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getEmail());
+                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(),
+                memberProfile.getEmail());
     }
 
     private Member findMemberInformationByIdentifier(final String identifier) {
