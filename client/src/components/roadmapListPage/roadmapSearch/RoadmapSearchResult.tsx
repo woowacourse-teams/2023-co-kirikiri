@@ -1,3 +1,4 @@
+import AsyncBoundary from '@/components/_common/errorBoundary/AsyncBoundary';
 import RoadmapItem from '@/components/_common/roadmapItem/RoadmapItem';
 import WavyLoading from '@/components/_common/wavyLoading/WavyLoading';
 import { useSearchRoadmapList } from '@/hooks/queries/roadmap';
@@ -26,14 +27,16 @@ const RoadmapSearchResult = () => {
 
   return (
     <>
-      {roadmapList.length === 0 && <NoResult />}
-      <S.RoadmapList aria-label='로드맵 목록'>
-        {roadmapList.map((item) => (
-          <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
-        ))}
-        {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
-        <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
-      </S.RoadmapList>
+      <AsyncBoundary>
+        {roadmapList.length === 0 && <NoResult />}
+        <S.RoadmapList aria-label='로드맵 목록'>
+          {roadmapList.map((item) => (
+            <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
+          ))}
+          {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
+          <S.CreateRoadmapButton onClick={moveRoadmapCreatePage}>+</S.CreateRoadmapButton>
+        </S.RoadmapList>
+      </AsyncBoundary>
     </>
   );
 };

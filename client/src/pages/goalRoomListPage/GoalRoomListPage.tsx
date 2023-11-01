@@ -1,14 +1,13 @@
 import GoalRoomList from '@/components/goalRoomListPage/goalRoomList/GoalRoomList';
-import { Suspense } from 'react';
 import * as S from './goalRoomListPage.styles';
-import Spinner from '@components/_common/spinner/Spinner';
+import AsyncBoundary from '@/components/_common/errorBoundary/AsyncBoundary';
 
 const GoalRoomListPage = () => {
   return (
     <S.Container>
-      <Suspense fallback={<Spinner />}>
+      <AsyncBoundary>
         <GoalRoomList />
-      </Suspense>
+      </AsyncBoundary>
     </S.Container>
   );
 };
