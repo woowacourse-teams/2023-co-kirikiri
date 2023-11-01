@@ -1,7 +1,7 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.BaseEntity;
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;

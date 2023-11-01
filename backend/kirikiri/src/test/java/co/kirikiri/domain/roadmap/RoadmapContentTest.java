@@ -13,9 +13,9 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.exception.BadRequestException;
-import org.junit.jupiter.api.Test;
+import co.kirikiri.service.exception.BadRequestException;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class RoadmapContentTest {
 

@@ -2,7 +2,7 @@ package co.kirikiri.domain.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

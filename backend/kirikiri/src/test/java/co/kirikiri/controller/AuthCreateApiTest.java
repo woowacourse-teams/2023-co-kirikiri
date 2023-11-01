@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
-import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.auth.AuthService;
 import co.kirikiri.service.auth.NaverOauthService;
 import co.kirikiri.service.dto.ErrorResponse;
@@ -22,7 +21,9 @@ import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import co.kirikiri.service.exception.AuthenticationException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-import java.util.List;
 
 @WebMvcTest(AuthController.class)
 class AuthCreateApiTest extends ControllerTestHelper {
@@ -268,7 +268,8 @@ class AuthCreateApiTest extends ControllerTestHelper {
     @Test
     void 네이버_로그인_페이지를_정상적으로_반환한다() throws Exception {
         // given
-        final OauthRedirectResponse expectedResponse = new OauthRedirectResponse("Naver_Login_Redirect_Page_URL", "state");
+        final OauthRedirectResponse expectedResponse = new OauthRedirectResponse("Naver_Login_Redirect_Page_URL",
+                "state");
         given(naverOauthService.makeOauthUrl()).willReturn(expectedResponse);
 
         네이버_로그인_페이지(status().isOk());

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import lombok.Getter;
 
 @Getter

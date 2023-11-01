@@ -3,15 +3,15 @@ package co.kirikiri.domain.goalroom;
 import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

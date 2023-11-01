@@ -4,15 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.service.auth.JwtTokenProvider;
 import co.kirikiri.service.auth.TokenProvider;
+import co.kirikiri.service.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class JwtTokenProviderTest {
 

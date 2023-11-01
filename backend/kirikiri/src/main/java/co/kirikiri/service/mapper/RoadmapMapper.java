@@ -3,7 +3,6 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.member.MemberDto;
@@ -37,12 +36,13 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+import co.kirikiri.service.exception.ServerException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -78,7 +78,8 @@ public final class RoadmapMapper {
 
     private static FileInformation converToRoadmapNodeImageDto(final MultipartFile it) {
         try {
-            return new FileInformation(it.getOriginalFilename(), it.getSize(), it.getContentType(), it.getInputStream());
+            return new FileInformation(it.getOriginalFilename(), it.getSize(), it.getContentType(),
+                    it.getInputStream());
         } catch (final IOException exception) {
             throw new ServerException(exception.getMessage());
         }

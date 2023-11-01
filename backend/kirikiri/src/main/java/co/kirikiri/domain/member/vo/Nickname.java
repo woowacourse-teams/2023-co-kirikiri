@@ -1,9 +1,9 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import jakarta.persistence.Column;
-import lombok.NoArgsConstructor;
 import java.util.Objects;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Nickname {

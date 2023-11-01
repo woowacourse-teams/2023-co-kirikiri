@@ -1,10 +1,10 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import jakarta.persistence.Column;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Identifier {

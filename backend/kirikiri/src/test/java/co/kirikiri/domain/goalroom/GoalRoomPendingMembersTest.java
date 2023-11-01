@@ -11,10 +11,10 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.exception.NotFoundException;
-import org.junit.jupiter.api.Test;
+import co.kirikiri.service.exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class GoalRoomPendingMembersTest {
 

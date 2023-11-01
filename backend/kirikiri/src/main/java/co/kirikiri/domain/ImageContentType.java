@@ -1,6 +1,6 @@
 package co.kirikiri.domain;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import java.util.Arrays;
 
 public enum ImageContentType {

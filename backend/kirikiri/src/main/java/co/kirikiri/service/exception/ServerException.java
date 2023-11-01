@@ -1,4 +1,4 @@
-package co.kirikiri.exception;
+package co.kirikiri.service.exception;
 
 public class ServerException extends RuntimeException {
 

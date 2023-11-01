@@ -1,7 +1,7 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.service.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
