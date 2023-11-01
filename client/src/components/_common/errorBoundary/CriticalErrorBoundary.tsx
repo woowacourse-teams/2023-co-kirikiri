@@ -1,18 +1,17 @@
-import { ErrorInfo } from 'react';
-import { Critical } from '../error/ErrorComponents';
 import ErrorBoundary from './ErrorBoundary';
 
-class CriticalErrorBoundary extends ErrorBoundary {
-  componentDidCatch(_error: any, _errorInfo: ErrorInfo): void {}
+export class CriticalErrorBoundary extends ErrorBoundary {
+  static getDerivedStateFromError(error: Error): { didCatch: boolean; error: Error } {
+    return { didCatch: true, error };
+  }
 
   render() {
-    const { didCatch } = this.state;
-    const { children } = this.props;
+    const { didCatch, fallback: innerFallback } = this.state;
+    const { children, fallback: custumFallback } = this.props;
+
     if (didCatch) {
-      return <Critical />;
+      return custumFallback ?? innerFallback ?? <div>critical error</div>;
     }
     return children;
   }
 }
-
-export default CriticalErrorBoundary;
