@@ -1,21 +1,29 @@
 import { PropsWithChildren, Suspense } from 'react';
 import Spinner from '../spinner/Spinner';
-import CriticalErrorBoundary from './CriticalErrorBoundary';
-import NotFoundErrorBoundary from './NotFoundErrorBoundary';
+import { ApiErrorBoundary } from './ApiErrorBoundary';
+import { BaseErrorBoundary } from './BaseErrorBoundary';
+import { APIError } from './errors';
+import { NetworkErrorBoundary } from './NetworkErrorBoundary';
 import RuntimeErrorBoundary from './RuntimeErrorBoundary';
-import ServerErrorBoundary from './ServerErrorBoundary';
 
-const AsyncBoundary = ({ children }: PropsWithChildren) => {
+interface AsyncBoundaryProps {
+  isCritical?: boolean;
+}
+
+const AsyncBoundary = ({
+  children,
+  isCritical,
+}: PropsWithChildren<AsyncBoundaryProps>) => {
   return (
-    <CriticalErrorBoundary>
-      <RuntimeErrorBoundary>
-        <ServerErrorBoundary>
-          <NotFoundErrorBoundary>
+    <RuntimeErrorBoundary>
+      <ApiErrorBoundary<APIError>>
+        <NetworkErrorBoundary>
+          <BaseErrorBoundary isCritical={isCritical}>
             <Suspense fallback={<Spinner />}>{children}</Suspense>
-          </NotFoundErrorBoundary>
-        </ServerErrorBoundary>
-      </RuntimeErrorBoundary>
-    </CriticalErrorBoundary>
+          </BaseErrorBoundary>
+        </NetworkErrorBoundary>
+      </ApiErrorBoundary>
+    </RuntimeErrorBoundary>
   );
 };
 
