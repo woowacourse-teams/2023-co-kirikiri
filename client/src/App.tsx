@@ -17,10 +17,10 @@ import UserInfoProvider from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
 import OAuthRedirect from './components/loginPage/OAuthRedirect';
-import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 import SessionHandler from '@components/_common/sessionHandler/SessionHandler';
 import RouteChangeTracker from '@components/_common/routeChangeTracker/RouteChangeTracker';
 import PrivateRouter from '@components/_common/privateRouter/PrivateRouter';
+import { CriticalErrorBoundary } from './components/_common/errorBoundary/CriticalErrorBoundary';
 
 const GoalRoomDashboardPage = lazy(
   () => import('@pages/goalRoomDashboardPage/GoalRoomDashboardPage')
@@ -40,8 +40,8 @@ const App = () => {
             <RouteChangeTracker>
               <ResponsiveContainer>
                 <PageLayout>
-                  <AsyncBoundary>
-                    <SessionHandler>
+                  <SessionHandler>
+                    <CriticalErrorBoundary>
                       <Routes>
                         <Route path='/' element={<MainPage />} />
                         <Route path='/login' element={<LoginPage />} />
@@ -94,8 +94,8 @@ const App = () => {
                         />
                         <Route path='/oauth/redirect' element={<OAuthRedirect />} />
                       </Routes>
-                    </SessionHandler>
-                  </AsyncBoundary>
+                    </CriticalErrorBoundary>
+                  </SessionHandler>
                 </PageLayout>
               </ResponsiveContainer>
             </RouteChangeTracker>
