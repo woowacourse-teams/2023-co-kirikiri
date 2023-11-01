@@ -19,10 +19,18 @@ type ErrorBoundarySharedProps = PropsWithChildren<{
   onError?: (error: Error, info: ErrorInfo) => void;
   onReset?: (
     details:
-      | { reason: 'imperative-api'; args: any[] }
-      | { reason: 'keys'; prev: any[] | undefined; next: any[] | undefined }
+      | {
+          reason: 'keys';
+          prev: unknown[] | undefined;
+          next: unknown[] | undefined;
+        }
+      | {
+          reason: 'keys';
+          args: unknown[];
+        }
   ) => void;
-  resetKeys?: any[];
+  resetKeys?: unknown[];
+  isCritical?: boolean;
 }>;
 
 export type ErrorBoundaryPropsWithComponent = ErrorBoundarySharedProps & {
@@ -34,7 +42,7 @@ export type ErrorBoundaryPropsWithComponent = ErrorBoundarySharedProps & {
 export type ErrorBoundaryPropsWithRender = ErrorBoundarySharedProps & {
   fallback?: never;
   FallbackComponent?: never;
-  fallbackRender: typeof FallbackRender;
+  fallbackRender?: typeof FallbackRender;
 };
 
 export type ErrorBoundaryPropsWithFallback = ErrorBoundarySharedProps & {
@@ -54,7 +62,9 @@ export type ErrorBoundaryContextType = {
   resetErrorBoundary: (...args: any[]) => void;
 };
 
-export type ErrorBoundaryState =
+export type ErrorBoundaryState = {
+  fallback?: ReactNode | null;
+} & (
   | {
       didCatch: true;
       error: any;
@@ -62,4 +72,5 @@ export type ErrorBoundaryState =
   | {
       didCatch: false;
       error: null;
-    };
+    }
+);
