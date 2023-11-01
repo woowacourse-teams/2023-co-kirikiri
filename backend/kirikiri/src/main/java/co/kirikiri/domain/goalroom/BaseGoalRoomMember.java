@@ -3,24 +3,25 @@ package co.kirikiri.domain.goalroom;
 import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.member.Member;
 import com.querydsl.core.annotations.QueryInit;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseGoalRoomMember extends BaseEntity {
+
+    protected static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 
     @Enumerated(value = EnumType.STRING)
     protected GoalRoomRole role;
@@ -50,6 +51,13 @@ public abstract class BaseGoalRoomMember extends BaseEntity {
         this.joinedAt = joinedAt;
         this.goalRoom = goalRoom;
         this.member = member;
+    }
+
+    @PrePersist
+    private void prePersist() {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        final String formattedTime = LocalDateTime.now().format(formatter);
+        joinedAt = LocalDateTime.parse(formattedTime, formatter);
     }
 
     public boolean isLeader() {
