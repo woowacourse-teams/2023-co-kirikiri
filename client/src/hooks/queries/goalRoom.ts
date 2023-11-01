@@ -30,10 +30,10 @@ import { useNavigate } from 'react-router-dom';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
-  const { roadmapId, filterCond, lastCreatedAt, size, lastId } = params;
+  const { roadmapId } = params;
 
   const { data, fetchNextPage } = useInfiniteQuery(
-    [QUERY_KEYS.goalRoom.list, roadmapId, filterCond, lastCreatedAt, size, lastId],
+    [QUERY_KEYS.goalRoom.list, roadmapId],
     ({ pageParam }) => getGoalRoomList({ ...params, lastId: pageParam }),
     {
       getNextPageParam: (lastPage) =>

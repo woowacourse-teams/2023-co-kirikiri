@@ -93,6 +93,9 @@ export const useLogin = () => {
 
         navigate('/roadmap-list');
       },
+      onError() {
+        triggerToast({ message: '존재하지 않는 계정입니다', isError: true });
+      },
     }
   );
 

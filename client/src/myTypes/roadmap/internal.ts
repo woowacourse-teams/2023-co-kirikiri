@@ -66,7 +66,7 @@ export type RoadmapDetailType = {
   tags: TagType[];
 };
 
-type RoadmapNodes = {
+export type RoadmapNodes = {
   [key: string]: string;
 };
 

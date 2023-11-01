@@ -5,6 +5,7 @@ import { SelectedCategoryId } from '@myTypes/roadmap/internal';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useInfiniteScroll } from '@hooks/_common/useInfiniteScroll';
 import WavyLoading from '@/components/_common/wavyLoading/WavyLoading';
+import NoResult from '@components/roadmapListPage/roadmapSearch/NoResult';
 
 type RoadmapListProps = {
   selectedCategoryId: SelectedCategoryId;
@@ -32,6 +33,7 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   console.log(selectedCategoryId);
   return (
     <S.RoadmapList aria-label='로드맵 목록'>
+      {!roadmapListResponse.responses.length && <NoResult />}
       {roadmapListResponse.responses.map((item) => (
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}

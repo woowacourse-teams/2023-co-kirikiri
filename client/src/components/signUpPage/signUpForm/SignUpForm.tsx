@@ -38,9 +38,9 @@ const SignUpForm = () => {
     <SingleCardWrapper>
       <picture>
         <source srcSet={logoAV} />
-        <img src={logo} alt='코끼리 로고' />
+        <S.Logo src={logo} alt='코끼리 로고' />
       </picture>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <S.FormWrapper onSubmit={handleSubmit(onSubmit)}>
         <S.FormList>
           <S.FormItem>
             <SVGIcon name='PersonIcon' />
@@ -95,7 +95,7 @@ const SignUpForm = () => {
         <S.InfoText centered>
           이미 계정이 있습니까? <S.StyledLink to='/login'>로그인하기</S.StyledLink>
         </S.InfoText>
-      </form>
+      </S.FormWrapper>
     </SingleCardWrapper>
   );
 };

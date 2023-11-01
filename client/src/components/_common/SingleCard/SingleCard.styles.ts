@@ -10,7 +10,7 @@ export const SingleCardWrapper = styled.div<{
   flex-direction: column;
   align-items: center;
 
-  width: 50rem;
+  width: 53rem;
   padding: 4rem 1.5rem;
 
   border: 1px solid ${({ theme }) => theme.colors.gray300};
