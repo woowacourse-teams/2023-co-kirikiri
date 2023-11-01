@@ -3,11 +3,11 @@ package co.kirikiri.service;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public interface TokenProvider {
+public interface TokenProvider<A, R> {
 
-    String createAccessToken(final String subject, final Map<String, Object> claims);
+    A createAccessToken(final String subject, final Map<String, Object> claims);
 
-    String createRefreshToken(final String subject, final Map<String, Object> claims);
+    R createRefreshToken(final String subject, final Map<String, Object> claims);
 
     boolean isValidToken(final String token);
 

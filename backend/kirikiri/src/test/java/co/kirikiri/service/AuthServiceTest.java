@@ -3,7 +3,6 @@ package co.kirikiri.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import co.kirikiri.domain.auth.RefreshToken;
@@ -20,7 +19,6 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,7 +33,7 @@ class AuthServiceTest {
     private static Member member;
 
     @Mock
-    private TokenProvider tokenProvider;
+    private TokenProvider<String, RefreshToken> tokenProvider;
 
     @Mock
     private MemberRepository memberRepository;
@@ -62,21 +60,22 @@ class AuthServiceTest {
         //given
         final LoginRequest loginRequest = new LoginRequest("identifier1", "password1!");
         final String accessToken = "accessToken";
-        final String refreshToken = "refreshToken";
+        final String rawRefreshToken = "refreshToken";
+        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, 100L, "identifier1");
+
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn(accessToken);
         given(tokenProvider.createRefreshToken(any(), any()))
                 .willReturn(refreshToken);
-        given(tokenProvider.findTokenExpiredAt(anyString()))
-                .willReturn(LocalDateTime.now());
 
         //when
         final AuthenticationResponse authenticationResponse = authService.login(loginRequest);
 
         //then
-        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken));
+        assertThat(authenticationResponse).isEqualTo(
+                new AuthenticationResponse(refreshToken.getRefreshToken(), accessToken));
     }
 
     @Test
@@ -111,15 +110,16 @@ class AuthServiceTest {
         final String rawAccessToken = "accessToken";
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest("refreshToken");
-        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, LocalDateTime.MAX, member);
+        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, Long.MAX_VALUE,
+                member.getIdentifier().getValue());
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn(rawAccessToken);
         given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn(rawRefreshToken);
-        given(tokenProvider.findTokenExpiredAt(anyString()))
-                .willReturn(LocalDateTime.now());
+                .willReturn(refreshToken);
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.of(member));
         given(refreshTokenRedisRepository.findById(any()))
                 .willReturn(Optional.of(refreshToken));
 

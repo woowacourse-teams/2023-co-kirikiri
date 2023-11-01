@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -54,7 +55,7 @@ class MemberServiceTest {
     private NumberGenerator numberGenerator;
 
     @Mock
-    private TokenProvider tokenProvider;
+    private TokenProvider<String, RefreshToken> tokenProvider;
 
     @Mock
     private RefreshTokenRedisRepository refreshTokenRedisRepository;
@@ -228,7 +229,7 @@ class MemberServiceTest {
         given(numberGenerator.generate())
                 .willReturn(7);
         given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn("refreshToken");
+                .willReturn(new RefreshToken("refreshToken", 100L, "identifier"));
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn("accessToken");
 
@@ -257,7 +258,7 @@ class MemberServiceTest {
         given(numberGenerator.generate())
                 .willReturn(7);
         given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn("refreshToken");
+                .willReturn(new RefreshToken("refreshToken", 100L, "identifier"));
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn("accessToken");
 
@@ -286,7 +287,7 @@ class MemberServiceTest {
         given(numberGenerator.generate())
                 .willReturn(7);
         given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn("refreshToken");
+                .willReturn(new RefreshToken("refreshToken", 100L, "identifier"));
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn("accessToken");
 

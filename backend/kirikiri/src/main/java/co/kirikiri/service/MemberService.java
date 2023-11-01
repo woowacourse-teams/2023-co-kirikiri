@@ -24,7 +24,6 @@ import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +46,7 @@ public class MemberService {
     private final Environment environment;
     private final NumberGenerator numberGenerator;
     private final FileService fileService;
-    private final TokenProvider tokenProvider;
+    private final TokenProvider<String, RefreshToken> tokenProvider;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
@@ -93,15 +92,13 @@ public class MemberService {
     }
 
     private AuthenticationResponse makeAuthenticationResponse(final Member member) {
-        final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
-        saveRefreshToken(member, refreshToken);
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
+        saveRefreshToken(refreshToken);
         final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
-        return AuthMapper.convertToAuthenticationResponse(refreshToken, accessToken);
+        return AuthMapper.convertToAuthenticationResponse(refreshToken.getRefreshToken(), accessToken);
     }
 
-    private void saveRefreshToken(final Member member, final String rawRefreshToken) {
-        final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
-        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, expiredAt, member);
+    private void saveRefreshToken(final RefreshToken refreshToken) {
         refreshTokenRedisRepository.save(refreshToken);
     }
 

@@ -11,7 +11,6 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.helper.RedisRepositoryTest;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -42,9 +41,10 @@ class RefreshTokenRedisRepositoryTest {
     void 정상적으로_리프레시_토큰을_찾아온다() {
         //given
         final String rawToken = "refreshToken";
-        final LocalDateTime now = LocalDateTime.now();
+        final Long expirationInSeconds = 100L;
+        final String memberIdentifier = member.getIdentifier().getValue();
 
-        final RefreshToken refreshToken = new RefreshToken(rawToken, now, member);
+        final RefreshToken refreshToken = new RefreshToken(rawToken, expirationInSeconds, memberIdentifier);
         refreshTokenRedisRepository.save(refreshToken);
 
         //when
@@ -54,17 +54,18 @@ class RefreshTokenRedisRepositoryTest {
         //then
         assertThat(findRefreshToken.getRefreshToken())
                 .isEqualTo(refreshToken.getRefreshToken());
-        assertThat(findRefreshToken.getMember())
-                .isEqualTo(member);
+        assertThat(findRefreshToken.getMemberIdentifier())
+                .isEqualTo(memberIdentifier);
     }
 
     @Test
     void 정상적으로_리프레시_토큰을_삭제한다() {
         //given
         final String rawToken = "refreshToken";
-        final LocalDateTime now = LocalDateTime.now();
+        final Long expirationInSeconds = 100L;
+        final String memberIdentifier = member.getIdentifier().getValue();
 
-        final RefreshToken refreshToken = new RefreshToken(rawToken, now, member);
+        final RefreshToken refreshToken = new RefreshToken(rawToken, expirationInSeconds, memberIdentifier);
         refreshTokenRedisRepository.save(refreshToken);
 
         //when

@@ -2,6 +2,7 @@ package co.kirikiri.service;
 
 import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
@@ -11,7 +12,6 @@ import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.mapper.AuthMapper;
-import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class AuthService {
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final MemberRepository memberRepository;
-    private final TokenProvider tokenProvider;
+    private final TokenProvider<String, RefreshToken> tokenProvider;
 
     @Transactional
     public AuthenticationResponse login(final LoginRequest loginRequest) {
@@ -46,15 +46,13 @@ public class AuthService {
     }
 
     private AuthenticationResponse makeAuthenticationResponse(final Member member) {
-        final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
-        saveRefreshToken(member, refreshToken);
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
+        saveRefreshToken(refreshToken);
         final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
-        return AuthMapper.convertToAuthenticationResponse(refreshToken, accessToken);
+        return AuthMapper.convertToAuthenticationResponse(refreshToken.getRefreshToken(), accessToken);
     }
 
-    private void saveRefreshToken(final Member member, final String rawRefreshToken) {
-        final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
-        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, expiredAt, member);
+    private void saveRefreshToken(final RefreshToken refreshToken) {
         refreshTokenRedisRepository.save(refreshToken);
     }
 
@@ -69,12 +67,14 @@ public class AuthService {
     @Transactional
     public AuthenticationResponse reissueToken(final ReissueTokenRequest reissueTokenRequest) {
         checkTokenValid(reissueTokenRequest.refreshToken());
-        final RefreshToken encryptedToken = new RefreshToken(reissueTokenRequest.refreshToken());
-        final RefreshToken refreshToken = findSavedRefreshToken(encryptedToken.getRefreshToken());
-        checkTokenExpired(refreshToken);
-        refreshTokenRedisRepository.delete(refreshToken);
-        final Member member = refreshToken.getMember();
+        final RefreshToken refreshToken = findSavedRefreshToken(reissueTokenRequest.refreshToken());
+        final Member member = findMemberByRefreshToken(refreshToken);
         return makeAuthenticationResponse(member);
+    }
+
+    private Member findMemberByRefreshToken(final RefreshToken refreshToken) {
+        return memberRepository.findByIdentifier(new Identifier(refreshToken.getMemberIdentifier()))
+                .orElseThrow(() -> new AuthenticationException("존재하지 않은 회원입니다."));
     }
 
     private void checkTokenValid(final String token) {
@@ -85,13 +85,7 @@ public class AuthService {
 
     private RefreshToken findSavedRefreshToken(final String clientRefreshToken) {
         return refreshTokenRedisRepository.findById(clientRefreshToken)
-                .orElseThrow(() -> new AuthenticationException("토큰이 유효하지 않습니다."));
-    }
-
-    private void checkTokenExpired(final RefreshToken refreshToken) {
-        if (refreshToken.isExpired()) {
-            throw new AuthenticationException("토큰이 만료 되었습니다.");
-        }
+                .orElseThrow(() -> new AuthenticationException("토큰이 만료 되었습니다."));
     }
 
     public String findIdentifierByToken(final String token) {
