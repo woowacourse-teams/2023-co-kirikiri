@@ -15,8 +15,6 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.exception.ConflictException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.auth.TokenProvider;
@@ -26,7 +24,12 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.service.exception.ConflictException;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.member.MemberService;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,9 +38,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {

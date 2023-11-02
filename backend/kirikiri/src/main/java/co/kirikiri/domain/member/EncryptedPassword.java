@@ -1,14 +1,14 @@
 package co.kirikiri.domain.member;
 
+import co.kirikiri.domain.exception.UnexpectedDomainException;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.exception.ServerException;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EncryptedPassword {
@@ -42,7 +42,7 @@ public class EncryptedPassword {
         try {
             return MessageDigest.getInstance(ALGORITHM);
         } catch (final NoSuchAlgorithmException exception) {
-            throw new ServerException(exception.getMessage());
+            throw new UnexpectedDomainException(exception.getMessage());
         }
     }
 

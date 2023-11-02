@@ -26,16 +26,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.goalroom.GoalRoomCreateService;
-import co.kirikiri.service.goalroom.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.goalroom.GoalRoomCreateService;
+import co.kirikiri.service.goalroom.GoalRoomReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -46,9 +49,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebMvcTest(GoalRoomController.class)
 class GoalRoomCreateApiTest extends ControllerTestHelper {

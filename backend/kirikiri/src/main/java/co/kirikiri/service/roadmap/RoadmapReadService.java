@@ -10,7 +10,6 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.domain.roadmap.RoadmapTags;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -21,6 +20,7 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
 import co.kirikiri.service.FileService;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomScrollDto;
@@ -43,19 +43,21 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import co.kirikiri.service.mapper.ScrollResponseMapper;
+import java.net.URL;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class RoadmapReadService {
 
     private final RoadmapRepository roadmapRepository;

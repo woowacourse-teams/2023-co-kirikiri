@@ -10,12 +10,11 @@ import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.exception.ConflictException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.NumberGenerator;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.MemberInformationDto;
@@ -25,21 +24,24 @@ import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.service.exception.ConflictException;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class MemberService {
 
     private static final String DEFAULT_ORIGINAL_FILE_NAME_PROPERTY = "image.default.originalFileName";
@@ -75,10 +77,12 @@ public class MemberService {
 
     @Transactional
     public AuthenticationResponse oauthJoin(final OauthMemberJoinDto oauthMemberJoinDto) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(oauthMemberJoinDto.gender().name()), oauthMemberJoinDto.email());
+        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(oauthMemberJoinDto.gender().name()),
+                oauthMemberJoinDto.email());
         final Identifier identifier = makeIdentifier(oauthMemberJoinDto);
         final Nickname nickname = new Nickname(oauthMemberJoinDto.nickname());
-        final Member member = new Member(identifier, oauthMemberJoinDto.oauthId(), nickname, findDefaultMemberImage(), memberProfile);
+        final Member member = new Member(identifier, oauthMemberJoinDto.oauthId(), nickname, findDefaultMemberImage(),
+                memberProfile);
         memberRepository.save(member);
         return makeAuthenticationResponse(member);
     }
@@ -130,7 +134,8 @@ public class MemberService {
         final MemberProfile memberProfile = member.getMemberProfile();
         final URL imageUrl = fileService.generateUrl(memberImage.getServerFilePath(), HttpMethod.GET);
         return new MemberInformationDto(member.getId(), member.getNickname().getValue(),
-                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getEmail());
+                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(),
+                memberProfile.getEmail());
     }
 
     private Member findMemberInformationByIdentifier(final String identifier) {

@@ -4,6 +4,7 @@ import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.service.aop.ExceptionConvert;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 @RequiredArgsConstructor
+@ExceptionConvert
 public class GoalRoomScheduler {
 
     private final GoalRoomRepository goalRoomRepository;

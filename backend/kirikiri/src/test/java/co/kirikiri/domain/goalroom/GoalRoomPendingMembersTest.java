@@ -3,6 +3,7 @@ package co.kirikiri.domain.goalroom;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import co.kirikiri.domain.exception.UnexpectedDomainException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -11,10 +12,9 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.exception.NotFoundException;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class GoalRoomPendingMembersTest {
 
@@ -55,18 +55,16 @@ class GoalRoomPendingMembersTest {
 
         // then
         assertThatThrownBy(() -> assertThat(goalRoomPendingMembers.findGoalRoomLeader()))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(UnexpectedDomainException.class);
     }
 
     @Test
     void 입력받은_사용자를_골룸_사용자_중에서_찾는다() {
         // given
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                LocalDateTime.now(), null,
-                MEMBER1);
+                LocalDateTime.now(), null, MEMBER1);
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), null,
-                MEMBER2);
+                LocalDateTime.now(), null, MEMBER2);
 
         final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
                 List.of(goalRoomPendingMember1, goalRoomPendingMember2));
