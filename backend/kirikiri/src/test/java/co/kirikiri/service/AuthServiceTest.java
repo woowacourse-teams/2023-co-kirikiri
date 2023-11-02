@@ -20,8 +20,8 @@ import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import java.util.Optional;
 import co.kirikiri.service.exception.AuthenticationException;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -147,26 +147,14 @@ class AuthServiceTest {
     }
 
     @Test
-    void 리프레시_토큰이_존재하지_않을_경우_예외를_던진다() {
-        //given
-        final String rawRefreshToken = "refreshToken";
-        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
-        given(tokenProvider.isValidToken(any()))
-                .willReturn(true);
-
-        //when
-        //then
-        assertThatThrownBy(() -> authService.reissueToken(reissueTokenRequest))
-                .isInstanceOf(AuthenticationException.class);
-    }
-
-    @Test
     void 리프레시_토큰이_만료_됐을_경우_예외를_던진다() {
         //given
         final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
+        given(refreshTokenRedisRepository.findById(any()))
+                .willReturn(Optional.empty());
 
         //when
         //then

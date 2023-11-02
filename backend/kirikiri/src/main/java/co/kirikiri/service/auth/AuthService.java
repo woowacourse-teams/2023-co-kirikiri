@@ -74,11 +74,6 @@ public class AuthService {
         return makeAuthenticationResponse(member);
     }
 
-    private Member findMemberByRefreshToken(final RefreshToken refreshToken) {
-        return memberRepository.findByIdentifier(new Identifier(refreshToken.getMemberIdentifier()))
-                .orElseThrow(() -> new AuthenticationException("존재하지 않은 회원입니다."));
-    }
-
     private void checkTokenValid(final String token) {
         if (!isCertified(token)) {
             throw new AuthenticationException("토큰이 유효하지 않습니다.");
@@ -88,6 +83,11 @@ public class AuthService {
     private RefreshToken findSavedRefreshToken(final String clientRefreshToken) {
         return refreshTokenRedisRepository.findById(clientRefreshToken)
                 .orElseThrow(() -> new AuthenticationException("토큰이 만료 되었습니다."));
+    }
+
+    private Member findMemberByRefreshToken(final RefreshToken refreshToken) {
+        return memberRepository.findByIdentifier(new Identifier(refreshToken.getMemberIdentifier()))
+                .orElseThrow(() -> new AuthenticationException("존재하지 않는 회원입니다."));
     }
 
     public String findIdentifierByToken(final String token) {
