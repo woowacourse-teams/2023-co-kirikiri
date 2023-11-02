@@ -31,7 +31,7 @@ export const FormItem = styled.div`
 `;
 
 export const InfoText = styled.p<{ centered?: boolean }>`
-  ${({ theme }) => theme.fonts.small};
+  ${({ theme }) => theme.fonts.description4};
   margin-top: 1rem;
   text-align: ${({ centered }) => (centered ? 'center' : 'left')};
 `;
@@ -70,10 +70,19 @@ export const StyledLink = styled(Link)`
 export const ErrorBox = styled.div`
   ${({ theme }) => theme.fonts.description4}
   padding: 1rem 1rem;
+  height: 14rem;
   color: ${({ theme }) => theme.colors.red};
   p {
     &:not(:last-child) {
       margin-bottom: 0.6rem;
     }
   }
+`;
+
+export const FormWrapper = styled.form`
+  width: 45rem;
+`;
+
+export const Logo = styled.img`
+  height: 4rem;
 `;

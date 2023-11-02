@@ -6,18 +6,22 @@ import * as S from './CreateGoalRoomForm.styles';
 import { convertFieldsToNumber } from '@utils/_common/convertFieldsToNumber';
 import { NodeType } from '@myTypes/roadmap/internal';
 import InputField from '@components/_common/InputField/InputField';
-// import TodoListSection from '../todoListSection/TodoListSection';
 import NodeSection from '../nodeSection/NodeSection';
 import { transformDateStringsIn } from '@utils/_common/transformDateStringsIn';
 import { generateNodesValidations, staticValidations } from './createGoalRoomValidations';
 
 type CreateGoalRoomFormProps = {
   roadmapContentId: number;
+  roadmapId: number;
   nodes: NodeType[];
 };
 
-const CreateGoalRoomForm = ({ roadmapContentId, nodes }: CreateGoalRoomFormProps) => {
-  const { createGoalRoom } = useCreateGoalRoom(roadmapContentId);
+const CreateGoalRoomForm = ({
+  roadmapContentId,
+  nodes,
+  roadmapId,
+}: CreateGoalRoomFormProps) => {
+  const { createGoalRoom } = useCreateGoalRoom(roadmapId);
   const { formState, handleInputChange, handleSubmit, error } =
     useFormInput<CreateGoalRoomRequest>(
       {

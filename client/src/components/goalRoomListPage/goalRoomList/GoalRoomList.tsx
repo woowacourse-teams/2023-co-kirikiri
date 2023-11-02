@@ -32,7 +32,14 @@ const GoalRoomList = () => {
   return (
     <S.ListContainer role='main' aria-label='골룸 리스트'>
       <S.FilterBar>
-        <p aria-live='polite'>모집중인 모임 {goalRoomList.length}개</p>
+        <p aria-live='polite'>
+          모집중인 모임{' '}
+          {
+            goalRoomList.filter((goalRoomInfo) => goalRoomInfo.status === 'RECRUITING')
+              .length
+          }
+          개
+        </p>
         <GoalRoomFilter>
           {(selectedOption) => {
             setSortedOption(selectedOption);
@@ -52,9 +59,11 @@ const GoalRoomList = () => {
         </GoalRoomFilter>
       </S.FilterBar>
       <S.ListWrapper aria-label='골룸 리스트'>
-        {goalRoomList.map((goalRoomInfo) => {
-          return <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />;
-        })}
+        {goalRoomList
+          .filter((goalRoomInfo) => goalRoomInfo.status === 'RECRUITING')
+          .map((goalRoomInfo) => (
+            <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />
+          ))}
       </S.ListWrapper>
       {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
       <Link to={`/roadmap/${Number(id)}/goalroom-create`}>
