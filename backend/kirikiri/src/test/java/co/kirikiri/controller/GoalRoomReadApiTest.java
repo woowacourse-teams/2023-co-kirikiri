@@ -20,11 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ForbiddenException;
-import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.service.GoalRoomCreateService;
-import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
@@ -40,6 +35,11 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.ForbiddenException;
+import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.goalroom.GoalRoomCreateService;
+import co.kirikiri.service.goalroom.GoalRoomReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

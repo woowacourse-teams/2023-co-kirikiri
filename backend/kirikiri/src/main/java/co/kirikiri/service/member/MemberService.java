@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.service.member;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.auth.RefreshToken;
@@ -9,10 +9,12 @@ import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.exception.ConflictException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.FileService;
+import co.kirikiri.service.NumberGenerator;
+import co.kirikiri.service.aop.ExceptionConvert;
+import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.MemberInformationDto;
 import co.kirikiri.service.dto.member.MemberInformationForPublicDto;
@@ -21,6 +23,8 @@ import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.service.exception.ConflictException;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
 import java.net.URL;
@@ -35,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class MemberService {
 
     private static final String DEFAULT_ORIGINAL_FILE_NAME_PROPERTY = "image.default.originalFileName";

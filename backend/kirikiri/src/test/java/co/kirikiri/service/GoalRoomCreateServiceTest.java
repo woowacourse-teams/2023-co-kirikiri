@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.domain.exception.ImageExtensionException;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
@@ -22,6 +23,7 @@ import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomRole;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
@@ -43,8 +45,6 @@ import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -56,13 +56,9 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.goalroom.GoalRoomCreateService;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -70,6 +66,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
@@ -306,7 +309,7 @@ class GoalRoomCreateServiceTest {
 
         //when, then
         assertThatThrownBy(() -> goalRoomCreateService.join("identifier2", 1L))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
     }
 
@@ -328,7 +331,7 @@ class GoalRoomCreateServiceTest {
 
         //when, then
         assertThatThrownBy(() -> goalRoomCreateService.join("identifier2", 1L))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
     }
 
@@ -480,7 +483,7 @@ class GoalRoomCreateServiceTest {
         //when
         //then
         assertThatThrownBy(() -> goalRoomCreateService.addGoalRoomTodo(1L, "identifier1", goalRoomTodoRequest))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 
     @Test
@@ -726,7 +729,7 @@ class GoalRoomCreateServiceTest {
         // when
         assertThatThrownBy(
                 () -> goalRoomCreateService.createCheckFeed("identifier", 1L, request))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(ImageExtensionException.class)
                 .hasMessage("허용되지 않는 확장자입니다.");
     }
 

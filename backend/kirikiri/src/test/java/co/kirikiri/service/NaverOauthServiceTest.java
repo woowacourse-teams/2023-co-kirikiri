@@ -7,11 +7,14 @@ import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.auth.AuthService;
+import co.kirikiri.service.auth.NaverOauthService;
 import co.kirikiri.service.dto.auth.NaverMemberProfileDto;
 import co.kirikiri.service.dto.auth.NaverMemberProfileResponseDto;
 import co.kirikiri.service.dto.auth.NaverOauthTokenDto;
 import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import co.kirikiri.service.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

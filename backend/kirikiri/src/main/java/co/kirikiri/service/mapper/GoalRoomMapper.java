@@ -11,7 +11,6 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.service.dto.FileInformation;
@@ -47,6 +46,7 @@ import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
+import co.kirikiri.service.exception.ServerException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -152,7 +152,8 @@ public class GoalRoomMapper {
     private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(
             final RoadmapGoalRoomDto roadmapGoalRoomDto) {
         return new RoadmapGoalRoomResponse(roadmapGoalRoomDto.goalRoomId(), roadmapGoalRoomDto.name(),
-                roadmapGoalRoomDto.currentMemberCount(), roadmapGoalRoomDto.limitedMemberCount(),
+                roadmapGoalRoomDto.status(), roadmapGoalRoomDto.currentMemberCount(),
+                roadmapGoalRoomDto.limitedMemberCount(),
                 roadmapGoalRoomDto.createdAt(), roadmapGoalRoomDto.startDate(),
                 roadmapGoalRoomDto.endDate(), convertToMemberResponse(roadmapGoalRoomDto.goalRoomLeader()));
     }

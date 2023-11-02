@@ -1,7 +1,8 @@
-package co.kirikiri.service;
+package co.kirikiri.service.auth;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.OauthNetworkService;
 import co.kirikiri.service.dto.auth.NaverMemberProfileDto;
 import co.kirikiri.service.dto.auth.NaverMemberProfileResponseDto;
 import co.kirikiri.service.dto.auth.NaverOauthTokenDto;
@@ -10,15 +11,16 @@ import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.mapper.OauthMapper;
+import co.kirikiri.service.member.MemberService;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,7 +58,8 @@ public class NaverOauthService {
 
     @Transactional
     public AuthenticationResponse login(final Map<String, String> queryParams) {
-        final NaverOauthTokenDto naverOauthTokenDto = oauthNetworkService.requestToken(NaverOauthTokenDto.class, queryParams).getBody();
+        final NaverOauthTokenDto naverOauthTokenDto = oauthNetworkService.requestToken(NaverOauthTokenDto.class,
+                queryParams).getBody();
         final NaverMemberProfileDto naverMemberProfileDto = getNaverMemberProfileDto(naverOauthTokenDto.accessToken());
         final NaverMemberProfileResponseDto naverMemberProfileResponseDto = naverMemberProfileDto.response();
         final Optional<Member> optionalMember = memberRepository.findByOauthId(naverMemberProfileResponseDto.id());
@@ -64,8 +67,10 @@ public class NaverOauthService {
             final Member member = optionalMember.get();
             return authService.oauthLogin(member);
         }
-        return memberService.oauthJoin(new OauthMemberJoinDto(naverMemberProfileResponseDto.id(), naverMemberProfileResponseDto.email(),
-                naverMemberProfileResponseDto.nickname(), GenderType.findByOauthType(naverMemberProfileResponseDto.gender())));
+        return memberService.oauthJoin(
+                new OauthMemberJoinDto(naverMemberProfileResponseDto.id(), naverMemberProfileResponseDto.email(),
+                        naverMemberProfileResponseDto.nickname(),
+                        GenderType.findByOauthType(naverMemberProfileResponseDto.gender())));
     }
 
     private NaverMemberProfileDto getNaverMemberProfileDto(final String accessToken) {

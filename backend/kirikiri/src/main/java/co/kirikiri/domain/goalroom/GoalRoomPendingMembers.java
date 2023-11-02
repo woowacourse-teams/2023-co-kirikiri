@@ -1,17 +1,18 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.domain.exception.UnexpectedDomainException;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +20,7 @@ public class GoalRoomPendingMembers {
 
     private static final int MIN_SIZE_TO_FIND_NEXT_LEADER = 1;
 
+    @BatchSize(size = 20)
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true, mappedBy = "goalRoom")
@@ -51,7 +53,7 @@ public class GoalRoomPendingMembers {
                 .filter(GoalRoomPendingMember::isLeader)
                 .findFirst()
                 .map(GoalRoomPendingMember::getMember)
-                .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
+                .orElseThrow(() -> new UnexpectedDomainException("골룸의 리더가 없습니다."));
     }
 
     public boolean isNotLeader(final Member member) {

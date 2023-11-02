@@ -1,14 +1,14 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor
@@ -27,7 +27,7 @@ public class RoadmapNodeImages {
 
     private void validateSize(final List<RoadmapNodeImage> images) {
         if (images.size() > MAX_SIZE) {
-            throw new BadRequestException("한 로드맵 노드에 사진은 최대 2개까지 가능합니다.");
+            throw new RoadmapException("한 로드맵 노드에 사진은 최대 2개까지 가능합니다.");
         }
     }
 

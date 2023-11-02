@@ -1,7 +1,7 @@
-package co.kirikiri.service;
+package co.kirikiri.service.auth;
 
 import co.kirikiri.domain.auth.RefreshToken;
-import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.service.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
