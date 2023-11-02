@@ -1,7 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
+import co.kirikiri.domain.exception.UnexpectedDomainException;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.service.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -67,7 +67,7 @@ public class GoalRoomMembers {
                 .filter(GoalRoomMember::isLeader)
                 .findFirst()
                 .map(GoalRoomMember::getMember)
-                .orElseThrow(() -> new NotFoundException("골룸의 리더가 없습니다."));
+                .orElseThrow(() -> new UnexpectedDomainException("골룸의 리더가 없습니다."));
     }
 
     public int size() {

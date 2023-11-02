@@ -14,6 +14,7 @@ import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.NumberGenerator;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.MemberInformationDto;
@@ -40,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class MemberService {
 
     private static final String DEFAULT_ORIGINAL_FILE_NAME_PROPERTY = "image.default.originalFileName";

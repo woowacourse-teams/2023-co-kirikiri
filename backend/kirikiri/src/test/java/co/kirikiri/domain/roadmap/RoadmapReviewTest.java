@@ -11,7 +11,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -44,7 +44,7 @@ class RoadmapReviewTest {
 
         // expected
         assertThatThrownBy(() -> new RoadmapReview(content, null, member))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
     }
 
     @ParameterizedTest
@@ -57,6 +57,6 @@ class RoadmapReviewTest {
 
         // expected
         assertThatThrownBy(() -> new RoadmapReview("리뷰", rate, member))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
     }
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -22,7 +23,6 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.service.exception.BadRequestException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -114,7 +114,7 @@ class GoalRoomTest {
 
         //when, then
         assertThatThrownBy(() -> goalRoom.join(member))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
     }
 
@@ -126,7 +126,7 @@ class GoalRoomTest {
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(member))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
     }
 
@@ -138,7 +138,7 @@ class GoalRoomTest {
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(member))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
     }
 
@@ -223,7 +223,7 @@ class GoalRoomTest {
         // when
         // then
         assertThatThrownBy(() -> goalRoom.leave(notJoinMember))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom.vo;
 
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -23,7 +23,7 @@ public class LimitedMemberCount {
 
     private void validate(final int value) {
         if (value < MIN || value > MAX) {
-            throw new BadRequestException("제한 인원 수가 적절하지 않습니다.");
+            throw new GoalRoomException("제한 인원 수가 적절하지 않습니다.");
         }
     }
 

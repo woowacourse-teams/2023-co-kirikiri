@@ -20,6 +20,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.FileService;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
@@ -53,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class GoalRoomReadService {
 
     private final MemberRepository memberRepository;

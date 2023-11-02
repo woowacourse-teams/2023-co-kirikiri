@@ -1,7 +1,7 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.BaseUpdatedTimeEntity;
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -49,7 +49,7 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
 
     private void validateContentLength(final String content) {
         if (content.length() > CONTENT_MAX_LENGTH) {
-            throw new BadRequestException(String.format("로드맵 본문의 길이는 최대 %d글자입니다.", CONTENT_MAX_LENGTH));
+            throw new RoadmapException(String.format("로드맵 본문의 길이는 최대 %d글자입니다.", CONTENT_MAX_LENGTH));
         }
     }
 

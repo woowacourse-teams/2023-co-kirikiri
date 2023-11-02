@@ -24,6 +24,7 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.ImageDirType;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
@@ -46,6 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@ExceptionConvert
 public class GoalRoomCreateService {
 
     private final FileService fileService;

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.service.exception.BadRequestException;
 import java.time.LocalDate;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,7 +37,7 @@ class GoalRoomRoadmapNodeTest {
         //then
         assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
                 new RoadmapNode("title", "content")))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 
     @ParameterizedTest
@@ -51,7 +51,7 @@ class GoalRoomRoadmapNodeTest {
         //then
         assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
                 new RoadmapNode("title", "content")))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 
     @ParameterizedTest
@@ -66,7 +66,7 @@ class GoalRoomRoadmapNodeTest {
         //then
         assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
                 new RoadmapNode("title", "content")))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 
     @ParameterizedTest
@@ -81,7 +81,7 @@ class GoalRoomRoadmapNodeTest {
         //then
         assertThatThrownBy(() -> new GoalRoomRoadmapNode(new Period(startDate, endDate), checkCount,
                 new RoadmapNode("title", "content")))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 
     @ParameterizedTest

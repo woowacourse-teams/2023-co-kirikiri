@@ -1,7 +1,7 @@
 package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.BaseEntity;
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
@@ -32,7 +32,7 @@ public class RoadmapCategory extends BaseEntity {
 
     private void validateNameLength(final String name) {
         if (name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) {
-            throw new BadRequestException("카테고리 이름은 1자 이상 10자 이하입니다.");
+            throw new RoadmapException("카테고리 이름은 1자 이상 10자 이하입니다.");
         }
     }
 

@@ -10,6 +10,7 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.ImageDirType;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.event.RoadmapCreateEvent;
@@ -24,6 +25,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
 @RequiredArgsConstructor
+@ExceptionConvert
 public class RoadmapCreateEventListener {
 
     private final RoadmapContentRepository roadmapContentRepository;

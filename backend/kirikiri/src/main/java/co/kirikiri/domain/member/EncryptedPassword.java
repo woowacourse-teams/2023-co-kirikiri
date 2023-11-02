@@ -1,7 +1,7 @@
 package co.kirikiri.domain.member;
 
+import co.kirikiri.domain.exception.UnexpectedDomainException;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.service.exception.ServerException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -42,7 +42,7 @@ public class EncryptedPassword {
         try {
             return MessageDigest.getInstance(ALGORITHM);
         } catch (final NoSuchAlgorithmException exception) {
-            throw new ServerException(exception.getMessage());
+            throw new UnexpectedDomainException(exception.getMessage());
         }
     }
 

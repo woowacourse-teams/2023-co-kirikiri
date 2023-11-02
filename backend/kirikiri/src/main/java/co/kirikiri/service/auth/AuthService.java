@@ -6,6 +6,7 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.auth.LoginDto;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class AuthService {
 
     private final RefreshTokenRepository refreshTokenRepository;

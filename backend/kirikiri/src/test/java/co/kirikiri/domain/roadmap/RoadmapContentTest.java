@@ -13,7 +13,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class RoadmapContentTest {
 
         // expect
         assertThatThrownBy(() -> new RoadmapContent(content))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
     }
 
     @Test

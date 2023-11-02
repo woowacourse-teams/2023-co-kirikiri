@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ class RoadmapNodeImagesTest {
         //then
         assertThatThrownBy(
                 () -> new RoadmapNodeImages(List.of(roadmapNodeImage1, roadmapNodeImage2, roadmapNodeImage3)))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
     }
 
     @Test
@@ -55,7 +55,7 @@ class RoadmapNodeImagesTest {
         //when
         //then
         assertThatThrownBy(() -> roadmapNodeImages.add(roadmapNodeImage3))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
 
     }
 
@@ -77,7 +77,7 @@ class RoadmapNodeImagesTest {
         //then
         assertThatThrownBy(
                 () -> roadmapNodeImages.addAll(new RoadmapNodeImages(List.of(roadmapNodeImage3, roadmapNodeImage4))))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
 
     }
 }
