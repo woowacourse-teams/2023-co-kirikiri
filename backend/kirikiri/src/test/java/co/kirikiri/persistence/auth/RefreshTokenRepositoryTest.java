@@ -11,6 +11,7 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.helper.RedisRepositoryTest;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,5 +69,17 @@ class RefreshTokenRepositoryTest {
 
         //then
         assertThat(findMemberIdentifier).isEqualTo(memberIdentifier);
+    }
+
+    @Test
+    void 리프레시_토큰을_찾을때_없는경우_빈값을_보낸다() {
+        //given
+        final String refreshToken = "refreshToken";
+
+        //when
+        final Optional<String> memberIdentifier = refreshTokenRepository.findMemberIdentifierByRefreshToken(
+                refreshToken);
+        //then
+        assertThat(memberIdentifier).isEmpty();
     }
 }

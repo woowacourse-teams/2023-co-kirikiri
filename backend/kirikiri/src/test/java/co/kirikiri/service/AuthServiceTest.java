@@ -158,4 +158,22 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.reissueToken(reissueTokenRequest))
                 .isInstanceOf(AuthenticationException.class);
     }
+
+    @Test
+    void 리프레시_토큰으로_조회한_회원이_존재하지_않는_경우_예외를_던진다() {
+        //given
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        given(tokenProvider.isValidToken(any()))
+                .willReturn(true);
+        given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
+                .willReturn(Optional.of(member.getIdentifier().getValue()));
+        given(memberRepository.findByIdentifier(any()))
+                .willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThatThrownBy(() -> authService.reissueToken(reissueTokenRequest))
+                .isInstanceOf(AuthenticationException.class);
+    }
 }
