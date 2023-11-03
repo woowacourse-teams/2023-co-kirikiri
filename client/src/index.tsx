@@ -22,16 +22,6 @@ const startApp = async () => {
         staleTime: 1000 * 60 * 5,
         cacheTime: 1000 * 60 * 30,
       },
-
-      mutations: {
-        useErrorBoundary: false,
-        onError: (e) => {
-          const error = e as any;
-          if (error.response.status === 400) {
-            alert(error.response.data[0].message);
-          }
-        },
-      },
     },
   });
 
