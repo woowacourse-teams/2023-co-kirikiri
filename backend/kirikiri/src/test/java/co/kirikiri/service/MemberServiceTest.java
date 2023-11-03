@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -16,7 +15,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
+import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
@@ -25,12 +24,12 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
 import co.kirikiri.service.exception.ConflictException;
 import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.member.MemberService;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -57,10 +56,10 @@ class MemberServiceTest {
     private NumberGenerator numberGenerator;
 
     @Mock
-    private TokenProvider<String, RefreshToken> tokenProvider;
+    private TokenProvider tokenProvider;
 
     @Mock
-    private RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Mock
     private FileService fileService;
@@ -231,7 +230,7 @@ class MemberServiceTest {
         given(numberGenerator.generate())
                 .willReturn(7);
         given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn(new RefreshToken("refreshToken", 100L, "identifier"));
+                .willReturn("refreshToken");
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn("accessToken");
 
@@ -260,7 +259,7 @@ class MemberServiceTest {
         given(numberGenerator.generate())
                 .willReturn(7);
         given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn(new RefreshToken("refreshToken", 100L, "identifier"));
+                .willReturn("refreshToken");
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn("accessToken");
 
@@ -289,7 +288,7 @@ class MemberServiceTest {
         given(numberGenerator.generate())
                 .willReturn(7);
         given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn(new RefreshToken("refreshToken", 100L, "identifier"));
+                .willReturn("refreshToken");
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn("accessToken");
 

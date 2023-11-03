@@ -15,9 +15,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import java.util.List;
 
 class AuthenticationIntegrationTest extends InitIntegrationTest {
 
@@ -90,7 +90,7 @@ class AuthenticationIntegrationTest extends InitIntegrationTest {
     }
 
     @Test
-    void 정상적으로_토큰_재발행을_힌다() {
+    void 정상적으로_토큰_재발행을_한다() {
         //given
         final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest(기본_재발행_토큰);
 

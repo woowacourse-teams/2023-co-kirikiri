@@ -1,7 +1,6 @@
 package co.kirikiri.service.member;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -9,7 +8,7 @@ import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
+import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.NumberGenerator;
@@ -51,9 +50,9 @@ public class MemberService {
     private final Environment environment;
     private final NumberGenerator numberGenerator;
     private final FileService fileService;
-    private final TokenProvider<String, RefreshToken> tokenProvider;
+    private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public Long join(final MemberJoinRequest memberJoinRequest) {
@@ -97,14 +96,14 @@ public class MemberService {
     }
 
     private AuthenticationResponse makeAuthenticationResponse(final Member member) {
-        final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
-        saveRefreshToken(refreshToken);
+        final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
+        saveRefreshToken(refreshToken, member);
         final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
-        return AuthMapper.convertToAuthenticationResponse(refreshToken.getRefreshToken(), accessToken);
+        return AuthMapper.convertToAuthenticationResponse(refreshToken, accessToken);
     }
 
-    private void saveRefreshToken(final RefreshToken refreshToken) {
-        refreshTokenRedisRepository.save(refreshToken);
+    private void saveRefreshToken(final String refreshToken, final Member member) {
+        refreshTokenRepository.save(refreshToken, member.getIdentifier().getValue());
     }
 
     private MemberImage findDefaultMemberImage() {

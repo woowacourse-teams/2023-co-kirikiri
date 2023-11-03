@@ -1,6 +1,5 @@
 package co.kirikiri.service.auth;
 
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.service.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -20,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtTokenProvider implements TokenProvider<String, RefreshToken> {
+public class JwtTokenProvider implements TokenProvider {
 
     private static final String TYPE_CLAIM_KEY = "type";
     private static final String UUID_CLAIM_KEY = "UUID";
@@ -46,12 +45,11 @@ public class JwtTokenProvider implements TokenProvider<String, RefreshToken> {
     }
 
     @Override
-    public RefreshToken createRefreshToken(final String subject, final Map<String, Object> claims) {
+    public String createRefreshToken(final String subject, final Map<String, Object> claims) {
         final Map<String, Object> copiedClaims = new HashMap<>(claims);
         copiedClaims.put(TYPE_CLAIM_KEY, "Refresh");
         copiedClaims.put(UUID_CLAIM_KEY, generateUUID());
-        final String refreshToken = createToken(refreshTokenValidityInSeconds, subject, copiedClaims);
-        return new RefreshToken(refreshToken, refreshTokenValidityInSeconds / 1000, subject);
+        return createToken(refreshTokenValidityInSeconds, subject, copiedClaims);
     }
 
     private String generateUUID() {

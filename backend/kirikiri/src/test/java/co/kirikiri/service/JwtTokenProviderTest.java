@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.service.auth.JwtTokenProvider;
 import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.exception.AuthenticationException;
@@ -18,7 +17,7 @@ import org.junit.jupiter.api.Test;
 class JwtTokenProviderTest {
 
     private static final String secretKey = "9zrOjg1kDd2gUp6KBbElGJj5GHP5BnneDs3nXEhdztHAUjKBX7l69JXUErBovPLn7TVWV0UCfejYZyxIjIMC5KPfSvBzo9C1gJ2";
-    TokenProvider<String, RefreshToken> tokenProvider = new JwtTokenProvider(secretKey, 1_800_000L, 86_400_000L);
+    TokenProvider tokenProvider = new JwtTokenProvider(secretKey, 1_800_000L, 86_400_000L);
 
     @Test
     void 정상적으로_subject와_claims를_포함한_ACCESS_TOKEN을_생성한다() {
@@ -48,10 +47,10 @@ class JwtTokenProviderTest {
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
 
         //when
-        final RefreshToken refreshToken = tokenProvider.createRefreshToken(subject, claims);
+        final String refreshToken = tokenProvider.createRefreshToken(subject, claims);
 
         //then
-        final Claims result = getClaims(refreshToken.getRefreshToken());
+        final Claims result = getClaims(refreshToken);
 
         assertThat(result.getSubject()).isEqualTo(subject);         // subject 확인
         for (final String claimKey : claims.keySet()) {             // custom claim 확인
@@ -81,7 +80,7 @@ class JwtTokenProviderTest {
         //given
         final String subject = "subject";
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
-        final TokenProvider<String, RefreshToken> tokenProvider = new JwtTokenProvider(secretKey, 0L, 0L);
+        final TokenProvider tokenProvider = new JwtTokenProvider(secretKey, 0L, 0L);
         final String accessToken = tokenProvider.createAccessToken(subject, claims);
 
         //when

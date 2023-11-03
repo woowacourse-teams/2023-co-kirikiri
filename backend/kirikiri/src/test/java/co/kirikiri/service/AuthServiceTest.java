@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -13,7 +12,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.auth.RefreshTokenRedisRepository;
+import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.auth.AuthService;
 import co.kirikiri.service.auth.TokenProvider;
@@ -35,13 +34,13 @@ class AuthServiceTest {
     private static Member member;
 
     @Mock
-    private TokenProvider<String, RefreshToken> tokenProvider;
+    private TokenProvider tokenProvider;
 
     @Mock
     private MemberRepository memberRepository;
 
     @Mock
-    private RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private RefreshTokenRepository refreshTokenRepository;
 
     @InjectMocks
     private AuthService authService;
@@ -62,8 +61,7 @@ class AuthServiceTest {
         //given
         final LoginRequest loginRequest = new LoginRequest("identifier1", "password1!");
         final String accessToken = "accessToken";
-        final String rawRefreshToken = "refreshToken";
-        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, 100L, "identifier1");
+        final String refreshToken = "refreshToken";
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -77,7 +75,7 @@ class AuthServiceTest {
 
         //then
         assertThat(authenticationResponse).isEqualTo(
-                new AuthenticationResponse(refreshToken.getRefreshToken(), accessToken));
+                new AuthenticationResponse(refreshToken, accessToken));
     }
 
     @Test
@@ -110,10 +108,9 @@ class AuthServiceTest {
     void 정상적으로_토큰을_재발행한다() {
         //given
         final String rawAccessToken = "accessToken";
-        final String rawRefreshToken = "refreshToken";
+        final String refreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest("refreshToken");
-        final RefreshToken refreshToken = new RefreshToken(rawRefreshToken, Long.MAX_VALUE,
-                member.getIdentifier().getValue());
+
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(tokenProvider.createAccessToken(any(), any()))
@@ -122,14 +119,14 @@ class AuthServiceTest {
                 .willReturn(refreshToken);
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
-        given(refreshTokenRedisRepository.findById(any()))
+        given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
                 .willReturn(Optional.of(refreshToken));
 
         //when
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
 
         //then
-        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(rawRefreshToken, rawAccessToken));
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, rawAccessToken));
     }
 
     @Test
@@ -153,7 +150,7 @@ class AuthServiceTest {
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
-        given(refreshTokenRedisRepository.findById(any()))
+        given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
                 .willReturn(Optional.empty());
 
         //when
