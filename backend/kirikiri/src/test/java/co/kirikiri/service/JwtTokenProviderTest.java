@@ -10,6 +10,7 @@ import co.kirikiri.service.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -123,5 +124,19 @@ class JwtTokenProviderTest {
 
         //then
         assertThat(result).isEqualTo(subject);
+    }
+
+    @Test
+    void 토큰의_만료기간을_가져온다() {
+        //given
+        final String subject = "subject";
+        final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
+        final String refreshToken = tokenProvider.createRefreshToken(subject, claims);
+
+        //when
+        final LocalDateTime tokenExpiredAt = tokenProvider.findTokenExpiredAt(refreshToken);
+
+        //then
+        assertThat(tokenExpiredAt).isAfter(LocalDateTime.now());
     }
 }
