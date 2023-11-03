@@ -20,16 +20,17 @@ import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { setCookie } from '@/utils/_common/cookies';
 import logout from '@utils/user/logout';
+import { useMutationWithKey } from './useMutationWithKey';
+import { TOAST_CONTENTS } from '@/constants/_common/toast';
 
 export const useSignUp = () => {
-  const { triggerToast } = useToast();
   const navigate = useNavigate();
 
-  const { mutate } = useMutation(
+  const { mutate } = useMutationWithKey(
+    'SIGN_UP',
     (memberJoinPayload: MemberJoinRequest) => signUp(memberJoinPayload),
     {
       onSuccess() {
-        triggerToast({ message: '회원가입 성공!' });
         navigate('/login');
       },
     }
@@ -53,14 +54,12 @@ export const useNaverLogin = () => {
 
 export const useNaverOAuth = (code: string, state: string) => {
   const navigate = useNavigate();
-  const { triggerToast } = useToast();
   const { setUserInfo } = useUserInfoContext();
 
-  const { mutate } = useMutation(() => naverOAuthToken(code, state), {
+  const { mutate } = useMutationWithKey('LOGIN', () => naverOAuthToken(code, state), {
     onSuccess: ({ accessToken, refreshToken }) => {
       setCookie('access_token', accessToken);
       setCookie('refresh_token', refreshToken);
-      triggerToast({ message: '로그인 성공!' });
 
       getUserInfo().then((response: AxiosResponse<UserInfoResponse>) => {
         setUserInfo(response.data);
@@ -75,26 +74,22 @@ export const useNaverOAuth = (code: string, state: string) => {
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const { triggerToast } = useToast();
   const { setUserInfo } = useUserInfoContext();
 
-  const { mutate } = useMutation(
+  const { mutate } = useMutationWithKey(
+    'LOGIN',
     (loginPayload: UserLoginRequest) => login(loginPayload),
     {
       onSuccess(response) {
         const { accessToken, refreshToken } = response.data;
         setCookie('access_token', accessToken);
         setCookie('refresh_token', refreshToken);
-        triggerToast({ message: '로그인 성공!' });
 
         getUserInfo().then((response: AxiosResponse<UserInfoResponse>) => {
           setUserInfo(response.data);
         });
 
         navigate('/roadmap-list');
-      },
-      onError() {
-        triggerToast({ message: '존재하지 않는 계정입니다', isError: true });
       },
     }
   );
@@ -111,7 +106,10 @@ export const useLogout = () => {
   const triggerLogout = () => {
     logout();
     setUserInfo(defaultUserInfo);
-    triggerToast({ message: '로그아웃 성공!' });
+    triggerToast({
+      message: TOAST_CONTENTS.LOGOUT.success.message,
+      indicator: TOAST_CONTENTS.LOGOUT.success.indicator,
+    });
   };
 
   return { logout: triggerLogout };
