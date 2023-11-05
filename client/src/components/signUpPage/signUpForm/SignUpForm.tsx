@@ -4,34 +4,15 @@ import SVGIcon from '@components/icons/SVGIcon';
 import logo from '@assets/images/logo.png';
 import logoAV from '@assets/images/logo.avif';
 import { SingleCardWrapper } from '@components/_common/SingleCard/SingleCard.styles';
-import useFormInput from '@hooks/_common/useFormInput';
 import * as S from './SignUpForm.styles';
-import { staticValidations } from './signUpValidations';
+import { useForm } from 'react-lightweight-form';
 
 const SignUpForm = () => {
-  const {
-    formState: signUpFormData,
-    handleInputChange,
-    handleSubmit,
-    error,
-  } = useFormInput<MemberJoinRequest>(
-    {
-      identifier: '',
-      password: '',
-      email: '',
-      nickname: '',
-      genderType: '',
-    },
-    staticValidations
-  );
-
+  const { register, handleSubmit, errors } = useForm<MemberJoinRequest>();
   const { signUp } = useSignUp();
 
-  const onSubmit = () => {
-    signUp({
-      ...signUpFormData,
-      genderType: signUpFormData.genderType.toUpperCase(),
-    });
+  const onSubmit = (formData: MemberJoinRequest) => {
+    signUp(formData);
   };
 
   return (
@@ -44,13 +25,27 @@ const SignUpForm = () => {
         <S.FormList>
           <S.FormItem>
             <SVGIcon name='PersonIcon' />
-            <input name='identifier' onChange={handleInputChange} placeholder='아이디' />
+            <input
+              {...register('identifier', {
+                pattern: {
+                  value: /^[a-z0-9]{4,20}$/,
+                  message:
+                    '-아이디는 영어 소문자와 숫자만 포함할 수 있으며, 4~20자여야 합니다.',
+                },
+              })}
+              placeholder='아이디'
+            />
           </S.FormItem>
           <S.FormItem>
             <SVGIcon name='LockIcon' />
             <input
-              name='password'
-              onChange={handleInputChange}
+              {...register('password', {
+                pattern: {
+                  value: /^[a-z0-9!@#$%^&*()~]{8,15}$/,
+                  message:
+                    '-비밀번호는 8~15자리여야 하며, 영어 소문자, 숫자, [!,@,#,$,%,^,&,*,(,),~] 특수문자만 포함해야 합니다.',
+                },
+              })}
               placeholder='비밀번호'
               type='password'
             />
@@ -58,22 +53,43 @@ const SignUpForm = () => {
           <S.FormItem>
             <SVGIcon name='EmailIcon' />
             <input
-              name='email'
-              onChange={handleInputChange}
+              {...register('email', {
+                pattern: {
+                  value:
+                    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+                  message: '-유효하지 않은 이메일 형식입니다.',
+                },
+              })}
               placeholder='이메일'
               type='email'
             />
           </S.FormItem>
           <S.FormItem>
             <SVGIcon name='StandingPersonIcon' />
-            <input name='nickname' onChange={handleInputChange} placeholder='닉네임' />
+            <input
+              {...register('nickname', {
+                pattern: {
+                  value: /^.{2,8}$/,
+                  message: '-닉네임은 2~8자리여야 합니다.',
+                },
+              })}
+              placeholder='닉네임'
+            />
           </S.FormItem>
         </S.FormList>
 
         <S.FormList>
           <S.FormItem>
             <SVGIcon name='GenderIcon' />
-            <select name='genderType' onChange={handleInputChange}>
+            <select
+              {...register('genderType', {
+                pattern: {
+                  value: /^(male|female)$/,
+                  message: "-성별은 '남자' 또는 '여자'만 선택 가능합니다.",
+                },
+                setValueAs: (inputValue) => inputValue.toUpperCase(),
+              })}
+            >
               <option value='' selected disabled>
                 성별
               </option>
@@ -83,7 +99,7 @@ const SignUpForm = () => {
           </S.FormItem>
         </S.FormList>
         <S.ErrorBox>
-          {Object.values(error).map((message: string) => (
+          {Object.values(errors).map((message: string) => (
             <p>{message}</p>
           ))}
         </S.ErrorBox>
