@@ -17,11 +17,15 @@ const LoginForm = () => {
       <S.FormItemContainer>
         <S.FormItem>
           <SVGIcon name='PersonIcon' />
-          <input {...register('identifier')} placeholder='아이디' />
+          <input {...register('identifier', { required: true })} placeholder='아이디' />
         </S.FormItem>
         <S.FormItem>
           <SVGIcon name='LockIcon' />
-          <input {...register('password')} placeholder='비밀번호' type='password' />
+          <input
+            {...register('password', { required: true })}
+            placeholder='비밀번호'
+            type='password'
+          />
         </S.FormItem>
       </S.FormItemContainer>
       <S.SubmitButton>로그인하기</S.SubmitButton>
