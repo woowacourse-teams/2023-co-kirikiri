@@ -107,14 +107,14 @@ class AuthServiceTest {
     @Test
     void 정상적으로_토큰을_재발행한다() {
         //given
-        final String rawAccessToken = "accessToken";
+        final String accessToken = "accessToken";
         final String refreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest("refreshToken");
 
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(tokenProvider.createAccessToken(any(), any()))
-                .willReturn(rawAccessToken);
+                .willReturn(accessToken);
         given(tokenProvider.createRefreshToken(any(), any()))
                 .willReturn(refreshToken);
         given(memberRepository.findByIdentifier(any()))
@@ -126,14 +126,14 @@ class AuthServiceTest {
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
 
         //then
-        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, rawAccessToken));
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken));
     }
 
     @Test
     void 리프레시_토큰이_유효하지_않을_경우_예외를_던진다() {
         //given
-        final String rawRefreshToken = "refreshToken";
-        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        final String refreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(false);
 
@@ -146,8 +146,8 @@ class AuthServiceTest {
     @Test
     void 리프레시_토큰이_만료_됐을_경우_예외를_던진다() {
         //given
-        final String rawRefreshToken = "refreshToken";
-        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        final String refreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
@@ -162,8 +162,8 @@ class AuthServiceTest {
     @Test
     void 리프레시_토큰으로_조회한_회원이_존재하지_않는_경우_예외를_던진다() {
         //given
-        final String rawRefreshToken = "refreshToken";
-        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        final String refreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
         given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
