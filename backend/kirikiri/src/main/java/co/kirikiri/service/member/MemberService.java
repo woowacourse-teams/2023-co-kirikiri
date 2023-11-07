@@ -1,8 +1,6 @@
 package co.kirikiri.service.member;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.auth.EncryptedToken;
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -29,7 +27,6 @@ import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -50,11 +47,11 @@ public class MemberService {
     private static final String DEFAULT_EXTENSION = "image.default.extension";
     private static final int MAX_IDENTIFIER_LENGTH = 40;
 
-    private final MemberRepository memberRepository;
     private final Environment environment;
     private final NumberGenerator numberGenerator;
     private final FileService fileService;
     private final TokenProvider tokenProvider;
+    private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
@@ -100,16 +97,13 @@ public class MemberService {
 
     private AuthenticationResponse makeAuthenticationResponse(final Member member) {
         final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
-        saveRefreshToken(member, refreshToken);
+        saveRefreshToken(refreshToken, member);
         final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
         return AuthMapper.convertToAuthenticationResponse(refreshToken, accessToken);
     }
 
-    private void saveRefreshToken(final Member member, final String rawRefreshToken) {
-        final EncryptedToken encryptedToken = new EncryptedToken(rawRefreshToken);
-        final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
-        final RefreshToken refreshToken = new RefreshToken(encryptedToken, expiredAt, member);
-        refreshTokenRepository.save(refreshToken);
+    private void saveRefreshToken(final String refreshToken, final Member member) {
+        refreshTokenRepository.save(refreshToken, member.getIdentifier().getValue());
     }
 
     private MemberImage findDefaultMemberImage() {

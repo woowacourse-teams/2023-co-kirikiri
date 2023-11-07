@@ -1,9 +1,8 @@
 package co.kirikiri.persistence.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.domain.auth.EncryptedToken;
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -11,25 +10,21 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.helper.RepositoryTest;
-import co.kirikiri.persistence.member.MemberRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
+import co.kirikiri.persistence.helper.RedisTest;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@RepositoryTest
-class RefreshTokenRepositoryTest {
+class RefreshTokenRepositoryTest extends RedisTest {
 
     private static Member member;
 
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final MemberRepository memberRepository;
+    private RefreshTokenRepository refreshTokenRepository;
 
-    public RefreshTokenRepositoryTest(final RefreshTokenRepository refreshTokenRepository,
-                                      final MemberRepository memberRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.memberRepository = memberRepository;
+    @BeforeEach
+    void init() {
+        refreshTokenRepository = new RefreshTokenRepository(redisTemplate, 2000L);
     }
 
     @BeforeAll
@@ -44,22 +39,41 @@ class RefreshTokenRepositoryTest {
     }
 
     @Test
-    void 정상적으로_취소되지_않은_리프레시_토큰을_찾아온다() {
+    void 정상적으로_리프레시_토큰을_저장한다() {
         //given
-        final EncryptedToken encryptedToken = new EncryptedToken("refreshToken");
-        final LocalDateTime now = LocalDateTime.now();
-        final RefreshToken refreshToken = new RefreshToken(encryptedToken, now, member);
-        memberRepository.save(member);
-        refreshTokenRepository.save(refreshToken);
+        final String refreshToken = "refreshToken";
+        final String memberIdentifier = member.getIdentifier().getValue();
 
         //when
-        final Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByTokenAndIsRevokedFalse(
-                encryptedToken);
+        //then
+        assertDoesNotThrow(() -> refreshTokenRepository.save(refreshToken, memberIdentifier));
+    }
+
+    @Test
+    void 정상적으로_리프레시_토큰을_찾아온다() {
+        //given
+        final String refreshToken = "refreshToken";
+        final String memberIdentifier = member.getIdentifier().getValue();
+
+        refreshTokenRepository.save(refreshToken, memberIdentifier);
+
+        //when
+        final String findMemberIdentifier = refreshTokenRepository.findMemberIdentifierByRefreshToken(refreshToken)
+                .get();
 
         //then
-        assertThat(optionalRefreshToken).isNotEmpty();
-        final RefreshToken result = optionalRefreshToken.get();
-        assertThat(result.getToken()).usingRecursiveComparison()
-                .isEqualTo(encryptedToken);
+        assertThat(findMemberIdentifier).isEqualTo(memberIdentifier);
+    }
+
+    @Test
+    void 리프레시_토큰을_찾을때_없는경우_빈값을_보낸다() {
+        //given
+        final String refreshToken = "refreshToken";
+
+        //when
+        final Optional<String> memberIdentifier = refreshTokenRepository.findMemberIdentifierByRefreshToken(
+                refreshToken);
+        //then
+        assertThat(memberIdentifier).isEmpty();
     }
 }
