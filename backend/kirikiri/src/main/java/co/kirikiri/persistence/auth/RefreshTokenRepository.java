@@ -19,8 +19,10 @@ public class RefreshTokenRepository {
     }
 
     public void save(final String refreshToken, final String memberIdentifier) {
+        final long timeToLiveSeconds = refreshTokenValidityInSeconds / 1000;
+
         redisTemplate.opsForValue()
-                .set(refreshToken, memberIdentifier, refreshTokenValidityInSeconds / 1000, TimeUnit.SECONDS);
+                .set(refreshToken, memberIdentifier, timeToLiveSeconds, TimeUnit.SECONDS);
     }
 
     public Optional<String> findMemberIdentifierByRefreshToken(final String refreshToken) {
