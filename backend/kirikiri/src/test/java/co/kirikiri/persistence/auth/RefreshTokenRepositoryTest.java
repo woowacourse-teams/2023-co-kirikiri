@@ -10,21 +10,15 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.helper.RedisRepositoryTest;
+import co.kirikiri.persistence.helper.RedisTest;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 
-@RedisRepositoryTest
-class RefreshTokenRepositoryTest {
+class RefreshTokenRepositoryTest extends RedisTest {
 
     private static Member member;
-
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
 
     private RefreshTokenRepository refreshTokenRepository;
 
