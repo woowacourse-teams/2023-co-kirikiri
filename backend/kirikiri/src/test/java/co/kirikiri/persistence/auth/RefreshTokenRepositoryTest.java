@@ -2,6 +2,7 @@ package co.kirikiri.persistence.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.when;
 
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -10,22 +11,40 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.helper.RedisTest;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
-class RefreshTokenRepositoryTest extends RedisTest {
+@ExtendWith(MockitoExtension.class)
+class RefreshTokenRepositoryTest {
 
     private static Member member;
 
-    private RefreshTokenRepository refreshTokenRepository;
+    private static final Long refreshTokenValidityInSeconds = 3600000L;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplateMock;
+
+    @Mock
+    private ValueOperations<String, String> valueOperationsMock;
+
+    private RefreshTokenRepositoryImpl refreshTokenRepository;
 
     @BeforeEach
     void init() {
-        refreshTokenRepository = new RefreshTokenRepository(redisTemplate, 2000L);
+        MockitoAnnotations.openMocks(this);
+        when(redisTemplateMock.opsForValue())
+                .thenReturn(valueOperationsMock);
+        refreshTokenRepository = new RefreshTokenRepositoryImpl(redisTemplateMock, refreshTokenValidityInSeconds);
     }
+
 
     @BeforeAll
     static void setUp() {
@@ -55,7 +74,8 @@ class RefreshTokenRepositoryTest extends RedisTest {
         final String refreshToken = "refreshToken";
         final String memberIdentifier = member.getIdentifier().getValue();
 
-        refreshTokenRepository.save(refreshToken, memberIdentifier);
+        when(valueOperationsMock.get(refreshToken))
+                .thenReturn(memberIdentifier);
 
         //when
         final String findMemberIdentifier = refreshTokenRepository.findMemberIdentifierByRefreshToken(refreshToken)

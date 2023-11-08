@@ -1,6 +1,5 @@
 package co.kirikiri.integration.helper;
 
-import co.kirikiri.persistence.helper.RedisTestContainer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +17,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestConstructor(autowireMode = AutowireMode.ALL)
-@Import({TestConfig.class, RedisTestContainer.class})
+@Import(TestConfig.class)
 public class IntegrationTest {
 
     @LocalServerPort
