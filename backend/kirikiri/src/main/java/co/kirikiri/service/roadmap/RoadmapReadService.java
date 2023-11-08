@@ -50,6 +50,7 @@ import co.kirikiri.service.mapper.ScrollResponseMapper;
 import java.net.URL;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +69,7 @@ public class RoadmapReadService {
     private final MemberRepository memberRepository;
     private final FileService fileService;
 
+    @Cacheable(value = "roadmap", keyGenerator = "cacheKeyGenerator", cacheManager = "redisCacheManager")
     public RoadmapResponse findRoadmap(final Long id) {
         final Roadmap roadmap = findRoadmapById(id);
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
@@ -128,6 +130,7 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
+    @Cacheable(value = "roadmapList", keyGenerator = "cacheKeyGenerator", cacheManager = "redisCacheManager")
     public RoadmapForListResponses findRoadmapsByOrderType(final Long categoryId,
                                                            final RoadmapOrderTypeRequest orderTypeRequest,
                                                            final CustomScrollRequest scrollRequest) {
@@ -148,7 +151,7 @@ public class RoadmapReadService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
     }
 
-    public RoadmapForListScrollDto makeRoadmapForListScrollDto(final List<Roadmap> roadmaps, final int requestSize) {
+    private RoadmapForListScrollDto makeRoadmapForListScrollDto(final List<Roadmap> roadmaps, final int requestSize) {
         final List<RoadmapForListDto> roadmapForListDtos = roadmaps.stream()
                 .map(this::makeRoadmapForListDto)
                 .toList();
@@ -187,6 +190,7 @@ public class RoadmapReadService {
                 .toList();
     }
 
+    @Cacheable(value = "roadmapList", keyGenerator = "cacheKeyGenerator", cacheManager = "redisCacheManager")
     public RoadmapForListResponses search(final RoadmapOrderTypeRequest orderTypeRequest,
                                           final RoadmapSearchRequest searchRequest,
                                           final CustomScrollRequest scrollRequest) {
@@ -200,6 +204,7 @@ public class RoadmapReadService {
         return RoadmapMapper.convertRoadmapResponses(roadmapForListScrollDto);
     }
 
+    @Cacheable(value = "categoryList", keyGenerator = "cacheKeyGenerator", cacheManager = "redisCacheManager")
     public List<RoadmapCategoryResponse> findAllRoadmapCategories() {
         final List<RoadmapCategory> roadmapCategories = roadmapCategoryRepository.findAll();
         return RoadmapMapper.convertRoadmapCategoryResponses(roadmapCategories);

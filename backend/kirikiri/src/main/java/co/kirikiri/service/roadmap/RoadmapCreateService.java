@@ -38,6 +38,7 @@ import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,7 @@ public class RoadmapCreateService {
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    @CacheEvict(value = "roadmapList", allEntries = true)
     public Long create(final RoadmapSaveRequest request, final String identifier) {
         final Member member = findMemberByIdentifier(identifier);
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
@@ -156,6 +158,7 @@ public class RoadmapCreateService {
         }
     }
 
+    @CacheEvict(value = {"roadmapList", "roadmap"}, allEntries = true)
     public void deleteRoadmap(final String identifier, final Long roadmapId) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         validateRoadmapCreator(roadmapId, identifier);
@@ -172,6 +175,7 @@ public class RoadmapCreateService {
                 .orElseThrow(() -> new ForbiddenException("해당 로드맵을 생성한 사용자가 아닙니다."));
     }
 
+    @CacheEvict(value = "categoryList", allEntries = true)
     public void createRoadmapCategory(final RoadmapCategorySaveRequest roadmapCategorySaveRequest) {
         final RoadmapCategory roadmapCategory = RoadmapMapper.convertToRoadmapCategory(roadmapCategorySaveRequest);
         roadmapCategoryRepository.findByName(roadmapCategory.getName())
