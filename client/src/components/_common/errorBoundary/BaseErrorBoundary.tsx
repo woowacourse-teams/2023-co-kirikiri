@@ -1,13 +1,21 @@
 import { CkError } from './errors';
 import ErrorBoundary from './ErrorBoundary';
+import { ErrorInfo } from 'react';
 
 export class BaseErrorBoundary extends ErrorBoundary {
-  static getDerivedStateFromError(error: Error): { didCatch: boolean; error: Error } {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    this.props.onError?.(error, errorInfo);
+
     throw CkError.convertError(error);
   }
 
   render() {
     const { children } = this.props;
+    const { didCatch } = this.state;
+
+    if (didCatch) {
+      return null;
+    }
 
     return children;
   }
