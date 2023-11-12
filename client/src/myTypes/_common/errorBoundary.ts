@@ -15,7 +15,7 @@ export type FallbackProps = {
   resetErrorBoundary: (...args: any[]) => void;
 };
 
-type ErrorBoundarySharedProps = PropsWithChildren<{
+export type ErrorBoundarySharedProps = PropsWithChildren<{
   onError?: (error: Error, info: ErrorInfo) => void;
   onReset?: (
     details:
