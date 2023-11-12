@@ -1,5 +1,7 @@
 import { AxiosError } from 'axios';
 import { ErrorInfo } from 'react';
+import { Navigate } from 'react-router-dom';
+import { Forbidden, NotFound } from '../fallback/Fallback';
 import ErrorBoundary from './ErrorBoundary';
 import { APIError } from './errors';
 
@@ -21,13 +23,13 @@ export class ApiErrorBoundary<T extends APIError> extends ErrorBoundary {
 
     switch (error.response?.status) {
       case 401:
-        this.setState({ fallback: <span>401 error</span> });
+        this.setState({ fallback: <Navigate to='/login' /> });
         break;
       case 403:
-        this.setState({ fallback: <span>forbidden</span> });
+        this.setState({ fallback: <Forbidden /> });
         break;
       case 404:
-        this.setState({ fallback: <div>404</div> });
+        this.setState({ fallback: <NotFound /> });
         break;
       default:
         break;

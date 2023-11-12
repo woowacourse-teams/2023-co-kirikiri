@@ -1,4 +1,5 @@
 import { ErrorInfo } from 'react';
+import { Offline } from '../fallback/Fallback';
 import ErrorBoundary from './ErrorBoundary';
 import { NetworkError } from './errors';
 
@@ -14,7 +15,7 @@ export class NetworkErrorBoundary extends ErrorBoundary {
     if (this.props.isCritical) throw error;
 
     this.props.onError?.(error, errorInfo);
-    this.setState({ fallback: <div>network error</div> });
+    this.setState({ fallback: <Offline /> });
   }
 
   render() {
