@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
@@ -8,7 +8,6 @@ import SignUpPage from '@pages/signUpPage/SignUpPage';
 import LoginPage from '@pages/loginPage/LoginPage';
 import PageLayout from '@components/_common/pageLayout/PageLayout';
 import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
-import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
 import ToastProvider from '@components/_common/toastProvider/ToastProvider';
@@ -52,14 +51,7 @@ const App = () => {
                             element={<RoadmapSearchResult />}
                           />
                         </Route>
-                        <Route
-                          path='/roadmap/:id'
-                          element={
-                            <Suspense fallback={<Fallback />}>
-                              <RoadmapDetailPage />
-                            </Suspense>
-                          }
-                        />
+                        <Route path='/roadmap/:id' element={<RoadmapDetailPage />} />
                         <Route
                           path='/roadmap/:id/goalroom-list'
                           element={<GoalRoomListPage />}
