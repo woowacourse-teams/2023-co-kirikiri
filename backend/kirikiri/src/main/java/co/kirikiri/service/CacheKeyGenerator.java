@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.stereotype.Component;
 
-@Component("cacheKeyGenerator")
+@Component
 public class CacheKeyGenerator implements KeyGenerator {
 
     private static final String DELIMITER = "_";

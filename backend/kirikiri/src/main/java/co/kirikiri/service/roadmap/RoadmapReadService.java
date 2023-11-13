@@ -190,7 +190,6 @@ public class RoadmapReadService {
                 .toList();
     }
 
-    @Cacheable(value = "roadmapList", keyGenerator = "cacheKeyGenerator", cacheManager = "redisCacheManager")
     public RoadmapForListResponses search(final RoadmapOrderTypeRequest orderTypeRequest,
                                           final RoadmapSearchRequest searchRequest,
                                           final CustomScrollRequest scrollRequest) {

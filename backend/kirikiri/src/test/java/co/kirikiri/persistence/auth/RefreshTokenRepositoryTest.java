@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -25,24 +24,23 @@ import org.springframework.data.redis.core.ValueOperations;
 @ExtendWith(MockitoExtension.class)
 class RefreshTokenRepositoryTest {
 
-    private static Member member;
-
     private static final Long refreshTokenValidityInSeconds = 3600000L;
 
-    @Mock
-    private RedisTemplate<String, String> redisTemplateMock;
+    private static Member member;
 
     @Mock
-    private ValueOperations<String, String> valueOperationsMock;
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, String> valueOperations;
 
     private RefreshTokenRepositoryImpl refreshTokenRepository;
 
     @BeforeEach
     void init() {
-        MockitoAnnotations.openMocks(this);
-        when(redisTemplateMock.opsForValue())
-                .thenReturn(valueOperationsMock);
-        refreshTokenRepository = new RefreshTokenRepositoryImpl(redisTemplateMock, refreshTokenValidityInSeconds);
+        when(redisTemplate.opsForValue())
+                .thenReturn(valueOperations);
+        refreshTokenRepository = new RefreshTokenRepositoryImpl(redisTemplate, refreshTokenValidityInSeconds);
     }
 
 
@@ -74,7 +72,7 @@ class RefreshTokenRepositoryTest {
         final String refreshToken = "refreshToken";
         final String memberIdentifier = member.getIdentifier().getValue();
 
-        when(valueOperationsMock.get(refreshToken))
+        when(valueOperations.get(refreshToken))
                 .thenReturn(memberIdentifier);
 
         //when
