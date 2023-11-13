@@ -17,13 +17,13 @@
 
 
 ### **Front-end**
-<img width="1028" alt="스크린샷 2023-11-07 오전 10 19 34" src="https://github.com/woowacourse-teams/2023-co-kirikiri/assets/90854702/264da76f-8d9f-4bec-9afd-f141a1bc8a47">
+<img width="1439" alt="스크린샷 2023-11-13 오후 2 26 54" src="https://github.com/woowacourse-teams/2023-co-kirikiri/assets/90854702/3f862969-65d8-4e82-9c0a-1d4ba86abb84">
 
 ### **Back-end**
-<img width="1028" alt="스크린샷 2023-11-07 오전 10 20 20" src="https://github.com/woowacourse-teams/2023-co-kirikiri/assets/90854702/44d47bae-1049-4540-89a0-512b2c097cca">
+<img width="1440" alt="스크린샷 2023-11-13 오후 2 44 03" src="https://github.com/woowacourse-teams/2023-co-kirikiri/assets/90854702/d2ce2fe7-a424-48e7-8dad-b99ba698ef16">
 
 ### **Infra**
-<img width="1028" alt="스크린샷 2023-11-07 오전 10 21 25" src="https://github.com/woowacourse-teams/2023-co-kirikiri/assets/90854702/eef449ef-6a28-430a-a53a-459589482ccc">
+<img width="1440" alt="스크린샷 2023-11-13 오후 2 39 48" src="https://github.com/woowacourse-teams/2023-co-kirikiri/assets/90854702/aed648d5-f16d-4884-9a92-e492bc4bc0d7">
 
 
 ## **Infrastructure ⚙️**
@@ -37,7 +37,7 @@
 |                                         Backend                                          |                                         Backend                                          |                                         Backend                                          |                                         Backend                                         |                                       Frontend                                        |                                        Frontend                                         |                                        Frontend                                        |
 | :--------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: |
 | <img src="https://avatars.githubusercontent.com/u/90854702?v=4" width=400px alt="두둠"/> | <img src="https://avatars.githubusercontent.com/u/116645747?v=4" width=400px alt="썬샷"/> | <img src="https://avatars.githubusercontent.com/u/39994337?v=4" width=400px alt="밀리"/> | <img src="https://avatars.githubusercontent.com/u/46810837?v=4" width=400px alt="져니"> | <img src="https://avatars.githubusercontent.com/u/81363031?v=4" width=400px alt="부엉이"> | <img src="https://avatars.githubusercontent.com/u/88191233?v=4" width=400px alt="우디"> | <img src="https://avatars.githubusercontent.com/u/87578512?v=4" width=400px alt="네이브"> |
-|                       [두둠](https://github.com/younghoondoodoom)                        |                            [썬샷](https://github.com/Ohjintaek)                            |                            [밀리](https://github.com/miseongk)                            |                          [져니](https://github.com/cl8d)                           |                         [부엉이](https://github.com/sh981013s)                         |                            [우디](https://github.com/evencoding)                            |                          [네이브](https://github.com/naveowo)                           |
+|                       [두둠](https://github.com/younghoondoodoom)                        |                            [썬샷](https://github.com/Ohjintaek)                            |                            [밀리](https://github.com/miseongk)                            |                          [져니](https://github.com/cl8d)                           |                         [부엉이](https://github.com/sh981013s)                         |                            [우디](https://github.com/jw-r)                            |                          [네이브](https://github.com/naveowo)                           |
 
 <br>
 
