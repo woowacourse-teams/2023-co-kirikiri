@@ -1,12 +1,11 @@
-import { Suspense } from 'react';
 import RoadmapDetail from '@components/roadmapDetailPage/roadmapDetail/RoadmapDetail';
-import Spinner from '@components/_common/spinner/Spinner';
+import AsyncBoundary from '@/components/_common/errorBoundary/AsyncBoundary';
 
 const RoadmapDetailPage = () => {
   return (
-    <Suspense fallback={<Spinner />}>
+    <AsyncBoundary>
       <RoadmapDetail />
-    </Suspense>
+    </AsyncBoundary>
   );
 };
 

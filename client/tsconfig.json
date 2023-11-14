@@ -1,12 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES6",
     "baseUrl": "./",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -36,10 +32,8 @@
       "@styles/*": ["src/styles/*"],
       "@myTypes/*": ["src/myTypes/*"],
       "@utils/*": ["src/utils/*"],
-      "@icons/*": ["src/icons/*"],
+      "@icons/*": ["src/icons/*"]
     }
   },
-  "include": [
-    "./src"
-  ]
+  "include": ["./src"]
 }
