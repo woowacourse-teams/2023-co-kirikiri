@@ -6,17 +6,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class GoalRoomMemberDao {
+public class GoalRoomMemberJdbcRepositoryImpl implements GoalRoomMemberJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public GoalRoomMemberDao(final JdbcTemplate jdbcTemplate) {
+    public GoalRoomMemberJdbcRepositoryImpl(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void saveAll(final List<GoalRoomMember> goalRoomMembers) {
+    @Override
+    public void saveAllInBatch(final List<GoalRoomMember> goalRoomMembers) {
         final String sql = "INSERT INTO goal_room_member "
-                + "(goal_room_id, member_id, role, joined_at, accomplishment_rate)"
+                + "(goal_room_id, member_id, role, joined_at, accomplishment_rate) "
                 + "VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.batchUpdate(sql, goalRoomMembers, goalRoomMembers.size(), ((ps, goalRoomMember) -> {
             ps.setLong(1, goalRoomMember.getGoalRoom().getId());

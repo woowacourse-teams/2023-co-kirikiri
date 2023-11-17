@@ -4,7 +4,7 @@ import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberDao;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.aop.ExceptionConvert;
@@ -23,7 +23,7 @@ public class GoalRoomScheduler {
 
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-    private final GoalRoomMemberDao goalRoomMemberDao;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
 
     @Scheduled(cron = "0 0 0 * * *")
     public void startGoalRooms() {
@@ -38,7 +38,7 @@ public class GoalRoomScheduler {
 
     private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
         final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
-        goalRoomMemberDao.saveAll(goalRoomMembers);
+        goalRoomMemberRepository.saveAllInBatch(goalRoomMembers);
         final List<Long> ids = makeGoalRoomPendingMemberIds(goalRoomPendingMembers);
         goalRoomPendingMemberRepository.deleteAllByIdIn(ids);
     }

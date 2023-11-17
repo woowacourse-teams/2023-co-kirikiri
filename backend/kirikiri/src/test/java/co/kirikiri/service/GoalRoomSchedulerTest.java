@@ -34,7 +34,7 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberDao;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.scheduler.GoalRoomScheduler;
@@ -60,9 +60,9 @@ class GoalRoomSchedulerTest {
 
     @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-
+    
     @Mock
-    private GoalRoomMemberDao goalRoomMemberDao;
+    private GoalRoomMemberRepository goalRoomMemberRepository;
 
     @InjectMocks
     private GoalRoomScheduler goalRoomScheduler;

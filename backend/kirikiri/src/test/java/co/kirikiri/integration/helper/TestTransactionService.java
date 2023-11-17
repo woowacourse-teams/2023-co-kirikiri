@@ -88,7 +88,7 @@ public class TestTransactionService {
     }
 
     public void 골룸_멤버를_저장한다(final List<GoalRoomMember> 골룸_멤버_리스트) {
-        goalRoomMemberRepository.saveAll(골룸_멤버_리스트);
+        goalRoomMemberRepository.saveAllInBatch(골룸_멤버_리스트);
     }
 
     public void 골룸의_상태와_종료날짜를_변경한다(final Long 골룸_아이디, final GoalRoomStatus 골룸_상태, final LocalDate 변경할_종료날짜) {
