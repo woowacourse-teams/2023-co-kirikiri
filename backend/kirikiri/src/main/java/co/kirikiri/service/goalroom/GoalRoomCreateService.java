@@ -123,7 +123,7 @@ public class GoalRoomCreateService {
     }
 
     private GoalRoom findGoalRoomById(final Long goalRoomId) {
-        return goalRoomRepository.findById(goalRoomId)
+        return goalRoomRepository.findGoalRoomByIdWithPessimisticLock(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 

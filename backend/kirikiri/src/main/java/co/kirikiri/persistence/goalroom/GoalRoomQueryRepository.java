@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface GoalRoomQueryRepository {
 
+    Optional<GoalRoom> findGoalRoomByIdWithPessimisticLock(Long goalRoomId);
+
     Optional<GoalRoom> findByIdWithRoadmapContent(final Long goalRoomId);
 
     Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId);
