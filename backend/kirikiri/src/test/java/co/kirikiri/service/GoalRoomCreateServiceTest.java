@@ -252,7 +252,7 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findById(anyLong()))
+        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
 
         //when
@@ -282,7 +282,7 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findById(anyLong()))
+        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
                 .thenReturn(Optional.empty());
 
         //when, then
@@ -304,7 +304,7 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findById(anyLong()))
+        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
 
         //when, then
@@ -326,7 +326,7 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findById(anyLong()))
+        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
 
         //when, then
