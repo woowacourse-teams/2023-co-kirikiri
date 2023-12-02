@@ -118,12 +118,12 @@ public class GoalRoomCreateService {
 
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
-        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomByIdWithPessimisticLock(goalRoomId);
         goalRoom.join(member);
     }
 
-    private GoalRoom findGoalRoomById(final Long goalRoomId) {
-        return goalRoomRepository.findById(goalRoomId)
+    private GoalRoom findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
+        return goalRoomRepository.findGoalRoomByIdWithPessimisticLock(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
@@ -137,6 +137,11 @@ public class GoalRoomCreateService {
         goalRoom.addGoalRoomTodo(goalRoomToDo);
         goalRoomRepository.save(goalRoom);
         return goalRoom.findLastGoalRoomTodo().getId();
+    }
+
+    private GoalRoom findGoalRoomById(final Long goalRoomId) {
+        return goalRoomRepository.findById(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
     private void checkGoalRoomCompleted(final GoalRoom goalRoom) {
