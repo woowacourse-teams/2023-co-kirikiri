@@ -127,6 +127,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     @Override
     public List<GoalRoom> findAllRecruitingGoalRoomsByStartDateEarlierThan(final LocalDate date) {
         return selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .fetchJoin()
                 .where(statusCond(GoalRoomStatus.RECRUITING))
                 .where(equalOrEarlierStartDateThan(date))
                 .fetch();

@@ -37,11 +37,11 @@ import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapRepositoryTest {
@@ -249,13 +249,13 @@ class RoadmapRepositoryTest {
         // gameRoadmap2 : 참가인원 1명
         final List<GoalRoomMember> gameRoadmap2GoalRoomMembers = List.of(
                 new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), gameRoadmap2GoalRoom, creator));
-        goalRoomMemberRepository.saveAll(gameRoadmap2GoalRoomMembers);
+        goalRoomMemberRepository.saveAllInBatch(gameRoadmap2GoalRoomMembers);
 
         // travelRoadmap : 참가인원 2명
         final List<GoalRoomMember> travelRoadmapGoalRoomMembers = List.of(
                 new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), travelRoadmapGoalRoom, creator),
                 new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), travelRoadmapGoalRoom, follower));
-        goalRoomMemberRepository.saveAll(travelRoadmapGoalRoomMembers);
+        goalRoomMemberRepository.saveAllInBatch(travelRoadmapGoalRoomMembers);
 
         final RoadmapCategory category = null;
         final RoadmapOrderType orderType = RoadmapOrderType.PARTICIPANT_COUNT;

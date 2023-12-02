@@ -33,12 +33,12 @@ import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class GoalRoomMemberRepositoryTest {
@@ -296,11 +296,13 @@ class GoalRoomMemberRepositoryTest {
     private Member 크리에이터를_저장한다() {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
-        final Member creator = new Member(1L, new Identifier("cokirikiri"), null, new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberImage, memberProfile);
+        final Member creator = new Member(1L, new Identifier("cokirikiri"), null,
+                new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberImage, memberProfile);
         return memberRepository.save(creator);
     }
 
-    private Member 사용자를_생성한다(final String identifier, final String password, final String nickname, final String email) {
+    private Member 사용자를_생성한다(final String identifier, final String password, final String nickname,
+                             final String email) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
         final Member member = new Member(new Identifier(identifier),
                 new EncryptedPassword(new Password(password)), new Nickname(nickname),
