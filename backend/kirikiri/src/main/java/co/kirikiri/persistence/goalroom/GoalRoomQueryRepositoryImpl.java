@@ -15,6 +15,7 @@ import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import jakarta.persistence.LockModeType;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,16 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     public GoalRoomQueryRepositoryImpl() {
         super(GoalRoom.class);
+    }
+
+    @Override
+    public Optional<GoalRoom> findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
+        return Optional.ofNullable(selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .fetchJoin()
+                .where(goalRoom.id.eq(goalRoomId))
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .fetchOne());
     }
 
     @Override
@@ -116,6 +127,8 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     @Override
     public List<GoalRoom> findAllRecruitingGoalRoomsByStartDateEarlierThan(final LocalDate date) {
         return selectFrom(goalRoom)
+                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
+                .fetchJoin()
                 .where(statusCond(GoalRoomStatus.RECRUITING))
                 .where(equalOrEarlierStartDateThan(date))
                 .fetch();

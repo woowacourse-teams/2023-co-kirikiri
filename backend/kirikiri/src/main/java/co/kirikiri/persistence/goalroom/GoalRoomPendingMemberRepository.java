@@ -3,11 +3,12 @@ package co.kirikiri.persistence.goalroom;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.domain.member.vo.Identifier;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomPendingMember, Long>,
         GoalRoomPendingMemberQueryRepository {
@@ -28,4 +29,8 @@ public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomP
             + "where g=:goalRoom "
             + "and gp.member = m")
     List<GoalRoomPendingMember> findAllByGoalRoom(@Param("goalRoom") final GoalRoom goalRoom);
+
+    @Modifying
+    @Query("DELETE FROM GoalRoomPendingMember gp WHERE gp.id IN :ids")
+    void deleteAllByIdIn(@Param("ids") final List<Long> ids);
 }

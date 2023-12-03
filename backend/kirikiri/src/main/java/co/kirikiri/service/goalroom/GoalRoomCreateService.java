@@ -15,8 +15,6 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
@@ -26,6 +24,7 @@ import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.ImageDirType;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
@@ -33,6 +32,8 @@ import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,6 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@ExceptionConvert
 public class GoalRoomCreateService {
 
     private final FileService fileService;
@@ -116,12 +118,12 @@ public class GoalRoomCreateService {
 
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
-        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomByIdWithPessimisticLock(goalRoomId);
         goalRoom.join(member);
     }
 
-    private GoalRoom findGoalRoomById(final Long goalRoomId) {
-        return goalRoomRepository.findById(goalRoomId)
+    private GoalRoom findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
+        return goalRoomRepository.findGoalRoomByIdWithPessimisticLock(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
@@ -135,6 +137,11 @@ public class GoalRoomCreateService {
         goalRoom.addGoalRoomTodo(goalRoomToDo);
         goalRoomRepository.save(goalRoom);
         return goalRoom.findLastGoalRoomTodo().getId();
+    }
+
+    private GoalRoom findGoalRoomById(final Long goalRoomId) {
+        return goalRoomRepository.findById(goalRoomId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
     private void checkGoalRoomCompleted(final GoalRoom goalRoom) {

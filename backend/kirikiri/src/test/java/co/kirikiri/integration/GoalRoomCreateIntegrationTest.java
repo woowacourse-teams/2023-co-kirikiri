@@ -50,14 +50,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 
 class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
 
@@ -287,37 +287,6 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
         assertAll(
                 () -> assertThat(참가_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(예외_메시지).contains("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.")
-        );
-    }
-
-    @Test
-    void 모집_중이지_않은_골룸에_참가_요청을_보내면_예외가_발생한다() throws IOException {
-        //given
-        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
-        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
-
-        final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
-                new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
-        final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(기본_로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
-                골룸_노드_별_기간_요청);
-        final Long 골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(골룸_생성_요청, 기본_로그인_토큰);
-        골룸을_시작한다(기본_로그인_토큰, 골룸_아이디);
-
-        final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
-        final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
-        회원가입(팔로워_회원_가입_요청);
-        final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
-
-        //when
-        final ExtractableResponse<Response> 참가_요청에_대한_응답 = 골룸_참가_요청(골룸_아이디, 팔로워_액세스_토큰);
-
-        //then
-        final String 예외_메시지 = 참가_요청에_대한_응답.asString();
-
-        assertAll(
-                () -> assertThat(참가_요청에_대한_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
-                () -> assertThat(예외_메시지).contains("모집 중이지 않은 골룸에는 참여할 수 없습니다.")
         );
     }
 

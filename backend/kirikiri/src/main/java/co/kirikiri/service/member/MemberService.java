@@ -1,8 +1,6 @@
 package co.kirikiri.service.member;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.auth.EncryptedToken;
-import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -10,12 +8,11 @@ import co.kirikiri.domain.member.MemberImage;
 import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.exception.ConflictException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.NumberGenerator;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import co.kirikiri.service.dto.member.MemberInformationDto;
@@ -25,21 +22,23 @@ import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.service.exception.ConflictException;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
+import java.net.URL;
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class MemberService {
 
     private static final String DEFAULT_ORIGINAL_FILE_NAME_PROPERTY = "image.default.originalFileName";
@@ -48,11 +47,11 @@ public class MemberService {
     private static final String DEFAULT_EXTENSION = "image.default.extension";
     private static final int MAX_IDENTIFIER_LENGTH = 40;
 
-    private final MemberRepository memberRepository;
     private final Environment environment;
     private final NumberGenerator numberGenerator;
     private final FileService fileService;
     private final TokenProvider tokenProvider;
+    private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
@@ -75,10 +74,12 @@ public class MemberService {
 
     @Transactional
     public AuthenticationResponse oauthJoin(final OauthMemberJoinDto oauthMemberJoinDto) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(oauthMemberJoinDto.gender().name()), oauthMemberJoinDto.email());
+        final MemberProfile memberProfile = new MemberProfile(Gender.valueOf(oauthMemberJoinDto.gender().name()),
+                oauthMemberJoinDto.email());
         final Identifier identifier = makeIdentifier(oauthMemberJoinDto);
         final Nickname nickname = new Nickname(oauthMemberJoinDto.nickname());
-        final Member member = new Member(identifier, oauthMemberJoinDto.oauthId(), nickname, findDefaultMemberImage(), memberProfile);
+        final Member member = new Member(identifier, oauthMemberJoinDto.oauthId(), nickname, findDefaultMemberImage(),
+                memberProfile);
         memberRepository.save(member);
         return makeAuthenticationResponse(member);
     }
@@ -96,16 +97,13 @@ public class MemberService {
 
     private AuthenticationResponse makeAuthenticationResponse(final Member member) {
         final String refreshToken = tokenProvider.createRefreshToken(member.getIdentifier().getValue(), Map.of());
-        saveRefreshToken(member, refreshToken);
+        saveRefreshToken(refreshToken, member);
         final String accessToken = tokenProvider.createAccessToken(member.getIdentifier().getValue(), Map.of());
         return AuthMapper.convertToAuthenticationResponse(refreshToken, accessToken);
     }
 
-    private void saveRefreshToken(final Member member, final String rawRefreshToken) {
-        final EncryptedToken encryptedToken = new EncryptedToken(rawRefreshToken);
-        final LocalDateTime expiredAt = tokenProvider.findTokenExpiredAt(rawRefreshToken);
-        final RefreshToken refreshToken = new RefreshToken(encryptedToken, expiredAt, member);
-        refreshTokenRepository.save(refreshToken);
+    private void saveRefreshToken(final String refreshToken, final Member member) {
+        refreshTokenRepository.save(refreshToken, member.getIdentifier().getValue());
     }
 
     private MemberImage findDefaultMemberImage() {
@@ -130,7 +128,8 @@ public class MemberService {
         final MemberProfile memberProfile = member.getMemberProfile();
         final URL imageUrl = fileService.generateUrl(memberImage.getServerFilePath(), HttpMethod.GET);
         return new MemberInformationDto(member.getId(), member.getNickname().getValue(),
-                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(), memberProfile.getEmail());
+                imageUrl.toExternalForm(), memberProfile.getGender().name(), member.getIdentifier().getValue(),
+                memberProfile.getEmail());
     }
 
     private Member findMemberInformationByIdentifier(final String identifier) {

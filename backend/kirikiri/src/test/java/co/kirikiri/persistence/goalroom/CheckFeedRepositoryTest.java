@@ -34,10 +34,10 @@ import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class CheckFeedRepositoryTest {
@@ -86,7 +86,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
@@ -120,7 +120,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
@@ -151,7 +151,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -188,7 +188,7 @@ class CheckFeedRepositoryTest {
                 member);
         final GoalRoomMember otherLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom2,
                 creator);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom1.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom1.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -226,7 +226,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -269,7 +269,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -303,7 +303,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -348,7 +348,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -407,7 +407,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
