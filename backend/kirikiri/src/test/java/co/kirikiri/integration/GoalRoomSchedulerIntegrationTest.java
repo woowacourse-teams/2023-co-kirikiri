@@ -26,7 +26,6 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
-import co.kirikiri.service.scheduler.GoalRoomScheduler;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
@@ -34,9 +33,10 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import org.junit.jupiter.api.Test;
+import co.kirikiri.service.scheduler.GoalRoomScheduler;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
 

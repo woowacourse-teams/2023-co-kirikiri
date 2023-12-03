@@ -1,10 +1,10 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.member.exception.MemberException;
 import jakarta.persistence.Column;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Identifier {
@@ -22,7 +22,7 @@ public class Identifier {
 
     private void validate(final String value) {
         if (isNotValidLength(value)) {
-            throw new BadRequestException("제약 조건에 맞지 않는 아이디입니다.");
+            throw new MemberException("제약 조건에 맞지 않는 아이디입니다.");
         }
     }
 

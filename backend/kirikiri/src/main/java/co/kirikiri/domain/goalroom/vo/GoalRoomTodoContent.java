@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom.vo;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -23,7 +23,7 @@ public class GoalRoomTodoContent {
 
     private void validate(final String value) {
         if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
-            throw new BadRequestException("투두 컨텐츠의 길이가 적절하지 않습니다.");
+            throw new GoalRoomException("투두 컨텐츠의 길이가 적절하지 않습니다.");
         }
     }
 

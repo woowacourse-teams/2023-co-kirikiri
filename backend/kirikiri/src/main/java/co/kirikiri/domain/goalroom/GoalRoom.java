@@ -1,11 +1,11 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseUpdatedTimeEntity;
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -14,13 +14,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -75,13 +75,13 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private void updateLeader(final Member member) {
         final GoalRoomPendingMember leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, member);
-        leader.updateGoalRoom(this);
+        leader.initGoalRoom(this);
         goalRoomPendingMembers.add(leader);
     }
 
     public void join(final Member member) {
         final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, member);
-        newMember.updateGoalRoom(this);
+        newMember.initGoalRoom(this);
         validateJoinGoalRoom(newMember);
         goalRoomPendingMembers.add(newMember);
     }
@@ -94,19 +94,19 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private void validateMemberCount() {
         if (getCurrentMemberCount() >= limitedMemberCount.getValue()) {
-            throw new BadRequestException("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
+            throw new GoalRoomException("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
         }
     }
 
     private void validateStatus() {
         if (status != GoalRoomStatus.RECRUITING) {
-            throw new BadRequestException("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
+            throw new GoalRoomException("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
         }
     }
 
     private void validateAlreadyParticipated(final GoalRoomPendingMember member) {
         if (goalRoomPendingMembers.containGoalRoomPendingMember(member)) {
-            throw new BadRequestException("이미 참여한 골룸에는 참여할 수 없습니다.");
+            throw new GoalRoomException("이미 참여한 골룸에는 참여할 수 없습니다.");
         }
     }
 
@@ -143,7 +143,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private void checkTotalSize(final int totalSize) {
         if (totalSize > roadmapContent.nodesSize()) {
-            throw new BadRequestException("로드맵의 노드 수보다 골룸의 노드 수가 큽니다.");
+            throw new GoalRoomException("로드맵의 노드 수보다 골룸의 노드 수가 큽니다.");
         }
     }
 
@@ -214,7 +214,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private GoalRoomPendingMember findGoalRoomPendingMemberByMember(final Member member) {
         return goalRoomPendingMembers.findByMember(member)
-                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+                .orElseThrow(() -> new GoalRoomException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
     }
 
     private void changeRoleIfLeaderLeave(final GoalRoomPendingMembers goalRoomPendingMembers,
@@ -227,7 +227,7 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private GoalRoomMember findGoalRoomMemberByMember(final Member member) {
         return goalRoomMembers.findByMember(member)
-                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+                .orElseThrow(() -> new GoalRoomException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
     }
 
     private void changeRoleIfLeaderLeave(final GoalRoomMembers goalRoomMembers,

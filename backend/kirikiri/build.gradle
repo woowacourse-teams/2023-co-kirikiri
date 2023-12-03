@@ -170,6 +170,9 @@ dependencies {
     // flyway
     implementation 'org.flywaydb:flyway-mysql'
 
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // test
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

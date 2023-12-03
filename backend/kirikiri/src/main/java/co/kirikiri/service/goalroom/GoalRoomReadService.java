@@ -12,8 +12,6 @@ import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.exception.ForbiddenException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
@@ -22,6 +20,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.FileService;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
@@ -38,6 +37,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
+import co.kirikiri.service.exception.ForbiddenException;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.net.URL;
 import java.time.LocalDate;
@@ -53,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@ExceptionConvert
 public class GoalRoomReadService {
 
     private final MemberRepository memberRepository;

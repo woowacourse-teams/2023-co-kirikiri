@@ -1,5 +1,6 @@
 package co.kirikiri.integration.helper;
 
+import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.FileService;
@@ -26,5 +27,10 @@ public class TestConfig {
     @Bean
     public TestTransactionService testTransactionService() {
         return new TestTransactionService(goalRoomRepository, goalRoomMemberRepository);
+    }
+
+    @Bean
+    public RefreshTokenRepository refreshTokenRepository() {
+        return new TestRefreshTokenRepository();
     }
 }

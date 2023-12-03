@@ -2,8 +2,6 @@ package co.kirikiri.controller;
 
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
-import co.kirikiri.service.roadmap.RoadmapCreateService;
-import co.kirikiri.service.roadmap.RoadmapReadService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
@@ -17,7 +15,11 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
+import co.kirikiri.service.roadmap.RoadmapCreateService;
+import co.kirikiri.service.roadmap.RoadmapReadService;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/roadmaps")
@@ -42,14 +42,15 @@ public class RoadmapController {
     private final RoadmapCreateService roadmapCreateService;
     private final RoadmapReadService roadmapReadService;
 
-    @Authenticated
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Authenticated
     public ResponseEntity<Void> create(final RoadmapSaveRequest request, @MemberIdentifier final String identifier) {
         final Long roadmapId = roadmapCreateService.create(request, identifier);
         return ResponseEntity.created(URI.create("/api/roadmaps/" + roadmapId)).build();
     }
 
     @PostMapping("/{roadmapId}/reviews")
+    @Authenticated
     public ResponseEntity<Void> createReview(
             @PathVariable("roadmapId") final Long roadmapId,
             @MemberIdentifier final String identifier,
@@ -93,7 +94,8 @@ public class RoadmapController {
     }
 
     @PostMapping("/categories")
-    public ResponseEntity<Void> createRoadmapCategory(@RequestBody @Valid final RoadmapCategorySaveRequest roadmapCategorySaveRequest) {
+    public ResponseEntity<Void> createRoadmapCategory(
+            @RequestBody @Valid final RoadmapCategorySaveRequest roadmapCategorySaveRequest) {
         roadmapCreateService.createRoadmapCategory(roadmapCategorySaveRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

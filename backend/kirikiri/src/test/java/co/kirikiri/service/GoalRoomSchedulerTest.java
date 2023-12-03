@@ -4,9 +4,8 @@ import static co.kirikiri.domain.goalroom.GoalRoomStatus.RECRUITING;
 import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,15 +38,15 @@ import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.scheduler.GoalRoomScheduler;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomSchedulerTest {
@@ -60,10 +59,10 @@ class GoalRoomSchedulerTest {
     private GoalRoomRepository goalRoomRepository;
 
     @Mock
-    private GoalRoomMemberRepository goalRoomMemberRepository;
-
-    @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
+    
+    @Mock
+    private GoalRoomMemberRepository goalRoomMemberRepository;
 
     @InjectMocks
     private GoalRoomScheduler goalRoomScheduler;
@@ -83,9 +82,9 @@ class GoalRoomSchedulerTest {
         final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
         final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "kirikiri@email.com");
 
-        final GoalRoomPendingMember goalRoomPendingMember = 골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
-        final GoalRoomPendingMember goalRoomPendingMember1 = 골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
-        final GoalRoomPendingMember goalRoomPendingMember2 = 골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
+        골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
+        골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
+        골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
 
         goalRoom1.join(follower1);
         goalRoom1.join(follower2);
@@ -130,9 +129,7 @@ class GoalRoomSchedulerTest {
         goalRoomScheduler.startGoalRooms();
 
         // then
-        verify(goalRoomPendingMemberRepository, times(0)).findAllByGoalRoom(any());
-        verify(goalRoomMemberRepository, times(0)).saveAll(anyList());
-        verify(goalRoomPendingMemberRepository, times(0)).deleteAll(anyList());
+        verify(goalRoomPendingMemberRepository, never()).deleteAllByIdIn(anyList());
 
         assertAll(
                 () -> assertThat(goalRoom1.getStatus()).isEqualTo(RECRUITING),

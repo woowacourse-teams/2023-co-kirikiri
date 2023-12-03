@@ -1,5 +1,14 @@
 package co.kirikiri.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
@@ -8,13 +17,24 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.domain.member.*;
+import co.kirikiri.domain.member.EncryptedPassword;
+import co.kirikiri.domain.member.Gender;
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.domain.member.MemberImage;
+import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.*;
+import co.kirikiri.domain.roadmap.Roadmap;
+import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapDifficulty;
+import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.domain.roadmap.RoadmapNodes;
+import co.kirikiri.domain.roadmap.RoadmapReview;
+import co.kirikiri.domain.roadmap.RoadmapTag;
+import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -27,14 +47,20 @@ import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSearchRequest;
-import co.kirikiri.service.dto.roadmap.response.*;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
+import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
+import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
+import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
+import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.roadmap.RoadmapReadService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -42,12 +68,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapReadServiceTest {
@@ -480,11 +505,13 @@ class RoadmapReadServiceTest {
 
         final RoadmapGoalRoomResponses expected =
                 new RoadmapGoalRoomResponses(List.of(
-                        new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING, 1, 10, LocalDateTime.now(),
+                        new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING, 1, 10,
+                                LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member3.getId(), member3.getNickname().getValue(),
                                         "http://example.com/serverFilePath")),
-                        new RoadmapGoalRoomResponse(1L, "goalroom1", GoalRoomStatus.RECRUITING, 1, 10, LocalDateTime.now(),
+                        new RoadmapGoalRoomResponse(1L, "goalroom1", GoalRoomStatus.RECRUITING, 1, 10,
+                                LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue(),
                                         "http://example.com/serverFilePath"))), false);

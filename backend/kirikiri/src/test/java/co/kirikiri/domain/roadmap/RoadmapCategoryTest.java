@@ -3,7 +3,7 @@ package co.kirikiri.domain.roadmap;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -27,7 +27,7 @@ class RoadmapCategoryTest {
         //when
         //then
         assertThatThrownBy(() -> new RoadmapCategory(space))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
     }
 
     @Test
@@ -38,6 +38,6 @@ class RoadmapCategoryTest {
         //when
         //then
         assertThatThrownBy(() -> new RoadmapCategory(space))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
     }
 }

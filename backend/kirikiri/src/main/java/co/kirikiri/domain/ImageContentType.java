@@ -1,6 +1,6 @@
 package co.kirikiri.domain;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.exception.ImageExtensionException;
 import java.util.Arrays;
 
 public enum ImageContentType {
@@ -21,6 +21,6 @@ public enum ImageContentType {
         return Arrays.stream(values())
                 .filter(it -> it.extension.equals(imageContentType))
                 .findAny()
-                .orElseThrow(() -> new BadRequestException("허용되지 않는 확장자입니다."));
+                .orElseThrow(() -> new ImageExtensionException("허용되지 않는 확장자입니다."));
     }
 }

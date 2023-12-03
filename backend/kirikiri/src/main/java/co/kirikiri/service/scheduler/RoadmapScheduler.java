@@ -5,15 +5,17 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.service.aop.ExceptionConvert;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Component
 @Transactional
 @RequiredArgsConstructor
+@ExceptionConvert
 public class RoadmapScheduler {
 
     private static final int DELETE_AFTER_MONTH = 3;

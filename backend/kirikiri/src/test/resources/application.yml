@@ -15,6 +15,10 @@ spring:
       max-file-size: 10MB
   flyway:
     enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
@@ -55,14 +59,15 @@ cloud:
     stack:
       auto: false
     credentials:
-      instanceProfile: true
+      access-key: access-key
+      secret-key: secret-key
     s3:
-      bucket: 2023-team-project
+      bucket: 2023-team-project-kirikiri
       root-directory: 2023-co-kirikiri
       sub-directory: prod
       url-expiration: 60000
     cloud-front:
-      distribution-domain: https://d3pqwmpjbeqywx.cloudfront.net
+      distribution-domain: https://d3c3ldqehj669c.cloudfront.net
 
 oauth:
   naver:
