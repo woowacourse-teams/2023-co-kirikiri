@@ -1,9 +1,9 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.BaseEntity;
-import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,13 +48,13 @@ public class GoalRoomRoadmapNode extends BaseEntity {
 
     private void validateCheckCountPositive(final Integer checkCount) {
         if (checkCount < MIN_CHECK_COUNT) {
-            throw new GoalRoomException("골룸 노드의 인증 횟수는 0보다 커야합니다.");
+            throw new BadRequestException("골룸 노드의 인증 횟수는 0보다 커야합니다.");
         }
     }
 
     private void validateCheckCountWithDaysBetween(final Period period, final int checkCount) {
         if (checkCount > period.getDayCount()) {
-            throw new GoalRoomException("골룸 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
+            throw new BadRequestException("골룸 노드의 인증 횟수가 설정 기간보다 클 수 없습니다.");
         }
     }
 

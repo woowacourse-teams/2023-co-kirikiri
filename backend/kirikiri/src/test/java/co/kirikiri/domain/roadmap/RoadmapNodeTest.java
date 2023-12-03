@@ -2,7 +2,7 @@ package co.kirikiri.domain.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import co.kirikiri.domain.roadmap.exception.RoadmapException;
+import co.kirikiri.exception.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -16,7 +16,7 @@ class RoadmapNodeTest {
 
         // expect
         assertThatThrownBy(() -> new RoadmapNode(title, "로드맵 설명"))
-                .isInstanceOf(RoadmapException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -27,6 +27,6 @@ class RoadmapNodeTest {
 
         // expect
         assertThatThrownBy(() -> new RoadmapNode("로드맵 제목", content))
-                .isInstanceOf(RoadmapException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

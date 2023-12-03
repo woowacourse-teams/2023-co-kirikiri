@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.domain.member.exception.MemberException;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 public class Identifier {
 
     private static final int MIN_LENGTH = 4;
-    private static final int MAX_LENGTH = 40;
+    private static final int MAX_LENGTH = 20;
+    private static final String REGEX = "^[a-z0-9]+$";
 
     @Column(name = "identifier", length = 50, unique = true, nullable = false)
     private String value;
@@ -21,13 +22,17 @@ public class Identifier {
     }
 
     private void validate(final String value) {
-        if (isNotValidLength(value)) {
-            throw new MemberException("제약 조건에 맞지 않는 아이디입니다.");
+        if (isNotValidLength(value) || isNotValidPattern(value)) {
+            throw new BadRequestException("제약 조건에 맞지 않는 아이디입니다.");
         }
     }
 
     private boolean isNotValidLength(final String value) {
         return value.length() < MIN_LENGTH || value.length() > MAX_LENGTH;
+    }
+
+    private boolean isNotValidPattern(final String value) {
+        return !value.matches(REGEX);
     }
 
     @Override

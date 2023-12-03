@@ -1,10 +1,8 @@
 package co.kirikiri.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -14,14 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
-import co.kirikiri.service.auth.AuthService;
-import co.kirikiri.service.auth.NaverOauthService;
+import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.service.AuthService;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.exception.AuthenticationException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -41,9 +37,6 @@ class AuthCreateApiTest extends ControllerTestHelper {
     @MockBean
     private AuthService authService;
 
-    @MockBean
-    private NaverOauthService naverOauthService;
-
     @Test
     void 정상적으로_로그인에_성공한다() throws Exception {
         //given
@@ -53,8 +46,8 @@ class AuthCreateApiTest extends ControllerTestHelper {
         given(authService.login(request))
                 .willReturn(expectedResponse);
 
-        final List<FieldDescription> requestFieldDescription = makeLoginSuccessRequestFieldDescription();
-        final List<FieldDescription> responseFieldDescription = makeLoginSuccessResponseFieldDescription();
+        final List<FieldDescription> requestFieldDescription = makeSuccessRequestFieldDescription();
+        final List<FieldDescription> responseFieldDescription = makeSuccessResponseFieldDescription();
 
         //when
         final MvcResult mvcResult = 로그인(jsonRequest, status().isOk())
@@ -265,26 +258,6 @@ class AuthCreateApiTest extends ControllerTestHelper {
                 .isEqualTo(errorResponse);
     }
 
-    @Test
-    void 네이버_로그인_페이지를_정상적으로_반환한다() throws Exception {
-        // given
-        final OauthRedirectResponse expectedResponse = new OauthRedirectResponse("Naver_Login_Redirect_Page_URL",
-                "state");
-        given(naverOauthService.makeOauthUrl()).willReturn(expectedResponse);
-
-        네이버_로그인_페이지(status().isOk());
-    }
-
-    @Test
-    void 네이버에서_콜백요청을_받아_사용자_정보를_반환한다() throws Exception {
-        // given
-        final AuthenticationResponse expectedResponse = new AuthenticationResponse("refresh_token", "access_token");
-        given(naverOauthService.login(any()))
-                .willReturn(expectedResponse);
-
-        네이버_사용자_정보_요청(status().isOk());
-    }
-
     private ResultActions 로그인(final String jsonRequest, final ResultMatcher result) throws Exception {
         return mockMvc.perform(post(API_PREFIX + "/auth/login")
                         .content(jsonRequest)
@@ -303,27 +276,7 @@ class AuthCreateApiTest extends ControllerTestHelper {
                 .andDo(print());
     }
 
-    private ResultActions 네이버_로그인_페이지(final ResultMatcher result) throws Exception {
-        return mockMvc.perform(get(API_PREFIX + "/auth/oauth/naver")
-                        .param("code", "code")
-                        .param("state", "state")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(result)
-                .andDo(print());
-    }
-
-    private ResultActions 네이버_사용자_정보_요청(final ResultMatcher result) throws Exception {
-        return mockMvc.perform(get(API_PREFIX + "/auth/login/oauth")
-                        .param("code", "code")
-                        .param("state", "state")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contextPath(API_PREFIX))
-                .andExpect(result)
-                .andDo(print());
-    }
-
-    private List<FieldDescription> makeLoginSuccessRequestFieldDescription() {
+    private List<FieldDescription> makeSuccessRequestFieldDescription() {
         return List.of(
                 new FieldDescription("identifier", "사용자 아이디",
                         "- 길이 : 4 ~ 20  +" + "\n" +
@@ -335,7 +288,7 @@ class AuthCreateApiTest extends ControllerTestHelper {
         );
     }
 
-    private List<FieldDescription> makeLoginSuccessResponseFieldDescription() {
+    private List<FieldDescription> makeSuccessResponseFieldDescription() {
         return List.of(
                 new FieldDescription("refreshToken", "리프레시 토큰"),
                 new FieldDescription("accessToken", "액세스 토큰")

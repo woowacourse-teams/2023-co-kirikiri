@@ -17,8 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
+import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.service.RoadmapCreateService;
+import co.kirikiri.service.RoadmapReadService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
@@ -35,9 +37,6 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import co.kirikiri.service.exception.NotFoundException;
-import co.kirikiri.service.roadmap.RoadmapCreateService;
-import co.kirikiri.service.roadmap.RoadmapReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -472,7 +471,6 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                                 responseFields(
                                         fieldWithPath("responses[0].goalRoomId").description("골룸 아이디"),
                                         fieldWithPath("responses[0].name").description("골룸 이름"),
-                                        fieldWithPath("responses[0].status").description("골룸 상태"),
                                         fieldWithPath("responses[0].currentMemberCount").description("현재 골룸에 참여한 인원 수"),
                                         fieldWithPath("responses[0].limitedMemberCount").description(
                                                 "골룸에 참여할 수 있는 제한 인원 수"),
@@ -688,13 +686,11 @@ class RoadmapReadApiTest extends ControllerTestHelper {
     }
 
     private RoadmapGoalRoomResponses 골룸_응답들을_생성한다() {
-        final RoadmapGoalRoomResponse roadmapGoalRoomResponse1 = new RoadmapGoalRoomResponse(1L, "골룸 이름1",
-                GoalRoomStatus.RECRUITING, 3, 6,
+        final RoadmapGoalRoomResponse roadmapGoalRoomResponse1 = new RoadmapGoalRoomResponse(1L, "골룸 이름1", 3, 6,
                 LocalDateTime.of(2023, 7, 20, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
                 new MemberResponse(1L, "황시진", "default-member-image"));
-        final RoadmapGoalRoomResponse roadmapGoalRoomResponse2 = new RoadmapGoalRoomResponse(2L, "골룸 이름2",
-                GoalRoomStatus.RECRUITING, 4, 10,
+        final RoadmapGoalRoomResponse roadmapGoalRoomResponse2 = new RoadmapGoalRoomResponse(2L, "골룸 이름2", 4, 10,
                 LocalDateTime.of(2023, 7, 10, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
                 new MemberResponse(2L, "시진이", "default-member-image"));

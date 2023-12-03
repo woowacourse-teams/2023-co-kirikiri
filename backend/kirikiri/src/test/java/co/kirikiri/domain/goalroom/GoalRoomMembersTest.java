@@ -7,17 +7,17 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class GoalRoomMembersTest {
 
     private static final Member MEMBER1 = new Member(1L, new Identifier("identifier1"),
-            null, new EncryptedPassword(new Password("password1!")),
+            new EncryptedPassword(new Password("password1!")),
             new Nickname("name1"), null, null);
     private static final Member MEMBER2 = new Member(2L, new Identifier("identifier2"),
-            null, new EncryptedPassword(new Password("password2!")),
+            new EncryptedPassword(new Password("password2!")),
             new Nickname("name2"), null, null);
 
     @Test

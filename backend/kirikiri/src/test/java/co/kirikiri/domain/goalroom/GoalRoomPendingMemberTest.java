@@ -12,8 +12,9 @@ import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.RoadmapContent;
-import org.junit.jupiter.api.Test;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.Test;
 
 class GoalRoomPendingMemberTest {
 
@@ -22,7 +23,7 @@ class GoalRoomPendingMemberTest {
         // given
         final Member member = new Member(new Identifier("identifier"), new EncryptedPassword(new Password("password1")),
                 new Nickname("nickname"), null,
-                new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
+                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
                 new RoadmapContent("content"), member);
 
@@ -39,7 +40,7 @@ class GoalRoomPendingMemberTest {
         // given
         final Member member = new Member(new Identifier("identifier"), new EncryptedPassword(new Password("password1")),
                 new Nickname("nickname"), null,
-                new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
+                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
                 new RoadmapContent("content"), member);
 
@@ -72,10 +73,10 @@ class GoalRoomPendingMemberTest {
     void 입력받은_멤버가_자신과_다른_멤버이면_false를_반환한다() {
         // given
         final Member member1 = new Member(1L, new Identifier("identifier1"),
-                null, new EncryptedPassword(new Password("password1!")),
+                new EncryptedPassword(new Password("password1!")),
                 new Nickname("name1"), null, null);
         final Member member2 = new Member(2L, new Identifier("identifier2"),
-                null, new EncryptedPassword(new Password("password2!")),
+                new EncryptedPassword(new Password("password2!")),
                 new Nickname("name2"), null, null);
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,

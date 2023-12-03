@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom.vo;
 
-import co.kirikiri.domain.goalroom.exception.GoalRoomException;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
@@ -31,13 +31,13 @@ public class Period {
 
     private void validateStartDateAfterNow(final LocalDate startDate) {
         if (startDate.isBefore(LocalDate.now())) {
-            throw new GoalRoomException("시작일은 오늘보다 전일 수 없습니다.");
+            throw new BadRequestException("시작일은 오늘보다 전일 수 없습니다.");
         }
     }
 
     private void validateStartDateBeforeOrEqualEndDate(final LocalDate startDate, final LocalDate endDate) {
         if (startDate.isAfter(endDate)) {
-            throw new GoalRoomException("시작일은 종료일보다 후일 수 없습니다.");
+            throw new BadRequestException("시작일은 종료일보다 후일 수 없습니다.");
         }
     }
 

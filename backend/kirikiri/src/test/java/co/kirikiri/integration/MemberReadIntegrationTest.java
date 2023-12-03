@@ -1,9 +1,10 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_BIRTHDAY;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_GENDER_TYPE;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_NICKNAME;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PHONE_NUMBER;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_특정_사용자의_정보_조회;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
@@ -35,7 +36,7 @@ class MemberReadIntegrationTest extends InitIntegrationTest {
                 new TypeReference<>() {
                 });
         final MemberInformationResponse 예상하는_응답값 = new MemberInformationResponse(기본_회원_아이디, DEFAULT_NICKNAME, null,
-                DEFAULT_GENDER_TYPE.name(), DEFAULT_IDENTIFIER, DEFAULT_EMAIL);
+                DEFAULT_GENDER_TYPE.name(), DEFAULT_IDENTIFIER, DEFAULT_PHONE_NUMBER, DEFAULT_BIRTHDAY);
 
         assertThat(사용자_자신의_정보_조회_응답_바디).usingRecursiveComparison()
                 .ignoringFields("profileImageUrl")
@@ -46,7 +47,7 @@ class MemberReadIntegrationTest extends InitIntegrationTest {
     void 특정_사용자의_정보를_성공적으로_조회한다() throws JsonProcessingException {
         // given
         final MemberJoinRequest 다른_회원의_가입_요청 = new MemberJoinRequest("identifier2", "password2!",
-                "hello", DEFAULT_GENDER_TYPE, DEFAULT_EMAIL);
+                "hello", DEFAULT_PHONE_NUMBER, DEFAULT_GENDER_TYPE, DEFAULT_BIRTHDAY);
         final Long 다른_회원_아이디 = 회원가입(다른_회원의_가입_요청);
 
         // when

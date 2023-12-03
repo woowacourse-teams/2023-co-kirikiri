@@ -3,8 +3,11 @@ package co.kirikiri.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
+import co.kirikiri.domain.auth.EncryptedToken;
+import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -12,14 +15,14 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.exception.AuthenticationException;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.auth.AuthService;
-import co.kirikiri.service.auth.TokenProvider;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.exception.AuthenticationException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -51,8 +54,8 @@ class AuthServiceTest {
         final Password password = new Password("password1!");
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
-        final String email = "kirikiri1@email";
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
+        final String phoneNumber = "010-1234-5678";
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
         member = new Member(identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
@@ -62,20 +65,20 @@ class AuthServiceTest {
         final LoginRequest loginRequest = new LoginRequest("identifier1", "password1!");
         final String accessToken = "accessToken";
         final String refreshToken = "refreshToken";
-
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(tokenProvider.createAccessToken(any(), any()))
                 .willReturn(accessToken);
         given(tokenProvider.createRefreshToken(any(), any()))
                 .willReturn(refreshToken);
+        given(tokenProvider.findTokenExpiredAt(anyString()))
+                .willReturn(LocalDateTime.now());
 
         //when
         final AuthenticationResponse authenticationResponse = authService.login(loginRequest);
 
         //then
-        assertThat(authenticationResponse).isEqualTo(
-                new AuthenticationResponse(refreshToken, accessToken));
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken));
     }
 
     @Test
@@ -107,33 +110,34 @@ class AuthServiceTest {
     @Test
     void 정상적으로_토큰을_재발행한다() {
         //given
-        final String accessToken = "accessToken";
-        final String refreshToken = "refreshToken";
+        final String rawAccessToken = "accessToken";
+        final String rawRefreshToken = "refreshToken";
         final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest("refreshToken");
-
+        final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MAX,
+                member);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
-        given(tokenProvider.createAccessToken(any(), any()))
-                .willReturn(accessToken);
-        given(tokenProvider.createRefreshToken(any(), any()))
-                .willReturn(refreshToken);
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
-        given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
+        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
                 .willReturn(Optional.of(refreshToken));
+        given(tokenProvider.createAccessToken(any(), any()))
+                .willReturn(rawAccessToken);
+        given(tokenProvider.createRefreshToken(any(), any()))
+                .willReturn(rawRefreshToken);
+        given(tokenProvider.findTokenExpiredAt(anyString()))
+                .willReturn(LocalDateTime.now());
 
         //when
         final AuthenticationResponse authenticationResponse = authService.reissueToken(reissueTokenRequest);
 
         //then
-        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(refreshToken, accessToken));
+        assertThat(authenticationResponse).isEqualTo(new AuthenticationResponse(rawRefreshToken, rawAccessToken));
     }
 
     @Test
     void 리프레시_토큰이_유효하지_않을_경우_예외를_던진다() {
         //given
-        final String refreshToken = "refreshToken";
-        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(false);
 
@@ -144,13 +148,13 @@ class AuthServiceTest {
     }
 
     @Test
-    void 리프레시_토큰이_만료_됐을_경우_예외를_던진다() {
+    void 리프레시_토큰이_존재하지_않을_경우_예외를_던진다() {
         //given
-        final String refreshToken = "refreshToken";
-        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
-        given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
+        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
                 .willReturn(Optional.empty());
 
         //when
@@ -160,16 +164,16 @@ class AuthServiceTest {
     }
 
     @Test
-    void 리프레시_토큰으로_조회한_회원이_존재하지_않는_경우_예외를_던진다() {
+    void 리프레시_토큰이_만료_됐을_경우_예외를_던진다() {
         //given
-        final String refreshToken = "refreshToken";
-        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
+        final String rawRefreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(rawRefreshToken);
+        final RefreshToken refreshToken = new RefreshToken(new EncryptedToken(rawRefreshToken), LocalDateTime.MIN,
+                member);
         given(tokenProvider.isValidToken(any()))
                 .willReturn(true);
-        given(refreshTokenRepository.findMemberIdentifierByRefreshToken(any()))
-                .willReturn(Optional.of(member.getIdentifier().getValue()));
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.empty());
+        given(refreshTokenRepository.findByTokenAndIsRevokedFalse(any()))
+                .willReturn(Optional.of(refreshToken));
 
         //when
         //then

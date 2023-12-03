@@ -27,7 +27,7 @@
                 ${LOG_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}_%i.log
             </fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
-            <maxHistory>10</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>

@@ -12,7 +12,8 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.exception.RoadmapException;
+import co.kirikiri.exception.BadRequestException;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,7 +54,7 @@ class RoadmapTest {
 
         // expect
         assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT, creator, category))
-                .isInstanceOf(RoadmapException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -64,7 +65,7 @@ class RoadmapTest {
 
         // expect
         assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT, creator, category))
-                .isInstanceOf(RoadmapException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -72,11 +73,11 @@ class RoadmapTest {
     void 로드맵_추천_소요_기간이_0보다_작고_1000보다_크면_예외가_발생한다(final int requiredPeriod) {
         // expect
         assertThatThrownBy(() -> new Roadmap("로드맵 제목", "로드맵 소개글", requiredPeriod, DIFFICULT, creator, category))
-                .isInstanceOf(RoadmapException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfile profile = new MemberProfile(Gender.FEMALE, "kirikiri1@email.com");
+        final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
 
         return new Member(new Identifier("creator"), new EncryptedPassword(new Password("password1")),
                 new Nickname("nickname"), null, profile);

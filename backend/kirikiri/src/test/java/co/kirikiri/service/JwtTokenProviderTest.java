@@ -4,13 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.service.auth.JwtTokenProvider;
-import co.kirikiri.service.auth.TokenProvider;
-import co.kirikiri.service.exception.AuthenticationException;
+import co.kirikiri.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -48,10 +45,10 @@ class JwtTokenProviderTest {
         final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
 
         //when
-        final String refreshToken = tokenProvider.createRefreshToken(subject, claims);
+        final String accessToken = tokenProvider.createRefreshToken(subject, claims);
 
         //then
-        final Claims result = getClaims(refreshToken);
+        final Claims result = getClaims(accessToken);
 
         assertThat(result.getSubject()).isEqualTo(subject);         // subject 확인
         for (final String claimKey : claims.keySet()) {             // custom claim 확인
@@ -124,19 +121,5 @@ class JwtTokenProviderTest {
 
         //then
         assertThat(result).isEqualTo(subject);
-    }
-
-    @Test
-    void 토큰의_만료기간을_가져온다() {
-        //given
-        final String subject = "subject";
-        final Map<String, Object> claims = new HashMap<>(Map.of("test1", "test1", "test2", "test2"));
-        final String refreshToken = tokenProvider.createRefreshToken(subject, claims);
-
-        //when
-        final LocalDateTime tokenExpiredAt = tokenProvider.findTokenExpiredAt(refreshToken);
-
-        //then
-        assertThat(tokenExpiredAt).isAfter(LocalDateTime.now());
     }
 }

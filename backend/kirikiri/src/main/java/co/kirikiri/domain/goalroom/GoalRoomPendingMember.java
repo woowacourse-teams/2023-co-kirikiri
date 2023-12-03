@@ -1,6 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.member.Member;
+import co.kirikiri.exception.ServerException;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -28,9 +29,14 @@ public class GoalRoomPendingMember extends BaseGoalRoomMember {
         super(id, role, joinedAt, goalRoom, member);
     }
 
-    public void initGoalRoom(final GoalRoom goalRoom) {
+    public void updateGoalRoom(final GoalRoom goalRoom) {
         if (this.goalRoom == null) {
             this.goalRoom = goalRoom;
+            return;
         }
+        if (this.goalRoom.equals(goalRoom)) {
+            return;
+        }
+        throw new ServerException("골룸을 변경할 수 없습니다.");
     }
 }

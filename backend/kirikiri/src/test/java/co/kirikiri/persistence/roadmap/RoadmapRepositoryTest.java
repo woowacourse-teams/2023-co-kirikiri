@@ -249,13 +249,13 @@ class RoadmapRepositoryTest {
         // gameRoadmap2 : 참가인원 1명
         final List<GoalRoomMember> gameRoadmap2GoalRoomMembers = List.of(
                 new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), gameRoadmap2GoalRoom, creator));
-        goalRoomMemberRepository.saveAllInBatch(gameRoadmap2GoalRoomMembers);
+        goalRoomMemberRepository.saveAll(gameRoadmap2GoalRoomMembers);
 
         // travelRoadmap : 참가인원 2명
         final List<GoalRoomMember> travelRoadmapGoalRoomMembers = List.of(
                 new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), travelRoadmapGoalRoom, creator),
                 new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), travelRoadmapGoalRoom, follower));
-        goalRoomMemberRepository.saveAllInBatch(travelRoadmapGoalRoomMembers);
+        goalRoomMemberRepository.saveAll(travelRoadmapGoalRoomMembers);
 
         final RoadmapCategory category = null;
         final RoadmapOrderType orderType = RoadmapOrderType.PARTICIPANT_COUNT;
@@ -546,7 +546,7 @@ class RoadmapRepositoryTest {
     }
 
     private Member 사용자를_생성한다(final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
         final MemberImage memberImage = new MemberImage("file-name", "file-path", ImageContentType.PNG);
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname), memberImage, memberProfile);

@@ -3,6 +3,7 @@ package co.kirikiri.service.mapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.member.MemberDto;
@@ -20,7 +21,6 @@ import co.kirikiri.service.dto.roadmap.RoadmapReviewReadDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
-import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
@@ -36,13 +36,12 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import co.kirikiri.service.exception.ServerException;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {
@@ -78,8 +77,7 @@ public final class RoadmapMapper {
 
     private static FileInformation converToRoadmapNodeImageDto(final MultipartFile it) {
         try {
-            return new FileInformation(it.getOriginalFilename(), it.getSize(), it.getContentType(),
-                    it.getInputStream());
+            return new FileInformation(it.getOriginalFilename(), it.getSize(), it.getContentType(), it.getInputStream());
         } catch (final IOException exception) {
             throw new ServerException(exception.getMessage());
         }
@@ -210,9 +208,5 @@ public final class RoadmapMapper {
         return new RoadmapReviewResponse(roadmapReviewReadDto.id(),
                 new MemberResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl()),
                 roadmapReviewReadDto.createdAt(), roadmapReviewReadDto.content(), roadmapReviewReadDto.rate());
-    }
-
-    public static RoadmapCategory convertToRoadmapCategory(final RoadmapCategorySaveRequest request) {
-        return new RoadmapCategory(request.name());
     }
 }

@@ -4,9 +4,9 @@ import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
-import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.query.Param;
 
 public interface GoalRoomMemberQueryRepository {
 

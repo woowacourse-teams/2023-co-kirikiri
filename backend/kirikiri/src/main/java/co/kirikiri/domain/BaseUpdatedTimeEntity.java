@@ -1,29 +1,17 @@
 package co.kirikiri.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class BaseUpdatedTimeEntity extends BaseCreatedTimeEntity {
 
+    @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @Override
-    protected void prePersist() {
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
-        final String formattedTime = LocalDateTime.now().format(formatter);
-        createdAt = LocalDateTime.parse(formattedTime, formatter);
-        updatedAt = LocalDateTime.parse(formattedTime, formatter);
-    }
-
-    @PreUpdate
-    private void preUpdate() {
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
-        final String formattedTime = LocalDateTime.now().format(formatter);
-        updatedAt = LocalDateTime.parse(formattedTime, formatter);
-    }
 }

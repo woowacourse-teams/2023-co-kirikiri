@@ -5,10 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.common.interceptor.Authenticated;
-import co.kirikiri.service.auth.AuthService;
-import co.kirikiri.service.exception.AuthenticationException;
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.service.AuthService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,8 +50,6 @@ class MemberIdentifierArgumentResolverTest {
                 .thenReturn(String.class);
         when(parameter.hasParameterAnnotation(MemberIdentifier.class))
                 .thenReturn(true);
-        when(parameter.hasMethodAnnotation(Authenticated.class))
-                .thenReturn(true);
 
         //when
         final boolean result = memberIdentifierArgumentResolver.supportsParameter(parameter);
@@ -67,8 +63,6 @@ class MemberIdentifierArgumentResolverTest {
         //given
         Mockito.<Class<?>>when(parameter.getParameterType())
                 .thenReturn(List.class);
-        when(parameter.hasMethodAnnotation(Authenticated.class))
-                .thenReturn(true);
 
         //when
         final boolean result = memberIdentifierArgumentResolver.supportsParameter(parameter);
@@ -84,27 +78,12 @@ class MemberIdentifierArgumentResolverTest {
                 .thenReturn(String.class);
         when(parameter.hasParameterAnnotation(MemberIdentifier.class))
                 .thenReturn(false);
-        when(parameter.hasMethodAnnotation(Authenticated.class))
-                .thenReturn(true);
 
         //when
         final boolean result = memberIdentifierArgumentResolver.supportsParameter(parameter);
 
         //then
         assertThat(result).isFalse();
-    }
-
-    @Test
-    void String_타입이고_Authenticated가_붙지_않은_인자인_경우_예외가_발생한다() {
-        //given
-        when(parameter.hasMethodAnnotation(Authenticated.class))
-                .thenReturn(false);
-
-        //when
-        //then
-        assertThatThrownBy(() -> memberIdentifierArgumentResolver.supportsParameter(parameter))
-                .isInstanceOf(ServerException.class)
-                .hasMessageContaining("MemberIdentifier는 인증된 사용자만 사용 가능합니다. (@Authenticated)");
     }
 
     @Test

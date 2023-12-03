@@ -1,6 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.goalroom.exception.GoalRoomException;
+import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -41,7 +42,7 @@ public class GoalRoomRoadmapNodes {
                 .filter(index -> nodes.get(index).isEndDateEqualOrAfterOtherStartDate(nodes.get(index + 1)))
                 .findAny()
                 .ifPresent(it -> {
-                    throw new GoalRoomException("골룸 노드의 기간이 겹칠 수 없습니다.");
+                    throw new BadRequestException("골룸 노드의 기간이 겹칠 수 없습니다.");
                 });
     }
 
@@ -56,14 +57,14 @@ public class GoalRoomRoadmapNodes {
     public LocalDate getGoalRoomStartDate() {
         return values.stream()
                 .min(Comparator.comparing(GoalRoomRoadmapNode::getStartDate))
-                .orElseThrow(() -> new GoalRoomException("골룸에 노드가 존재하지 않습니다."))
+                .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
                 .getStartDate();
     }
 
     public LocalDate getGoalRoomEndDate() {
         return values.stream()
                 .max(Comparator.comparing(GoalRoomRoadmapNode::getEndDate))
-                .orElseThrow(() -> new GoalRoomException("골룸에 노드가 존재하지 않습니다."))
+                .orElseThrow(() -> new NotFoundException("골룸에 노드가 존재하지 않습니다."))
                 .getEndDate();
     }
 

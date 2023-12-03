@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -16,19 +17,27 @@ public class MemberProfile extends BaseUpdatedTimeEntity {
     @Column(length = 10, nullable = false)
     private Gender gender;
 
-    @Column(length = 100, nullable = false)
-    private String email;
+    @Column(nullable = false)
+    private LocalDate birthday;
 
-    public MemberProfile(final Gender gender, final String email) {
+    @Column(length = 20, nullable = false)
+    private String phoneNumber;
+
+    public MemberProfile(final Gender gender, final LocalDate birthday, final String phoneNumber) {
         this.gender = gender;
-        this.email = email;
+        this.birthday = birthday;
+        this.phoneNumber = phoneNumber;
     }
 
     public Gender getGender() {
         return gender;
     }
 
-    public String getEmail() {
-        return email;
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 }

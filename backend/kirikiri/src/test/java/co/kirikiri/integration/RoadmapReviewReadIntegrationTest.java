@@ -2,7 +2,6 @@ package co.kirikiri.integration;
 
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
 import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_리뷰를_조회한다;
@@ -29,11 +28,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
 
@@ -44,7 +44,7 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 리더_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "leader", GenderType.FEMALE, DEFAULT_EMAIL);
+                "leader", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 리더_로그인_요청 = new LoginRequest(리더_회원_가입_요청.identifier(), 리더_회원_가입_요청.password());
         회원가입(리더_회원_가입_요청);
         final String 리더_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(리더_로그인_요청).accessToken());
@@ -52,7 +52,7 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
         });
 
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
+                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 팔로워1_로그인_요청 = new LoginRequest(팔로워1_회원_가입_요청.identifier(), 팔로워1_회원_가입_요청.password());
         회원가입(팔로워1_회원_가입_요청);
         final String 팔로워1_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워1_로그인_요청).accessToken());
@@ -60,7 +60,7 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
         });
 
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier4", "paswword2@",
-                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
+                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 팔로워2_로그인_요청 = new LoginRequest(팔로워2_회원_가입_요청.identifier(), 팔로워2_회원_가입_요청.password());
         회원가입(팔로워2_회원_가입_요청);
         final String 팔로워2_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워2_로그인_요청).accessToken());
@@ -120,7 +120,7 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(로드맵_아이디);
 
         final MemberJoinRequest 리더_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "leader", GenderType.FEMALE, DEFAULT_EMAIL);
+                "leader", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 리더_로그인_요청 = new LoginRequest(리더_회원_가입_요청.identifier(), 리더_회원_가입_요청.password());
         회원가입(리더_회원_가입_요청);
         final String 리더_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(리더_로그인_요청).accessToken());
@@ -128,7 +128,7 @@ class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
         });
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
+                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());

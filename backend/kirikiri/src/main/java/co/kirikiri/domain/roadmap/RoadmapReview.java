@@ -2,7 +2,7 @@ package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.roadmap.exception.RoadmapException;
+import co.kirikiri.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -53,13 +53,13 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
 
     private void validateContentLength(final String content) {
         if (content.length() > CONTENT_MAX_LENGTH) {
-            throw new RoadmapException(String.format("리뷰는 최대 %d글자까지 입력할 수 있습니다.", CONTENT_MAX_LENGTH));
+            throw new BadRequestException(String.format("리뷰는 최대 %d글자까지 입력할 수 있습니다.", CONTENT_MAX_LENGTH));
         }
     }
 
     private void validateRate(final Double rate) {
         if (!Pattern.matches(RATE_FORMAT, String.valueOf(rate))) {
-            throw new RoadmapException(String.format("별점은 %d부터 %d까지 0.%d 단위로 설정할 수 있습니다.",
+            throw new BadRequestException(String.format("별점은 %d부터 %d까지 0.%d 단위로 설정할 수 있습니다.",
                     MIN_RATE, MAX_RATE, RATE_UNIT));
         }
     }

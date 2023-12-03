@@ -1,9 +1,9 @@
 package co.kirikiri.persistence.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.when;
 
+import co.kirikiri.domain.auth.EncryptedToken;
+import co.kirikiri.domain.auth.RefreshToken;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -11,38 +11,27 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.persistence.helper.RepositoryTest;
+import co.kirikiri.persistence.member.MemberRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-@ExtendWith(MockitoExtension.class)
+@RepositoryTest
 class RefreshTokenRepositoryTest {
-
-    private static final Long refreshTokenValidityInSeconds = 3600000L;
 
     private static Member member;
 
-    @Mock
-    private RedisTemplate<String, String> redisTemplate;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
-    @Mock
-    private ValueOperations<String, String> valueOperations;
-
-    private RefreshTokenRepositoryImpl refreshTokenRepository;
-
-    @BeforeEach
-    void init() {
-        when(redisTemplate.opsForValue())
-                .thenReturn(valueOperations);
-        refreshTokenRepository = new RefreshTokenRepositoryImpl(redisTemplate, refreshTokenValidityInSeconds);
+    public RefreshTokenRepositoryTest(final RefreshTokenRepository refreshTokenRepository,
+                                      final MemberRepository memberRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.memberRepository = memberRepository;
     }
-
 
     @BeforeAll
     static void setUp() {
@@ -50,48 +39,28 @@ class RefreshTokenRepositoryTest {
         final Password password = new Password("password1!");
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
-        final String email = "kirikiri1@email.com";
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
+        final String phoneNumber = "010-1234-5678";
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
         member = new Member(identifier, encryptedPassword, nickname, null, memberProfile);
     }
 
     @Test
-    void 정상적으로_리프레시_토큰을_저장한다() {
+    void 정상적으로_취소되지_않은_리프레시_토큰을_찾아온다() {
         //given
-        final String refreshToken = "refreshToken";
-        final String memberIdentifier = member.getIdentifier().getValue();
+        final EncryptedToken encryptedToken = new EncryptedToken("refreshToken");
+        final LocalDateTime now = LocalDateTime.now();
+        final RefreshToken refreshToken = new RefreshToken(encryptedToken, now, member);
+        memberRepository.save(member);
+        refreshTokenRepository.save(refreshToken);
 
         //when
-        //then
-        assertDoesNotThrow(() -> refreshTokenRepository.save(refreshToken, memberIdentifier));
-    }
-
-    @Test
-    void 정상적으로_리프레시_토큰을_찾아온다() {
-        //given
-        final String refreshToken = "refreshToken";
-        final String memberIdentifier = member.getIdentifier().getValue();
-
-        when(valueOperations.get(refreshToken))
-                .thenReturn(memberIdentifier);
-
-        //when
-        final String findMemberIdentifier = refreshTokenRepository.findMemberIdentifierByRefreshToken(refreshToken)
-                .get();
+        final Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByTokenAndIsRevokedFalse(
+                encryptedToken);
 
         //then
-        assertThat(findMemberIdentifier).isEqualTo(memberIdentifier);
-    }
-
-    @Test
-    void 리프레시_토큰을_찾을때_없는경우_빈값을_보낸다() {
-        //given
-        final String refreshToken = "refreshToken";
-
-        //when
-        final Optional<String> memberIdentifier = refreshTokenRepository.findMemberIdentifierByRefreshToken(
-                refreshToken);
-        //then
-        assertThat(memberIdentifier).isEmpty();
+        assertThat(optionalRefreshToken).isNotEmpty();
+        final RefreshToken result = optionalRefreshToken.get();
+        assertThat(result.getToken()).usingRecursiveComparison()
+                .isEqualTo(encryptedToken);
     }
 }
