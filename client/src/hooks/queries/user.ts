@@ -4,7 +4,7 @@ import {
   UserInfoResponse,
   UserLoginRequest,
 } from '@myTypes/user/remote';
-import { getUserInfo, login, naverLogin, signUp } from '@apis/user';
+import { getUserInfo, login, signUp } from '@apis/user';
 import useToast from '@hooks/_common/useToast';
 import {
   defaultUserInfo,
@@ -14,8 +14,6 @@ import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { setCookie } from '@/utils/_common/cookies';
 import logout from '@utils/user/logout';
-import { useSuspendedQuery } from './useSuspendedQuery';
-import QUERY_KEYS from '@/constants/@queryKeys/queryKeys';
 
 export const useSignUp = () => {
   const { triggerToast } = useToast();
@@ -34,26 +32,6 @@ export const useSignUp = () => {
   return {
     signUp: mutate,
   };
-};
-
-export const useNaverLogin = async () => {
-  const navigate = useNavigate();
-  const { triggerToast } = useToast();
-  const { setUserInfo } = useUserInfoContext();
-
-  useSuspendedQuery([QUERY_KEYS.user.naver_oauth], () => naverLogin(), {
-    onSuccess({ accessToken, refreshToken }) {
-      setCookie('access_token', accessToken);
-      setCookie('refresh_token', refreshToken);
-      triggerToast({ message: '로그인 성공!' });
-
-      getUserInfo().then((response: AxiosResponse<UserInfoResponse>) => {
-        setUserInfo(response.data);
-      });
-
-      navigate('/roadmap-list');
-    },
-  });
 };
 
 export const useLogin = () => {

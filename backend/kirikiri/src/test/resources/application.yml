@@ -15,10 +15,6 @@ spring:
       max-file-size: 10MB
   flyway:
     enabled: false
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 logging:
   level:
@@ -65,14 +61,3 @@ cloud:
       root-directory: 2023-co-kirikiri
       sub-directory: prod
       url-expiration: 60000
-    cloud-front:
-      distribution-domain: https://d3pqwmpjbeqywx.cloudfront.net
-
-oauth:
-  naver:
-    client-id: test
-    client-secret: test
-    redirect-url: https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=%s&redirect_uri=%s&state=%s
-    callback-url: test
-    token-url: https://nid.naver.com/oauth2.0/token?
-    member-info-url: https://openapi.naver.com/v1/nid/me

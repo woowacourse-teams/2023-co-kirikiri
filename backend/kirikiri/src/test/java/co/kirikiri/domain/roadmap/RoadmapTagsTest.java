@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
+import co.kirikiri.exception.BadRequestException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ class RoadmapTagsTest {
 
         // expected
         assertThatThrownBy(() -> new RoadmapTags(values))
-                .isInstanceOf(RoadmapException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -54,6 +54,6 @@ class RoadmapTagsTest {
 
         // expected
         assertThatThrownBy(() -> new RoadmapTags(values))
-                .isInstanceOf(RoadmapException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

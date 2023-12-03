@@ -86,7 +86,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
@@ -120,7 +120,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         인증_피드를_저장한다(goalRoomRoadmapNode, joinedMember);
@@ -151,7 +151,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -188,7 +188,7 @@ class CheckFeedRepositoryTest {
                 member);
         final GoalRoomMember otherLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom2,
                 creator);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom1.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom1.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -226,7 +226,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -269,7 +269,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -303,7 +303,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -348,7 +348,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -407,7 +407,7 @@ class CheckFeedRepositoryTest {
         final GoalRoomMember leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, creator);
         final GoalRoomMember joinedMember = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom,
                 member);
-        goalRoomMemberRepository.saveAllInBatch(List.of(leader, joinedMember));
+        goalRoomMemberRepository.saveAll(List.of(leader, joinedMember));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(0);
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = goalRoom.getGoalRoomRoadmapNodes().getValues().get(1);
@@ -436,7 +436,8 @@ class CheckFeedRepositoryTest {
 
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1990, 1, 1), "010-1234-5678");
         final Member creator = new Member(new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname), memberImage, memberProfile);
         return memberRepository.save(creator);

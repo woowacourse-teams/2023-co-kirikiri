@@ -3,7 +3,7 @@ package co.kirikiri.domain.member.vo;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.domain.member.exception.MemberException;
+import co.kirikiri.exception.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -25,7 +25,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-                .isInstanceOf(MemberException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -35,7 +35,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-                .isInstanceOf(MemberException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -45,7 +45,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-                .isInstanceOf(MemberException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -55,7 +55,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-                .isInstanceOf(MemberException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -65,7 +65,7 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-                .isInstanceOf(MemberException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 
     @ParameterizedTest
@@ -75,6 +75,6 @@ class PasswordTest {
         //when
         //then
         assertThatThrownBy(() -> new Password(password))
-                .isInstanceOf(MemberException.class);
+                .isInstanceOf(BadRequestException.class);
     }
 }

@@ -20,6 +20,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.exception.ForbiddenException;
+import co.kirikiri.exception.NotFoundException;
+import co.kirikiri.service.GoalRoomCreateService;
+import co.kirikiri.service.GoalRoomReadService;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
@@ -27,7 +32,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
@@ -35,11 +39,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
-import co.kirikiri.service.goalroom.GoalRoomCreateService;
-import co.kirikiri.service.goalroom.GoalRoomReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -536,11 +535,9 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     void 골룸의_노드를_조회한다() throws Exception {
         // given
         final LocalDate today = LocalDate.now();
-        final List<GoalRoomRoadmapNodeDetailResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomRoadmapNodeDetailResponse(1L, "골룸 노드 1", "골룸 노드 본문1",
-                        List.of("image1-filepath", "image2-filepath"), today, today.plusDays(10), 10),
-                new GoalRoomRoadmapNodeDetailResponse(2L, "골룸 노드 2", "골룸 노드 본문2",
-                        List.of("image1-filepath", "image2-filepath"), today.plusDays(20), today.plusDays(30), 5));
+        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new GoalRoomRoadmapNodeResponse(1L, "골룸 노드 1", today, today.plusDays(10), 10),
+                new GoalRoomRoadmapNodeResponse(2L, "골룸 노드 2", today.plusDays(20), today.plusDays(30), 5));
 
         when(goalRoomReadService.findAllGoalRoomNodes(any(), any()))
                 .thenReturn(goalRoomNodeResponses);
@@ -561,8 +558,6 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                                 responseFields(
                                         fieldWithPath("[0].id").description("골룸 로드맵 노드 아이디"),
                                         fieldWithPath("[0].title").description("노드 제목"),
-                                        fieldWithPath("[0].description").description("노드 본문"),
-                                        fieldWithPath("[0].imageUrls[0]").description("노드 이미지 파일 경로"),
                                         fieldWithPath("[0].startDate").description("노드 시작 날짜"),
                                         fieldWithPath("[0].endDate").description("노드 종료 날짜"),
                                         fieldWithPath("[0].checkCount").description("인증 횟수")
@@ -570,7 +565,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 .andReturn();
 
         // then
-        final List<GoalRoomRoadmapNodeDetailResponse> response = jsonToClass(mvcResult, new TypeReference<>() {
+        final List<GoalRoomRoadmapNodeResponse> response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
         assertThat(response)

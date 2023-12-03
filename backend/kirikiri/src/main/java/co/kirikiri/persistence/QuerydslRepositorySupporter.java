@@ -1,6 +1,6 @@
 package co.kirikiri.persistence;
 
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.exception.ServerException;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.PathBuilder;

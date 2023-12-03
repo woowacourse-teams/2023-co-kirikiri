@@ -8,24 +8,24 @@ export const OathButtonContainer = styled.div`
   align-items: center;
   justify-content: center;
 
-  margin-top: 2rem;
+  margin-top: 7rem;
 `;
 
 export const OathButton = styled.button<{ type?: string }>`
-  ${({ theme }) => theme.fonts.button1}
   display: flex;
   align-items: center;
   justify-content: center;
 
   width: 100%;
-  height: 4rem;
   margin-top: 1rem;
   padding: 1rem;
 
-  color: ${({ type, theme }) => type === 'naver' && theme.colors.white};
-
   background: ${({ type, theme }) =>
-    type === 'naver' ? '#5AC466' : theme.colors.main_dark};
+    type === 'kakao'
+      ? 'rgb(255, 225, 83)'
+      : type === 'google'
+      ? theme.colors.gray100
+      : theme.colors.main_dark};
   border: none;
   border-radius: 1rem;
 
@@ -33,9 +33,5 @@ export const OathButton = styled.button<{ type?: string }>`
 
   &:hover {
     transform: scale(1.04);
-  }
-
-  & > span {
-    margin-left: ${({ type }) => type === 'naver' && '1rem'};
   }
 `;

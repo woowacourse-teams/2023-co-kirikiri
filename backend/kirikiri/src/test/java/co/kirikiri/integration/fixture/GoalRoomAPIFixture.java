@@ -15,14 +15,14 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 public class GoalRoomAPIFixture {
 
@@ -53,10 +53,11 @@ public class GoalRoomAPIFixture {
     }
 
     public static Long 기본_골룸_생성(final String 액세스_토큰, final RoadmapResponse 로드맵_응답) {
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
                 new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), 정상적인_골룸_이름,
-                정상적인_골룸_제한_인원, 골룸_노드_별_기간_요청);
+                정상적인_골룸_제한_인원, 골룸_투두_요청, 골룸_노드_별_기간_요청);
         final String Location_헤더 = 골룸_생성(골룸_생성_요청, 액세스_토큰).response().header(LOCATION);
         return Long.parseLong(Location_헤더.substring(16));
     }
@@ -99,10 +100,11 @@ public class GoalRoomAPIFixture {
     }
 
     public static Long 정상적인_골룸_생성(final String 액세스_토큰, final Long 로드맵_아이디, final Long 로드맵_노드_아이디) {
+        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
                 new GoalRoomRoadmapNodeRequest(로드맵_노드_아이디, 정상적인_골룸_노드_인증_횟수, 오늘, 십일_후));
         final GoalRoomCreateRequest 골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_아이디, 정상적인_골룸_이름, 정상적인_골룸_제한_인원,
-                골룸_노드_별_기간_요청);
+                골룸_투두_요청, 골룸_노드_별_기간_요청);
         final ExtractableResponse<Response> 골룸_생성_응답 = 골룸_생성(골룸_생성_요청, 액세스_토큰);
         final String Location_헤더 = 골룸_생성_응답.response().header("Location");
         return Long.parseLong(Location_헤더.substring(16));

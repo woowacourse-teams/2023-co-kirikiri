@@ -1,7 +1,6 @@
 const QUERY_KEYS = {
   user: {
     user: 'user',
-    naver_oauth: 'naver_login',
   },
   roadmap: {
     list: 'roadmapList',

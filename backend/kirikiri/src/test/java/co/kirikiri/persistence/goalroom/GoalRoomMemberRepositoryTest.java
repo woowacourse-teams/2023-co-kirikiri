@@ -129,9 +129,9 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
 
         final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, member1);
@@ -164,9 +164,9 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
 
         final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, member1);
@@ -199,9 +199,9 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
 
         final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, member1);
@@ -235,9 +235,9 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
 
         final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, member1);
@@ -267,7 +267,7 @@ class GoalRoomMemberRepositoryTest {
     @Test
     void 골룸_아이디와_사용자_아이디로_골룸_멤버를_조회한다() {
         // given
-        final Member creator = 사용자를_생성한다("identifier1", "password!1", "name1", "kirikiri1@email.com");
+        final Member creator = 사용자를_생성한다("identifier1", "password!1", "name1", "01011111111");
         final RoadmapCategory category = 카테고리를_저장한다("여가");
         final Roadmap roadmap = 로드맵을_저장한다(creator, category);
 
@@ -295,15 +295,15 @@ class GoalRoomMemberRepositoryTest {
 
     private Member 크리에이터를_저장한다() {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPG);
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
-        final Member creator = new Member(1L, new Identifier("cokirikiri"), null,
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final Member creator = new Member(1L, new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), memberImage, memberProfile);
         return memberRepository.save(creator);
     }
 
     private Member 사용자를_생성한다(final String identifier, final String password, final String nickname,
-                             final String email) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
+                             final String phoneNumber) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), phoneNumber);
         final Member member = new Member(new Identifier(identifier),
                 new EncryptedPassword(new Password(password)), new Nickname(nickname),
                 new MemberImage("file-name", "file-path", ImageContentType.PNG), memberProfile);

@@ -160,7 +160,8 @@ class GoalRoomToDoCheckRepositoryTest {
 
     private Member 사용자를_생성한다(final String nickname, final String phoneNumber, final String identifier,
                              final String password) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
+                phoneNumber);
         final Member creator = new Member(new Identifier(identifier),
                 new EncryptedPassword(new Password(password)), new Nickname(nickname), null, memberProfile);
         return memberRepository.save(creator);

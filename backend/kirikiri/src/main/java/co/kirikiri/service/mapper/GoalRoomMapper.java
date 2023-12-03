@@ -11,6 +11,7 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
+import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.service.dto.FileInformation;
@@ -19,7 +20,6 @@ import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
-import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDetailDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
 import co.kirikiri.service.dto.goalroom.MemberGoalRoomForListDto;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
@@ -33,7 +33,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
@@ -46,16 +45,15 @@ import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
 import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
-import co.kirikiri.service.exception.ServerException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -64,6 +62,8 @@ public class GoalRoomMapper {
     private static final int MAX_MEMBER_GOAL_ROOM_CHECK_FEED_NUMBER = 4;
 
     public static GoalRoomCreateDto convertToGoalRoomCreateDto(final GoalRoomCreateRequest goalRoomCreateRequest) {
+        final GoalRoomTodoRequest goalRoomTodoRequest = goalRoomCreateRequest.goalRoomTodo();
+        final GoalRoomToDo goalRoomToDo = convertToGoalRoomTodo(goalRoomTodoRequest);
         final List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests = goalRoomCreateRequest.goalRoomRoadmapNodeRequests();
         final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos = makeGoalRoomRoadmapNodeDtos(
                 goalRoomRoadmapNodeRequests);
@@ -72,7 +72,7 @@ public class GoalRoomMapper {
                 goalRoomCreateRequest.roadmapContentId(),
                 new GoalRoomName(goalRoomCreateRequest.name()),
                 new LimitedMemberCount(goalRoomCreateRequest.limitedMemberCount()),
-                goalRoomRoadmapNodeDtos);
+                goalRoomToDo, goalRoomRoadmapNodeDtos);
     }
 
     public static GoalRoomToDo convertToGoalRoomTodo(final GoalRoomTodoRequest goalRoomTodoRequest) {
@@ -108,21 +108,6 @@ public class GoalRoomMapper {
                 node.getEndDate(), node.getCheckCount());
     }
 
-    public static List<GoalRoomRoadmapNodeDetailResponse> convertGoalRoomNodeDetailResponses(
-            final List<GoalRoomRoadmapNodeDetailDto> goalRoomRoadmapNodeDetailDtos) {
-        return goalRoomRoadmapNodeDetailDtos.stream()
-                .map(GoalRoomMapper::convertGoalRoomNodeDetailResponse)
-                .toList();
-    }
-
-    private static GoalRoomRoadmapNodeDetailResponse convertGoalRoomNodeDetailResponse(
-            final GoalRoomRoadmapNodeDetailDto goalRoomRoadmapNodeDetailDto) {
-        return new GoalRoomRoadmapNodeDetailResponse(goalRoomRoadmapNodeDetailDto.id(),
-                goalRoomRoadmapNodeDetailDto.title(), goalRoomRoadmapNodeDetailDto.description(),
-                goalRoomRoadmapNodeDetailDto.imageUrls(), goalRoomRoadmapNodeDetailDto.startDate(),
-                goalRoomRoadmapNodeDetailDto.endDate(), goalRoomRoadmapNodeDetailDto.checkCount());
-    }
-
     public static GoalRoomCertifiedResponse convertGoalRoomCertifiedResponse(final GoalRoom goalRoom,
                                                                              final boolean isJoined) {
         final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
@@ -152,8 +137,7 @@ public class GoalRoomMapper {
     private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(
             final RoadmapGoalRoomDto roadmapGoalRoomDto) {
         return new RoadmapGoalRoomResponse(roadmapGoalRoomDto.goalRoomId(), roadmapGoalRoomDto.name(),
-                roadmapGoalRoomDto.status(), roadmapGoalRoomDto.currentMemberCount(),
-                roadmapGoalRoomDto.limitedMemberCount(),
+                roadmapGoalRoomDto.currentMemberCount(), roadmapGoalRoomDto.limitedMemberCount(),
                 roadmapGoalRoomDto.createdAt(), roadmapGoalRoomDto.startDate(),
                 roadmapGoalRoomDto.endDate(), convertToMemberResponse(roadmapGoalRoomDto.goalRoomLeader()));
     }

@@ -1,9 +1,7 @@
 package co.kirikiri.common.resolver;
 
-import co.kirikiri.common.interceptor.Authenticated;
-import co.kirikiri.service.auth.AuthService;
-import co.kirikiri.service.exception.AuthenticationException;
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.exception.AuthenticationException;
+import co.kirikiri.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
@@ -23,9 +21,6 @@ public class MemberIdentifierArgumentResolver implements HandlerMethodArgumentRe
 
     @Override
     public boolean supportsParameter(final MethodParameter parameter) {
-        if (!parameter.hasMethodAnnotation(Authenticated.class)) {
-            throw new ServerException("MemberIdentifier는 인증된 사용자만 사용 가능합니다. (@Authenticated)");
-        }
         return parameter.getParameterType().equals(String.class)
                 && parameter.hasParameterAnnotation(MemberIdentifier.class);
     }

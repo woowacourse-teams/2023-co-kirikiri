@@ -4,8 +4,9 @@ import static co.kirikiri.domain.goalroom.GoalRoomStatus.RECRUITING;
 import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +38,6 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.service.scheduler.GoalRoomScheduler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -49,7 +49,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class GoalRoomSchedulerTest {
+public class GoalRoomSchedulerTest {
 
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
@@ -59,10 +59,10 @@ class GoalRoomSchedulerTest {
     private GoalRoomRepository goalRoomRepository;
 
     @Mock
-    private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-    
-    @Mock
     private GoalRoomMemberRepository goalRoomMemberRepository;
+
+    @Mock
+    private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     @InjectMocks
     private GoalRoomScheduler goalRoomScheduler;
@@ -78,19 +78,19 @@ class GoalRoomSchedulerTest {
         final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
         final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
 
-        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "kirikiri@email.com");
-        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
-        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "kirikiri@email.com");
+        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "010-1111-1111");
+        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "010-1111-1112");
+        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "010-1111-1113");
 
-        골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
-        골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
-        골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
+        final GoalRoomPendingMember goalRoomPendingMember = 골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
+        final GoalRoomPendingMember goalRoomPendingMember1 = 골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
+        final GoalRoomPendingMember goalRoomPendingMember2 = 골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
 
         goalRoom1.join(follower1);
         goalRoom1.join(follower2);
         goalRoom2.join(follower3);
 
-        when(goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now()))
+        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
                 .thenReturn(List.of(goalRoom1));
 
         // when
@@ -106,7 +106,7 @@ class GoalRoomSchedulerTest {
     @Test
     void 골룸의_시작날짜가_아직_지나지_않았다면_골룸의_상태가_변경되지_않는다() {
         // given
-        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "kirikiri@email.com");
+        final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
         final Roadmap roadmap = 로드맵을_생성한다(creator);
 
         final RoadmapContents roadmapContents = roadmap.getContents();
@@ -114,22 +114,24 @@ class GoalRoomSchedulerTest {
         final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
         final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
 
-        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "kirikiri@email.com");
-        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
-        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "kirikiri@email.com");
+        final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "010-1111-1111");
+        final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "010-1111-1112");
+        final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "010-1111-1113");
 
         goalRoom1.join(follower1);
         goalRoom1.join(follower2);
         goalRoom2.join(follower3);
 
-        when(goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now()))
+        when(goalRoomRepository.findAllByStartDate(LocalDate.now()))
                 .thenReturn(Collections.emptyList());
 
         // when
         goalRoomScheduler.startGoalRooms();
 
         // then
-        verify(goalRoomPendingMemberRepository, never()).deleteAllByIdIn(anyList());
+        verify(goalRoomPendingMemberRepository, times(0)).findAllByGoalRoom(any());
+        verify(goalRoomMemberRepository, times(0)).saveAll(anyList());
+        verify(goalRoomPendingMemberRepository, times(0)).deleteAll(anyList());
 
         assertAll(
                 () -> assertThat(goalRoom1.getStatus()).isEqualTo(RECRUITING),
@@ -138,10 +140,11 @@ class GoalRoomSchedulerTest {
     }
 
     private Member 사용자를_생성한다(final Long memberId, final String identifier, final String password, final String nickname,
-                             final String email) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
+                             final String phoneNumber) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
+                LocalDate.of(1995, 9, 30), phoneNumber);
 
-        return new Member(memberId, new Identifier(identifier), null, new EncryptedPassword(new Password(password)),
+        return new Member(memberId, new Identifier(identifier), new EncryptedPassword(new Password(password)),
                 new Nickname(nickname), null, memberProfile);
     }
 
