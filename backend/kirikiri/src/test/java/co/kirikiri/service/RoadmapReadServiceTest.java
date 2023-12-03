@@ -13,6 +13,7 @@ import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -34,7 +35,6 @@ import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -59,6 +59,8 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
+import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.roadmap.RoadmapReadService;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -78,9 +80,9 @@ class RoadmapReadServiceTest {
     private static final LocalDate TODAY = LocalDate.now();
 
     private final Member member = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             new MemberImage("originalFileName", "default-member-image", ImageContentType.JPG),
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+            new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
     private final LocalDateTime now = LocalDateTime.now();
 
     @Mock
@@ -491,7 +493,7 @@ class RoadmapReadServiceTest {
         final List<GoalRoom> goalRooms = List.of(goalRoom2, goalRoom1);
         given(roadmapRepository.findRoadmapById(anyLong()))
                 .willReturn(Optional.of(roadmap));
-        given(goalRoomRepository.findGoalRoomsWithPendingMembersByRoadmapAndCond(roadmap,
+        given(goalRoomRepository.findGoalRoomsByRoadmapAndCond(roadmap,
                 RoadmapGoalRoomsOrderType.LATEST, null, 10))
                 .willReturn(goalRooms);
         given(fileService.generateUrl(anyString(), any()))
@@ -503,11 +505,13 @@ class RoadmapReadServiceTest {
 
         final RoadmapGoalRoomResponses expected =
                 new RoadmapGoalRoomResponses(List.of(
-                        new RoadmapGoalRoomResponse(2L, "goalroom2", 1, 10, LocalDateTime.now(),
+                        new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING, 1, 10,
+                                LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member3.getId(), member3.getNickname().getValue(),
                                         "http://example.com/serverFilePath")),
-                        new RoadmapGoalRoomResponse(1L, "goalroom1", 1, 10, LocalDateTime.now(),
+                        new RoadmapGoalRoomResponse(1L, "goalroom1", GoalRoomStatus.RECRUITING, 1, 10,
+                                LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue(),
                                         "http://example.com/serverFilePath"))), false);
@@ -588,10 +592,10 @@ class RoadmapReadServiceTest {
 
     private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
         return new Member(id, new Identifier(identifier),
-                new EncryptedPassword(new Password("password1!")),
+                null, new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname),
                 new MemberImage("originalFileName", "default-profile-image", ImageContentType.JPG),
-                new MemberProfile(Gender.FEMALE, LocalDate.of(2000, 7, 20), "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
     }
 
     private Roadmap 로드맵을_생성한다(final String roadmapTitle, final RoadmapCategory category) {

@@ -1,8 +1,7 @@
 package co.kirikiri.domain.member;
 
+import co.kirikiri.domain.exception.UnexpectedDomainException;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.exception.ServerException;
-import jakarta.persistence.Column;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -16,10 +15,7 @@ public class EncryptedPassword {
 
     private static final String ALGORITHM = "SHA-256";
 
-    @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
     private String salt;
 
     public EncryptedPassword(final Password unencryptedPassword) {
@@ -46,7 +42,7 @@ public class EncryptedPassword {
         try {
             return MessageDigest.getInstance(ALGORITHM);
         } catch (final NoSuchAlgorithmException exception) {
-            throw new ServerException(exception.getMessage());
+            throw new UnexpectedDomainException(exception.getMessage());
         }
     }
 

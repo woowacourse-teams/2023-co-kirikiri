@@ -1,8 +1,10 @@
 package co.kirikiri.persistence.auth;
 
-import co.kirikiri.domain.auth.RefreshToken;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long>, RefreshTokenQueryRepository {
+public interface RefreshTokenRepository {
 
+    void save(final String refreshToken, final String memberIdentifier);
+
+    Optional<String> findMemberIdentifierByRefreshToken(final String refreshToken);
 }

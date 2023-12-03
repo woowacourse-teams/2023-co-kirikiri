@@ -5,19 +5,22 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface GoalRoomQueryRepository {
 
+    Optional<GoalRoom> findGoalRoomByIdWithPessimisticLock(Long goalRoomId);
+
     Optional<GoalRoom> findByIdWithRoadmapContent(final Long goalRoomId);
 
     Optional<GoalRoom> findByIdWithContentAndTodos(final Long goalRoomId);
 
-    List<GoalRoom> findGoalRoomsWithPendingMembersByRoadmapAndCond(final Roadmap roadmap,
-                                                                   final RoadmapGoalRoomsOrderType filterType,
-                                                                   final Long lastId,
-                                                                   final int pageSize);
+    List<GoalRoom> findGoalRoomsByRoadmapAndCond(final Roadmap roadmap,
+                                                 final RoadmapGoalRoomsOrderType filterType,
+                                                 final Long lastId,
+                                                 final int pageSize);
 
     Optional<GoalRoom> findByIdWithTodos(final Long goalRoomId);
 
@@ -28,4 +31,6 @@ public interface GoalRoomQueryRepository {
     Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId);
 
     List<GoalRoom> findByRoadmap(final Roadmap roadmap);
+
+    List<GoalRoom> findAllRecruitingGoalRoomsByStartDateEarlierThan(final LocalDate startDate);
 }

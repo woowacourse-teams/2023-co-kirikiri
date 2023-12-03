@@ -21,15 +21,14 @@ public final class MemberMapper {
         final Password password = new Password(request.password());
         final Nickname nickname = new Nickname(request.nickname());
         final Gender gender = Gender.valueOf(request.genderType().name());
-        return new MemberJoinDto(identifier, password, nickname, request.phoneNumber(), gender, request.birthday());
+        return new MemberJoinDto(identifier, password, nickname, gender, request.email());
     }
 
     public static MemberInformationResponse convertToMemberInformationResponse(
             final MemberInformationDto memberInformationDto) {
         return new MemberInformationResponse(memberInformationDto.id(), memberInformationDto.nickname(),
                 memberInformationDto.profileImageUrl(), memberInformationDto.gender(),
-                memberInformationDto.identifier(),
-                memberInformationDto.phoneNumber(), memberInformationDto.birthday());
+                memberInformationDto.identifier(), memberInformationDto.email());
     }
 
     public static MemberInformationForPublicResponse convertToMemberInformationForPublicResponse(

@@ -26,6 +26,7 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.인증_피드_�
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
@@ -45,9 +46,9 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
@@ -125,8 +126,6 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 
         // then
         assertThat(골룸_투두리스트_응답값.get(0).startDate())
-                .isEqualTo(오늘);
-        assertThat(골룸_투두리스트_응답값.get(1).startDate())
                 .isEqualTo(이십일_후);
     }
 
@@ -155,7 +154,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         골룸_투두리스트_추가(기본_로그인_토큰, 기본_골룸_아이디, 골룸_투두_생성_요청);
 
         final MemberJoinRequest 다른_사용자_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 다른_사용자_로그인_요청 = new LoginRequest(다른_사용자_회원_가입_요청.identifier(), 다른_사용자_회원_가입_요청.password());
         회원가입(다른_사용자_회원_가입_요청);
         final String 다른_사용자_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_사용자_로그인_요청).accessToken());
@@ -182,7 +181,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -205,8 +204,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
                 new GoalRoomRoadmapNodesResponse(false, false,
                         List.of(new GoalRoomRoadmapNodeResponse(로드맵_응답.content().nodes().get(0).id(),
                                 "roadmap 1st week", 오늘, 십일_후, 정상적인_골룸_노드_인증_횟수))),
-                List.of(new GoalRoomTodoResponse(1L, "GOAL_ROOM_TO_DO_CONTENT", 오늘, 십일_후,
-                        new GoalRoomToDoCheckResponse(false))),
+                List.of(),
                 List.of(new CheckFeedResponse(2L, "default-image-path", "image description", LocalDate.now()),
                         new CheckFeedResponse(1L, "default-image-path", "image description", LocalDate.now())));
 
@@ -272,11 +270,10 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(두번째_로드맵_아이디);
 
-        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("Content", 십일_후, 이십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
                 new GoalRoomRoadmapNodeRequest(두번째_로드맵_응답.content().nodes().get(0).id(), 10, 십일_후, 이십일_후));
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_응답.content().id(), 정상적인_골룸_이름,
-                20, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+                20, 골룸_노드_별_기간_요청);
 
         final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(두번째_골룸_생성_요청, 기본_로그인_토큰);
 
@@ -303,11 +300,10 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final Long 두번째_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 두번째_로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(두번째_로드맵_아이디);
 
-        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("Content", 십일_후, 이십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
                 new GoalRoomRoadmapNodeRequest(두번째_로드맵_응답.content().nodes().get(0).id(), 10, 십일_후, 이십일_후));
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(두번째_로드맵_응답.content().id(), 정상적인_골룸_이름,
-                20, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+                20, 골룸_노드_별_기간_요청);
 
         final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(두번째_골룸_생성_요청, 기본_로그인_토큰);
 
@@ -335,7 +331,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         골룸을_시작한다(기본_로그인_토큰, 기본_골룸_아이디);
 
         // when
-        final List<GoalRoomRoadmapNodeResponse> 골룸_노드_응답값 = 골룸_노드_조회(기본_골룸_아이디, 기본_로그인_토큰)
+        final List<GoalRoomRoadmapNodeDetailResponse> 골룸_노드_응답값 = 골룸_노드_조회(기본_골룸_아이디, 기본_로그인_토큰)
                 .as(new TypeRef<>() {
                 });
 
@@ -365,7 +361,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 다른_사용자_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -386,7 +382,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 골룸의_인증피드를_전체_조회한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         final String 팔로워_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());
@@ -435,7 +431,7 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 골룸의_인증피드를_전체_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() throws IOException {
         // given
         final MemberJoinRequest 다른_회원_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follower", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follower", GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 다른_회원_로그인_요청 = new LoginRequest(다른_회원_회원_가입_요청.identifier(), 다른_회원_회원_가입_요청.password());
         회원가입(다른_회원_회원_가입_요청);
         final String 다른_회원_액세스_토큰 = String.format(BEARER_TOKEN_FORMAT, 로그인(다른_회원_로그인_요청).accessToken());
@@ -466,9 +462,9 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 골룸의_사용자_정보를_달성률순으로_전체_조회한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
         final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
 
@@ -508,9 +504,9 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 모집중인_골룸의_사용자_정보를_참가한_최신순으로_전체_조회한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
         final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
 
@@ -543,9 +539,9 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     void 모집중인_골룸의_사용자_정보_조회시_정렬기준을_입력하지_않으면_참여한지_오래된순으로_정렬한다() throws IOException {
         // given
         final MemberJoinRequest 팔로워1_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
-                "follow1", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow1", GenderType.FEMALE, DEFAULT_EMAIL);
         final MemberJoinRequest 팔로워2_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword2@",
-                "follow2", "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                "follow2", GenderType.FEMALE, DEFAULT_EMAIL);
         final Long 팔로워1_아이디 = 회원가입(팔로워1_회원_가입_요청);
         final Long 팔로워2_아이디 = 회원가입(팔로워2_회원_가입_요청);
 
@@ -587,6 +583,40 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
     }
 
     @Test
+    void 로드맵의_골룸_목록을_최신순으로_조회한다() throws IOException {
+        // given
+        final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
+        final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
+
+        final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
+
+        final List<GoalRoomRoadmapNodeRequest> 모집_중인_골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 10, 십일_후, 이십일_후));
+        final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), 정상적인_골룸_이름,
+                20, 모집_중인_골룸_노드_별_기간_요청);
+
+        final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(두번째_골룸_생성_요청, 기본_로그인_토큰);
+
+        final List<GoalRoomRoadmapNodeRequest> 진행_중인_골룸_노드_별_기간_요청 = List.of(
+                new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 10, 오늘, 이십일_후));
+        final GoalRoomCreateRequest 세번째_골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), 정상적인_골룸_이름,
+                20, 진행_중인_골룸_노드_별_기간_요청);
+
+        final Long 세번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(세번째_골룸_생성_요청, 기본_로그인_토큰);
+
+        // when
+        final RoadmapGoalRoomResponses 로드맵_아이디로_골룸_목록_조회_응답1 = 로드맵_아이디로_골룸_목록_조회(기본_로그인_토큰, 기본_로드맵_아이디,
+                RoadmapGoalRoomsOrderType.LATEST.name(), 10).as(
+                new TypeRef<>() {
+                });
+
+        // then
+        assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(0).goalRoomId()).isEqualTo(세번째_골룸_아이디);
+        assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(1).goalRoomId()).isEqualTo(두번째_골룸_아이디);
+        assertThat(로드맵_아이디로_골룸_목록_조회_응답1.responses().get(2).goalRoomId()).isEqualTo(기본_골룸_아이디);
+    }
+
+    @Test
     void 로드맵의_골룸_목록을_마감임박순으로_조회한다() throws IOException {
         // given
         final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
@@ -594,11 +624,10 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
 
-        final GoalRoomTodoRequest 골룸_투두_요청 = new GoalRoomTodoRequest("Content", 십일_후, 이십일_후);
         final List<GoalRoomRoadmapNodeRequest> 골룸_노드_별_기간_요청 = List.of(
                 new GoalRoomRoadmapNodeRequest(로드맵_응답.content().nodes().get(0).id(), 10, 십일_후, 이십일_후));
         final GoalRoomCreateRequest 두번째_골룸_생성_요청 = new GoalRoomCreateRequest(로드맵_응답.content().id(), 정상적인_골룸_이름,
-                20, 골룸_투두_요청, 골룸_노드_별_기간_요청);
+                20, 골룸_노드_별_기간_요청);
 
         final Long 두번째_골룸_아이디 = 골룸을_생성하고_아이디를_반환한다(두번째_골룸_생성_요청, 기본_로그인_토큰);
 

@@ -13,8 +13,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.exception.BadRequestException;
-import java.time.LocalDate;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ class RoadmapContentTest {
 
         // expect
         assertThatThrownBy(() -> new RoadmapContent(content))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(RoadmapException.class);
     }
 
     @Test
@@ -75,7 +74,7 @@ class RoadmapContentTest {
     void 로드맵_본문의_로드맵인_경우_false를_반환한다() {
         // given
         final RoadmapContent content = new RoadmapContent("content");
-        final MemberProfile profile = new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "01011112222");
+        final MemberProfile profile = new MemberProfile(Gender.FEMALE, "kirikiri1@email.com");
         final Member creator = new Member(new Identifier("creator"),
                 new EncryptedPassword(new Password("password1")), new Nickname("nickname"), null, profile);
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");

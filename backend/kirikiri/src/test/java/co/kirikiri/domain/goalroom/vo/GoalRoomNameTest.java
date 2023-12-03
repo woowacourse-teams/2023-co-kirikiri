@@ -3,7 +3,7 @@ package co.kirikiri.domain.goalroom.vo;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -29,6 +29,6 @@ class GoalRoomNameTest {
         //when
         //then
         assertThatThrownBy(() -> new GoalRoomName(value))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 }

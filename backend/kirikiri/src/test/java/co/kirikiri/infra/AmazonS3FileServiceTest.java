@@ -7,12 +7,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.dto.FileInformation;
+import co.kirikiri.service.exception.ServerException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.Protocol;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import java.io.FileInputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,9 +23,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
-import java.io.FileInputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 @ExtendWith(MockitoExtension.class)
 class AmazonS3FileServiceTest {
@@ -34,6 +34,9 @@ class AmazonS3FileServiceTest {
 
     @Mock
     private Environment environment;
+
+    @Mock
+    private CloudFrontService cloudFrontService;
 
     @InjectMocks
     private AmazonS3FileService amazonS3FileService;
@@ -86,7 +89,21 @@ class AmazonS3FileServiceTest {
     }
 
     @Test
-    void 정상적으로_파일_URL을_생성한다() throws MalformedURLException {
+    void 정상적으로_파일_GET_URL을_생성한다() throws MalformedURLException {
+        //given
+        final URL url = new URL(Protocol.HTTP.toString(), "host", 80, "file");
+        when(cloudFrontService.generateGetUrl(anyString()))
+                .thenReturn(url);
+
+        //when
+        final URL result = amazonS3FileService.generateUrl("path", HttpMethod.GET);
+
+        //then
+        assertThat(result).isEqualTo(url);
+    }
+
+    @Test
+    void 정상적으로_파일_POST_URL을_생성한다() throws MalformedURLException {
         //given
         final URL url = new URL(Protocol.HTTP.toString(), "host", 80, "file");
         when(environment.getProperty(anyString()))
@@ -97,7 +114,25 @@ class AmazonS3FileServiceTest {
                 .thenReturn(url);
 
         //when
-        final URL result = amazonS3FileService.generateUrl("path", HttpMethod.GET);
+        final URL result = amazonS3FileService.generateUrl("path", HttpMethod.POST);
+
+        //then
+        assertThat(result).isEqualTo(url);
+    }
+
+    @Test
+    void 정상적으로_파일_DELETE_URL을_생성한다() throws MalformedURLException {
+        //given
+        final URL url = new URL(Protocol.HTTP.toString(), "host", 80, "file");
+        when(environment.getProperty(anyString()))
+                .thenReturn("bucket");
+        when(environment.getProperty(anyString()))
+                .thenReturn("60000");
+        when(amazonS3.generatePresignedUrl(any()))
+                .thenReturn(url);
+
+        //when
+        final URL result = amazonS3FileService.generateUrl("path", HttpMethod.DELETE);
 
         //then
         assertThat(result).isEqualTo(url);

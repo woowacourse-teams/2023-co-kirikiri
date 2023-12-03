@@ -17,8 +17,6 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ServerException;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
@@ -26,6 +24,11 @@ import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.event.RoadmapCreateEvent;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.service.roadmap.RoadmapCreateEventListener;
+import java.io.IOException;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,16 +36,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateEventListenerTest {
 
     private static final Member member = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"), null,
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"), null,
+            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock
     private RoadmapContentRepository roadmapContentRepository;

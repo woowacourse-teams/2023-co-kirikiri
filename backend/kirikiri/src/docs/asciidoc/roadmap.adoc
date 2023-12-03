@@ -219,3 +219,22 @@ operation::roadmap-create-api-test/로드맵_삭제시_존재하지_않는_로�
 === *10-3* 실패 - 자신이 생성한 로드맵이 아닌 경우
 
 operation::roadmap-create-api-test/로드맵_삭제시_자신이_생성한_로드맵이_아닌_경우_예외가_발생한다[snippets='http-request,http-response,response-fields']
+
+[[로드맵카테고리생성-API]]
+== *11. 로드맵 카테고리 생성 API*
+
+=== *11-1* 성공
+
+operation::roadmap-create-api-test/정상적으로_로드맵_카테고리를_생성한다[snippets='http-request,request-fields,http-response']
+
+=== *11-2* 로드맵 카테고리 생성 시 카테고리 이름이 빈값일 경우
+
+operation::roadmap-create-api-test/로드맵_카테고리_생성_시_카테고리_이름이_빈값일_경우[snippets='http-request,request-fields,http-response']
+
+=== *11-3* 로드맵 카테고리 생성 시 카테고리 이름이 10자 초과일 경우
+
+operation::roadmap-create-api-test/로드맵_카테고리_생성_시_카테고리_이름이_10자_초과일_경우[snippets='http-request,request-fields,http-response']
+
+=== *11-4* 로드맵 카테고리 생성 시 카테고리 이름이 중복될 경우
+
+operation::roadmap-create-api-test/로드맵_카테고리_생성_시_카테고리_이름이_중복될_경우[snippets='http-request,request-fields,http-response']

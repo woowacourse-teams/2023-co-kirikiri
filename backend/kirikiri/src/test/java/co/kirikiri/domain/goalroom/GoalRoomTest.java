@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
@@ -22,7 +23,6 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.exception.BadRequestException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -45,9 +45,8 @@ class GoalRoomTest {
         final Password password = new Password("password1!");
         final EncryptedPassword encryptedPassword = new EncryptedPassword(password);
         final Nickname nickname = new Nickname("nickname");
-        final String phoneNumber = "010-1234-5678";
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.now(), phoneNumber);
-        member = new Member(1L, identifier, encryptedPassword, nickname, null, memberProfile);
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
+        member = new Member(1L, identifier, null, encryptedPassword, nickname, null, memberProfile);
     }
 
     @Test
@@ -74,13 +73,13 @@ class GoalRoomTest {
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
                 new RoadmapContent("content"), member);
         final Member member1 = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
         final Member member2 = new Member(3L, new Identifier("identifier3"),
-                new EncryptedPassword(new Password("password1")), new Nickname("닉네임3"),
+                null, new EncryptedPassword(new Password("password1")), new Nickname("닉네임3"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(2023, 7, 20), "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
 
         // when
         goalRoom.join(member1);
@@ -115,7 +114,7 @@ class GoalRoomTest {
 
         //when, then
         assertThatThrownBy(() -> goalRoom.join(member))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
     }
 
@@ -127,7 +126,7 @@ class GoalRoomTest {
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(member))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
     }
 
@@ -139,7 +138,7 @@ class GoalRoomTest {
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(member))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(GoalRoomException.class)
                 .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
     }
 
@@ -224,7 +223,7 @@ class GoalRoomTest {
         // when
         // then
         assertThatThrownBy(() -> goalRoom.leave(notJoinMember))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(GoalRoomException.class);
     }
 
     @Test
@@ -245,17 +244,14 @@ class GoalRoomTest {
     }
 
     private Member 크리에이터를_생성한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1),
-                "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         return new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), null, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE,
-                LocalDate.of(1995, 9, 30), "010-1234-5678");
-
-        return new Member(id, new Identifier(identifier), new EncryptedPassword(new Password("password1!")),
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
+        return new Member(id, new Identifier(identifier), null, new EncryptedPassword(new Password("password1!")),
                 new Nickname(nickname), null, memberProfile);
     }
 

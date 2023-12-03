@@ -90,7 +90,7 @@ class AuthenticationIntegrationTest extends InitIntegrationTest {
     }
 
     @Test
-    void 정상적으로_토큰_재발행을_힌다() {
+    void 정상적으로_토큰_재발행을_한다() {
         //given
         final ReissueTokenRequest 토큰_재발행_요청 = new ReissueTokenRequest(기본_재발행_토큰);
 

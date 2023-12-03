@@ -30,22 +30,24 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapContents;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapReview;
-import co.kirikiri.exception.AuthenticationException;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ForbiddenException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
+import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
-import java.time.LocalDate;
+import co.kirikiri.service.exception.AuthenticationException;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.ConflictException;
+import co.kirikiri.service.exception.ForbiddenException;
+import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.roadmap.RoadmapCreateService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -61,9 +63,9 @@ import org.springframework.context.ApplicationEventPublisher;
 class RoadmapCreateServiceTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
-            new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
             null,
-            new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock
     private MemberRepository memberRepository;
@@ -87,7 +89,7 @@ class RoadmapCreateServiceTest {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
-    private RoadmapCreateService roadmapService;
+    private RoadmapCreateService roadmapCreateService;
 
     @Test
     void 로드맵을_생성한다() {
@@ -114,7 +116,7 @@ class RoadmapCreateServiceTest {
                 .thenReturn(Optional.of(MEMBER));
 
         // expect
-        assertDoesNotThrow(() -> roadmapService.create(request, "identifier1"));
+        assertDoesNotThrow(() -> roadmapCreateService.create(request, "identifier1"));
     }
 
     @Test
@@ -129,7 +131,7 @@ class RoadmapCreateServiceTest {
                 .willReturn(Optional.empty());
 
         // expect
-        assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
+        assertThatThrownBy(() -> roadmapCreateService.create(request, "identifier1"))
                 .isInstanceOf(AuthenticationException.class);
     }
 
@@ -147,7 +149,7 @@ class RoadmapCreateServiceTest {
                 .willReturn(Optional.empty());
 
         // expect
-        assertThatThrownBy(() -> roadmapService.create(request, "identifier1"))
+        assertThatThrownBy(() -> roadmapCreateService.create(request, "identifier1"))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -155,9 +157,9 @@ class RoadmapCreateServiceTest {
     void 로드맵에_대한_리뷰를_추가한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
 
@@ -177,7 +179,7 @@ class RoadmapCreateServiceTest {
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("최고의 로드맵이네요", 5.0);
 
         // expected
-        assertDoesNotThrow(() -> roadmapService.createReview(1L, "identifier2", roadmapReviewSaveRequest));
+        assertDoesNotThrow(() -> roadmapCreateService.createReview(1L, "identifier2", roadmapReviewSaveRequest));
     }
 
     @Test
@@ -190,7 +192,7 @@ class RoadmapCreateServiceTest {
 
         // expected
         assertThatThrownBy(() ->
-                roadmapService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
+                roadmapCreateService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -210,7 +212,7 @@ class RoadmapCreateServiceTest {
 
         // expected
         assertThatThrownBy(() ->
-                roadmapService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
+                roadmapCreateService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
                 .isInstanceOf(BadRequestException.class);
     }
 
@@ -218,9 +220,9 @@ class RoadmapCreateServiceTest {
     void 로드맵_리뷰_작성시_이미_작성을_완료했으면_예외가_발생한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"),
                 null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
 
@@ -240,7 +242,7 @@ class RoadmapCreateServiceTest {
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("최고의 로드맵이네요", 5.0);
 
         // expected
-        assertThatThrownBy(() -> roadmapService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
+        assertThatThrownBy(() -> roadmapCreateService.createReview(1L, "cokirikiri", roadmapReviewSaveRequest))
                 .isInstanceOf(BadRequestException.class);
     }
 
@@ -259,7 +261,7 @@ class RoadmapCreateServiceTest {
 
         // when
         // then
-        assertDoesNotThrow(() -> roadmapService.deleteRoadmap("identifier1", 1L));
+        assertDoesNotThrow(() -> roadmapCreateService.deleteRoadmap("identifier1", 1L));
         verify(roadmapRepository, times(1)).delete(any());
     }
 
@@ -267,8 +269,8 @@ class RoadmapCreateServiceTest {
     void 골룸이_생성된_적이_있는_로드맵을_삭제한다() {
         // given
         final Member follower = new Member(2L, new Identifier("identifier2"),
-                new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1999, 6, 8), "010-1234-5678"));
+                null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임2"), null,
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory(1L, "운동");
         final Roadmap roadmap = 로드맵을_생성한다(MEMBER, category);
@@ -286,7 +288,7 @@ class RoadmapCreateServiceTest {
 
         // when
         // then
-        assertDoesNotThrow(() -> roadmapService.deleteRoadmap("identifier1", 1L));
+        assertDoesNotThrow(() -> roadmapCreateService.deleteRoadmap("identifier1", 1L));
         assertThat(roadmap.isDeleted()).isTrue();
         verify(roadmapRepository, never()).delete(any());
     }
@@ -299,7 +301,7 @@ class RoadmapCreateServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> roadmapService.deleteRoadmap("identifier1", 1L))
+        assertThatThrownBy(() -> roadmapCreateService.deleteRoadmap("identifier1", 1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage("존재하지 않는 로드맵입니다. roadmapId = 1");
     }
@@ -321,9 +323,36 @@ class RoadmapCreateServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> roadmapService.deleteRoadmap("identifier2", 1L))
+        assertThatThrownBy(() -> roadmapCreateService.deleteRoadmap("identifier2", 1L))
                 .isInstanceOf(ForbiddenException.class)
                 .hasMessage("해당 로드맵을 생성한 사용자가 아닙니다.");
+    }
+
+    @Test
+    void 정상적으로_로드맵_카테고리를_생성한다() {
+        //given
+        final RoadmapCategorySaveRequest category = new RoadmapCategorySaveRequest("운동");
+
+        when(roadmapCategoryRepository.findByName(anyString()))
+                .thenReturn(Optional.empty());
+
+        //when
+        //then
+        assertDoesNotThrow(() -> roadmapCreateService.createRoadmapCategory(category));
+    }
+
+    @Test
+    void 로드맵_카테고리_생성_시_중복될_이름일_경우_예외를_던진다() {
+        //given
+        final RoadmapCategorySaveRequest category = new RoadmapCategorySaveRequest("운동");
+
+        when(roadmapCategoryRepository.findByName(anyString()))
+                .thenReturn(Optional.of(new RoadmapCategory("운동")));
+
+        //when
+        //then
+        assertThatThrownBy(() -> roadmapCreateService.createRoadmapCategory(category))
+                .isInstanceOf(ConflictException.class);
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {

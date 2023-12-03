@@ -1,12 +1,12 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.exception.AuthenticationException;
-import co.kirikiri.exception.BadRequestException;
-import co.kirikiri.exception.ConflictException;
-import co.kirikiri.exception.ForbiddenException;
-import co.kirikiri.exception.NotFoundException;
-import co.kirikiri.exception.ServerException;
 import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.exception.AuthenticationException;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.ConflictException;
+import co.kirikiri.service.exception.ForbiddenException;
+import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.exception.ServerException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import java.util.List;
 import org.slf4j.Logger;

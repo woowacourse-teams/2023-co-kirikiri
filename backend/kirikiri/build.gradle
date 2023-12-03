@@ -80,7 +80,8 @@ jacocoTestReport {
                             "**/*Request*",
                             "**/*Response*",
                             "**/*Interceptor*",
-                            "**/*Exception*"
+                            "**/*Exception*",
+                            "**/*Mapper*"
                     ] + QDomains)
                 })
         )
@@ -122,7 +123,8 @@ jacocoTestCoverageVerification {
                     "**.*Request*",
                     "**.*Response*",
                     "**.*Interceptor*",
-                    "**.*Exception*"
+                    "**.*Exception*",
+                    "**.*Mapper*"
             ] + QDomains
         }
     }
@@ -167,6 +169,9 @@ dependencies {
 
     // flyway
     implementation 'org.flywaydb:flyway-mysql'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // test
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

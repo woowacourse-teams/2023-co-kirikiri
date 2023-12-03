@@ -2,7 +2,7 @@ package co.kirikiri.domain.roadmap;
 
 import co.kirikiri.domain.BaseCreatedTimeEntity;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -101,7 +101,7 @@ public class Roadmap extends BaseCreatedTimeEntity {
 
     private void validateTitleLength(final String title) {
         if (title.length() < TITLE_MIN_LENGTH || title.length() > TITLE_MAX_LENGTH) {
-            throw new BadRequestException(
+            throw new RoadmapException(
                     String.format("로드맵 제목의 길이는 최소 %d글자, 최대 %d글자입니다.", TITLE_MIN_LENGTH, TITLE_MAX_LENGTH)
             );
         }
@@ -109,7 +109,7 @@ public class Roadmap extends BaseCreatedTimeEntity {
 
     private void validateIntroductionLength(final String introduction) {
         if (introduction.length() < INTRODUCTION_MIN_LENGTH || introduction.length() > INTRODUCTION_MAX_LENGTH) {
-            throw new BadRequestException(
+            throw new RoadmapException(
                     String.format("로드맵 소개글의 길이는 최소 %d글자, 최대 %d글자입니다.",
                             INTRODUCTION_MIN_LENGTH, INTRODUCTION_MAX_LENGTH
                     )
@@ -119,7 +119,7 @@ public class Roadmap extends BaseCreatedTimeEntity {
 
     private void validateRequiredPeriod(final int requiredPeriod) {
         if (requiredPeriod < REQUIRED_MIN_PERIOD || requiredPeriod > REQUIRED_MAX_PERIOD) {
-            throw new BadRequestException(
+            throw new RoadmapException(
                     String.format("로드맵 추천 소요 기간은 최소 %d일, 최대 %d일입니다.", REQUIRED_MIN_PERIOD, REQUIRED_MAX_PERIOD)
             );
         }

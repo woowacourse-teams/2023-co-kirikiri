@@ -12,6 +12,11 @@ export type UserLoginRequest = {
   password: string;
 };
 
+export type OAuthResponse = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 export type UserLoginResponse = {
   accessToken: string;
   refreshToken: string;

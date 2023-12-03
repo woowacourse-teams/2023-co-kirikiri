@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member.vo;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.member.exception.MemberException;
 import jakarta.persistence.Column;
 import java.util.Objects;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 public class Nickname {
 
     private static final int MIN_LENGTH = 2;
-    private static final int MAX_LENGTH = 8;
+    private static final int MAX_LENGTH = 20;
 
-    @Column(name = "nickname", length = 15, unique = true, nullable = false)
+    @Column(name = "nickname", length = 30, unique = true, nullable = false)
     private String value;
 
     public Nickname(final String value) {
@@ -21,7 +21,7 @@ public class Nickname {
 
     private void validate(final String value) {
         if (isNotValidLength(value)) {
-            throw new BadRequestException("제약 조건에 맞지 않는 닉네임입니다.");
+            throw new MemberException("제약 조건에 맞지 않는 닉네임입니다.");
         }
     }
 
