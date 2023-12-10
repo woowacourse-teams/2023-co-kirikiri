@@ -33,12 +33,12 @@ import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class GoalRoomPendingMemberRepositoryTest {
@@ -128,9 +128,9 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER,
                 LocalDateTime.now(), savedGoalRoom, creator);
@@ -168,7 +168,7 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member follower = 사용자를_생성한다("identifier2", "password!2", "name", "010-1111-1111");
+        final Member follower = 사용자를_생성한다("identifier2", "password!2", "name", "kirikiri1@email.com");
 
         //when
         savedGoalRoom.join(follower);
@@ -200,9 +200,9 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember0 = goalRoom.getGoalRoomPendingMembers().getValues().get(0);
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
@@ -238,9 +238,9 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember0 = goalRoom.getGoalRoomPendingMembers().getValues().get(0);
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
@@ -280,9 +280,9 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "010-1111-1111");
-        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "010-1111-1112");
-        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "010-1111-1113");
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
+        final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
+        final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember0 = goalRoom.getGoalRoomPendingMembers().getValues().get(0);
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
@@ -310,7 +310,7 @@ class GoalRoomPendingMemberRepositoryTest {
     }
 
     private Member 크리에이터를_저장한다() {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
         final Member creator = new Member(new Identifier("cokirikiri"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"),
                 new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG), memberProfile);
@@ -318,8 +318,8 @@ class GoalRoomPendingMemberRepositoryTest {
     }
 
     private Member 사용자를_생성한다(final String identifier, final String password, final String nickname,
-                             final String phoneNumber) {
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), phoneNumber);
+                             final String email) {
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
         final Member member = new Member(new Identifier(identifier), new EncryptedPassword(new Password(password)),
                 new Nickname(nickname), new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG),
                 memberProfile);

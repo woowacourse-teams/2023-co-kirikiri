@@ -17,9 +17,6 @@ public record GoalRoomCreateRequest(
         Integer limitedMemberCount,
 
         @Valid
-        GoalRoomTodoRequest goalRoomTodo,
-
-        @Valid
         List<GoalRoomRoadmapNodeRequest> goalRoomRoadmapNodeRequests
 ) {
 

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap.vo;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import jakarta.persistence.Column;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -23,7 +23,7 @@ public class RoadmapTagName {
 
     private void validate(final String name) {
         if (name.length() < MIN_LENGTH || name.length() > MAX_LENGTH) {
-            throw new BadRequestException(
+            throw new RoadmapException(
                     String.format("태그 이름은 최소 %d자부터 최대 %d자까지 가능합니다.", MIN_LENGTH, MAX_LENGTH));
         }
     }

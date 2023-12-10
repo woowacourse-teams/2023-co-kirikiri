@@ -4,9 +4,11 @@ import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인
 import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
 import static co.kirikiri.integration.fixture.CommonFixture.아이디를_반환한다;
 import static co.kirikiri.integration.fixture.CommonFixture.응답_상태_코드_검증;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_삭제;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_카테고리를_생성한다;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.요청을_받는_이미지가_포함된_로드맵_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,6 +17,7 @@ import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
@@ -22,14 +25,13 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 class RoadmapCreateIntegrationTest extends InitIntegrationTest {
 
@@ -244,7 +246,6 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
         final String 로드맵_노드_설명 = "a".repeat(2001);
         final List<RoadmapNodeSaveRequest> 로드맵_노드들 = List.of(
                 new RoadmapNodeSaveRequest("로드맵 노드 제목", 로드맵_노드_설명, Collections.emptyList()));
-        testTransactionService.로드맵_카테고리를_저장한다("여행");
 
         final RoadmapSaveRequest 로드맵_생성_요청값 = new RoadmapSaveRequest(기본_카테고리.getId(), "로드맵 제목", "로드맵 소개글",
                 "로드맵 본문", RoadmapDifficultyType.DIFFICULT, 30, 로드맵_노드들, List.of(new RoadmapTagSaveRequest("태그1")));
@@ -354,8 +355,8 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
         // given
         final Long 로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
 
-        회원가입(new MemberJoinRequest("identifier2", "password2!", "name2", "010-1111-2222", GenderType.FEMALE,
-                LocalDate.now()));
+        회원가입(new MemberJoinRequest("identifier2", "password2!", "name2",
+                GenderType.FEMALE, DEFAULT_EMAIL));
         final String 다른_사용자_로그인_토큰 = String.format(BEARER_TOKEN_FORMAT,
                 로그인(new LoginRequest("identifier2", "password2!")).accessToken());
 
@@ -367,5 +368,63 @@ class RoadmapCreateIntegrationTest extends InitIntegrationTest {
         응답_상태_코드_검증(로드맵_삭제_응답, HttpStatus.FORBIDDEN);
         assertThat(에러_메세지.message()).isEqualTo("해당 로드맵을 생성한 사용자가 아닙니다.");
 
+    }
+
+    @Test
+    void 정상적으로_카테고리를_생성한다() {
+        //given
+        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("운동");
+
+        //when
+        final ExtractableResponse<Response> 로드맵_카테고리_생성_응답 = 로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
+
+        //then
+        응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.CREATED);
+    }
+
+    @Test
+    void 카테고리_생성_시_10글자_초과_이름이_들어올_경우() {
+        //given
+        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("10자 초과되는 카테고리 이름");
+
+        //when
+        final ExtractableResponse<Response> 로드맵_카테고리_생성_응답 = 로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
+
+        //then
+        final ErrorResponse 에러_메세지 = 로드맵_카테고리_생성_응답.as(ErrorResponse.class);
+
+        응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.BAD_REQUEST);
+        assertThat(에러_메세지.message()).isEqualTo("카테고리 이름은 1자 이상 10자 이하입니다.");
+    }
+
+    @Test
+    void 카테고리_생성_시_공백이_들어올_경우() {
+        //given
+        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("");
+
+        //when
+        final ExtractableResponse<Response> 로드맵_카테고리_생성_응답 = 로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
+
+        //then
+        final ErrorResponse[] 에러_메세지 = 로드맵_카테고리_생성_응답.as(ErrorResponse[].class);
+
+        응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.BAD_REQUEST);
+        assertThat(에러_메세지[0].message()).isEqualTo("카테고리 이름은 빈 값일 수 없습니다.");
+    }
+
+    @Test
+    void 카테고리_생성_시_이미_있는_이름인_경우() {
+        //given
+        final RoadmapCategorySaveRequest 로드맵_카테고리_생성_요청 = new RoadmapCategorySaveRequest("운동");
+        로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
+
+        //when
+        final ExtractableResponse<Response> 로드맵_카테고리_생성_응답 = 로드맵_카테고리를_생성한다(기본_로그인_토큰, 로드맵_카테고리_생성_요청);
+
+        //then
+        final ErrorResponse 에러_메세지 = 로드맵_카테고리_생성_응답.as(ErrorResponse.class);
+
+        응답_상태_코드_검증(로드맵_카테고리_생성_응답, HttpStatus.CONFLICT);
+        assertThat(에러_메세지.message()).isEqualTo("이미 존재하는 이름의 카테고리입니다.");
     }
 }

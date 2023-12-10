@@ -20,6 +20,8 @@ public class Member extends BaseUpdatedTimeEntity {
     @Embedded
     private Identifier identifier;
 
+    private String oauthId;
+
     @Embedded
     private EncryptedPassword encryptedPassword;
 
@@ -40,13 +42,19 @@ public class Member extends BaseUpdatedTimeEntity {
 
     public Member(final Identifier identifier, final EncryptedPassword encryptedPassword, final Nickname nickname,
                   final MemberImage image, final MemberProfile memberProfile) {
-        this(null, identifier, encryptedPassword, nickname, image, memberProfile);
+        this(null, identifier, null, encryptedPassword, nickname, image, memberProfile);
     }
 
-    public Member(final Long id, final Identifier identifier, final EncryptedPassword encryptedPassword,
+    public Member(final Identifier identifier, final String oauthId, final Nickname nickname,
+                  final MemberImage image, final MemberProfile memberProfile) {
+        this(null, identifier, oauthId, null, nickname, image, memberProfile);
+    }
+
+    public Member(final Long id, final Identifier identifier, final String oauthId, final EncryptedPassword encryptedPassword,
                   final Nickname nickname, final MemberImage image, final MemberProfile memberProfile) {
         this.id = id;
         this.identifier = identifier;
+        this.oauthId = oauthId;
         this.encryptedPassword = encryptedPassword;
         this.nickname = nickname;
         this.image = image;

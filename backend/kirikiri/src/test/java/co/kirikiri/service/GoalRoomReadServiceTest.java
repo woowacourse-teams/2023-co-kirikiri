@@ -41,8 +41,6 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.exception.ForbiddenException;
-import co.kirikiri.exception.NotFoundException;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
@@ -56,6 +54,7 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
@@ -63,6 +62,9 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.service.exception.ForbiddenException;
+import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.goalroom.GoalRoomReadService;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -926,7 +928,7 @@ class GoalRoomReadServiceTest {
     }
 
     @Test
-    void 골룸의_전체_노드를_조회한다() {
+    void 골룸의_전체_노드를_조회한다() throws MalformedURLException {
         // given
         final Member creator = 사용자를_생성한다(1L);
         final Roadmap roadmap = 로드맵을_생성한다(creator);
@@ -938,12 +940,18 @@ class GoalRoomReadServiceTest {
                 .thenReturn(Optional.of(goalRoomMember));
         when(goalRoomRepository.findByIdWithNodes(1L))
                 .thenReturn(Optional.of(goalRoom));
+        given(fileService.generateUrl(anyString(), any()))
+                .willReturn(new URL("http://example.com/serverFilePath"));
 
         // when
-        final List<GoalRoomRoadmapNodeResponse> responses = goalRoomReadService.findAllGoalRoomNodes(1L, "identifier");
-        final List<GoalRoomRoadmapNodeResponse> expected = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2)
+        final List<GoalRoomRoadmapNodeDetailResponse> responses = goalRoomReadService.findAllGoalRoomNodes(1L,
+                "identifier");
+        final List<GoalRoomRoadmapNodeDetailResponse> expected = List.of(
+                new GoalRoomRoadmapNodeDetailResponse(1L, "로드맵 1주차", "로드맵 1주차 내용",
+                        List.of("http://example.com/serverFilePath", "http://example.com/serverFilePath"), TODAY,
+                        TEN_DAY_LATER, 10),
+                new GoalRoomRoadmapNodeDetailResponse(2L, "로드맵 2주차", "로드맵 2주차 내용",
+                        Collections.emptyList(), TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2)
         );
 
         // then
@@ -1177,17 +1185,16 @@ class GoalRoomReadServiceTest {
     private Member 크리에이터를_생성한다() {
         final MemberImage memberImage = new MemberImage("originalFileName", "default-member-image",
                 ImageContentType.JPG);
-        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, LocalDate.of(1990, 1, 1), "010-1234-5678");
-        return new Member(1L, new Identifier("cokirikiri"), new EncryptedPassword(new Password("password1!")),
+        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri@email.com");
+        return new Member(1L, new Identifier("cokirikiri"), null, new EncryptedPassword(new Password("password1!")),
                 new Nickname("코끼리"), memberImage, memberProfile);
     }
 
     private Member 사용자를_생성한다(final Long id) {
         return new Member(id, new Identifier("identifier1"),
-                new EncryptedPassword(new Password("password1")), new Nickname("name1"),
+                null, new EncryptedPassword(new Password("password1")), new Nickname("name1"),
                 new MemberImage("originalFileName", "serverFilePath", ImageContentType.JPEG),
-                new MemberProfile(Gender.FEMALE, LocalDate.of(2000, 7, 20),
-                        "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator) {

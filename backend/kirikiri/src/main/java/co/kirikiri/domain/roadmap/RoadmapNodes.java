@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.exception.BadRequestException;
+import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -32,7 +32,7 @@ public class RoadmapNodes {
                 .collect(Collectors.toSet())
                 .size();
         if (roadmapNodes.size() != distinctNameCount) {
-            throw new BadRequestException("한 로드맵에 같은 이름의 노드가 존재할 수 없습니다.");
+            throw new RoadmapException("한 로드맵에 같은 이름의 노드가 존재할 수 없습니다.");
         }
     }
 

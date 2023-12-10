@@ -1,3 +1,4 @@
+import { naverLogin } from '@apis/user';
 import SVGIcon from '@components/icons/SVGIcon';
 import * as S from './LoginOptions.styles';
 
@@ -6,19 +7,21 @@ type LoginOptionsProps = {
 };
 
 const LoginOptions = ({ toggleLoginForm }: LoginOptionsProps) => {
+  const onClickNaverLoginButton = () => {
+    naverLogin();
+  };
+
   return (
     <>
       <S.OathButtonContainer>
         <div>
-          {/* <S.OathButton type='kakao'>
-            <SVGIcon name='KakaoIcon' />
-            카카오톡으로 3초 만에 로그인하기
+          <S.OathButton type='naver' onClick={onClickNaverLoginButton}>
+            <SVGIcon name='NaverIcon' size={12} />
+            <span>네이버 로그인</span>
           </S.OathButton>
-          <S.OathButton type='google'>
-            <SVGIcon name='GoogleIcon' /> 구글로 로그인하기
-          </S.OathButton> */}
           <S.OathButton onClick={toggleLoginForm}>
-            <SVGIcon name='PersonIcon' /> 아이디로 로그인하기
+            <SVGIcon name='PersonIcon' size={22} />
+            <span>아이디로 로그인하기</span>
           </S.OathButton>
         </div>
       </S.OathButtonContainer>

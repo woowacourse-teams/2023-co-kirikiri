@@ -11,8 +11,6 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.time.Month;
 import org.springframework.http.MediaType;
 
 public class MemberAPIFixture {
@@ -20,9 +18,8 @@ public class MemberAPIFixture {
     public static final String DEFAULT_IDENTIFIER = "identifier1";
     public static final String DEFAULT_PASSWORD = "password1!";
     public static final String DEFAULT_NICKNAME = "nickname";
-    public static final String DEFAULT_PHONE_NUMBER = "010-1234-5678";
-    public static final LocalDate DEFAULT_BIRTHDAY = LocalDate.of(2023, Month.JULY, 12);
     public static final GenderType DEFAULT_GENDER_TYPE = GenderType.MALE;
+    public static final String DEFAULT_EMAIL = "kirikiri1@email.com";
 
     public static ExtractableResponse<Response> 요청을_받는_회원가입(final MemberJoinRequest 회원가입_요청) {
         return given().log().all()
@@ -43,7 +40,7 @@ public class MemberAPIFixture {
 
     public static Long 기본_회원가입() {
         final MemberJoinRequest 회원가입_요청 = new MemberJoinRequest(DEFAULT_IDENTIFIER, DEFAULT_PASSWORD, DEFAULT_NICKNAME,
-                DEFAULT_PHONE_NUMBER, DEFAULT_GENDER_TYPE, DEFAULT_BIRTHDAY);
+                DEFAULT_GENDER_TYPE, DEFAULT_EMAIL);
         return 회원가입(회원가입_요청);
     }
 
@@ -71,7 +68,7 @@ public class MemberAPIFixture {
 
     public static String 사용자를_추가하고_토큰을_조회한다(final String 아이디, final String 닉네임) {
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest(아이디, "paswword2@",
-                닉네임, "010-1234-1234", GenderType.FEMALE, LocalDate.of(1999, 9, 9));
+                닉네임, GenderType.FEMALE, DEFAULT_EMAIL);
         final LoginRequest 팔로워_로그인_요청 = new LoginRequest(팔로워_회원_가입_요청.identifier(), 팔로워_회원_가입_요청.password());
         회원가입(팔로워_회원_가입_요청);
         return String.format(BEARER_TOKEN_FORMAT, 로그인(팔로워_로그인_요청).accessToken());

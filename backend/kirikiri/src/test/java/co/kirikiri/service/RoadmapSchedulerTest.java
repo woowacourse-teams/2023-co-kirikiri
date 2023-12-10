@@ -27,14 +27,15 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import co.kirikiri.service.scheduler.RoadmapScheduler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapSchedulerTest {
@@ -56,10 +57,10 @@ class RoadmapSchedulerTest {
         // given
         final Member member1 = new Member(new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("name1"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
         final Member member2 = new Member(new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password2!")), new Nickname("name2"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-2222"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");
         final RoadmapContent roadmapContent1_1 = new RoadmapContent("로드맵 본문2");
@@ -101,10 +102,10 @@ class RoadmapSchedulerTest {
         // given
         final Member member1 = new Member(new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("name1"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
         final Member member2 = new Member(new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password2!")), new Nickname("name2"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-2222"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");
         final RoadmapContent roadmapContent1 = new RoadmapContent("로드맵 본문1");
@@ -140,10 +141,10 @@ class RoadmapSchedulerTest {
         // given
         final Member member1 = new Member(new Identifier("identifier1"),
                 new EncryptedPassword(new Password("password1!")), new Nickname("name1"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-1111"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
         final Member member2 = new Member(new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password2!")), new Nickname("name2"), null,
-                new MemberProfile(Gender.FEMALE, LocalDate.of(1900, 1, 1), "010-1111-2222"));
+                new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");
         final RoadmapContent roadmapContent1 = new RoadmapContent("로드맵 본문1");

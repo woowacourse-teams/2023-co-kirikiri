@@ -4,8 +4,10 @@ import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
 import static co.kirikiri.integration.fixture.CommonFixture.AUTHORIZATION;
 import static io.restassured.RestAssured.given;
 
+import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.service.dto.CustomScrollRequest;
+import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
@@ -15,10 +17,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import java.io.IOException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoadmapAPIFixture {
 
@@ -209,5 +213,31 @@ public class RoadmapAPIFixture {
                 .get("/api/roadmaps/search?size=" + 페이지_사이즈 + "&roadmapTitle=" + 로드맵_제목)
                 .then().log().all()
                 .extract();
+    }
+
+    public static ExtractableResponse<Response> 로드맵_카테고리를_생성한다(final String 로그인_토큰_정보, final RoadmapCategorySaveRequest 카테고리_생성_요청) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .header(AUTHORIZATION, 로그인_토큰_정보)
+                .body(카테고리_생성_요청)
+                .post("/api/roadmaps/categories")
+                .then()
+                .log().all()
+                .extract();
+    }
+
+    public static RoadmapCategory 카테고리_생성(final String 로그인_토큰_정보, final String 카테고리_이름) {
+        로드맵_카테고리를_생성한다(로그인_토큰_정보, new RoadmapCategorySaveRequest(카테고리_이름));
+        return new RoadmapCategory(1L, 카테고리_이름);
+    }
+
+    public static List<RoadmapCategory> 카테고리들_생성(final String 로그인_토큰_정보, final String... 카테고리_이름들) {
+        final List<RoadmapCategory> 카테고리들 = new ArrayList<>();
+        for (final String 카테고리_이름 : 카테고리_이름들) {
+            final RoadmapCategory 카테고리 = 카테고리_생성(로그인_토큰_정보, 카테고리_이름);
+            카테고리들.add(카테고리);
+        }
+        return 카테고리들;
     }
 }
