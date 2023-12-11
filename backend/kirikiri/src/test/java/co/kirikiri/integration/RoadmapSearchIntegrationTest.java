@@ -1,21 +1,5 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
-import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_NICKNAME;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.이전_검색_결과를_전달받아_제목으로_최신순_정렬된_로드맵을_검색한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.이전_검색_결과를_전달받아_크리에이터_닉네임으로_정렬된_로드맵을_검색한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.이전_검색_결과를_전달받아_태그_이름으로_최신순_정렬된_로드맵을_검색한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.제목으로_최신순_정렬된_로드맵을_검색한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.크리에이터_닉네임으로_정렬된_로드맵을_검색한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.태그_이름으로_최신순_정렬된_로드맵을_검색한다;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
@@ -27,9 +11,17 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import io.restassured.common.mapper.TypeRef;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.Test;
+
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
+import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.*;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoadmapSearchIntegrationTest extends InitIntegrationTest {
 
@@ -124,7 +116,7 @@ class RoadmapSearchIntegrationTest extends InitIntegrationTest {
     }
 
     @Test
-    void 크리에이터_닉네입_기준으로_로드맵_검색_시_크리에이터명이_검색어로_시작하는_모든_로드맵을_조회한다() throws IOException {
+    void 크리에이터_닉네임_기준으로_로드맵_검색_시_크리에이터명이_검색어로_시작하는_모든_로드맵을_조회한다() throws IOException {
         // given
         final MemberJoinRequest 닉네임_시작이_다른_회원_가입_요청 = new MemberJoinRequest("identifier3", "paswword3#",
                 "a" + DEFAULT_NICKNAME, GenderType.MALE, DEFAULT_EMAIL);
@@ -277,11 +269,13 @@ class RoadmapSearchIntegrationTest extends InitIntegrationTest {
                 });
 
         // then
-        assertThat(첫번째_로드맵_리스트_응답.hasNext()).isFalse();
-        assertThat(첫번째_로드맵_리스트_응답.responses().get(0).roadmapId()).isEqualTo(세번째_로드맵_아이디);
-        assertThat(첫번째_로드맵_리스트_응답.responses().get(1).roadmapId()).isEqualTo(두번째_로드맵_아이디);
-        assertThat(첫번째_로드맵_리스트_응답.responses().get(2).roadmapId()).isEqualTo(네번째_로드맵_아이디);
-        assertThat(첫번째_로드맵_리스트_응답.responses().get(3).roadmapId()).isEqualTo(첫번째_로드맵_아이디);
+        assertAll(
+                () -> assertThat(첫번째_로드맵_리스트_응답.hasNext()).isFalse(),
+                () -> assertThat(첫번째_로드맵_리스트_응답.responses().get(0).roadmapId()).isEqualTo(세번째_로드맵_아이디),
+                () -> assertThat(첫번째_로드맵_리스트_응답.responses().get(1).roadmapId()).isEqualTo(두번째_로드맵_아이디),
+                () -> assertThat(첫번째_로드맵_리스트_응답.responses().get(2).roadmapId()).isEqualTo(네번째_로드맵_아이디),
+                () -> assertThat(첫번째_로드맵_리스트_응답.responses().get(3).roadmapId()).isEqualTo(첫번째_로드맵_아이디)
+        );
     }
 
     @Test
