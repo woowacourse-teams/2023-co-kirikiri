@@ -332,7 +332,7 @@ class RoadmapRepositoryTest {
     }
 
     @Test
-    void 로드맵을_제목으로_검색한다() {
+    void 제목이_검색어를_포함하는_로드맵을_일치도_순으로_반환한다() {
         // given
         final Member creator = 사용자를_생성한다("cokirikiri", "코끼리");
         final RoadmapCategory category = 카테고리를_생성한다("여가");
@@ -355,12 +355,12 @@ class RoadmapRepositoryTest {
                 () -> assertThat(roadmapRequest).hasSize(4),
                 () -> assertThat(roadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(roadmap4, roadmap3, roadmap2, roadmap1))
+                        .isEqualTo(List.of(roadmap1, roadmap2, roadmap3, roadmap4))
         );
     }
 
     @Test
-    void 로드맵을_크리에이터_닉네임으로_검색한다() {
+    void 크리에이터_닉네임이_검색으로_시작하는_로드맵을_일치도_순으로_반환한다() {
         // given
         final Member creator1 = 사용자를_생성한다("cokirikiri", "코끼리");
         final Member creator2 = 사용자를_생성한다("cokirikiri2", "코코끼");
@@ -387,12 +387,12 @@ class RoadmapRepositoryTest {
                 () -> assertThat(roadmapRequest).hasSize(5),
                 () -> assertThat(roadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
-                        .isEqualTo(List.of(roadmap5, roadmap4, roadmap3, roadmap2, roadmap1))
+                        .isEqualTo(List.of(roadmap3, roadmap2, roadmap1, roadmap5, roadmap4))
         );
     }
 
     @Test
-    void 로드맵을_태그_이름으로_검색한다() {
+    void 태그_이름이_검색어로_시작하는_로드맵을_최신순으로_반환한다() {
         // given
         final Member creator = 사용자를_생성한다("cokirikiri", "코끼리");
         final RoadmapCategory category = 카테고리를_생성한다("여가");
@@ -435,6 +435,50 @@ class RoadmapRepositoryTest {
                 () -> assertThat(roadmapRequest).usingRecursiveComparison()
                         .ignoringFields("id", "createdAt", "updatedAt")
                         .isEqualTo(List.of(roadmap3, roadmap2, roadmap1))
+        );
+    }
+
+    @Test
+    void 태그_이름이_검색어와_일치하는_로드맵을_최신순으로_반환한다() {
+        // given
+        final Member creator = 사용자를_생성한다("cokirikiri", "코끼리");
+        final RoadmapCategory category = 카테고리를_생성한다("여가");
+
+        final Roadmap roadmap1 = 로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("스프링")),
+                        new RoadmapTag(new RoadmapTagName("자바")))));
+
+        final Roadmap roadmap2 = 로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("자바")))));
+
+        final Roadmap roadmap3 = 로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("자바스크립트")))));
+
+        로드맵을_저장한다("로드맵", creator, category);
+
+        로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("왕자바")))));
+
+        로드맵을_태그와_저장한다("로드맵", creator, category,
+                new RoadmapTags(List.of(
+                        new RoadmapTag(new RoadmapTagName("야자바위")))));
+
+        final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
+        final RoadmapSearchDto searchRequest = RoadmapSearchDto.create(null, null, " 자 바 ");
+
+        // when
+        final List<Roadmap> roadmapRequest = roadmapRepository.findRoadmapsByTagName(searchRequest.getTagName().value());
+
+        // then
+        assertAll(
+                () -> assertThat(roadmapRequest).hasSize(2),
+                () -> assertThat(roadmapRequest).usingRecursiveComparison()
+                        .ignoringFields("id", "createdAt", "updatedAt")
+                        .isEqualTo(List.of(roadmap2, roadmap1))
         );
     }
 

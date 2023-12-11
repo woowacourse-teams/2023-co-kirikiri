@@ -1,14 +1,5 @@
 package co.kirikiri.persistence.roadmap;
 
-import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
-import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
-import static co.kirikiri.domain.member.QMember.member;
-import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
-import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
-import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
-import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
-import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
-
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
@@ -20,6 +11,7 @@ import co.kirikiri.persistence.dto.RoadmapSearchCreatorNickname;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.dto.RoadmapSearchTagName;
 import co.kirikiri.persistence.dto.RoadmapSearchTitle;
+import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -27,8 +19,18 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQuery;
+
 import java.util.List;
 import java.util.Optional;
+
+import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
+import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
+import static co.kirikiri.domain.member.QMember.member;
+import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
+import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
+import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
+import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
+import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
 
 public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter implements RoadmapQueryRepository {
 
@@ -82,6 +84,18 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                         titleCond(searchRequest.getTitle()),
                         tagCond(searchRequest.getTagName()),
                         creatorNicknameCond(searchRequest.getCreatorName()))
+                .orderBy(searchSortCond(searchRequest), sortCond(RoadmapOrderType.LATEST))
+                .fetch();
+    }
+
+    @Override
+    public List<Roadmap> findRoadmapsByTagName(final String tagName) {
+        return selectFrom(roadmap)
+                .innerJoin(roadmap.category, roadmapCategory)
+                .fetchJoin()
+                .innerJoin(roadmap.creator, member)
+                .fetchJoin()
+                .where(roadmap.tags.values.any().name.value.eq(tagName))
                 .orderBy(sortCond(RoadmapOrderType.LATEST))
                 .fetch();
     }
@@ -189,6 +203,18 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
             );
         }
         return roadmap.createdAt.desc();
+    }
+
+    private OrderSpecifier<?> searchSortCond(final RoadmapSearchDto searchDto) {
+        if (searchDto.getTitle() != null) {
+            return roadmap.title.length().asc();
+        }
+
+        if (searchDto.getCreatorName() != null) {
+            return roadmap.creator.nickname.value.length().asc();
+        }
+
+        return new OrderSpecifier(Order.ASC, NullExpression.DEFAULT);
     }
 
     private JPAQuery<Long> goalRoomCountCond(final BooleanExpression isSatisfiedRoadmap) {
