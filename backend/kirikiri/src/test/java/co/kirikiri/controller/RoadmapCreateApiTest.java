@@ -24,6 +24,11 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.kirikiri.common.exception.AuthenticationException;
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ConflictException;
+import co.kirikiri.common.exception.ForbiddenException;
+import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
@@ -32,11 +37,6 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
-import co.kirikiri.service.exception.AuthenticationException;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ConflictException;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.roadmap.RoadmapCreateService;
 import co.kirikiri.service.roadmap.RoadmapReadService;
 import com.fasterxml.jackson.core.type.TypeReference;

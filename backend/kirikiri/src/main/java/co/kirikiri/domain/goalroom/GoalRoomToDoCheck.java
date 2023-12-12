@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;

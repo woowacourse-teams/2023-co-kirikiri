@@ -16,12 +16,13 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponses;
@@ -35,7 +36,6 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.roadmap.RoadmapCreateService;
 import co.kirikiri.service.roadmap.RoadmapReadService;
 import com.fasterxml.jackson.core.type.TypeReference;

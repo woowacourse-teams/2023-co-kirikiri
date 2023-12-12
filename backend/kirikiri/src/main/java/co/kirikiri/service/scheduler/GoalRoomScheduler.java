@@ -1,13 +1,13 @@
 package co.kirikiri.service.scheduler;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.common.aop.ExceptionConvert;
+import co.kirikiri.common.entity.BaseEntity;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.service.aop.ExceptionConvert;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

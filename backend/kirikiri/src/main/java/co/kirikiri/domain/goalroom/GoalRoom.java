@@ -1,11 +1,11 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseUpdatedTimeEntity;
+import co.kirikiri.common.entity.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -184,7 +184,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomMembers.size();
     }
 
-    // FIXME 테스트용 메서드
     public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
         this.goalRoomMembers.addAll(new ArrayList<>(members));
     }

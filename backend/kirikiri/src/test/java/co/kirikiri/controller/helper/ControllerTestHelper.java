@@ -3,12 +3,12 @@ package co.kirikiri.controller.helper;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.common.interceptor.AuthInterceptor;
-import co.kirikiri.common.resolver.MemberIdentifierArgumentResolver;
+import co.kirikiri.auth.interceptor.AuthInterceptorImpl;
+import co.kirikiri.auth.resolver.MemberIdentifierArgumentResolverImpl;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.FieldDescriptor;
-import java.util.List;
 
 public class ControllerTestHelper extends RestDocsHelper {
 
@@ -16,10 +16,10 @@ public class ControllerTestHelper extends RestDocsHelper {
     protected final String BEARER_TOKEN_FORMAT = "Bearer %s";
 
     @MockBean
-    protected AuthInterceptor authInterceptor;
+    protected AuthInterceptorImpl authInterceptor;
 
     @MockBean
-    private MemberIdentifierArgumentResolver memberIdentifierArgumentResolver;
+    private MemberIdentifierArgumentResolverImpl memberIdentifierArgumentResolver;
 
     @BeforeEach
     void setUp() {

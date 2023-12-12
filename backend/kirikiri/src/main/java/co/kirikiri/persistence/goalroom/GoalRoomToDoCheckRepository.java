@@ -3,7 +3,7 @@ package co.kirikiri.persistence.goalroom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
-import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.member.domain.vo.Identifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

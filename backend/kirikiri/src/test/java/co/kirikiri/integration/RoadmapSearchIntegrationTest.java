@@ -8,16 +8,16 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.태그_이름으
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
 import io.restassured.common.mapper.TypeRef;
-import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class RoadmapSearchIntegrationTest extends InitIntegrationTest {
 

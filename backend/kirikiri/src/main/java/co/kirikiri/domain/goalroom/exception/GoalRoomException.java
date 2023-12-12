@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom.exception;
 
-import co.kirikiri.domain.exception.DomainException;
+import co.kirikiri.common.exception.DomainException;
 
 public class GoalRoomException extends DomainException {
 

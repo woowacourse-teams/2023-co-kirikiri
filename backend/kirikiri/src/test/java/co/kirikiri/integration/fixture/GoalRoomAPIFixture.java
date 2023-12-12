@@ -5,24 +5,24 @@ import static co.kirikiri.integration.fixture.CommonFixture.AUTHORIZATION;
 import static co.kirikiri.integration.fixture.CommonFixture.LOCATION;
 import static io.restassured.RestAssured.given;
 
+import co.kirikiri.member.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 public class GoalRoomAPIFixture {
 

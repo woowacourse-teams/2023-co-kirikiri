@@ -18,8 +18,19 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ForbiddenException;
+import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.member.service.dto.response.MemberCheckFeedResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomForListResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomRoadmapNodeResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomRoadmapNodesResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomToDoCheckResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomTodoResponse;
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
@@ -29,15 +40,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.goalroom.GoalRoomCreateService;
 import co.kirikiri.service.goalroom.GoalRoomReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -766,18 +770,18 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         return new MemberGoalRoomResponse("골룸 이름", "RUNNING", 1L,
                 15, 20, LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31), 1L,
-                new GoalRoomRoadmapNodesResponse(false, true, List.of(
-                        new GoalRoomRoadmapNodeResponse(1L, "첫번째 골룸 노드 제목", LocalDate.of(2023, 1, 1),
+                new MemberGoalRoomRoadmapNodesResponse(false, true, List.of(
+                        new MemberGoalRoomRoadmapNodeResponse(1L, "첫번째 골룸 노드 제목", LocalDate.of(2023, 1, 1),
                                 LocalDate.of(2023, 1, 31), 15),
-                        new GoalRoomRoadmapNodeResponse(2L, "두번째 골룸 노드 제목", LocalDate.of(2023, 2, 1),
+                        new MemberGoalRoomRoadmapNodeResponse(2L, "두번째 골룸 노드 제목", LocalDate.of(2023, 2, 1),
                                 LocalDate.of(2023, 2, 28), 14))),
-                List.of(new GoalRoomTodoResponse(1L, "첫 번째 할일",
+                List.of(new MemberGoalRoomTodoResponse(1L, "첫 번째 할일",
                         LocalDate.of(2023, 1, 15), LocalDate.of(2023, 1, 31),
-                        new GoalRoomToDoCheckResponse(false))),
-                List.of(new CheckFeedResponse(1L, "imageUrl1", "인증 피드 설명 1", LocalDate.now()),
-                        new CheckFeedResponse(2L, "imageUrl2", "인증 피드 설명 2", LocalDate.now()),
-                        new CheckFeedResponse(3L, "imageUrl3", "인증 피드 설명 3", LocalDate.now()),
-                        new CheckFeedResponse(4L, "imageUrl4", "인증 피드 설명 4", LocalDate.now())));
+                        new MemberGoalRoomToDoCheckResponse(false))),
+                List.of(new MemberCheckFeedResponse(1L, "imageUrl1", "인증 피드 설명 1", LocalDate.now()),
+                        new MemberCheckFeedResponse(2L, "imageUrl2", "인증 피드 설명 2", LocalDate.now()),
+                        new MemberCheckFeedResponse(3L, "imageUrl3", "인증 피드 설명 3", LocalDate.now()),
+                        new MemberCheckFeedResponse(4L, "imageUrl4", "인증 피드 설명 4", LocalDate.now())));
 
     }
 
