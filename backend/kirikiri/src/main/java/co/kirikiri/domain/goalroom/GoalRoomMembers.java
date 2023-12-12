@@ -1,7 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.exception.UnexpectedDomainException;
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.common.exception.UnexpectedDomainException;
+import co.kirikiri.member.domain.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;

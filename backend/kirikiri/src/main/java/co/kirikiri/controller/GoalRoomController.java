@@ -2,6 +2,8 @@ package co.kirikiri.controller;
 
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomForListResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
@@ -14,8 +16,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.goalroom.GoalRoomCreateService;
 import co.kirikiri.service.goalroom.GoalRoomReadService;
 import jakarta.validation.Valid;

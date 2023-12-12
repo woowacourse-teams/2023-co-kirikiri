@@ -32,28 +32,28 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberCheckFeedResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomForListResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomRoadmapNodeResponse;
+import co.kirikiri.member.service.dto.response.MemberGoalRoomRoadmapNodesResponse;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCertifiedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
@@ -201,12 +201,12 @@ class GoalRoomReadIntegrationTest extends InitIntegrationTest {
         // then
         final MemberGoalRoomResponse 예상되는_응답값 = new MemberGoalRoomResponse(정상적인_골룸_이름, "RUNNING", 기본_회원_아이디,
                 2, 정상적인_골룸_제한_인원, 오늘, 십일_후, 로드맵_응답.content().id(),
-                new GoalRoomRoadmapNodesResponse(false, false,
-                        List.of(new GoalRoomRoadmapNodeResponse(로드맵_응답.content().nodes().get(0).id(),
+                new MemberGoalRoomRoadmapNodesResponse(false, false,
+                        List.of(new MemberGoalRoomRoadmapNodeResponse(로드맵_응답.content().nodes().get(0).id(),
                                 "roadmap 1st week", 오늘, 십일_후, 정상적인_골룸_노드_인증_횟수))),
                 List.of(),
-                List.of(new CheckFeedResponse(2L, "default-image-path", "image description", LocalDate.now()),
-                        new CheckFeedResponse(1L, "default-image-path", "image description", LocalDate.now())));
+                List.of(new MemberCheckFeedResponse(2L, "default-image-path", "image description", LocalDate.now()),
+                        new MemberCheckFeedResponse(1L, "default-image-path", "image description", LocalDate.now())));
 
         assertThat(요청_응답값)
                 .usingRecursiveComparison()

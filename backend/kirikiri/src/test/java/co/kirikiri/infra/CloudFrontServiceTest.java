@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.common.exception.ServerException;
+import co.kirikiri.common.infra.CloudFrontService;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;

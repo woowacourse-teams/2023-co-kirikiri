@@ -11,14 +11,15 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ConflictException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
+import co.kirikiri.member.controller.MemberController;
+import co.kirikiri.member.service.MemberService;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ConflictException;
-import co.kirikiri.service.member.MemberService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import org.junit.jupiter.api.Test;
