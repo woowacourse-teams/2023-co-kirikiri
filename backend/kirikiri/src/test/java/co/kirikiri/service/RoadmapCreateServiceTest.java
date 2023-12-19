@@ -1,22 +1,5 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -24,18 +7,18 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
 import co.kirikiri.roadmap.domain.RoadmapContents;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import co.kirikiri.roadmap.domain.RoadmapReview;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
+import co.kirikiri.roadmap.service.RoadmapCreateService;
+import co.kirikiri.roadmap.service.RoadmapGoalRoomService;
 import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
@@ -47,17 +30,23 @@ import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.ConflictException;
 import co.kirikiri.service.exception.ForbiddenException;
 import co.kirikiri.service.exception.NotFoundException;
-import co.kirikiri.roadmap.service.RoadmapCreateService;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateServiceTest {
@@ -77,16 +66,13 @@ class RoadmapCreateServiceTest {
     private RoadmapReviewRepository roadmapReviewRepository;
 
     @Mock
-    private GoalRoomRepository goalRoomRepository;
-
-    @Mock
-    private GoalRoomMemberRepository goalRoomMemberRepository;
-
-    @Mock
     private RoadmapCategoryRepository roadmapCategoryRepository;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Mock
+    private RoadmapGoalRoomService roadmapGoalRoomService;
 
     @InjectMocks
     private RoadmapCreateService roadmapCreateService;
@@ -166,13 +152,11 @@ class RoadmapCreateServiceTest {
         final Roadmap roadmap = 로드맵을_생성한다(MEMBER, category);
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(MEMBER, targetRoadmapContent);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(Optional.of(
-                        new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom, follower)));
+        when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
+                .thenReturn(follower);
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.empty());
 
@@ -205,8 +189,8 @@ class RoadmapCreateServiceTest {
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(Optional.empty());
+        when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
+                .thenThrow(new BadRequestException("Error Message"));
 
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("리뷰 내용", null);
 
@@ -229,13 +213,11 @@ class RoadmapCreateServiceTest {
         final Roadmap roadmap = 로드맵을_생성한다(MEMBER, category);
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(MEMBER, targetRoadmapContent);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(anyLong(), any(), any()))
-                .thenReturn(Optional.of(
-                        new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom, follower)));
+        when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
+                .thenReturn(follower);
         when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
                 .thenReturn(Optional.of(new RoadmapReview("로드맵 짱!", 5.0, MEMBER)));
 
@@ -256,8 +238,8 @@ class RoadmapCreateServiceTest {
                 .thenReturn(Optional.of(roadmap));
         when(roadmapRepository.findByIdAndMemberIdentifier(anyLong(), anyString()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomRepository.findByRoadmap(any()))
-                .thenReturn(Collections.emptyList());
+        when(roadmapGoalRoomService.hasGoalRooms(roadmap))
+                .thenReturn(false);
 
         // when
         // then
@@ -277,14 +259,13 @@ class RoadmapCreateServiceTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(follower, targetRoadmapContent);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(roadmapRepository.findByIdAndMemberIdentifier(anyLong(), anyString()))
                 .thenReturn(Optional.of(roadmap));
-        when(goalRoomRepository.findByRoadmap(any()))
-                .thenReturn(List.of(goalRoom));
+        when(roadmapGoalRoomService.hasGoalRooms(roadmap))
+                .thenReturn(true);
 
         // when
         // then
@@ -314,7 +295,6 @@ class RoadmapCreateServiceTest {
 
         final RoadmapContents roadmapContents = roadmap.getContents();
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        골룸을_생성한다(MEMBER, targetRoadmapContent);
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
@@ -360,9 +340,5 @@ class RoadmapCreateServiceTest {
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
         roadmap.addContent(content);
         return roadmap;
-    }
-
-    private GoalRoom 골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent, member);
     }
 }

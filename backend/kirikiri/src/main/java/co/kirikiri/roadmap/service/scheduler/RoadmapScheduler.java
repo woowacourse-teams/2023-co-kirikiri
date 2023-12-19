@@ -1,16 +1,17 @@
 package co.kirikiri.roadmap.service.scheduler;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapStatus;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.service.aop.ExceptionConvert;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Component
 @Transactional

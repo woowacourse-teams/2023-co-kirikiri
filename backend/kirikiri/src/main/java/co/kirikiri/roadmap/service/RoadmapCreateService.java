@@ -1,10 +1,8 @@
 package co.kirikiri.roadmap.service;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -15,13 +13,9 @@ import co.kirikiri.roadmap.domain.RoadmapReview;
 import co.kirikiri.roadmap.domain.RoadmapTag;
 import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
-import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.roadmap.service.dto.RoadmapNodeSaveDto;
 import co.kirikiri.roadmap.service.dto.RoadmapReviewDto;
 import co.kirikiri.roadmap.service.dto.RoadmapSaveDto;
@@ -30,18 +24,20 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
+import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
+import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.exception.AuthenticationException;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.ConflictException;
 import co.kirikiri.service.exception.ForbiddenException;
 import co.kirikiri.service.exception.NotFoundException;
-import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -52,9 +48,8 @@ public class RoadmapCreateService {
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapReviewRepository roadmapReviewRepository;
-    private final GoalRoomRepository goalRoomRepository;
-    private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final RoadmapGoalRoomService roadmapGoalRoomService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @CacheEvict(value = "roadmapList", allEntries = true)
@@ -122,8 +117,7 @@ public class RoadmapCreateService {
 
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final GoalRoomMember goalRoomMember = findCompletedGoalRoomMember(roadmapId, identifier);
-        final Member member = goalRoomMember.getMember();
+        final Member member = roadmapGoalRoomService.findCompletedGoalRoomMember(roadmapId, identifier);
         final RoadmapReviewDto roadmapReviewDto = RoadmapMapper.convertRoadmapReviewDto(request, member);
         validateReviewQualification(roadmap, member);
         validateReviewCount(roadmap, member);
@@ -135,13 +129,6 @@ public class RoadmapCreateService {
     private Roadmap findRoadmapById(final Long id) {
         return roadmapRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
-    }
-
-    private GoalRoomMember findCompletedGoalRoomMember(final Long roadmapId, final String identifier) {
-        return goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(roadmapId,
-                        new Identifier(identifier), GoalRoomStatus.COMPLETED)
-                .orElseThrow(() -> new BadRequestException(
-                        "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = " + roadmapId + " memberIdentifier = " + identifier));
     }
 
     private void validateReviewQualification(final Roadmap roadmap, final Member member) {
@@ -162,8 +149,7 @@ public class RoadmapCreateService {
     public void deleteRoadmap(final String identifier, final Long roadmapId) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         validateRoadmapCreator(roadmapId, identifier);
-        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
-        if (goalRooms.isEmpty()) {
+        if (!roadmapGoalRoomService.hasGoalRooms(roadmap)) {
             roadmapRepository.delete(roadmap);
             return;
         }
@@ -171,8 +157,9 @@ public class RoadmapCreateService {
     }
 
     private void validateRoadmapCreator(final Long roadmapId, final String identifier) {
-        roadmapRepository.findByIdAndMemberIdentifier(roadmapId, identifier)
-                .orElseThrow(() -> new ForbiddenException("해당 로드맵을 생성한 사용자가 아닙니다."));
+        if (roadmapRepository.findByIdAndMemberIdentifier(roadmapId, identifier).isEmpty()) {
+            throw new ForbiddenException("해당 로드맵을 생성한 사용자가 아닙니다.");
+        }
     }
 
     @CacheEvict(value = "categoryList", allEntries = true)
