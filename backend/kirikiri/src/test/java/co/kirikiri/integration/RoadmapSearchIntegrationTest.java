@@ -9,11 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
+import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
+import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponses;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;

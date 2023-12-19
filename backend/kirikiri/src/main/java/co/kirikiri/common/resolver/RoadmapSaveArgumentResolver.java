@@ -1,7 +1,7 @@
 package co.kirikiri.common.resolver;
 
-import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.service.exception.BadRequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

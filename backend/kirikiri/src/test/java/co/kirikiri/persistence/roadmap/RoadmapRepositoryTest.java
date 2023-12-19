@@ -20,17 +20,17 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.domain.roadmap.RoadmapReview;
-import co.kirikiri.domain.roadmap.RoadmapStatus;
-import co.kirikiri.domain.roadmap.RoadmapTag;
-import co.kirikiri.domain.roadmap.RoadmapTags;
-import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
+import co.kirikiri.roadmap.domain.Roadmap;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
+import co.kirikiri.roadmap.domain.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapDifficulty;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.domain.RoadmapReview;
+import co.kirikiri.roadmap.domain.RoadmapStatus;
+import co.kirikiri.roadmap.domain.RoadmapTag;
+import co.kirikiri.roadmap.domain.RoadmapTags;
+import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
@@ -41,6 +41,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import org.junit.jupiter.api.Test;
 
 @RepositoryTest

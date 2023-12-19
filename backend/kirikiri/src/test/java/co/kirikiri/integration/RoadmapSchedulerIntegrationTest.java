@@ -13,11 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import co.kirikiri.service.scheduler.RoadmapScheduler;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
+import co.kirikiri.roadmap.service.scheduler.RoadmapScheduler;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.LocalDate;

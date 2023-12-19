@@ -19,19 +19,19 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리_생
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
+import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponses;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import java.io.IOException;
 import java.util.List;

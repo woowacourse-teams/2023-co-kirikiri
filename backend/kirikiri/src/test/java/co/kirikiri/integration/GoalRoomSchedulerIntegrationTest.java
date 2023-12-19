@@ -32,7 +32,7 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.service.scheduler.GoalRoomScheduler;
 import java.io.IOException;
 import java.util.List;

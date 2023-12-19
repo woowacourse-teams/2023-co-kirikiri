@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.roadmap.exception.RoadmapException;
+import co.kirikiri.roadmap.domain.RoadmapNodeImage;
+import co.kirikiri.roadmap.domain.RoadmapNodeImages;
+import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 

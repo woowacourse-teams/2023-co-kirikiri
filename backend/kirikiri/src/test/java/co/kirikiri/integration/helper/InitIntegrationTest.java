@@ -5,11 +5,11 @@ import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.기본_회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리_생성;
 
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
+import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
+import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
 import org.junit.jupiter.api.BeforeEach;
 import java.util.List;
 

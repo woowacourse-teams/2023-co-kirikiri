@@ -2,7 +2,8 @@ package co.kirikiri.domain.roadmap;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import co.kirikiri.domain.roadmap.exception.RoadmapException;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

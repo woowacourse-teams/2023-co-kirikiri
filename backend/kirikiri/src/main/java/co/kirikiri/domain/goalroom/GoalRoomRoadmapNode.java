@@ -3,7 +3,7 @@ package co.kirikiri.domain.goalroom;
 import co.kirikiri.domain.BaseEntity;
 import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.roadmap.domain.RoadmapNode;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

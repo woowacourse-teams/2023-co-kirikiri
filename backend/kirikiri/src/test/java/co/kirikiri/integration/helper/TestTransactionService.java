@@ -25,7 +25,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
