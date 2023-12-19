@@ -2,8 +2,8 @@ package co.kirikiri.roadmap.service;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.persistence.dto.RoadmapSearchDto;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
+import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;

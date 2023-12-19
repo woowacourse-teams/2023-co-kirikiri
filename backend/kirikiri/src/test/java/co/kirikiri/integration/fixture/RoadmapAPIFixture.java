@@ -1,6 +1,6 @@
 package co.kirikiri.integration.fixture;
 
-import co.kirikiri.persistence.dto.RoadmapOrderType;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;

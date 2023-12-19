@@ -1,8 +1,4 @@
-package co.kirikiri.service;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+package co.kirikiri.roadmap.service;
 
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -18,17 +14,16 @@ import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
-import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.roadmap.service.dto.RoadmapNodeSaveDto;
 import co.kirikiri.roadmap.service.dto.RoadmapSaveDto;
 import co.kirikiri.roadmap.service.dto.RoadmapTagSaveDto;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
+import co.kirikiri.service.FilePathGenerator;
+import co.kirikiri.service.FileService;
+import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.ServerException;
-import co.kirikiri.roadmap.service.RoadmapCreateEventListener;
-import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +31,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateEventListenerTest {

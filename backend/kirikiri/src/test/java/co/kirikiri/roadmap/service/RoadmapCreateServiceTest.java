@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.roadmap.service;
 
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -17,8 +17,6 @@ import co.kirikiri.roadmap.domain.RoadmapReview;
 import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
-import co.kirikiri.roadmap.service.RoadmapCreateService;
-import co.kirikiri.roadmap.service.RoadmapGoalRoomService;
 import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;

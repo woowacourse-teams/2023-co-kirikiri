@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.persistence.dto.RoadmapOrderType;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;

@@ -1,4 +1,4 @@
-package co.kirikiri.service.member;
+package co.kirikiri.service.goalroom;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -34,6 +34,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @ExceptionConvert
 public class RoadmapGoalRoomServiceImpl implements RoadmapGoalRoomService {
+
+    private static final int DELETE_AFTER_MONTH = 3;
 
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
@@ -86,5 +88,20 @@ public class RoadmapGoalRoomServiceImpl implements RoadmapGoalRoomService {
     private MemberDto makeMemberDto(final Member creator) {
         final URL url = fileService.generateUrl(creator.getImage().getServerFilePath(), HttpMethod.GET);
         return new MemberDto(creator.getId(), creator.getNickname().getValue(), url.toExternalForm());
+    }
+
+    @Override
+    public boolean canDeleteGoalRoomsInRoadmap(final Roadmap roadmap) {
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
+        final boolean canDelete = canDeleteRoadmapBasedOnGoalRooms(goalRooms);
+        if (canDelete) {
+            goalRoomRepository.deleteAll(goalRooms);
+        }
+        return canDelete;
+    }
+
+    private boolean canDeleteRoadmapBasedOnGoalRooms(final List<GoalRoom> goalRooms) {
+        return goalRooms.stream()
+                .allMatch(goalRoom -> goalRoom.isCompleted() && goalRoom.isCompletedAfterMonths(DELETE_AFTER_MONTH));
     }
 }

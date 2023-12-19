@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.persistence.dto.RoadmapOrderType;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;

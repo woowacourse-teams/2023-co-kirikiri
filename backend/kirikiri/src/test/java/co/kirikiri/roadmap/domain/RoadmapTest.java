@@ -1,4 +1,4 @@
-package co.kirikiri.domain.roadmap;
+package co.kirikiri.roadmap.domain;
 
 import static co.kirikiri.roadmap.domain.RoadmapDifficulty.DIFFICULT;
 import static org.assertj.core.api.Assertions.assertThat;

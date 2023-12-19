@@ -1,4 +1,4 @@
-package co.kirikiri.domain.roadmap;
+package co.kirikiri.roadmap.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

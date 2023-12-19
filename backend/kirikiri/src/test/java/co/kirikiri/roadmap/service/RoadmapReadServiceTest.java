@@ -1,4 +1,4 @@
-package co.kirikiri.service;
+package co.kirikiri.roadmap.service;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -25,8 +25,6 @@ import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
-import co.kirikiri.roadmap.service.RoadmapGoalRoomService;
-import co.kirikiri.roadmap.service.RoadmapReadService;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.roadmap.service.dto.request.RoadmapOrderTypeRequest;
@@ -43,6 +41,7 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
+import co.kirikiri.service.FileService;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.NotFoundException;

@@ -4,8 +4,9 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapStatus;
-import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.persistence.dto.RoadmapSearchDto;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
+import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
+
 import java.util.List;
 import java.util.Optional;
 

@@ -1,7 +1,4 @@
-package co.kirikiri.persistence.roadmap;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+package co.kirikiri.roadmap.persistence;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -12,6 +9,8 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.persistence.helper.RepositoryTest;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -19,14 +18,13 @@ import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
 import co.kirikiri.roadmap.domain.RoadmapReview;
-import co.kirikiri.persistence.helper.RepositoryTest;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
-import co.kirikiri.roadmap.persistence.RoadmapRepository;
-import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @RepositoryTest
 class RoadmapReviewRepositoryTest {

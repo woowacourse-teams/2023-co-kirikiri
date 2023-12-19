@@ -1,4 +1,4 @@
-package co.kirikiri.persistence.dto;
+package co.kirikiri.roadmap.persistence.dto;
 
 import co.kirikiri.service.exception.BadRequestException;
 

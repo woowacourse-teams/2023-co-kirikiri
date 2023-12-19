@@ -1,28 +1,10 @@
-package co.kirikiri.controller;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+package co.kirikiri.roadmap.controller;
 
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
-import co.kirikiri.roadmap.controller.RoadmapController;
-import co.kirikiri.service.dto.CustomScrollRequest;
-import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.roadmap.service.RoadmapCreateService;
+import co.kirikiri.roadmap.service.RoadmapReadService;
 import co.kirikiri.roadmap.service.dto.request.RoadmapOrderTypeRequest;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponses;
@@ -36,14 +18,11 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
+import co.kirikiri.service.dto.CustomScrollRequest;
+import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.NotFoundException;
-import co.kirikiri.roadmap.service.RoadmapCreateService;
-import co.kirikiri.roadmap.service.RoadmapReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -51,6 +30,25 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RoadmapController.class)
 class RoadmapReadApiTest extends ControllerTestHelper {

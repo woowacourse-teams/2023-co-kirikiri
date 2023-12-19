@@ -1,7 +1,4 @@
-package co.kirikiri.persistence.roadmap;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+package co.kirikiri.roadmap.persistence;
 
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
@@ -20,6 +17,10 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.persistence.helper.RepositoryTest;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -31,20 +32,17 @@ import co.kirikiri.roadmap.domain.RoadmapStatus;
 import co.kirikiri.roadmap.domain.RoadmapTag;
 import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
-import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.persistence.dto.RoadmapSearchDto;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.helper.RepositoryTest;
-import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
+import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
-import co.kirikiri.roadmap.persistence.RoadmapRepository;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @RepositoryTest
 class RoadmapRepositoryTest {

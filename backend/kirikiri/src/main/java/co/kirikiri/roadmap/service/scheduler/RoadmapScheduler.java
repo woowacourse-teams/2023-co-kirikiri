@@ -1,10 +1,9 @@
 package co.kirikiri.roadmap.service.scheduler;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapStatus;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
+import co.kirikiri.roadmap.service.RoadmapGoalRoomService;
 import co.kirikiri.service.aop.ExceptionConvert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,10 +18,8 @@ import java.util.List;
 @ExceptionConvert
 public class RoadmapScheduler {
 
-    private static final int DELETE_AFTER_MONTH = 3;
-
     private final RoadmapRepository roadmapRepository;
-    private final GoalRoomRepository goalRoomRepository;
+    private final RoadmapGoalRoomService roadmapGoalRoomService;
 
     @Scheduled(cron = "0 0 4 * * *")
     public void deleteRoadmaps() {
@@ -34,21 +31,10 @@ public class RoadmapScheduler {
     }
 
     private void delete(final Roadmap roadmap) {
-        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
-        final boolean canDelete = canDeleteRoadmapBasedOnGoalRooms(goalRooms);
+        final boolean canDelete = roadmapGoalRoomService.canDeleteGoalRoomsInRoadmap(roadmap);
         if (canDelete) {
-            deleteGoalRooms(goalRooms);
             deleteRoadmap(roadmap);
         }
-    }
-
-    private boolean canDeleteRoadmapBasedOnGoalRooms(final List<GoalRoom> goalRooms) {
-        return goalRooms.stream()
-                .allMatch(goalRoom -> goalRoom.isCompleted() && goalRoom.isCompletedAfterMonths(DELETE_AFTER_MONTH));
-    }
-
-    private void deleteGoalRooms(final List<GoalRoom> goalRooms) {
-        goalRoomRepository.deleteAll(goalRooms);
     }
 
     private void deleteRoadmap(final Roadmap roadmap) {

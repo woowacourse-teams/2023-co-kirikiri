@@ -16,4 +16,6 @@ public interface RoadmapGoalRoomService {
     RoadmapGoalRoomNumberDto findRoadmapGoalRoomsByRoadmap(final Roadmap roadmap);
 
     RoadmapGoalRoomResponses makeRoadmapGoalRoomResponsesByOrderType(final Roadmap roadmap, final RoadmapGoalRoomsOrderTypeDto orderTypeDto, final CustomScrollRequest scrollRequest);
+
+    boolean canDeleteGoalRoomsInRoadmap(final Roadmap roadmap);
 }
