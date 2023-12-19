@@ -1,22 +1,7 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-
 import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -25,6 +10,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -35,15 +21,13 @@ import co.kirikiri.roadmap.domain.RoadmapReview;
 import co.kirikiri.roadmap.domain.RoadmapTag;
 import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
-import co.kirikiri.service.dto.CustomScrollRequest;
-import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.roadmap.service.RoadmapGoalRoomService;
+import co.kirikiri.roadmap.service.RoadmapReadService;
+import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.roadmap.service.dto.request.RoadmapOrderTypeRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSearchRequest;
@@ -59,8 +43,15 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
+import co.kirikiri.service.dto.CustomScrollRequest;
+import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.NotFoundException;
-import co.kirikiri.roadmap.service.RoadmapReadService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -68,11 +59,12 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapReadServiceTest {
@@ -86,6 +78,9 @@ class RoadmapReadServiceTest {
     private final LocalDateTime now = LocalDateTime.now();
 
     @Mock
+    private MemberRepository memberRepository;
+
+    @Mock
     private RoadmapRepository roadmapRepository;
 
     @Mock
@@ -95,13 +90,10 @@ class RoadmapReadServiceTest {
     private RoadmapContentRepository roadmapContentRepository;
 
     @Mock
-    private GoalRoomRepository goalRoomRepository;
-
-    @Mock
-    private MemberRepository memberRepository;
-
-    @Mock
     private RoadmapReviewRepository roadmapReviewRepository;
+
+    @Mock
+    private RoadmapGoalRoomService roadmapGoalRoomService;
 
     @Mock
     private FileService fileService;
@@ -112,21 +104,18 @@ class RoadmapReadServiceTest {
     @Test
     void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() throws MalformedURLException {
         //given
-        final Member member = 사용자를_생성한다(1L, "identifier1", "코끼리");
         final RoadmapCategory category = 로드맵_카테고리를_생성한다(1L, "운동");
         final RoadmapContent content = 로드맵_컨텐츠를_생성한다(1L, "콘텐츠 내용");
         final Roadmap roadmap = 로드맵을_생성한다("로드맵 제목", category);
         roadmap.addContent(content);
         final Long roadmapId = 1L;
 
-        final List<GoalRoom> goalRooms = 상태별_골룸_목록을_생성한다();
-
         when(roadmapRepository.findRoadmapById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
         when(roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(any()))
                 .thenReturn(Optional.of(roadmap.getContents().getValues().get(0)));
-        when(goalRoomRepository.findByRoadmap(any()))
-                .thenReturn(goalRooms);
+        when(roadmapGoalRoomService.findRoadmapGoalRoomsByRoadmap(any()))
+                .thenReturn(new RoadmapGoalRoomNumberDto(2, 2, 2));
         when(fileService.generateUrl(anyString(), any()))
                 .thenReturn(new URL("http://example.com/serverFilePath"));
 
@@ -469,40 +458,11 @@ class RoadmapReadServiceTest {
         final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1,
                 new RoadmapCategory("it"));
 
-        final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(new Period(TODAY, TODAY.plusDays(10)),
-                1, roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode2 = new GoalRoomRoadmapNode(
-                new Period(TODAY.plusDays(11), TODAY.plusDays(20)), 1, roadmapNode2);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode3 = new GoalRoomRoadmapNode(new Period(TODAY, TODAY.plusDays(10)),
-                1, roadmapNode1);
-        final GoalRoomRoadmapNode goalRoomRoadmapNode4 = new GoalRoomRoadmapNode(
-                new Period(TODAY.plusDays(11), TODAY.plusDays(20)), 1, roadmapNode2);
-
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "name2");
-        final GoalRoom goalRoom1 = new GoalRoom(1L, new GoalRoomName("goalroom1"), new LimitedMemberCount(10),
-                roadmapContent, member2);
-        goalRoom1.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
-
         final Member member3 = 사용자를_생성한다(3L, "identifier2", "name3");
-        final GoalRoom goalRoom2 = new GoalRoom(2L, new GoalRoomName("goalroom2"), new LimitedMemberCount(10),
-                roadmapContent, member3);
-        goalRoom2.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)));
 
-        final List<GoalRoom> goalRooms = List.of(goalRoom2, goalRoom1);
         given(roadmapRepository.findRoadmapById(anyLong()))
                 .willReturn(Optional.of(roadmap));
-        given(goalRoomRepository.findGoalRoomsByRoadmapAndCond(roadmap,
-                RoadmapGoalRoomsOrderType.LATEST, null, 10))
-                .willReturn(goalRooms);
-        given(fileService.generateUrl(anyString(), any()))
-                .willReturn(new URL("http://example.com/serverFilePath"));
-
-        // when
-        final RoadmapGoalRoomResponses result = roadmapService.findRoadmapGoalRoomsByOrderType(1L,
-                RoadmapGoalRoomsOrderTypeDto.LATEST, new CustomScrollRequest(null, 10));
-
         final RoadmapGoalRoomResponses expected =
                 new RoadmapGoalRoomResponses(List.of(
                         new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING, 1, 10,
@@ -515,6 +475,12 @@ class RoadmapReadServiceTest {
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue(),
                                         "http://example.com/serverFilePath"))), false);
+        given(roadmapGoalRoomService.makeRoadmapGoalRoomResponsesByOrderType(any(), any(), any()))
+                .willReturn(expected);
+
+        // when
+        final RoadmapGoalRoomResponses result = roadmapService.findRoadmapGoalRoomsByOrderType(1L,
+                RoadmapGoalRoomsOrderTypeDto.LATEST, new CustomScrollRequest(null, 10));
 
         assertThat(result)
                 .usingRecursiveComparison()
@@ -650,29 +616,5 @@ class RoadmapReadServiceTest {
         final RoadmapCategoryResponse category9 = new RoadmapCategoryResponse(9L, "기타");
         return List.of(category1, category2, category3, category4, category5,
                 category6, category7, category8, category9);
-    }
-
-    private List<GoalRoom> 상태별_골룸_목록을_생성한다() {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 내용");
-        final GoalRoom recruitedGoalRoom1 = new GoalRoom(new GoalRoomName("모집 중 골룸 1"),
-                new LimitedMemberCount(20), roadmapContent, member);
-        final GoalRoom recruitedGoalRoom2 = new GoalRoom(new GoalRoomName("모집 중 골룸 2"),
-                new LimitedMemberCount(20), roadmapContent, member);
-        final GoalRoom runningGoalRoom1 = new GoalRoom(new GoalRoomName("진행 중 골룸 1"),
-                new LimitedMemberCount(20), roadmapContent, member);
-        final GoalRoom runningGoalRoom2 = new GoalRoom(new GoalRoomName("진행 중 골룸 2"),
-                new LimitedMemberCount(20), roadmapContent, member);
-        final GoalRoom completedGoalRoom1 = new GoalRoom(new GoalRoomName("완료된 골룸 1"),
-                new LimitedMemberCount(20), roadmapContent, member);
-        final GoalRoom completedGoalRoom2 = new GoalRoom(new GoalRoomName("완료된 골룸 2"),
-                new LimitedMemberCount(20), roadmapContent, member);
-
-        runningGoalRoom1.start();
-        runningGoalRoom2.start();
-        completedGoalRoom1.complete();
-        completedGoalRoom2.complete();
-
-        return List.of(recruitedGoalRoom1, recruitedGoalRoom2, runningGoalRoom1, runningGoalRoom2,
-                completedGoalRoom1, completedGoalRoom2);
     }
 }

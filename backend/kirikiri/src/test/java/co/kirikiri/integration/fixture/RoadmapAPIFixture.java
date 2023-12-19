@@ -1,17 +1,13 @@
 package co.kirikiri.integration.fixture;
 
-import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
-import static co.kirikiri.integration.fixture.CommonFixture.AUTHORIZATION;
-import static io.restassured.RestAssured.given;
-
-import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.service.dto.CustomScrollRequest;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.ExtractableResponse;
@@ -20,9 +16,14 @@ import io.restassured.specification.RequestSpecification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
+import static co.kirikiri.integration.fixture.CommonFixture.AUTHORIZATION;
+import static io.restassured.RestAssured.given;
 
 public class RoadmapAPIFixture {
 
