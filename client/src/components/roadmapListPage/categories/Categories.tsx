@@ -16,7 +16,6 @@ const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => 
   const downCategories = categories.slice(5);
 
   const navigate = useNavigate();
-  console.log(selectCategory);
 
   const handleClickCategory = (categoryId: CategoryType['id']) => {
     const queryParams = new URLSearchParams();
