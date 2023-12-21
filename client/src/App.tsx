@@ -10,7 +10,7 @@ import PageLayout from '@components/_common/pageLayout/PageLayout';
 import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
-import ToastProvider from '@components/_common/toastProvider/ToastProvider';
+import ToastProvider from '@/components/_common/toast/Toast';
 import MyPage from '@pages/myPage/MyPage';
 import UserInfoProvider from './components/_providers/UserInfoProvider';
 import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';

@@ -1,5 +1,6 @@
 export type ToastContainerProps = {
   message: string;
+  indicator: JSX.Element | null;
   isError?: boolean;
   isShow?: boolean | null;
   onClickToast?: () => void;

@@ -1,3 +1,4 @@
+import { API_PATH } from '@/constants/_common/api';
 import type {
   RoadmapDetailResponse,
   RoadmapListRequest,
@@ -12,7 +13,7 @@ export const getRoadmapList = async ({
   filterCond,
   lastId,
 }: RoadmapListRequest) => {
-  const { data } = await client.get<RoadmapListResponse>(`/roadmaps`, {
+  const { data } = await client.get<RoadmapListResponse>(API_PATH.ROADMAPS, {
     params: {
       ...(categoryId && { categoryId }),
       ...(lastId && { lastId }),
@@ -31,7 +32,7 @@ export const getSearchRoadmapList = async ({
   lastId = '',
   size = 10,
 }: any) => {
-  const { data } = await client.get<RoadmapListResponse>(`/roadmaps/search`, {
+  const { data } = await client.get<RoadmapListResponse>(API_PATH.ROADMAP_SEARCH, {
     params: {
       [category]: search,
       filterCond,
@@ -44,22 +45,26 @@ export const getSearchRoadmapList = async ({
 };
 
 export const getRoadmapDetail = async (id: number): Promise<RoadmapDetailResponse> => {
-  const { data } = await client.get<RoadmapDetailResponse>(`/roadmaps/${id}`);
+  const { data } = await client.get<RoadmapDetailResponse>(API_PATH.ROADMAP_DETAIL(id));
 
   return data;
 };
 
 export const postCreateRoadmap = (roadmapValue: FormData) => {
-  const resposne = client.post<RoadmapValueRequest>('/roadmaps', roadmapValue, {
-    headers: {
-      'Content-Type': 'multipart/form-data;charset=UTF-8',
-    },
-  });
+  const resposne = client.post<RoadmapValueRequest>(
+    API_PATH.CREATE_ROADMAP,
+    roadmapValue,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data;charset=UTF-8',
+      },
+    }
+  );
   return resposne;
 };
 
 export const getMyRoadmapList = async (size: number, lastId?: number) => {
-  const { data } = await client.get<RoadmapListResponse>('/roadmaps/me', {
+  const { data } = await client.get<RoadmapListResponse>(API_PATH.MY_ROADMAPS, {
     params: {
       size,
       ...(lastId && { lastId }),

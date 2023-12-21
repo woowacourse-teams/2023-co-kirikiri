@@ -5,33 +5,33 @@ type ToastContainerProps = {
 };
 
 export const ToastContainer = styled.div<ToastContainerProps>`
-  ${({ theme }) => theme.fonts.description5}
+  ${({ theme }) => theme.fonts.description3}
   position: fixed;
   right: 0;
   bottom: 0;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 
-  width: 20%;
+  width: 25%;
   min-width: 15rem;
   max-width: 50rem;
   margin: 1rem;
-  padding: 0.5rem;
+  padding: 1.5rem;
 
-  color: ${(props) =>
-    props.isError ? props.theme.colors.white : props.theme.colors.black};
+  color: ${(props) => props.theme.colors.white};
 
   background-color: ${(props) =>
-    props.isError ? props.theme.colors.red : props.theme.colors.main_light};
-  border-radius: 10px;
+    props.isError ? '#F16666' : props.theme.colors.main_dark};
+  border-radius: 12px;
   box-shadow: ${({ theme }) => theme.shadows.box};
 `;
 export const ToastMessageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-left: 2rem;
 `;
 
 export const ToastMessage = styled.span`

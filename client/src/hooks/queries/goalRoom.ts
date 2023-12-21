@@ -23,11 +23,11 @@ import {
   getGoalRoomNodeList,
 } from '@apis/goalRoom';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import useToast from '@hooks/_common/useToast';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 import { useNavigate } from 'react-router-dom';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
+import { useMutationWithKey } from './useMutationWithKey';
 
 export const useGoalRoomList = (params: GoalRoomListRequest) => {
   const { roadmapId } = params;
@@ -66,31 +66,28 @@ export const useGoalRoomDetail = (goalRoomId: number) => {
 };
 
 export const useFetchGoalRoom = (goalRoomId: string) => {
-  const { data: goalRoomResponse } = useSuspendedQuery(
-    [QUERY_KEYS.goalRoom.dashboard, goalRoomId],
-    () => getGoalRoomDashboard(goalRoomId)
+  const { data } = useSuspendedQuery([QUERY_KEYS.goalRoom.dashboard, goalRoomId], () =>
+    getGoalRoomDashboard(goalRoomId)
   );
 
   return {
-    goalRoom: goalRoomResponse,
+    goalRoom: data,
   };
 };
 
 export const useCreateGoalRoom = (roadmapId: number) => {
   const queryClient = useQueryClient();
-
   const navigate = useNavigate();
-  const { triggerToast } = useToast();
-  const { mutate } = useMutation(
+
+  const { mutate } = useMutationWithKey(
+    'CREATE_GOALROOM',
     (body: CreateGoalRoomRequest) => postCreateGoalRoom(body),
     {
-      async onSuccess() {
+      onSuccess: async () => {
+        navigate(`/roadmap/${roadmapId}/goalroom-list`);
         await queryClient.refetchQueries([QUERY_KEYS.goalRoom.list, roadmapId]);
         await queryClient.refetchQueries([QUERY_KEYS.goalRoom.my, roadmapId]);
-        navigate(`/roadmap/${roadmapId}/goalroom-list`);
-        triggerToast({ message: '모임을 생성했습니다!' });
       },
-      onError() {},
     }
   );
 
@@ -101,16 +98,14 @@ export const useCreateGoalRoom = (roadmapId: number) => {
 
 export const useCreateTodo = (goalRoomId: string) => {
   const queryClient = useQueryClient();
-  const { triggerToast } = useToast();
 
-  const { mutate } = useMutation(
+  const { mutate } = useMutationWithKey(
+    'CREATE_TODO',
     (body: newTodoPayload) => postCreateNewTodo(goalRoomId, body),
     {
       onSuccess() {
         queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
         queryClient.invalidateQueries([QUERY_KEYS.goalRoom.todos, goalRoomId]);
-
-        triggerToast({ message: '새로운 투두리스트가 등록되었습니다.' });
       },
     }
   );
@@ -135,13 +130,12 @@ export const usePostChangeTodoCheckStatus = ({
   todoId,
 }: GoalRoomTodoChangeStatusRequest) => {
   const queryClient = useQueryClient();
-  const { triggerToast } = useToast();
 
-  const { mutate } = useMutation(
+  const { mutate } = useMutationWithKey(
+    'CHECK_TODO',
     () => postToChangeTodoCheckStatus({ goalRoomId, todoId }),
     {
       onSuccess() {
-        triggerToast({ message: '투두리스트 상태 변경 완료!' });
         queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
         queryClient.invalidateQueries([QUERY_KEYS.goalRoom.todos, goalRoomId]);
       },
@@ -157,15 +151,14 @@ export const useCreateCertificationFeed = (
   goalRoomId: string,
   onSuccessCallbackFunc: () => void
 ) => {
-  const { triggerToast } = useToast();
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(
+  const { mutate } = useMutationWithKey(
+    'CREATE_FEED',
     (formData: FormData) => postCreateNewCertificationFeed(goalRoomId, formData),
     {
       onSuccess() {
         queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
-        triggerToast({ message: '인증 피드가 등록되었습니다' });
         queryClient.invalidateQueries([
           QUERY_KEYS.goalRoom.certificationFeeds,
           goalRoomId,
@@ -182,16 +175,18 @@ export const useCreateCertificationFeed = (
 
 export const useJoinGoalRoom = ({ goalRoomId }: JoinGoalRoomRequest) => {
   const navigate = useNavigate();
-  const { triggerToast } = useToast();
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(() => postJoinGoalRoom(goalRoomId), {
-    onSuccess() {
-      navigate(`/goalroom-dashboard/${goalRoomId}`);
-      triggerToast({ message: '모임에 참여하였습니다!' });
-      queryClient.invalidateQueries([QUERY_KEYS.goalRoom.detail, goalRoomId]);
-    },
-  });
+  const { mutate } = useMutationWithKey(
+    'JOIN_GOALROOM',
+    () => postJoinGoalRoom(goalRoomId),
+    {
+      onSuccess() {
+        navigate(`/goalroom-dashboard/${goalRoomId}`);
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.detail, goalRoomId]);
+      },
+    }
+  );
 
   return {
     joinGoalRoom: mutate,
@@ -223,15 +218,17 @@ export const useCertificationFeeds = (goalRoomId: string) => {
 };
 
 export const useStartGoalRoom = (goalRoomId: string) => {
-  const { triggerToast } = useToast();
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(() => postStartGoalRoom(goalRoomId), {
-    onSuccess() {
-      triggerToast({ message: '모임이 시작되었습니다' });
-      queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
-    },
-  });
+  const { mutate } = useMutationWithKey(
+    'START_GOALROOM',
+    () => postStartGoalRoom(goalRoomId),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries([QUERY_KEYS.goalRoom.dashboard, goalRoomId]);
+      },
+    }
+  );
 
   return {
     startGoalRoom: mutate,

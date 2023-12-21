@@ -15,6 +15,7 @@ import {
 } from '@/myTypes/goalRoom/remote';
 import client from '@apis/axios/client';
 import { GoalRoomRecruitmentStatus, MyPageGoalRoom } from '@myTypes/goalRoom/internal';
+import { API_PATH } from '@/constants/_common/api';
 
 export const getGoalRoomList = async ({
   roadmapId,
@@ -24,7 +25,7 @@ export const getGoalRoomList = async ({
   lastId,
 }: GoalRoomListRequest): Promise<GoalRoomDetailResponse> => {
   const { data } = await client.get<GoalRoomDetailResponse>(
-    `/roadmaps/${roadmapId}/goal-rooms`,
+    API_PATH.GOALROOMS(roadmapId),
     {
       params: {
         ...(lastId && { lastId }),
@@ -39,9 +40,7 @@ export const getGoalRoomList = async ({
 };
 
 export const getMyGoalRoomList = async (statusCond: GoalRoomRecruitmentStatus) => {
-  const { data } = await client.get<MyPageGoalRoom[]>(
-    `/goal-rooms/me?statusCond=${statusCond}`
-  );
+  const { data } = await client.get<MyPageGoalRoom[]>(API_PATH.MY_GOALROOMS(statusCond));
 
   return data;
 };
@@ -49,26 +48,28 @@ export const getMyGoalRoomList = async (statusCond: GoalRoomRecruitmentStatus) =
 export const getGoalRoomDetail = async (
   goalRoomId: number
 ): Promise<GoalRoomInfoResponse> => {
-  const { data } = await client.get<GoalRoomInfoResponse>(`/goal-rooms/${goalRoomId}`);
+  const { data } = await client.get<GoalRoomInfoResponse>(
+    API_PATH.GOALROOM_DETAIL(goalRoomId)
+  );
   return data;
 };
 
 export const getGoalRoomDashboard = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomBrowseResponse>(
-    `/goal-rooms/${goalRoomId}/me`
+    API_PATH.GOALROOM_DASHBOARD(goalRoomId)
   );
   return data;
 };
 
 export const postCreateGoalRoom = async (body: CreateGoalRoomRequest) => {
-  const { data } = await client.post(`/goal-rooms`, body);
+  const { data } = await client.post(API_PATH.CREATE_GOALROOM, body);
 
   return data;
 };
 
 export const getGoalRoomTodos = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomTodoResponse>(
-    `/goal-rooms/${goalRoomId}/todos`
+    API_PATH.GOALROOM_TODOS(goalRoomId)
   );
 
   return data;
@@ -78,18 +79,18 @@ export const postToChangeTodoCheckStatus = async ({
   goalRoomId,
   todoId,
 }: GoalRoomTodoChangeStatusRequest) => {
-  return client.post(`/goal-rooms/${goalRoomId}/todos/${todoId}`);
+  return client.post(API_PATH.CHANGE_TODO_CHECKS(goalRoomId, todoId));
 };
 
 export const postCreateNewTodo = (goalRoomId: string, body: newTodoPayload) => {
-  return client.post(`/goal-rooms/${goalRoomId}/todos`, body);
+  return client.post(API_PATH.CREATE_TODO(goalRoomId), body);
 };
 
 export const postCreateNewCertificationFeed = (
   goalRoomId: string,
   formData: FormData
 ) => {
-  return client.post(`/goal-rooms/${goalRoomId}/checkFeeds`, formData, {
+  return client.post(API_PATH.CREATE_FEED(goalRoomId), formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -97,7 +98,7 @@ export const postCreateNewCertificationFeed = (
 };
 
 export const postJoinGoalRoom = (goalRoomId: string) => {
-  return client.post(`/goal-rooms/${goalRoomId}/join`);
+  return client.post(API_PATH.JOIN_GOALROOM(goalRoomId));
 };
 
 export const getGoalRoomParticipants = async (
@@ -105,7 +106,7 @@ export const getGoalRoomParticipants = async (
   participantsSortOrder: ParticipantsSortOrder
 ) => {
   const { data } = await client.get<GoalRoomParticipantsResponse>(
-    `/goal-rooms/${goalRoomId}/members`,
+    API_PATH.GOALROOM_PARTICIPANTS(goalRoomId),
     {
       params: {
         sortCond: participantsSortOrder,
@@ -118,19 +119,19 @@ export const getGoalRoomParticipants = async (
 
 export const getCertificationFeeds = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomCertificationFeedsResponse>(
-    `/goal-rooms/${goalRoomId}/checkFeeds`
+    API_PATH.GOALROOM_FEEDS(goalRoomId)
   );
 
   return data;
 };
 
 export const postStartGoalRoom = async (goalRoomId: string) => {
-  return client.post(`/goal-rooms/${goalRoomId}/start`);
+  return client.post(API_PATH.START_GOALROOM(goalRoomId));
 };
 
 export const getGoalRoomNodeList = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomNodeListResponse>(
-    `/goal-rooms/${goalRoomId}/nodes`
+    API_PATH.GOALROOM_NODE_LIST(goalRoomId)
   );
   return data;
 };
