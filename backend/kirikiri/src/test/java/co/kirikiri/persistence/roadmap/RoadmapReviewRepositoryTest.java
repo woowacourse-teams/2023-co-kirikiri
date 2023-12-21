@@ -3,7 +3,7 @@ package co.kirikiri.persistence.roadmap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -19,11 +19,11 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
-import co.kirikiri.persistence.helper.RepositoryTest;
+import co.kirikiri.common.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
-import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapReviewRepositoryTest {

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member;
 
-import co.kirikiri.domain.BaseUpdatedTimeEntity;
+import co.kirikiri.common.entity.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
@@ -50,7 +50,8 @@ public class Member extends BaseUpdatedTimeEntity {
         this(null, identifier, oauthId, null, nickname, image, memberProfile);
     }
 
-    public Member(final Long id, final Identifier identifier, final String oauthId, final EncryptedPassword encryptedPassword,
+    public Member(final Long id, final Identifier identifier, final String oauthId,
+                  final EncryptedPassword encryptedPassword,
                   final Nickname nickname, final MemberImage image, final MemberProfile memberProfile) {
         this.id = id;
         this.identifier = identifier;

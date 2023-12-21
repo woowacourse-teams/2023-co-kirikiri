@@ -6,12 +6,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -25,17 +19,23 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
+import co.kirikiri.goalroom.domain.vo.GoalRoomName;
+import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
+import co.kirikiri.goalroom.domain.vo.Period;
+import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.service.scheduler.RoadmapScheduler;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapSchedulerTest {
@@ -73,18 +73,18 @@ class RoadmapSchedulerTest {
         roadmap1.addContent(roadmapContent1_2);
 
         final GoalRoom goalRoom1_1 = new GoalRoom(new GoalRoomName("골룸2"), new LimitedMemberCount(10),
-                roadmapContent1_1, member2);
+                roadmapContent1_1.getId(), member2.getId());
         final GoalRoom goalRoom1_2 = new GoalRoom(new GoalRoomName("골룸2-1"), new LimitedMemberCount(10),
-                roadmapContent1_2, member2);
+                roadmapContent1_2.getId(), member2.getId());
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes1 = new GoalRoomRoadmapNodes(List.of(
-                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 5, roadmapNode1)));
+                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 5, roadmapNode1.getId())));
         goalRoom1_1.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes1);
         goalRoom1_2.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes1);
 
         given(roadmapRepository.findWithRoadmapContentByStatus(any()))
                 .willReturn(List.of(roadmap1));
-        given(goalRoomRepository.findByRoadmap(roadmap1))
+        given(goalRoomRepository.findByRoadmapContentId(roadmapContent1_2.getId()))
                 .willReturn(List.of(goalRoom1_1, goalRoom1_2));
 
         // when
@@ -115,15 +115,15 @@ class RoadmapSchedulerTest {
         final Roadmap roadmap1 = new Roadmap("로드맵1", "로드맵 설명1", 30, RoadmapDifficulty.DIFFICULT, member1, category);
         roadmap1.addContent(roadmapContent1);
 
-        final GoalRoom goalRoom1 = new GoalRoom(new GoalRoomName("골룸1"), new LimitedMemberCount(10), roadmapContent1,
-                member2);
+        final GoalRoom goalRoom1 = new GoalRoom(new GoalRoomName("골룸1"), new LimitedMemberCount(10),
+                roadmapContent1.getId(), member2.getId());
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes1 = new GoalRoomRoadmapNodes(List.of(
-                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 5, roadmapNode1)));
+                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 5, roadmapNode1.getId())));
         goalRoom1.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes1);
 
         given(roadmapRepository.findWithRoadmapContentByStatus(any()))
                 .willReturn(List.of(roadmap1));
-        given(goalRoomRepository.findByRoadmap(roadmap1))
+        given(goalRoomRepository.findByRoadmapContentId(roadmapContent1.getId()))
                 .willReturn(List.of(goalRoom1));
 
         // when
@@ -153,11 +153,11 @@ class RoadmapSchedulerTest {
         roadmapContent1.addNodes(new RoadmapNodes(List.of(roadmapNode)));
         roadmap1.addContent(roadmapContent1);
 
-        final GoalRoom goalRoom1 = new GoalRoom(new GoalRoomName("골룸1"), new LimitedMemberCount(10), roadmapContent1,
-                member2);
+        final GoalRoom goalRoom1 = new GoalRoom(new GoalRoomName("골룸1"), new LimitedMemberCount(10),
+                roadmapContent1.getId(), member2.getId());
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(List.of(
-                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 5, roadmapNode)));
+                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 5, roadmapNode.getId())));
         goalRoom1.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         goalRoom1.complete();
 
@@ -167,7 +167,7 @@ class RoadmapSchedulerTest {
         // when
         // then
         assertDoesNotThrow(() -> roadmapScheduler.deleteRoadmaps());
-        verify(goalRoomRepository, never()).findByRoadmap(any());
+        verify(goalRoomRepository, never()).findByRoadmapContentId(any());
         verify(roadmapRepository, never()).deleteAll(any());
     }
 }

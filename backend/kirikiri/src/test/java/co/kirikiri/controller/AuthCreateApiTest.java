@@ -12,16 +12,16 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
+import co.kirikiri.common.exception.AuthenticationException;
+import co.kirikiri.common.helper.ControllerTestHelper;
+import co.kirikiri.common.service.dto.ErrorResponse;
+import co.kirikiri.common.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.service.auth.AuthService;
 import co.kirikiri.service.auth.NaverOauthService;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.exception.AuthenticationException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import org.junit.jupiter.api.Test;

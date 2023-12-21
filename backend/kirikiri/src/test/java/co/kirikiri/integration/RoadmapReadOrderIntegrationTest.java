@@ -18,12 +18,12 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.정렬된_카테
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
+import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;

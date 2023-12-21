@@ -16,11 +16,13 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.common.exception.NotFoundException;
+import co.kirikiri.common.helper.ControllerTestHelper;
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
+import co.kirikiri.goalroom.domain.GoalRoomStatus;
+import co.kirikiri.goalroom.service.dto.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.CustomScrollRequest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapOrderTypeRequest;
 import co.kirikiri.service.dto.roadmap.response.MemberRoadmapResponse;
@@ -29,13 +31,11 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapCategoryResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapContentResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapForListResponses;
-import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.roadmap.RoadmapCreateService;
 import co.kirikiri.service.roadmap.RoadmapReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -692,12 +692,12 @@ class RoadmapReadApiTest extends ControllerTestHelper {
                 GoalRoomStatus.RECRUITING, 3, 6,
                 LocalDateTime.of(2023, 7, 20, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(1L, "황시진", "default-member-image"));
+                new co.kirikiri.goalroom.service.dto.response.MemberResponse(1L, "황시진", "default-member-image"));
         final RoadmapGoalRoomResponse roadmapGoalRoomResponse2 = new RoadmapGoalRoomResponse(2L, "골룸 이름2",
                 GoalRoomStatus.RECRUITING, 4, 10,
                 LocalDateTime.of(2023, 7, 10, 13, 0, 0),
                 LocalDate.now(), LocalDate.now().plusDays(100),
-                new MemberResponse(2L, "시진이", "default-member-image"));
+                new co.kirikiri.goalroom.service.dto.response.MemberResponse(2L, "시진이", "default-member-image"));
         final List<RoadmapGoalRoomResponse> responses = List.of(roadmapGoalRoomResponse1,
                 roadmapGoalRoomResponse2);
         return new RoadmapGoalRoomResponses(responses, false);

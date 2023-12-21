@@ -12,12 +12,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.common.exception.NotFoundException;
+import co.kirikiri.common.helper.ControllerTestHelper;
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.member.MemberService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;

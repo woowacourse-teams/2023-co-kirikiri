@@ -2,10 +2,10 @@ package co.kirikiri.persistence.roadmap;
 
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import java.util.Optional;
 
 public interface RoadmapContentRepository extends JpaRepository<RoadmapContent, Long> {
 
@@ -15,4 +15,6 @@ public interface RoadmapContentRepository extends JpaRepository<RoadmapContent, 
             + "join fetch rc.roadmap r "
             + "where rc.id = :roadmapContentId")
     Optional<RoadmapContent> findByIdWithRoadmap(@Param("roadmapContentId") final Long roadmapContentId);
+
+    Optional<RoadmapContent> findByRoadmap(@Param("roadmap") final Roadmap roadmap);
 }

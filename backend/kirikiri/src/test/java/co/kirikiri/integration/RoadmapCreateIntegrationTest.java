@@ -12,8 +12,8 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_카테
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.요청을_받는_이미지가_포함된_로드맵_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
@@ -25,13 +25,13 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 class RoadmapCreateIntegrationTest extends InitIntegrationTest {
 

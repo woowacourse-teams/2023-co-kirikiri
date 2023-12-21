@@ -3,9 +3,9 @@ package co.kirikiri.persistence.roadmap;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
 
+import co.kirikiri.common.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapReview;
-import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.time.LocalDateTime;

@@ -6,8 +6,8 @@ import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIE
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;

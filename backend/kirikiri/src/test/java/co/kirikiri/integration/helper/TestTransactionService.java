@@ -9,10 +9,6 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_�
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static co.kirikiri.integration.helper.InitIntegrationTest.기본_로그인_토큰;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -20,10 +16,14 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
+import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
+import co.kirikiri.goalroom.domain.GoalRoomStatus;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomRepository;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import jakarta.persistence.EntityManager;
@@ -68,14 +68,14 @@ public class TestTransactionService {
                                      final MemberInformationResponse... 팔로워들_정보) {
         final Member 리더 = 사용자_정보에서_사용자를_생성한다(리더_정보);
         final GoalRoomMember 골룸_멤버_리더 = new GoalRoomMember(GoalRoomRole.LEADER,
-                LocalDateTime.of(2023, 7, 1, 12, 0), 골룸, 리더);
+                LocalDateTime.of(2023, 7, 1, 12, 0), 골룸, 리더.getId());
         final List<GoalRoomMember> 골룸_멤버_리스트 = new ArrayList<>();
         골룸_멤버_리스트.add(골룸_멤버_리더);
 
         for (final MemberInformationResponse 팔로워_정보 : 팔로워들_정보) {
             final Member 팔로워 = 사용자_정보에서_사용자를_생성한다(팔로워_정보);
             final GoalRoomMember 골룸_멤버_팔로워 = new GoalRoomMember(GoalRoomRole.FOLLOWER,
-                    LocalDateTime.of(2023, 7, 5, 18, 0), 골룸, 팔로워);
+                    LocalDateTime.of(2023, 7, 5, 18, 0), 골룸, 팔로워.getId());
             골룸_멤버_리스트.add(골룸_멤버_팔로워);
         }
         골룸_멤버를_저장한다(골룸_멤버_리스트);

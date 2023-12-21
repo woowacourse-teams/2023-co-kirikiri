@@ -1,8 +1,11 @@
 package co.kirikiri.service.roadmap;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.common.aop.ExceptionConvert;
+import co.kirikiri.common.exception.AuthenticationException;
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ConflictException;
+import co.kirikiri.common.exception.ForbiddenException;
+import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
@@ -15,13 +18,16 @@ import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomStatus;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
+import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
-import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapReviewDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
@@ -30,11 +36,6 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.event.RoadmapCreateEvent;
-import co.kirikiri.service.exception.AuthenticationException;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ConflictException;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.RoadmapMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class RoadmapCreateService {
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
     private final RoadmapReviewRepository roadmapReviewRepository;
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
@@ -122,8 +124,10 @@ public class RoadmapCreateService {
 
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final GoalRoomMember goalRoomMember = findCompletedGoalRoomMember(roadmapId, identifier);
-        final Member member = goalRoomMember.getMember();
+        final Member member = findMemberByIdentifier(identifier);
+        final GoalRoomMember goalRoomMember = findCompletedGoalRoomMember(roadmapId, member.getId());
+//        final Long memberId = goalRoomMember.getMemberId();
+//        final Member member = findMemberById(memberId);
         final RoadmapReviewDto roadmapReviewDto = RoadmapMapper.convertRoadmapReviewDto(request, member);
         validateReviewQualification(roadmap, member);
         validateReviewCount(roadmap, member);
@@ -137,11 +141,16 @@ public class RoadmapCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-    private GoalRoomMember findCompletedGoalRoomMember(final Long roadmapId, final String identifier) {
-        return goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(roadmapId,
-                        new Identifier(identifier), GoalRoomStatus.COMPLETED)
+    private GoalRoomMember findCompletedGoalRoomMember(final Long roadmapId, final Long memberId) {
+        return goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(roadmapId, memberId,
+                        GoalRoomStatus.COMPLETED)
                 .orElseThrow(() -> new BadRequestException(
-                        "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = " + roadmapId + " memberIdentifier = " + identifier));
+                        "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = " + roadmapId + " memberId = " + memberId));
+    }
+
+    private Member findMemberById(final Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다. memberId = " + memberId));
     }
 
     private void validateReviewQualification(final Roadmap roadmap, final Member member) {
@@ -162,12 +171,18 @@ public class RoadmapCreateService {
     public void deleteRoadmap(final String identifier, final Long roadmapId) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         validateRoadmapCreator(roadmapId, identifier);
-        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
+        final RoadmapContent roadmapContent = findRecentContent(roadmap);
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmapContentId(roadmapContent.getId());
         if (goalRooms.isEmpty()) {
             roadmapRepository.delete(roadmap);
             return;
         }
         roadmap.delete();
+    }
+
+    private RoadmapContent findRecentContent(final Roadmap roadmap) {
+        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
+                .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
     private void validateRoadmapCreator(final Long roadmapId, final String identifier) {
