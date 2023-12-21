@@ -1,6 +1,6 @@
 package co.kirikiri.service.dto.roadmap;
 
-import co.kirikiri.service.dto.FileInformation;
+import co.kirikiri.common.service.dto.FileInformation;
 import java.util.List;
 
 public record RoadmapNodeSaveDto(

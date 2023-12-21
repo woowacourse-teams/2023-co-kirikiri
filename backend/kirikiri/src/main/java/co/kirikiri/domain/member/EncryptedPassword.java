@@ -1,6 +1,6 @@
 package co.kirikiri.domain.member;
 
-import co.kirikiri.domain.exception.UnexpectedDomainException;
+import co.kirikiri.common.exception.UnexpectedDomainException;
 import co.kirikiri.domain.member.vo.Password;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

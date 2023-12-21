@@ -1,10 +1,10 @@
 package co.kirikiri.integration.helper;
 
-import co.kirikiri.service.FileService;
-import co.kirikiri.service.dto.FileInformation;
-import org.springframework.http.HttpMethod;
+import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.service.dto.FileInformation;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.springframework.http.HttpMethod;
 
 public class TestFileService implements FileService {
 

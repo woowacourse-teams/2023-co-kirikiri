@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import co.kirikiri.common.exception.AuthenticationException;
+import co.kirikiri.common.exception.ServerException;
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.service.auth.AuthService;
-import co.kirikiri.service.exception.AuthenticationException;
-import co.kirikiri.service.exception.ServerException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -14,7 +14,7 @@ import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.persistence.helper.RepositoryTest;
+import co.kirikiri.common.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import org.junit.jupiter.api.Test;
 

@@ -1,20 +1,20 @@
 package co.kirikiri.persistence.roadmap;
 
-import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
-import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmap.roadmap;
 import static co.kirikiri.domain.roadmap.QRoadmapCategory.roadmapCategory;
 import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
 import static co.kirikiri.domain.roadmap.QRoadmapTag.roadmapTag;
+import static co.kirikiri.goalroom.domain.QGoalRoom.goalRoom;
+import static co.kirikiri.goalroom.domain.QGoalRoomMember.goalRoomMember;
 
+import co.kirikiri.common.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;
-import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchCreatorNickname;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
@@ -171,18 +171,18 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     private OrderSpecifier<?> sortCond(final RoadmapOrderType orderType) {
-        if (orderType == RoadmapOrderType.GOAL_ROOM_COUNT) {
-            return new OrderSpecifier<>(
-                    Order.DESC,
-                    goalRoomCountCond(goalRoom.roadmapContent.roadmap.eq(roadmap))
-            );
-        }
-        if (orderType == RoadmapOrderType.PARTICIPANT_COUNT) {
-            return new OrderSpecifier<>(
-                    Order.DESC,
-                    participantCountCond(goalRoomMember.goalRoom.roadmapContent.roadmap.eq(roadmap))
-            );
-        }
+//        if (orderType == RoadmapOrderType.GOAL_ROOM_COUNT) {
+//            return new OrderSpecifier<>(
+//                    Order.DESC,
+//                    goalRoomCountCond(goalRoom.roadmapContent.roadmap.eq(roadmap))
+//            );
+//        }
+//        if (orderType == RoadmapOrderType.PARTICIPANT_COUNT) {
+//            return new OrderSpecifier<>(
+//                    Order.DESC,
+//                    participantCountCond(goalRoomMember.goalRoom.roadmapContent.roadmap.eq(roadmap))
+//            );
+//        }
         if (orderType == RoadmapOrderType.REVIEW_RATE) {
             return new OrderSpecifier<>(
                     Order.DESC,
@@ -214,16 +214,16 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (lastId == null) {
             return null;
         }
-        if (orderType == RoadmapOrderType.GOAL_ROOM_COUNT) {
-            final NumberPath<Long> goalRoomRoadmapId = goalRoom.roadmapContent.roadmap.id;
-            return goalRoomCountCond(goalRoomRoadmapId.eq(roadmap.id))
-                    .lt(goalRoomCountCond(goalRoomRoadmapId.eq(lastId)));
-        }
-        if (orderType == RoadmapOrderType.PARTICIPANT_COUNT) {
-            final NumberPath<Long> goalRoomMemberRoadmapId = goalRoomMember.goalRoom.roadmapContent.roadmap.id;
-            return participantCountCond(goalRoomMemberRoadmapId.eq(roadmap.id))
-                    .lt(participantCountCond(goalRoomMemberRoadmapId.eq(lastId)));
-        }
+//        if (orderType == RoadmapOrderType.GOAL_ROOM_COUNT) {
+//            final NumberPath<Long> goalRoomRoadmapId = goalRoom.roadmapContent.roadmap.id;
+//            return goalRoomCountCond(goalRoomRoadmapId.eq(roadmap.id))
+//                    .lt(goalRoomCountCond(goalRoomRoadmapId.eq(lastId)));
+//        }
+//        if (orderType == RoadmapOrderType.PARTICIPANT_COUNT) {
+//            final NumberPath<Long> goalRoomMemberRoadmapId = goalRoomMember.goalRoom.roadmapContent.roadmap.id;
+//            return participantCountCond(goalRoomMemberRoadmapId.eq(roadmap.id))
+//                    .lt(participantCountCond(goalRoomMemberRoadmapId.eq(lastId)));
+//        }
         if (orderType == RoadmapOrderType.REVIEW_RATE) {
             final NumberPath<Long> roadmapReviewRoadmapId = roadmapReview.roadmap.id;
             return reviewRateCond(roadmapReviewRoadmapId.eq(roadmap.id))

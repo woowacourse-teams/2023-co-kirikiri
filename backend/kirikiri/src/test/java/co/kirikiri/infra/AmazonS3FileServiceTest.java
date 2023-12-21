@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.service.dto.FileInformation;
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.common.exception.ServerException;
+import co.kirikiri.common.service.dto.FileInformation;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.Protocol;
 import com.amazonaws.SdkClientException;
