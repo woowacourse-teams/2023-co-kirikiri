@@ -1,6 +1,6 @@
 package co.kirikiri.roadmap.persistence.dto;
 
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.roadmap.domain.exception.RoadmapException;
 
 public record RoadmapSearchTitle(
         String value
@@ -20,7 +20,7 @@ public record RoadmapSearchTitle(
 
     private void validateLength(final String title) {
         if (title.length() < MIN_LENGTH) {
-            throw new BadRequestException(
+            throw new RoadmapException(
                     String.format("검색어는 최소 %d자부터 가능합니다.", MIN_LENGTH));
         }
     }
