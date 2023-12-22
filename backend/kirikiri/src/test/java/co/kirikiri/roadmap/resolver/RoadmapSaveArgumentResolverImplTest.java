@@ -1,15 +1,10 @@
-package co.kirikiri.common.resolver;
+package co.kirikiri.roadmap.resolver;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
-
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
+import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.exception.BadRequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.xml.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,14 +18,17 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.xml.validation.Validator;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
-class RoadmapSaveArgumentResolverTest {
+class RoadmapSaveArgumentResolverImplTest {
 
     @Mock
     private ObjectMapper objectMapper;
-
-    @Mock
-    private Validator validator;
 
     @Mock
     private MethodParameter parameter;
@@ -45,7 +43,7 @@ class RoadmapSaveArgumentResolverTest {
     private WebDataBinderFactory binderFactory;
 
     @InjectMocks
-    private RoadmapSaveArgumentResolver resolver;
+    private RoadmapSaveArgumentResolverImpl resolver;
 
     @Test
     void 정상적으로_핸들러의_파라미터가_객체를_타도록_한다() {
