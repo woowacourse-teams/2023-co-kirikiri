@@ -11,7 +11,7 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapContent;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 

@@ -5,7 +5,7 @@ import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapContent;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

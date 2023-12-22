@@ -1,13 +1,5 @@
 package co.kirikiri.persistence.goalroom;
 
-import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
-import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
-import static co.kirikiri.domain.member.QMember.member;
-import static co.kirikiri.domain.member.QMemberImage.memberImage;
-import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
-import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.ACCOMPLISHMENT_RATE;
-import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.JOINED_ASC;
-
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -15,8 +7,17 @@ import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+
 import java.util.List;
 import java.util.Optional;
+
+import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
+import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
+import static co.kirikiri.domain.member.QMember.member;
+import static co.kirikiri.domain.member.QMemberImage.memberImage;
+import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.ACCOMPLISHMENT_RATE;
+import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.JOINED_ASC;
+import static co.kirikiri.roadmap.domain.QRoadmapContent.roadmapContent;
 
 public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupporter implements
         GoalRoomMemberQueryRepository {
