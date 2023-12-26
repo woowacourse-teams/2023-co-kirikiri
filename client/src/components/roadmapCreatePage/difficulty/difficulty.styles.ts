@@ -34,6 +34,12 @@ export const Wrapper = styled.ul`
 `;
 
 export const TriggerButton = styled.button`
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 15.4rem;
   height: 4rem;
 
