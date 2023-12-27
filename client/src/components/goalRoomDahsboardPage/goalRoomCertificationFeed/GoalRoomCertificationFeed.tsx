@@ -2,12 +2,7 @@ import * as S from './GoalRoomCertificationFeed.styles';
 import SVGIcon from '@components/icons/SVGIcon';
 import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import { StyledImage } from './GoalRoomCertificationFeed.styles';
-import {
-  DialogBackdrop,
-  DialogBox,
-  DialogContent,
-  DialogTrigger,
-} from '@components/_common/dialog/dialog';
+import { Dialog } from 'ck-util-components';
 import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/certificationFeedModal/CertificationFeedModal';
 import ToolTip from '@components/_common/toolTip/ToolTip';
 
@@ -19,7 +14,7 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
   const { checkFeeds } = goalRoomData;
 
   return (
-    <DialogBox>
+    <Dialog>
       <S.CertificationFeedWrapper>
         <div>
           <S.CertificationTitleWrapper>
@@ -31,12 +26,12 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
             </ToolTip>
           </S.CertificationTitleWrapper>
 
-          <DialogTrigger asChild>
+          <Dialog.Trigger asChild>
             <button aria-labelledby='이미지 피드 전체보기'>
               <span>전체보기</span>
               <SVGIcon name='RightArrowIcon' aria-hidden='true' />
             </button>
-          </DialogTrigger>
+          </Dialog.Trigger>
         </div>
         <S.ImageGrid>
           {checkFeeds.map((feed) => {
@@ -49,14 +44,14 @@ const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedPr
         </S.ImageGrid>
       </S.CertificationFeedWrapper>
 
-      <DialogBackdrop asChild>
+      <Dialog.BackDrop asChild>
         <S.ModalBackdrop />
-      </DialogBackdrop>
+      </Dialog.BackDrop>
 
-      <DialogContent>
+      <Dialog.Content>
         <CertificationFeedModal />
-      </DialogContent>
-    </DialogBox>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 

@@ -1,9 +1,4 @@
-import {
-  DialogBackdrop,
-  DialogBox,
-  DialogContent,
-  DialogTrigger,
-} from '@components/_common/dialog/dialog';
+import { Dialog } from 'ck-util-components';
 import * as S from './goalRoomDetailDialog.styles';
 import GoalRoomDetailDialogContent from './GoalRoomDetailDialogContent';
 
@@ -13,17 +8,17 @@ type GoalRoomDetailDialogProps = {
 
 const GoalRoomDetailDialog = ({ goalRoomId }: GoalRoomDetailDialogProps) => {
   return (
-    <DialogBox>
-      <DialogTrigger asChild>
+    <Dialog>
+      <Dialog.Trigger asChild>
         <S.DetailButton>자세히 보기</S.DetailButton>
-      </DialogTrigger>
-      <DialogBackdrop asChild>
+      </Dialog.Trigger>
+      <Dialog.BackDrop asChild>
         <S.BackDrop />
-      </DialogBackdrop>
-      <DialogContent>
+      </Dialog.BackDrop>
+      <Dialog.Content>
         <GoalRoomDetailDialogContent goalRoomId={goalRoomId} />
-      </DialogContent>
-    </DialogBox>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 
