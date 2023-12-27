@@ -73,6 +73,7 @@ jacocoTestReport {
                     fileTree(dir: it, excludes: [
                             "co/kirikiri/persistence/QuerydslRepositorySupporter",
                             "co/kirikiri/domain/**",
+                            "co/kirikiri/**/domain/**",
                             "co/kirikiri/persistence/goalroom/dto/**",
                             "**/*Application*",
                             "**/*Config*",
