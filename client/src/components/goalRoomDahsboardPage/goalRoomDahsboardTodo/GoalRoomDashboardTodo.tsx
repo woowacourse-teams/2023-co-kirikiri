@@ -1,21 +1,20 @@
 import * as S from './GoalRoomDashboardTodo.styles';
 import SVGIcon from '@components/icons/SVGIcon';
-import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import SingleTodo from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/singleTodo/SingleTodo';
 import { Dialog } from 'ck-util-components';
 import TodoModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/todoModal/TodoModal';
 import ToolTip from '@components/_common/toolTip/ToolTip';
+import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
+import { useFetchGoalRoom } from '@/hooks/queries/goalRoom';
 
 type GoalRoomDashboardTodoProps = {
-  goalRoomData: GoalRoomBrowseResponse;
   isLeader: boolean;
 };
 
-const GoalRoomDashboardTodo = ({
-  goalRoomData,
-  isLeader,
-}: GoalRoomDashboardTodoProps) => {
-  const { goalRoomTodos } = goalRoomData;
+const GoalRoomDashboardTodo = ({ isLeader }: GoalRoomDashboardTodoProps) => {
+  const { goalroomId } = useGoalRoomDashboardContext();
+  const { goalRoom } = useFetchGoalRoom(goalroomId);
+  const { goalRoomTodos } = goalRoom;
 
   return (
     <Dialog>
@@ -49,7 +48,7 @@ const GoalRoomDashboardTodo = ({
         <S.DashboardBackDrop />
       </Dialog.BackDrop>
 
-      <Dialog.Content>
+      <Dialog.Content asChild>
         <TodoModal isLeader={isLeader} />
       </Dialog.Content>
     </Dialog>
