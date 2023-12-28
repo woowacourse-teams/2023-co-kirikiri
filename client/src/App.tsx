@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
@@ -19,6 +19,7 @@ import OAuthRedirect from './components/loginPage/OAuthRedirect';
 import SessionHandler from '@components/_common/sessionHandler/SessionHandler';
 import RouteChangeTracker from '@components/_common/routeChangeTracker/RouteChangeTracker';
 import PrivateRouter from '@components/_common/privateRouter/PrivateRouter';
+import { Spinner } from './components/_common/spinner/Spinner.styles';
 import { CriticalErrorBoundary } from './components/_common/errorBoundary/CriticalErrorBoundary';
 
 const GoalRoomDashboardPage = lazy(
@@ -54,7 +55,11 @@ const App = () => {
                         <Route path='/roadmap/:id' element={<RoadmapDetailPage />} />
                         <Route
                           path='/roadmap/:id/goalroom-list'
-                          element={<GoalRoomListPage />}
+                          element={
+                            <Suspense fallback={<Spinner />}>
+                              <GoalRoomListPage />
+                            </Suspense>
+                          }
                         />
                         <Route
                           path='/roadmap-create'
@@ -68,13 +73,19 @@ const App = () => {
                           path='/roadmap/:id/goalroom-create'
                           element={
                             <PrivateRouter>
-                              <GoalRoomCreatePage />
+                              <Suspense fallback={<Spinner />}>
+                                <GoalRoomCreatePage />
+                              </Suspense>
                             </PrivateRouter>
                           }
                         />
                         <Route
                           path='/goalroom-dashboard/:goalroomId'
-                          element={<GoalRoomDashboardPage />}
+                          element={
+                            <Suspense fallback={<Spinner />}>
+                              <GoalRoomDashboardPage />
+                            </Suspense>
+                          }
                         />
                         <Route
                           path='/myPage'
