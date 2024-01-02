@@ -2,12 +2,7 @@ import * as S from './GoalRoomDashboardTodo.styles';
 import SVGIcon from '@components/icons/SVGIcon';
 import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import SingleTodo from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/singleTodo/SingleTodo';
-import {
-  DialogBackdrop,
-  DialogBox,
-  DialogContent,
-  DialogTrigger,
-} from '@components/_common/dialog/dialog';
+import { Dialog } from 'ck-util-components';
 import TodoModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardTodo/todoModal/TodoModal';
 import ToolTip from '@components/_common/toolTip/ToolTip';
 
@@ -23,7 +18,7 @@ const GoalRoomDashboardTodo = ({
   const { goalRoomTodos } = goalRoomData;
 
   return (
-    <DialogBox>
+    <Dialog>
       <S.TodoWrapper>
         <div>
           <S.TitleWrapper>
@@ -33,12 +28,12 @@ const GoalRoomDashboardTodo = ({
             </ToolTip>
           </S.TitleWrapper>
 
-          <DialogTrigger asChild>
+          <Dialog.Trigger asChild>
             <button>
               <span>전체보기</span>
               <SVGIcon name='RightArrowIcon' aria-hidden='true' />
             </button>
-          </DialogTrigger>
+          </Dialog.Trigger>
         </div>
 
         <div>
@@ -50,14 +45,14 @@ const GoalRoomDashboardTodo = ({
         </div>
       </S.TodoWrapper>
 
-      <DialogBackdrop asChild>
+      <Dialog.BackDrop asChild>
         <S.DashboardBackDrop />
-      </DialogBackdrop>
+      </Dialog.BackDrop>
 
-      <DialogContent>
+      <Dialog.Content>
         <TodoModal isLeader={isLeader} />
-      </DialogContent>
-    </DialogBox>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 

@@ -9,7 +9,7 @@ import SVGIcon from '@/components/icons/SVGIcon';
 import AsyncBoundary from '@/components/_common/errorBoundary/AsyncBoundary';
 
 const RoadmapListView = () => {
-  const [selectedCategoryId, selectCategory] = useSelectCategory();
+  const [selectedCategoryId] = useSelectCategory();
   const { search } = useValidParams();
 
   return (
@@ -20,20 +20,11 @@ const RoadmapListView = () => {
         </S.ListTitle>
       </Link>
       <RoadmapSearch />
-      <Categories
-        selectedCategoryId={selectedCategoryId}
-        selectCategory={selectCategory}
-        aria-label='카테고리 선택'
-      />
+      <Categories selectedCategoryId={selectedCategoryId} aria-label='카테고리 선택' />
 
       <AsyncBoundary>
         <Outlet />
-        {!search && (
-          <RoadmapList
-            selectedCategoryId={selectedCategoryId}
-            aria-label='로드맵 리스트'
-          />
-        )}
+        {!search && <RoadmapList aria-label='로드맵 리스트' />}
       </AsyncBoundary>
     </S.RoadmapListView>
   );

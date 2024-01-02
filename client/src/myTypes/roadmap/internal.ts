@@ -71,7 +71,7 @@ export type RoadmapNodes = {
 };
 
 export type RoadmapValueType = {
-  categoryId: null | number;
+  categoryId: number | null;
   title: null | string;
   introduction: null | string;
   content: null | string;

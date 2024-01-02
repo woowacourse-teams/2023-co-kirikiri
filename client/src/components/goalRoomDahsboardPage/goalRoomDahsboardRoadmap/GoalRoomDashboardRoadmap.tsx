@@ -1,12 +1,7 @@
 import * as S from './GoalRoomDashboardRoadmap.styles';
 import { useGoalRoomDetail } from '@/hooks/queries/goalRoom';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
-import {
-  DialogBackdrop,
-  DialogBox,
-  DialogContent,
-  DialogTrigger,
-} from '@components/_common/dialog/dialog';
+import { Dialog } from 'ck-util-components';
 import SVGIcon from '@components/icons/SVGIcon';
 import RoadmapModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardRoadmap/roadmapModal/RoadmapModal';
 import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
@@ -20,19 +15,19 @@ const GoalRoomDashboardRoadmap = ({ goalRoomStatus }: GoalRoomDashboardRoadmapPr
   const { goalRoomInfo } = useGoalRoomDetail(Number(goalroomId));
 
   return (
-    <DialogBox>
+    <Dialog>
       <S.RoadmapWrapper>
         <div>
           <S.TitleWrapper>
             <h2>로드맵</h2>
           </S.TitleWrapper>
 
-          <DialogTrigger asChild>
+          <Dialog.Trigger asChild>
             <button>
               <span>전체보기</span>
               <SVGIcon name='RightArrowIcon' aria-hidden='true' />
             </button>
-          </DialogTrigger>
+          </Dialog.Trigger>
         </div>
         <S.RoadmapContainer>
           {goalRoomInfo.goalRoomNodes.map((node) => {
@@ -49,14 +44,14 @@ const GoalRoomDashboardRoadmap = ({ goalRoomStatus }: GoalRoomDashboardRoadmapPr
         </S.RoadmapContainer>
       </S.RoadmapWrapper>
 
-      <DialogBackdrop asChild>
+      <Dialog.BackDrop asChild>
         <S.DashboardBackDrop />
-      </DialogBackdrop>
+      </Dialog.BackDrop>
 
-      <DialogContent>
-        {goalRoomStatus === 'RUNNING' && <RoadmapModal goalroomId={goalroomId} />}
-      </DialogContent>
-    </DialogBox>
+      <Dialog.Content>
+        <>{goalRoomStatus === 'RUNNING' && <RoadmapModal goalroomId={goalroomId} />}</>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 

@@ -1,33 +1,47 @@
-import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
+import { Select } from 'ck-util-components';
 import { goalRoomFilter } from '@/constants/goalRoom/goalRoomFilter';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as S from './goalRoomList.styles';
+import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
 
-const GoalRoomFilter = ({
-  children,
-}: {
-  children: (
-    selectedOption: (typeof goalRoomFilter)[keyof typeof goalRoomFilter]
-  ) => React.ReactNode;
-}) => {
-  const [selectedOption, setSelectedOption] = useState<
-    (typeof goalRoomFilter)[keyof typeof goalRoomFilter]
-  >(goalRoomFilter['1']);
+interface GoalRoomFilterProps {
+  sortedOption: (typeof goalRoomFilter)[keyof typeof goalRoomFilter];
+  selectOption: (option: keyof typeof goalRoomFilter) => void;
+}
 
-  const selectFilterOption = (id: number) => {
-    // eslint-disable-next-line no-prototype-builtins
-    if (goalRoomFilter.hasOwnProperty(id)) {
-      setSelectedOption(goalRoomFilter[id as keyof typeof goalRoomFilter]);
+const GoalRoomFilter = ({ sortedOption, selectOption }: GoalRoomFilterProps) => {
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const toggleFilter = () => {
+    if (filterOpen) {
+      setFilterOpen(false);
+    } else {
+      setFilterOpen(true);
     }
   };
 
   return (
     <S.FilterWrapper>
-      <Select externalSelectState={selectFilterOption}>
+      <Select
+        externalSelectedOption={sortedOption}
+        onSelectChange={selectOption}
+        externalOpen={filterOpen}
+        onOpenChange={toggleFilter}
+      >
         <Select.Trigger asChild>
-          <S.FilterTrigger>{selectedOption}</S.FilterTrigger>
+          <S.FilterTrigger>{sortedOption}</S.FilterTrigger>
         </Select.Trigger>
-        {children(selectedOption)}
+        <Select.OptionGroup>
+          <S.FilterOptionWrapper>
+            {getInvariantObjectKeys(invariantOf(goalRoomFilter)).map((item) => {
+              return (
+                <Select.Option id={item} onOptionClick={() => toggleFilter()} asChild>
+                  <S.FilterOption>{goalRoomFilter[item]}</S.FilterOption>
+                </Select.Option>
+              );
+            })}
+          </S.FilterOptionWrapper>
+        </Select.OptionGroup>
       </Select>
     </S.FilterWrapper>
   );

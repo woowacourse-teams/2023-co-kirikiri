@@ -1,14 +1,9 @@
 import { SearchIcon } from '@/components/icons/svgIcons';
-import { Select } from '@/components/roadmapCreatePage/selector/SelectBox';
+import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
+import { Select } from 'ck-util-components';
 import { FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './roadmapSearch.styles';
-
-const searchCategoryKeyword = {
-  1: 'tagName',
-  2: 'roadmapTitle',
-  3: 'creatorName',
-} as const;
 
 const searchCategorySelection = {
   tagName: '태그',
@@ -22,12 +17,15 @@ const RoadmapSearch = () => {
   const [searchCategory, setSearchCategory] = useState<
     'tagName' | 'roadmapTitle' | 'creatorName'
   >('roadmapTitle');
+  const [categoryOpen, setCategoryOpen] = useState(false);
 
-  const selectSearchCategory = (id: number) => {
-    // eslint-disable-next-line no-prototype-builtins
-    if (searchCategory.hasOwnProperty(id)) {
-      setSearchCategory(searchCategoryKeyword[id as keyof typeof searchCategoryKeyword]);
-    }
+  const selectSearchCategory = (option: keyof typeof searchCategorySelection) => {
+    setSearchCategory(option);
+  };
+
+  const toggleSearchCategory = () => {
+    // eslint-disable-next-line no-unused-expressions
+    categoryOpen ? setCategoryOpen(false) : setCategoryOpen(true);
   };
 
   const searchRoadmap = (e: FormEvent<HTMLFormElement>) => {
@@ -42,7 +40,12 @@ const RoadmapSearch = () => {
       <form onSubmit={(e: FormEvent<HTMLFormElement>) => searchRoadmap(e)}>
         <S.Wrapper>
           <S.SelectWrapper>
-            <Select externalSelectState={selectSearchCategory}>
+            <Select
+              externalSelectedOption={searchCategory}
+              onSelectChange={selectSearchCategory}
+              externalOpen={categoryOpen}
+              onOpenChange={toggleSearchCategory}
+            >
               <S.TriggerAndOptionWrapper>
                 <Select.Trigger asChild>
                   <S.SelectTrigger>
@@ -52,15 +55,21 @@ const RoadmapSearch = () => {
                 </Select.Trigger>
                 <Select.OptionGroup asChild>
                   <S.SearchCategoryOptionGroup>
-                    <Select.Option id={1} asChild>
-                      <S.SearchCategoryOption>태그</S.SearchCategoryOption>
-                    </Select.Option>
-                    <Select.Option id={2} asChild defaultSelected>
-                      <S.SearchCategoryOption>로드맵 제목</S.SearchCategoryOption>
-                    </Select.Option>
-                    <Select.Option id={3} asChild>
-                      <S.SearchCategoryOption>크리에이터</S.SearchCategoryOption>
-                    </Select.Option>
+                    {getInvariantObjectKeys(invariantOf(searchCategorySelection)).map(
+                      (categ) => {
+                        return (
+                          <Select.Option
+                            id={categ}
+                            onOptionClick={() => toggleSearchCategory()}
+                            asChild
+                          >
+                            <S.SearchCategoryOption>
+                              {searchCategorySelection[categ]}
+                            </S.SearchCategoryOption>
+                          </Select.Option>
+                        );
+                      }
+                    )}
                   </S.SearchCategoryOptionGroup>
                 </Select.OptionGroup>
               </S.TriggerAndOptionWrapper>

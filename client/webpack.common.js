@@ -32,6 +32,10 @@ module.exports = {
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@myTypes': path.resolve(__dirname, 'src/myTypes'),
       '@utils': path.resolve(__dirname, 'src/utils'),
+      'ck-util-components': path.resolve(
+        __dirname,
+        'node_modules/ck-util-components/dist/lib'
+      ),
     },
   },
 

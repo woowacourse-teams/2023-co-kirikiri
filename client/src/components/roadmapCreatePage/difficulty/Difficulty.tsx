@@ -1,9 +1,13 @@
 /* eslint-disable react/no-unused-prop-types */
 import { useSelect } from '@/hooks/_common/useSelect';
 import { DifficultiesType, DifficultyKeyType } from '@/myTypes/roadmap/internal';
-import { getInvariantObjectKeys, invariantOf } from '@/utils/_common/invariantType';
+import {
+  getInvariantObjectKeys,
+  getInvariantObjectValues,
+  invariantOf,
+} from '@/utils/_common/invariantType';
 import { useEffect } from 'react';
-import { Select, SelectBox } from '../selector/SelectBox';
+import { Select } from 'ck-util-components';
 import * as S from './difficulty.styles';
 
 const Difficulties: DifficultiesType = {
@@ -19,54 +23,42 @@ type DifficultyProps = {
 };
 
 const Difficulty = ({ getSelectedDifficulty }: DifficultyProps) => {
-  const { selectOption, selectedOption } = useSelect<number>();
+  const { selectOption, selectedOption } = useSelect<DifficultyKeyType>();
 
   useEffect(() => {
     if (selectedOption === null) return;
 
-    getSelectedDifficulty(
-      getInvariantObjectKeys(invariantOf(Difficulties))[selectedOption]
-    );
+    getSelectedDifficulty(selectedOption);
   }, [selectedOption]);
 
   return (
-    <SelectBox externalSelectState={selectOption}>
-      <Select.Label asChild>
-        <S.DifficultyLabel>
-          난이도<p>*</p>
-        </S.DifficultyLabel>
-      </Select.Label>
-      <Select.Description asChild>
-        <S.DifficultyDescription>
-          컨텐츠의 달성 난이도를 선택해주세요
-        </S.DifficultyDescription>
-      </Select.Description>
+    <Select externalSelectedOption={selectedOption} onSelectChange={selectOption}>
+      <S.DifficultyLabel>
+        난이도<p>*</p>
+      </S.DifficultyLabel>
+      <S.DifficultyDescription>
+        컨텐츠의 달성 난이도를 선택해주세요
+      </S.DifficultyDescription>
       <Select.Trigger asChild>
-        <S.TriggerButton>
-          <Select.Value asChild>
-            {({ selectedId }: { selectedId: number | null }) => {
-              return (
-                <S.DifficultyValue>
-                  {selectedId === null
-                    ? '선택안함'
-                    : Difficulties[
-                        getInvariantObjectKeys(invariantOf(Difficulties))[selectedId]
-                      ]}
-                </S.DifficultyValue>
-              );
-            }}
-          </Select.Value>
+        <S.TriggerButton type='button'>
+          <S.DifficultyValue>{selectedOption ?? '선택안함'}</S.DifficultyValue>
         </S.TriggerButton>
       </Select.Trigger>
       <Select.OptionGroup asChild>
         <S.Wrapper>
           {getInvariantObjectKeys(invariantOf(Difficulties)).map((difficulty, idx) => {
             return (
-              <Select.Option id={idx} asChild>
+              <Select.Option
+                id={getInvariantObjectValues(invariantOf(Difficulties))[idx]}
+                asChild
+              >
                 <S.DifficultyOption>
-                  <Select.Indicator id={idx} asChild>
+                  <Select.Option
+                    id={getInvariantObjectValues(invariantOf(Difficulties))[idx]}
+                    asChild
+                  >
                     <S.OptionIndicator />
-                  </Select.Indicator>
+                  </Select.Option>
                   {Difficulties[difficulty]}
                 </S.DifficultyOption>
               </Select.Option>
@@ -74,7 +66,7 @@ const Difficulty = ({ getSelectedDifficulty }: DifficultyProps) => {
           })}
         </S.Wrapper>
       </Select.OptionGroup>
-    </SelectBox>
+    </Select>
   );
 };
 

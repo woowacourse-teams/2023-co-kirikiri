@@ -1,4 +1,3 @@
-import { MouseEvent } from 'react';
 import type { CategoryType, SelectedCategoryId } from '@myTypes/roadmap/internal';
 import { CategoriesInfo } from '@constants/roadmap/category';
 import SVGIcon from '@components/icons/SVGIcon';
@@ -7,10 +6,9 @@ import { useNavigate } from 'react-router-dom';
 
 type CategoriesProps = {
   selectedCategoryId: SelectedCategoryId;
-  selectCategory: ({ currentTarget }: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => {
+const Categories = ({ selectedCategoryId }: CategoriesProps) => {
   const categories = Object.values(CategoriesInfo);
   const upCategories = categories.slice(0, 5);
   const downCategories = categories.slice(5);
