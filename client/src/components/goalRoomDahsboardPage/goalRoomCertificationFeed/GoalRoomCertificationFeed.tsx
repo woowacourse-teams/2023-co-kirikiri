@@ -1,17 +1,16 @@
 import * as S from './GoalRoomCertificationFeed.styles';
 import SVGIcon from '@components/icons/SVGIcon';
-import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import { StyledImage } from './GoalRoomCertificationFeed.styles';
 import { Dialog } from 'ck-util-components';
 import CertificationFeedModal from '@components/goalRoomDahsboardPage/goalRoomCertificationFeed/certificationFeedModal/CertificationFeedModal';
 import ToolTip from '@components/_common/toolTip/ToolTip';
+import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
+import { useFetchGoalRoom } from '@/hooks/queries/goalRoom';
 
-type GoalRoomCertificationFeedProps = {
-  goalRoomData: GoalRoomBrowseResponse;
-};
-
-const GoalRoomCertificationFeed = ({ goalRoomData }: GoalRoomCertificationFeedProps) => {
-  const { checkFeeds } = goalRoomData;
+const GoalRoomCertificationFeed = () => {
+  const { goalroomId } = useGoalRoomDashboardContext();
+  const { goalRoom } = useFetchGoalRoom(goalroomId);
+  const { checkFeeds } = goalRoom;
 
   return (
     <Dialog>

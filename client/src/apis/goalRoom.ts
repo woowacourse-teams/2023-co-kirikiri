@@ -69,7 +69,7 @@ export const postCreateGoalRoom = async (body: CreateGoalRoomRequest) => {
 
 export const getGoalRoomTodos = async (goalRoomId: string) => {
   const { data } = await client.get<GoalRoomTodoResponse>(
-    API_PATH.GOALROOM_TODOS(goalRoomId)
+    `${API_PATH.GOALROOM_TODOS(goalRoomId)}/90`
   );
 
   return data;

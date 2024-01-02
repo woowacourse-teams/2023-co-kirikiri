@@ -1,17 +1,13 @@
 import * as S from './GoalRoomDashboardRoadmap.styles';
-import { useGoalRoomDetail } from '@/hooks/queries/goalRoom';
+import { useFetchGoalRoom, useGoalRoomDetail } from '@/hooks/queries/goalRoom';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
 import { Dialog } from 'ck-util-components';
 import SVGIcon from '@components/icons/SVGIcon';
 import RoadmapModal from '@components/goalRoomDahsboardPage/goalRoomDahsboardRoadmap/roadmapModal/RoadmapModal';
-import { GoalRoomRecruitmentStatus } from '@myTypes/goalRoom/internal';
 
-type GoalRoomDashboardRoadmapProps = {
-  goalRoomStatus: GoalRoomRecruitmentStatus;
-};
-
-const GoalRoomDashboardRoadmap = ({ goalRoomStatus }: GoalRoomDashboardRoadmapProps) => {
+const GoalRoomDashboardRoadmap = () => {
   const { goalroomId } = useGoalRoomDashboardContext();
+  const { goalRoom } = useFetchGoalRoom(goalroomId);
   const { goalRoomInfo } = useGoalRoomDetail(Number(goalroomId));
 
   return (
@@ -49,7 +45,7 @@ const GoalRoomDashboardRoadmap = ({ goalRoomStatus }: GoalRoomDashboardRoadmapPr
       </Dialog.BackDrop>
 
       <Dialog.Content>
-        <>{goalRoomStatus === 'RUNNING' && <RoadmapModal goalroomId={goalroomId} />}</>
+        <>{goalRoom.status === 'RUNNING' && <RoadmapModal goalroomId={goalroomId} />}</>
       </Dialog.Content>
     </Dialog>
   );

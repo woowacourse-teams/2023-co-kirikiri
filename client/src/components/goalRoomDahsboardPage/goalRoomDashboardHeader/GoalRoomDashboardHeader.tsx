@@ -1,27 +1,21 @@
 import SVGIcon from '@components/icons/SVGIcon';
-
 import * as S from './GoalRoomDashboardHeader.styles';
 import recruitmentStatus from '@constants/goalRoom/recruitmentStatus';
-import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
 import { Dialog } from 'ck-util-components';
 import GoalRoomParticipantsListModal from '@components/goalRoomDahsboardPage/goalRoomDashboardHeader/goalRoomParticipantsListModal/GoalRoomParticipantsListModal';
 import isTodayOrAfter from '@utils/_common/isTodayOrAfter';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
-import { useStartGoalRoom } from '@hooks/queries/goalRoom';
+import { useFetchGoalRoom, useStartGoalRoom } from '@hooks/queries/goalRoom';
 
 type GoalRoomDashboardHeaderProps = {
-  goalRoomData: GoalRoomBrowseResponse;
   isLeader: boolean;
 };
 
-const GoalRoomDashboardHeader = ({
-  goalRoomData,
-  isLeader,
-}: GoalRoomDashboardHeaderProps) => {
-  const { name, status, currentMemberCount, limitedMemberCount, startDate, endDate } =
-    goalRoomData;
-
+const GoalRoomDashboardHeader = ({ isLeader }: GoalRoomDashboardHeaderProps) => {
   const { goalroomId } = useGoalRoomDashboardContext();
+  const { goalRoom } = useFetchGoalRoom(goalroomId);
+  const { name, status, currentMemberCount, limitedMemberCount, startDate, endDate } =
+    goalRoom;
 
   const { startGoalRoom } = useStartGoalRoom(goalroomId);
 
