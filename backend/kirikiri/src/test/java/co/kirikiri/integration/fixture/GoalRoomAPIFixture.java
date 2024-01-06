@@ -5,11 +5,11 @@ import static co.kirikiri.integration.fixture.CommonFixture.AUTHORIZATION;
 import static co.kirikiri.integration.fixture.CommonFixture.LOCATION;
 import static io.restassured.RestAssured.given;
 
-import co.kirikiri.member.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.Header;

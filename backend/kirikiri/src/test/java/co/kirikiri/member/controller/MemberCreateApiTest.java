@@ -1,4 +1,4 @@
-package co.kirikiri.controller;
+package co.kirikiri.member.controller;
 
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,7 +15,6 @@ import co.kirikiri.common.exception.BadRequestException;
 import co.kirikiri.common.exception.ConflictException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
-import co.kirikiri.member.controller.MemberController;
 import co.kirikiri.member.service.MemberService;
 import co.kirikiri.member.service.dto.request.GenderType;
 import co.kirikiri.member.service.dto.request.MemberJoinRequest;

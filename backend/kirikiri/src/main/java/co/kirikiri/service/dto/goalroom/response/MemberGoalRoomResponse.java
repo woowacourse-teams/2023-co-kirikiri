@@ -1,4 +1,4 @@
-package co.kirikiri.member.service.dto.response;
+package co.kirikiri.service.dto.goalroom.response;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,9 +12,9 @@ public record MemberGoalRoomResponse(
         LocalDate startDate,
         LocalDate endDate,
         Long roadmapContentId,
-        MemberGoalRoomRoadmapNodesResponse goalRoomRoadmapNodes,
-        List<MemberGoalRoomTodoResponse> goalRoomTodos,
-        List<MemberCheckFeedResponse> checkFeeds
+        GoalRoomRoadmapNodesResponse goalRoomRoadmapNodes,
+        List<GoalRoomTodoResponse> goalRoomTodos,
+        List<CheckFeedResponse> checkFeeds
 ) {
 
 }

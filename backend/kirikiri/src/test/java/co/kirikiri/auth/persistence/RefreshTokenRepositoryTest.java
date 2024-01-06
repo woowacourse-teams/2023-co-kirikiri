@@ -34,7 +34,7 @@ class RefreshTokenRepositoryTest {
     @Mock
     private ValueOperations<String, String> valueOperations;
 
-    private RefreshTokenRepositoryImpl refreshTokenRepository;
+    private RefreshTokenRepository refreshTokenRepository;
 
     @BeforeEach
     void init() {

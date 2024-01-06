@@ -45,11 +45,6 @@ import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
 import co.kirikiri.member.persistence.MemberRepository;
-import co.kirikiri.member.service.dto.response.MemberCheckFeedResponse;
-import co.kirikiri.member.service.dto.response.MemberGoalRoomForListResponse;
-import co.kirikiri.member.service.dto.response.MemberGoalRoomResponse;
-import co.kirikiri.member.service.dto.response.MemberGoalRoomRoadmapNodeResponse;
-import co.kirikiri.member.service.dto.response.MemberGoalRoomRoadmapNodesResponse;
 import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
@@ -65,8 +60,11 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import co.kirikiri.service.goalroom.GoalRoomReadService;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -500,20 +498,20 @@ class GoalRoomReadServiceTest {
         final MemberGoalRoomResponse expected = new MemberGoalRoomResponse(goalRoom.getName().getValue(),
                 goalRoom.getStatus().name(), member.getId(), goalRoom.getCurrentMemberCount(),
                 goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
-                roadmapContent.getId(), new MemberGoalRoomRoadmapNodesResponse(false, true,
+                roadmapContent.getId(), new GoalRoomRoadmapNodesResponse(false, true,
                 List.of(
-                        new MemberGoalRoomRoadmapNodeResponse(goalRoomRoadmapNode1.getId(), roadmapNode1.getTitle(),
+                        new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode1.getId(), roadmapNode1.getTitle(),
                                 goalRoomRoadmapNode1.getStartDate(),
                                 goalRoomRoadmapNode1.getEndDate(), goalRoomRoadmapNode1.getCheckCount()),
-                        new MemberGoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
+                        new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
                                 goalRoomRoadmapNode2.getStartDate(),
                                 goalRoomRoadmapNode2.getEndDate(), goalRoomRoadmapNode2.getCheckCount())
                 )), Collections.emptyList(),
                 List.of(
-                        new MemberCheckFeedResponse(1L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
-                        new MemberCheckFeedResponse(2L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
-                        new MemberCheckFeedResponse(3L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
-                        new MemberCheckFeedResponse(4L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now())
+                        new CheckFeedResponse(1L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(2L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(3L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(4L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now())
                 ));
 
         //when
@@ -562,12 +560,12 @@ class GoalRoomReadServiceTest {
         final MemberGoalRoomResponse expected = new MemberGoalRoomResponse(goalRoom.getName().getValue(),
                 goalRoom.getStatus().name(), member.getId(), goalRoom.getCurrentMemberCount(),
                 goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
-                roadmapContent.getId(), new MemberGoalRoomRoadmapNodesResponse(false, true,
+                roadmapContent.getId(), new GoalRoomRoadmapNodesResponse(false, true,
                 List.of(
-                        new MemberGoalRoomRoadmapNodeResponse(goalRoomRoadmapNode1.getId(), roadmapNode1.getTitle(),
+                        new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode1.getId(), roadmapNode1.getTitle(),
                                 goalRoomRoadmapNode1.getStartDate(),
                                 goalRoomRoadmapNode1.getEndDate(), goalRoomRoadmapNode1.getCheckCount()),
-                        new MemberGoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
+                        new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
                                 goalRoomRoadmapNode2.getStartDate(),
                                 goalRoomRoadmapNode2.getEndDate(), goalRoomRoadmapNode2.getCheckCount())
                 )), Collections.emptyList(), Collections.emptyList());
@@ -623,20 +621,20 @@ class GoalRoomReadServiceTest {
         final MemberGoalRoomResponse expected = new MemberGoalRoomResponse(goalRoom.getName().getValue(),
                 goalRoom.getStatus().name(), member.getId(), goalRoom.getCurrentMemberCount(),
                 goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
-                roadmapContent.getId(), new MemberGoalRoomRoadmapNodesResponse(false, true,
+                roadmapContent.getId(), new GoalRoomRoadmapNodesResponse(false, true,
                 List.of(
-                        new MemberGoalRoomRoadmapNodeResponse(goalRoomRoadmapNode1.getId(), roadmapNode1.getTitle(),
+                        new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode1.getId(), roadmapNode1.getTitle(),
                                 goalRoomRoadmapNode1.getStartDate(),
                                 goalRoomRoadmapNode1.getEndDate(), goalRoomRoadmapNode1.getCheckCount()),
-                        new MemberGoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
+                        new GoalRoomRoadmapNodeResponse(goalRoomRoadmapNode2.getId(), roadmapNode2.getTitle(),
                                 goalRoomRoadmapNode2.getStartDate(),
                                 goalRoomRoadmapNode2.getEndDate(), goalRoomRoadmapNode2.getCheckCount())
                 )), Collections.emptyList(),
                 List.of(
-                        new MemberCheckFeedResponse(1L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
-                        new MemberCheckFeedResponse(2L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
-                        new MemberCheckFeedResponse(3L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
-                        new MemberCheckFeedResponse(4L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now())
+                        new CheckFeedResponse(1L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(2L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(3L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now()),
+                        new CheckFeedResponse(4L, "http://example.com/serverFilePath", "인증 피드 설명", LocalDate.now())
                 ));
 
         //when
@@ -1029,13 +1027,13 @@ class GoalRoomReadServiceTest {
         // then
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse3 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(2L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse3,
                 goalRoomCheckFeedResponse2, goalRoomCheckFeedResponse1);
 
@@ -1107,13 +1105,13 @@ class GoalRoomReadServiceTest {
         // then
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse3 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(2L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse3,
                 goalRoomCheckFeedResponse2, goalRoomCheckFeedResponse1);
 
@@ -1268,17 +1266,17 @@ class GoalRoomReadServiceTest {
     }
 
     private static GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
-        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 31);
     }
 
     private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined,
                                                                         final int currentMemberCount) {
-        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
         return new GoalRoomCertifiedResponse("골룸", currentMemberCount, 10, goalRoomNodeResponses, 31, isJoined);
     }
 

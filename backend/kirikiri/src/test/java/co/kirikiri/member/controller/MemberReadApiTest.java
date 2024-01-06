@@ -1,4 +1,4 @@
-package co.kirikiri.controller;
+package co.kirikiri.member.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.member.controller.MemberController;
 import co.kirikiri.member.domain.Gender;
 import co.kirikiri.member.service.MemberService;
 import co.kirikiri.member.service.dto.response.MemberInformationForPublicResponse;

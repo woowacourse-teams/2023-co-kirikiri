@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 class JwtTokenProviderTest {
 
     private static final String secretKey = "9zrOjg1kDd2gUp6KBbElGJj5GHP5BnneDs3nXEhdztHAUjKBX7l69JXUErBovPLn7TVWV0UCfejYZyxIjIMC5KPfSvBzo9C1gJ2";
+
     TokenProvider tokenProvider = new JwtTokenProvider(secretKey, 1_800_000L, 86_400_000L);
 
     @Test

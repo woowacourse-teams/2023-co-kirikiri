@@ -1,5 +1,6 @@
-package co.kirikiri.member.service.dto.response;
+package co.kirikiri.service.dto.goalroom.response;
 
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
