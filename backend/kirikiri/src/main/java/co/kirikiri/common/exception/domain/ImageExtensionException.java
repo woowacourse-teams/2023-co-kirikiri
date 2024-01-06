@@ -1,4 +1,4 @@
-package co.kirikiri.common.exception;
+package co.kirikiri.common.exception.domain;
 
 public class ImageExtensionException extends DomainException {
 

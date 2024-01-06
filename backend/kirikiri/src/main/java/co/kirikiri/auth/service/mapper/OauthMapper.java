@@ -1,6 +1,6 @@
 package co.kirikiri.auth.service.mapper;
 
-import co.kirikiri.auth.service.dto.OauthRedirectResponse;
+import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 
 public class OauthMapper {
 

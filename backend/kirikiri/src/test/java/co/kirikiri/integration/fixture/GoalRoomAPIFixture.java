@@ -160,7 +160,7 @@ public class GoalRoomAPIFixture {
     }
 
     public static ExtractableResponse<Response> 골룸을_시작한다(final String 로그인_토큰, final Long 골룸_아이디) {
-        final ExtractableResponse<Response> 골룸_시작_요청_응답 = given().log().all()
+        return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .header(new Header(HttpHeaders.AUTHORIZATION, 로그인_토큰))
@@ -168,7 +168,6 @@ public class GoalRoomAPIFixture {
                 .then()
                 .log().all()
                 .extract();
-        return 골룸_시작_요청_응답;
     }
 
     public static ExtractableResponse<Response> 골룸의_사용자_정보를_정렬_기준없이_조회(final Long 골룸_아이디, final String 로그인_토큰) {

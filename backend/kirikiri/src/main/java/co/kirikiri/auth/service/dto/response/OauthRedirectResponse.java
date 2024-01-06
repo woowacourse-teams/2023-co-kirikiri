@@ -1,4 +1,4 @@
-package co.kirikiri.auth.service.dto;
+package co.kirikiri.auth.service.dto.response;
 
 public record OauthRedirectResponse(
         String url,

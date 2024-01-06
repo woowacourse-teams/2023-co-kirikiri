@@ -1,9 +1,9 @@
 package co.kirikiri.common.aop;
 
 import co.kirikiri.common.exception.BadRequestException;
-import co.kirikiri.common.exception.DomainException;
+import co.kirikiri.common.exception.domain.DomainException;
 import co.kirikiri.common.exception.ServerException;
-import co.kirikiri.common.exception.UnexpectedDomainException;
+import co.kirikiri.common.exception.domain.UnexpectedDomainException;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;

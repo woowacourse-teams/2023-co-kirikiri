@@ -1,6 +1,6 @@
 package co.kirikiri.member.domain.exception;
 
-import co.kirikiri.common.exception.DomainException;
+import co.kirikiri.common.exception.domain.DomainException;
 
 public class MemberException extends DomainException {
 

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.common.exception.BadRequestException;
-import co.kirikiri.common.exception.ImageExtensionException;
+import co.kirikiri.common.exception.domain.ImageExtensionException;
 import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.common.service.FilePathGenerator;
 import co.kirikiri.common.service.FileService;

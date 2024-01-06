@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import co.kirikiri.auth.service.dto.NaverMemberProfileDto;
 import co.kirikiri.auth.service.dto.NaverMemberProfileResponseDto;
 import co.kirikiri.auth.service.dto.NaverOauthTokenDto;
-import co.kirikiri.auth.service.dto.OauthRedirectResponse;
+import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
 import co.kirikiri.member.domain.Gender;
 import co.kirikiri.member.domain.Member;
