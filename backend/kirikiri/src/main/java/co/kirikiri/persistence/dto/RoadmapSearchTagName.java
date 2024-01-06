@@ -1,6 +1,6 @@
 package co.kirikiri.persistence.dto;
 
-import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.common.exception.BadRequestException;
 
 public record RoadmapSearchTagName(
         String value

@@ -9,20 +9,20 @@ import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 public class GoalRoomAPIFixture {
 
@@ -160,7 +160,7 @@ public class GoalRoomAPIFixture {
     }
 
     public static ExtractableResponse<Response> 골룸을_시작한다(final String 로그인_토큰, final Long 골룸_아이디) {
-        final ExtractableResponse<Response> 골룸_시작_요청_응답 = given().log().all()
+        return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .header(new Header(HttpHeaders.AUTHORIZATION, 로그인_토큰))
@@ -168,7 +168,6 @@ public class GoalRoomAPIFixture {
                 .then()
                 .log().all()
                 .extract();
-        return 골룸_시작_요청_응답;
     }
 
     public static ExtractableResponse<Response> 골룸의_사용자_정보를_정렬_기준없이_조회(final Long 골룸_아이디, final String 로그인_토큰) {

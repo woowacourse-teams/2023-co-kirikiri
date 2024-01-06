@@ -2,8 +2,8 @@ package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QCheckFeed.checkFeed;
 import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
-import static co.kirikiri.domain.member.QMember.member;
-import static co.kirikiri.domain.member.QMemberImage.memberImage;
+import static co.kirikiri.member.domain.QMember.member;
+import static co.kirikiri.member.domain.QMemberImage.memberImage;
 
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;

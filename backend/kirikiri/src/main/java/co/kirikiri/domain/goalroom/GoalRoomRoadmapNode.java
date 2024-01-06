@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.common.entity.BaseEntity;
 import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.domain.roadmap.RoadmapNode;

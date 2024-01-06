@@ -1,6 +1,6 @@
 package co.kirikiri.persistence.roadmap;
 
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.member.domain.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapStatus;

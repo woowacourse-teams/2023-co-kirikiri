@@ -12,15 +12,15 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.리뷰를_생성
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
@@ -29,11 +29,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
 

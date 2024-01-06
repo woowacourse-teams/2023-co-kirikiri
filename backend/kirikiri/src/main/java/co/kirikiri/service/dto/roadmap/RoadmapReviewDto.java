@@ -1,6 +1,6 @@
 package co.kirikiri.service.dto.roadmap;
 
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.member.domain.Member;
 
 public record RoadmapReviewDto(
         String content,

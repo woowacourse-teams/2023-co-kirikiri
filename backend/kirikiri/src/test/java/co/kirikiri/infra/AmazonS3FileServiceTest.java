@@ -7,8 +7,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import co.kirikiri.common.exception.ServerException;
+import co.kirikiri.common.infra.AmazonS3FileService;
+import co.kirikiri.common.infra.CloudFrontService;
 import co.kirikiri.service.dto.FileInformation;
-import co.kirikiri.service.exception.ServerException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.Protocol;
 import com.amazonaws.SdkClientException;

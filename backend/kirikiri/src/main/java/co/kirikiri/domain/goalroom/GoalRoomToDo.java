@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseUpdatedTimeEntity;
+import co.kirikiri.common.entity.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.Period;
 import jakarta.persistence.Embedded;

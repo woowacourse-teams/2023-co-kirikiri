@@ -10,7 +10,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.common.exception.ForbiddenException;
+import co.kirikiri.common.exception.NotFoundException;
+import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
@@ -24,14 +27,6 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberImage;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.domain.roadmap.RoadmapContent;
@@ -41,12 +36,21 @@ import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImage;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberImage;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import co.kirikiri.member.persistence.MemberRepository;
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
@@ -59,11 +63,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import co.kirikiri.service.goalroom.GoalRoomReadService;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1026,13 +1027,13 @@ class GoalRoomReadServiceTest {
         // then
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse3 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(2L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse3,
                 goalRoomCheckFeedResponse2, goalRoomCheckFeedResponse1);
 
@@ -1104,13 +1105,13 @@ class GoalRoomReadServiceTest {
         // then
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(1L, "http://example.com/serverFilePath", "description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(2L, "http://example.com/serverFilePath", "description2", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse3 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(2L, "name1", "http://example.com/serverFilePath"),
-                new CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(3L, "http://example.com/serverFilePath", "description3", LocalDate.now()));
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse3,
                 goalRoomCheckFeedResponse2, goalRoomCheckFeedResponse1);
 
@@ -1265,17 +1266,17 @@ class GoalRoomReadServiceTest {
     }
 
     private static GoalRoomResponse 예상하는_골룸_응답을_생성한다() {
-        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 31);
     }
 
     private static GoalRoomCertifiedResponse 예상하는_로그인된_사용자의_골룸_응답을_생성한다(final Boolean isJoined,
                                                                         final int currentMemberCount) {
-        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", TODAY, TEN_DAY_LATER, 10),
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", TWENTY_DAY_LAYER, THIRTY_DAY_LATER, 2));
         return new GoalRoomCertifiedResponse("골룸", currentMemberCount, 10, goalRoomNodeResponses, 31, isJoined);
     }
 

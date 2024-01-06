@@ -32,10 +32,12 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
@@ -50,10 +52,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailRespon
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
