@@ -176,10 +176,8 @@ class GoalRoomSchedulerTest {
 
     private GoalRoom 골룸을_생성한다(final Long goalRoomId, final Member creator, final RoadmapContent roadmapContent,
                               final Integer limitedMemberCount) {
-        final GoalRoom goalRoom = new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"),
-                new LimitedMemberCount(limitedMemberCount), roadmapContent.getId(), creator.getId());
-        goalRoom.addAllGoalRoomRoadmapNodes(골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
-        return goalRoom;
+        return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
+                roadmapContent.getId(), creator.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
     }
 
     private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다(final RoadmapNodes roadmapNodes) {

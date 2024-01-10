@@ -15,7 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoomStatus;
+import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomResponse;
@@ -26,6 +29,8 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
@@ -49,7 +54,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
-        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null);
+        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null, 골룸_로드맵_노드들을_생성한다());
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "follower", GenderType.FEMALE, DEFAULT_EMAIL);
@@ -76,7 +81,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
-        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null);
+        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null, 골룸_로드맵_노드들을_생성한다());
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "follower", GenderType.FEMALE, DEFAULT_EMAIL);
@@ -104,7 +109,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
-        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null);
+        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null, 골룸_로드맵_노드들을_생성한다());
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "follower", GenderType.FEMALE, DEFAULT_EMAIL);
@@ -174,5 +179,11 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
 
         // then
         assertThat(요청_응답값.status()).isEqualTo(GoalRoomStatus.RUNNING.name());
+    }
+
+    private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다() {
+        return new GoalRoomRoadmapNodes(List.of(
+                new GoalRoomRoadmapNode(new Period(LocalDate.now(), LocalDate.now().plusDays(5)), 5, 1L))
+        );
     }
 }

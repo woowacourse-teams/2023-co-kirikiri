@@ -313,7 +313,7 @@ class CheckFeedRepositoryTest {
         //then
         assertThat(checkFeeds).isEmpty();
     }
-    
+
     private Member 사용자를_저장한다(final String identifier, final String nickname) {
         final MemberImage memberImage = new MemberImage("originalFileName", "serverFilePath", ImageContentType.PNG);
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
@@ -356,8 +356,6 @@ class CheckFeedRepositoryTest {
     }
 
     private GoalRoom 골룸을_저장한다(final RoadmapContent roadmapContent, final Member member) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId());
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -372,7 +370,9 @@ class CheckFeedRepositoryTest {
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
+                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
         return goalRoomRepository.save(goalRoom);
     }
 

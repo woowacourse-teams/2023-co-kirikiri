@@ -50,29 +50,30 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
     private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
-                    final Long roadmapContentId, final Long memberId) {
-        this(null, name, limitedMemberCount, roadmapContentId, memberId);
+                    final Long roadmapContentId, final Long memberId, final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        this(null, name, limitedMemberCount, roadmapContentId, memberId, goalRoomRoadmapNodes);
     }
 
     public GoalRoom(final Long id, final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
-                    final Long roadmapContentId, final Long memberId) {
+                    final Long roadmapContentId, final Long memberId, final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
         this.id = id;
         this.name = name;
         this.limitedMemberCount = limitedMemberCount;
         this.roadmapContentId = roadmapContentId;
+        addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
         updateLeader(memberId);
+    }
+
+    private void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
+        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
+        this.startDate = goalRoomRoadmapNodes.getGoalRoomStartDate();
+        this.endDate = goalRoomRoadmapNodes.getGoalRoomEndDate();
     }
 
     private void updateLeader(final Long memberId) {
         final GoalRoomPendingMember leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, memberId);
         leader.initGoalRoom(this);
         goalRoomPendingMembers.add(leader);
-    }
-
-    public void addAllGoalRoomRoadmapNodes(final GoalRoomRoadmapNodes goalRoomRoadmapNodes) {
-        this.goalRoomRoadmapNodes.addAll(goalRoomRoadmapNodes);
-        this.startDate = goalRoomRoadmapNodes.getGoalRoomStartDate();
-        this.endDate = goalRoomRoadmapNodes.getGoalRoomEndDate();
     }
 
     public void join(final Long memberId) {

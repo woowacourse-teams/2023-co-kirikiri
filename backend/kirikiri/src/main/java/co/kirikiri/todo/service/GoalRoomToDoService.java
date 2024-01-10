@@ -76,10 +76,10 @@ public class GoalRoomToDoService {
         final GoalRoomToDo goalRoomToDo = findGoalRoomTodoById(todoId);
         final GoalRoomMember goalRoomMember = findGoalRoomMember(memberIdentifier, goalRoom);
 
-        final boolean isAlreadyChecked = goalRoomToDoCheckRepository.findByGoalRoomTodoAndGoalRoomMemberId(goalRoomToDo,
+        final boolean isAlreadyChecked = goalRoomToDoCheckRepository.findByGoalRoomToDoAndGoalRoomMemberId(goalRoomToDo,
                 goalRoomMember.getId()).isPresent();
         if (isAlreadyChecked) {
-            goalRoomToDoCheckRepository.deleteByGoalRoomMemberIdAndToDoId(goalRoomMember.getId(), todoId);
+            goalRoomToDoCheckRepository.deleteByGoalRoomMemberIdAndGoalRoomToDoId(goalRoomMember.getId(), todoId);
             return new GoalRoomToDoCheckResponse(false);
         }
         final GoalRoomToDoCheck goalRoomToDoCheck = new GoalRoomToDoCheck(goalRoomMember.getId(), goalRoomToDo);

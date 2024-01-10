@@ -344,8 +344,6 @@ class GoalRoomMemberRepositoryTest {
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final Member member) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId());
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -359,7 +357,8 @@ class GoalRoomMemberRepositoryTest {
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-        return goalRoom;
+
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId(),
+                goalRoomRoadmapNodes);
     }
 }

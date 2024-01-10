@@ -32,9 +32,12 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoomRole;
 import co.kirikiri.goalroom.domain.vo.GoalRoomName;
 import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
+import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -48,6 +51,7 @@ import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.roadmap.RoadmapCreateService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -363,6 +367,13 @@ class RoadmapCreateServiceTest {
     }
 
     private GoalRoom 골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId());
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId(),
+                골룸_로드맵_노드들을_생성한다());
+    }
+
+    private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다() {
+        return new GoalRoomRoadmapNodes(List.of(
+                new GoalRoomRoadmapNode(new Period(LocalDate.now(), LocalDate.now().plusDays(5)), 5, 1L))
+        );
     }
 }

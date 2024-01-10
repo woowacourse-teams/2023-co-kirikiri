@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import co.kirikiri.common.exception.UnexpectedDomainException;
 import co.kirikiri.goalroom.domain.vo.GoalRoomName;
 import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
+import co.kirikiri.goalroom.domain.vo.Period;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,8 @@ class GoalRoomPendingMembersTest {
     @Test
     void 골룸의_리더를_찾는다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
+                골룸_로드맵_노드들을_생성한다());
 
         // when
         final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(List.of(
@@ -30,7 +33,8 @@ class GoalRoomPendingMembersTest {
     @Test
     void 골룸의_리더가_없으면_예외가_발생한다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
+                골룸_로드맵_노드들을_생성한다());
 
         // when
         final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(List.of(
@@ -115,5 +119,11 @@ class GoalRoomPendingMembersTest {
         assertThat(goalRoomPendingMembers)
                 .usingRecursiveComparison()
                 .isEqualTo(new GoalRoomPendingMembers(List.of(goalRoomPendingMember2)));
+    }
+
+    private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다() {
+        return new GoalRoomRoadmapNodes(List.of(
+                new GoalRoomRoadmapNode(new Period(LocalDate.now(), LocalDate.now().plusDays(5)), 5, 1L))
+        );
     }
 }

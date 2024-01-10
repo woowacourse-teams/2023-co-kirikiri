@@ -445,14 +445,14 @@ class GoalRoomReadServiceTest {
                 new Period(TODAY, TODAY.plusDays(10)), 5, roadmapNode1.getId());
         final GoalRoomRoadmapNode goalRoomRoadmapNode2 = new GoalRoomRoadmapNode(
                 new Period(TODAY.plusDays(11), TODAY.plusDays(20)), 5, roadmapNode2.getId());
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
+                List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2));
 
         final Member member = 사용자를_생성한다(1L);
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId());
+                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
         goalRoom.start();
 
-        goalRoom.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
         goalRoom.addAllGoalRoomMembers(
                 List.of(new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member.getId())));
 
@@ -523,13 +523,12 @@ class GoalRoomReadServiceTest {
                 new Period(TODAY.plusDays(21), TODAY.plusDays(30)), 5, roadmapNode1.getId());
         final GoalRoomRoadmapNode goalRoomRoadmapNode4 = new GoalRoomRoadmapNode(
                 new Period(TODAY.plusDays(31), TODAY.plusDays(40)), 5, roadmapNode2.getId());
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
+                List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2, goalRoomRoadmapNode3, goalRoomRoadmapNode4));
 
         final Member member = 사용자를_생성한다(1L);
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId());
-        goalRoom.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2, goalRoomRoadmapNode3,
-                        goalRoomRoadmapNode4)));
+                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
 
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
                 .willReturn(Optional.of(goalRoom));
@@ -584,14 +583,15 @@ class GoalRoomReadServiceTest {
                 new Period(TODAY.plusDays(21), TODAY.plusDays(30)), 5, roadmapNode1.getId());
         final GoalRoomRoadmapNode goalRoomRoadmapNode4 = new GoalRoomRoadmapNode(
                 new Period(TODAY.plusDays(31), TODAY.plusDays(40)), 5, roadmapNode2.getId());
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
+                List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2));
 
         final Member member = 사용자를_생성한다(1L);
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId());
+                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
         goalRoom.start();
         goalRoom.complete();
-        goalRoom.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
+
         goalRoom.addAllGoalRoomMembers(
                 List.of(new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member.getId())));
 
@@ -1050,8 +1050,6 @@ class GoalRoomReadServiceTest {
     }
 
     private GoalRoom 골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId());
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -1064,8 +1062,9 @@ class GoalRoomReadServiceTest {
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-        return goalRoom;
+
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId(),
+                goalRoomRoadmapNodes);
     }
 
     private static GoalRoomResponse 예상하는_골룸_응답을_생성한다() {

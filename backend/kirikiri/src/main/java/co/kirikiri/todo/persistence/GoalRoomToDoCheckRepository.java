@@ -11,12 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface GoalRoomToDoCheckRepository extends JpaRepository<GoalRoomToDoCheck, Long> {
 
-    @Query("select gc from GoalRoomToDoCheck gc "
-            + "where gc.goalRoomToDo = :goalRoomToDo "
-            + "and gc.goalRoomMemberId = :goalRoomMemberId ")
-    Optional<GoalRoomToDoCheck> findByGoalRoomTodoAndGoalRoomMemberId(
-            @Param("goalRoomToDo") final GoalRoomToDo goalRoomToDo,
-            @Param("goalRoomMemberId") final Long goalRoomMemberId);
+    Optional<GoalRoomToDoCheck> findByGoalRoomToDoAndGoalRoomMemberId(final GoalRoomToDo goalRoomToDo,
+                                                                      final Long goalRoomMemberId);
 
     @Query("select gc from GoalRoomToDoCheck gc "
             + "inner join fetch gc.goalRoomToDo gt "
@@ -27,9 +23,5 @@ public interface GoalRoomToDoCheckRepository extends JpaRepository<GoalRoomToDoC
             @Param("goalRoomMemberId") final Long goalRoomMemberId);
 
     @Modifying
-    @Query("delete from GoalRoomToDoCheck gc "
-            + "where gc.goalRoomMemberId = :goalRoomMemberId "
-            + "and gc.goalRoomToDo.id = :todoId")
-    void deleteByGoalRoomMemberIdAndToDoId(@Param("goalRoomMemberId") final Long goalRoomMemberId,
-                                           @Param("todoId") final Long todoId);
+    void deleteByGoalRoomMemberIdAndGoalRoomToDoId(final Long goalRoomMemberId, final Long goalRoomToDoId);
 }

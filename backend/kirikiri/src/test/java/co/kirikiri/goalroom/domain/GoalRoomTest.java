@@ -39,7 +39,7 @@ class GoalRoomTest {
     @Test
     void 골룸에_사용자를_추가한다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
 
         //when
         final Long followerId = 2L;
@@ -54,7 +54,7 @@ class GoalRoomTest {
     @Test
     void 모집중이_아닌_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
         goalRoom.start();
 
         //when, then
@@ -66,7 +66,7 @@ class GoalRoomTest {
     @Test
     void 제한_인원이_가득_찬_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(2L))
@@ -77,7 +77,7 @@ class GoalRoomTest {
     @Test
     void 이미_참여_중인_사용자를_골룸에_추가하면_예외가_발생한다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(1L))
@@ -105,7 +105,8 @@ class GoalRoomTest {
     @Test
     void 골룸에_대기중인_인원수를_계산한다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
+                골룸_로드맵_노드들을_생성한다());
 
         // when
         goalRoom.join(2L);
@@ -151,7 +152,7 @@ class GoalRoomTest {
     @Test
     void 골룸을_나간다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
 
         // when
         goalRoom.leave(1L);
@@ -163,7 +164,7 @@ class GoalRoomTest {
     @Test
     void 골룸에_참여하지_않은_멤버가_나가면_예외가_발생한다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L);
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
 
         // when
         final Long notJoinMemberId = 2L;
@@ -196,12 +197,6 @@ class GoalRoomTest {
                 new EncryptedPassword(new Password("password1!")), new Nickname("코끼리"), null, memberProfile);
     }
 
-//    private Member 사용자를_생성한다(final Long id, final String identifier, final String nickname) {
-//        final MemberProfile memberProfile = new MemberProfile(Gender.MALE, "kirikiri1@email.com");
-//        return new Member(id, new Identifier(identifier), null, new EncryptedPassword(new Password("password1!")),
-//                new Nickname(nickname), null, memberProfile);
-//    }
-
     private Roadmap 로드맵을_생성한다(final Member creator) {
         final RoadmapCategory category = new RoadmapCategory("게임");
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
@@ -225,8 +220,6 @@ class GoalRoomTest {
     }
 
     private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final Member creator) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"),
-                new LimitedMemberCount(10), roadmapContent.getId(), creator.getId());
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -239,7 +232,14 @@ class GoalRoomTest {
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-        return goalRoom;
+
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), creator.getId(),
+                goalRoomRoadmapNodes);
+    }
+
+    private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다() {
+        return new GoalRoomRoadmapNodes(List.of(
+                new GoalRoomRoadmapNode(new Period(TODAY, TEN_DAY_LATER), 5, 1L))
+        );
     }
 }

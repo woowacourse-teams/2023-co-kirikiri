@@ -28,7 +28,6 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
         return Optional.ofNullable(selectFrom(goalRoomMember)
                 .innerJoin(goalRoomMember.goalRoom, goalRoom)
                 .fetchJoin()
-                .fetchJoin()
                 .where(
                         memberIdCond(memberId),
                         goalRoom.status.eq(status))

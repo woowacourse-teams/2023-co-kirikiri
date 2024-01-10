@@ -149,8 +149,7 @@ public class GoalRoomCheckFeedService {
         final GoalRoom goalRoom = findGoalRoomWithNodesById(goalRoomId);
         validateJoinedMemberInRunningGoalRoom(goalRoom, identifier);
         final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
-        final List<CheckFeed> checkFeeds = findCheckFeedsByGoalRoomRoadmapNode(goalRoom,
-                currentGoalRoomRoadmapNode);
+        final List<CheckFeed> checkFeeds = findCheckFeedsByGoalRoomRoadmapNode(goalRoom, currentGoalRoomRoadmapNode);
         final List<GoalRoomCheckFeedDto> goalRoomCheckFeedDtos = makeGoalRoomCheckFeedDtos(checkFeeds);
         return CheckFeedMapper.convertToGoalRoomCheckFeedResponses(goalRoomCheckFeedDtos);
     }

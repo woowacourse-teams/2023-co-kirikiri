@@ -7,12 +7,16 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
+import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.service.dto.GoalRoomCreateDto;
+import co.kirikiri.goalroom.service.dto.GoalRoomRoadmapNodeDto;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
 import co.kirikiri.goalroom.service.mapper.GoalRoomMapper;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -37,23 +41,13 @@ public class GoalRoomCreateService {
         final RoadmapContent roadmapContent = findRoadmapContentById(goalRoomCreateDto.roadmapContentId());
         validateDeletedRoadmap(roadmapContent);
         validateNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
-        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = GoalRoomMapper.convertToGoalRoomRoadmapNodes(
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = convertToGoalRoomRoadmapNodes(
                 goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
+        validateGoalRoomRoadmapNodeSize(goalRoomRoadmapNodes, roadmapContent);
         final Member leader = findMemberByIdentifier(memberIdentifier);
-
         final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(),
-                roadmapContent.getId(), leader.getId());
-        validateGoalRoomRoadmapNodeSize(goalRoom, goalRoomRoadmapNodes, roadmapContent);
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+                roadmapContent.getId(), leader.getId(), goalRoomRoadmapNodes);
         return goalRoomRepository.save(goalRoom).getId();
-    }
-
-    private void validateGoalRoomRoadmapNodeSize(final GoalRoom goalRoom, final GoalRoomRoadmapNodes goalRoomRoadmapNodes,
-                                                 final RoadmapContent roadmapContent) {
-        final int totalSize = goalRoomRoadmapNodes.size() + goalRoom.goalRoomRoadmapNodeSize();
-        if (totalSize > roadmapContent.nodesSize()) {
-            throw new BadRequestException("로드맵의 노드 수보다 골룸의 노드 수가 큽니다.");
-        }
     }
 
     private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
@@ -71,6 +65,34 @@ public class GoalRoomCreateService {
     private void validateNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {
         if (roadmapNodesSize != goalRoomRoadmapNodeDtosSize) {
             throw new BadRequestException("모든 노드에 대해 기간이 설정돼야 합니다.");
+        }
+    }
+
+    private static GoalRoomRoadmapNodes convertToGoalRoomRoadmapNodes(
+            final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos,
+            final RoadmapContent roadmapContent) {
+        final List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = goalRoomRoadmapNodeDtos.stream()
+                .map(it -> makeGoalRoomRoadmapNode(roadmapContent, it))
+                .toList();
+        return new GoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+    }
+
+    private static GoalRoomRoadmapNode makeGoalRoomRoadmapNode(final RoadmapContent roadmapContent,
+                                                               final GoalRoomRoadmapNodeDto it) {
+        return new GoalRoomRoadmapNode(new Period(it.startDate(), it.endDate()), it.checkCount(),
+                findRoadmapNode(roadmapContent, it.roadmapNodeId()).getId());
+    }
+
+    private static RoadmapNode findRoadmapNode(final RoadmapContent roadmapContent, final Long roadmapNodeId) {
+        return roadmapContent.findRoadmapNodeById(roadmapNodeId)
+                .orElseThrow(() -> new NotFoundException("로드맵에 존재하지 않는 노드입니다."));
+    }
+
+    private void validateGoalRoomRoadmapNodeSize(final GoalRoomRoadmapNodes goalRoomRoadmapNodes,
+                                                 final RoadmapContent roadmapContent) {
+        final int goalRoomRoadmapNodesSize = goalRoomRoadmapNodes.size();
+        if (goalRoomRoadmapNodesSize > roadmapContent.nodesSize()) {
+            throw new BadRequestException("로드맵의 노드 수보다 골룸의 노드 수가 큽니다.");
         }
     }
 

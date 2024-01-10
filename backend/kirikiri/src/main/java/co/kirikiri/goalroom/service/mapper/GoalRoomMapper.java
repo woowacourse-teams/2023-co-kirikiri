@@ -1,7 +1,6 @@
 package co.kirikiri.goalroom.service.mapper;
 
 import co.kirikiri.common.exception.NotFoundException;
-import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoom;
@@ -10,7 +9,6 @@ import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoomStatus;
 import co.kirikiri.goalroom.domain.vo.GoalRoomName;
 import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
-import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.dto.GoalRoomMemberSortType;
 import co.kirikiri.goalroom.persistence.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.goalroom.service.dto.GoalRoomCreateDto;
@@ -63,26 +61,6 @@ public class GoalRoomMapper {
                 new GoalRoomName(goalRoomCreateRequest.name()),
                 new LimitedMemberCount(goalRoomCreateRequest.limitedMemberCount()),
                 goalRoomRoadmapNodeDtos);
-    }
-
-    public static GoalRoomRoadmapNodes convertToGoalRoomRoadmapNodes(
-            final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos,
-            final RoadmapContent roadmapContent) {
-        final List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = goalRoomRoadmapNodeDtos.stream()
-                .map(it -> makeGoalRoomRoadmapNode(roadmapContent, it))
-                .toList();
-        return new GoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-    }
-
-    private static GoalRoomRoadmapNode makeGoalRoomRoadmapNode(final RoadmapContent roadmapContent,
-                                                               final GoalRoomRoadmapNodeDto it) {
-        return new GoalRoomRoadmapNode(new Period(it.startDate(), it.endDate()), it.checkCount(),
-                findRoadmapNode(roadmapContent, it.roadmapNodeId()).getId());
-    }
-
-    private static RoadmapNode findRoadmapNode(final RoadmapContent roadmapContent, final Long roadmapNodeId) {
-        return roadmapContent.findRoadmapNodeById(roadmapNodeId)
-                .orElseThrow(() -> new NotFoundException("로드맵에 존재하지 않는 노드입니다."));
     }
 
     private static List<GoalRoomRoadmapNodeDto> makeGoalRoomRoadmapNodeDtos(

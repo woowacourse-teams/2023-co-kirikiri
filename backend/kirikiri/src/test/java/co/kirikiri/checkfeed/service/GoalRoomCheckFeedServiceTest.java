@@ -584,26 +584,19 @@ class GoalRoomCheckFeedServiceTest {
 
     private GoalRoom 골룸을_생성한다(final Long goalRoomId, final Member creator, final RoadmapContent roadmapContent,
                               final Integer limitedMemberCount) {
-        final GoalRoom goalRoom = new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"),
-                new LimitedMemberCount(limitedMemberCount), roadmapContent.getId(), creator.getId());
-        goalRoom.addAllGoalRoomRoadmapNodes(골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
-        return goalRoom;
+        return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
+                roadmapContent.getId(), creator.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
     }
 
     private GoalRoom 시작_날짜가_미래인_골룸을_생성한다(final Long goalRoomId, final Member creator,
                                          final RoadmapContent roadmapContent, final Integer limitedMemberCount) {
-        final GoalRoom goalRoom = new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"),
-                new LimitedMemberCount(limitedMemberCount), roadmapContent.getId(), creator.getId());
         final GoalRoomRoadmapNode goalRoomRoadmapNode = new GoalRoomRoadmapNode(
                 new Period(TEN_DAY_LATER, TWENTY_DAY_LATER), 5, roadmapContent.getNodes().getValues().get(0).getId());
-        goalRoom.addAllGoalRoomRoadmapNodes(
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode)));
-        return goalRoom;
+        return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
+                roadmapContent.getId(), creator.getId(), new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode)));
     }
 
     private GoalRoom 진행중인_노드가_없는_골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId());
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -616,8 +609,9 @@ class GoalRoomCheckFeedServiceTest {
 
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
-        return goalRoom;
+
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
+                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
     }
 
     private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다(final RoadmapNodes roadmapNodes) {
