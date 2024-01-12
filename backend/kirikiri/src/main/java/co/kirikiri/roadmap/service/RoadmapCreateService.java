@@ -57,7 +57,7 @@ public class RoadmapCreateService {
         final Member member = findMemberByIdentifier(identifier);
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
         final RoadmapSaveDto roadmapSaveDto = RoadmapMapper.convertToRoadmapSaveDto(request);
-        final Roadmap roadmap = createRoadmap(member, roadmapSaveDto, roadmapCategory);
+        final Roadmap roadmap = createRoadmap(member.getId(), roadmapSaveDto, roadmapCategory);
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
 
         applicationEventPublisher.publishEvent(new RoadmapCreateEvent(savedRoadmap, roadmapSaveDto));
@@ -75,12 +75,12 @@ public class RoadmapCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다. categoryId = " + categoryId));
     }
 
-    private Roadmap createRoadmap(final Member member, final RoadmapSaveDto roadmapSaveDto,
+    private Roadmap createRoadmap(final Long memberId, final RoadmapSaveDto roadmapSaveDto,
                                   final RoadmapCategory roadmapCategory) {
         final RoadmapNodes roadmapNodes = makeRoadmapNodes(roadmapSaveDto.roadmapNodes());
         final RoadmapContent roadmapContent = makeRoadmapContent(roadmapSaveDto, roadmapNodes);
         final RoadmapTags roadmapTags = makeRoadmapTags(roadmapSaveDto.tags());
-        final Roadmap roadmap = makeRoadmap(member, roadmapSaveDto, roadmapCategory);
+        final Roadmap roadmap = makeRoadmap(memberId, roadmapSaveDto, roadmapCategory);
         roadmap.addContent(roadmapContent);
         roadmap.addTags(roadmapTags);
         return roadmap;
@@ -108,21 +108,22 @@ public class RoadmapCreateService {
         );
     }
 
-    private Roadmap makeRoadmap(final Member member, final RoadmapSaveDto roadmapSaveDto,
+    private Roadmap makeRoadmap(final Long memberId, final RoadmapSaveDto roadmapSaveDto,
                                 final RoadmapCategory roadmapCategory) {
         return new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(),
-                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), member,
+                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), memberId,
                 roadmapCategory);
     }
 
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final Member member = roadmapGoalRoomService.findCompletedGoalRoomMember(roadmapId, identifier);
-        final RoadmapReviewDto roadmapReviewDto = RoadmapMapper.convertRoadmapReviewDto(request, member);
-        validateReviewQualification(roadmap, member);
-        validateReviewCount(roadmap, member);
-        final RoadmapReview roadmapReview = new RoadmapReview(roadmapReviewDto.content(), roadmapReviewDto.rate(),
-                roadmapReviewDto.member());
+        final Long memberId = roadmapGoalRoomService.findCompletedGoalRoomMember(roadmapId, identifier)
+                .getId();
+
+        validateReviewQualification(roadmap, memberId);
+        validateReviewCount(roadmap, memberId);
+        final RoadmapReviewDto roadmapReviewDto = RoadmapMapper.convertRoadmapReviewDto(request, memberId);
+        final RoadmapReview roadmapReview = new RoadmapReview(roadmapReviewDto.content(), roadmapReviewDto.rate(), memberId);
         roadmap.addReview(roadmapReview);
     }
 
@@ -131,17 +132,17 @@ public class RoadmapCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-    private void validateReviewQualification(final Roadmap roadmap, final Member member) {
-        if (roadmap.isCreator(member)) {
+    private void validateReviewQualification(final Roadmap roadmap, final Long memberId) {
+        if (roadmap.isCreator(memberId)) {
             throw new BadRequestException(
-                    "로드맵 생성자는 리뷰를 달 수 없습니다. roadmapId = " + roadmap.getId() + " memberId = " + member.getId());
+                    "로드맵 생성자는 리뷰를 달 수 없습니다. roadmapId = " + roadmap.getId() + " memberId = " + memberId);
         }
     }
 
-    private void validateReviewCount(final Roadmap roadmap, final Member member) {
-        if (roadmapReviewRepository.findByRoadmapAndMember(roadmap, member).isPresent()) {
+    private void validateReviewCount(final Roadmap roadmap, final Long memberId) {
+        if (roadmapReviewRepository.findByRoadmapAndMemberId(roadmap, memberId).isPresent()) {
             throw new BadRequestException(
-                    "이미 작성한 리뷰가 존재합니다. roadmapId = " + roadmap.getId() + " memberId = " + member.getId());
+                    "이미 작성한 리뷰가 존재합니다. roadmapId = " + roadmap.getId() + " memberId = " + memberId);
         }
     }
 

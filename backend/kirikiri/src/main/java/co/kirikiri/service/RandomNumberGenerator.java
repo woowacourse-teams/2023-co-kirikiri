@@ -1,6 +1,7 @@
 package co.kirikiri.service;
 
 import org.springframework.stereotype.Component;
+
 import java.util.Random;
 
 @Component

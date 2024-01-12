@@ -2,8 +2,6 @@ package co.kirikiri.roadmap.service;
 
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
-import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
@@ -16,6 +14,8 @@ import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
+import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
 import co.kirikiri.roadmap.service.dto.RoadmapCategoryDto;
 import co.kirikiri.roadmap.service.dto.RoadmapContentDto;
 import co.kirikiri.roadmap.service.dto.RoadmapDto;
@@ -85,7 +85,7 @@ public class RoadmapReadService {
 
     private RoadmapDto makeRoadmapDto(final Roadmap roadmap, final RoadmapContent roadmapContent) {
         final RoadmapCategory category = roadmap.getCategory();
-        final Member creator = roadmap.getCreator();
+        final Member creator = findMemberById(roadmap.getCreatorId());
         final RoadmapContentDto roadmapContentDto = new RoadmapContentDto(
                 roadmapContent.getId(),
                 roadmapContent.getContent(),
@@ -94,6 +94,11 @@ public class RoadmapReadService {
                 roadmap.getTitle(), roadmap.getIntroduction(), makeMemberDto(creator),
                 roadmapContentDto, roadmap.getDifficulty().name(), roadmap.getRequiredPeriod(),
                 roadmap.getCreatedAt(), makeRoadmapTagDtos(roadmap.getTags()));
+    }
+
+    private Member findMemberById(final Long memberId) {
+        return memberRepository.findWithMemberProfileAndImageById(memberId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
     private MemberDto makeMemberDto(final Member creator) {
@@ -158,7 +163,7 @@ public class RoadmapReadService {
         final RoadmapCategory category = roadmap.getCategory();
         final RoadmapCategoryDto roadmapCategoryDto = new RoadmapCategoryDto(category.getId(),
                 category.getName());
-        final Member creator = roadmap.getCreator();
+        final Member creator = findMemberById(roadmap.getCreatorId());
         final URL creatorImageUrl = fileService.generateUrl(creator.getImage().getServerFilePath(), HttpMethod.GET);
         final MemberDto memberDto = new MemberDto(creator.getId(), creator.getNickname().getValue(),
                 creatorImageUrl.toExternalForm());
@@ -206,7 +211,7 @@ public class RoadmapReadService {
     public MemberRoadmapResponses findAllMemberRoadmaps(final String identifier,
                                                         final CustomScrollRequest scrollRequest) {
         final Member member = findMemberByIdentifier(identifier);
-        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(member,
+        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(member,
                 scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertMemberRoadmapResponses(roadmaps, scrollRequest.size());
     }
@@ -226,7 +231,7 @@ public class RoadmapReadService {
     public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId,
                                                           final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewByRoadmapOrderByLatest(
                 roadmap, scrollRequest.lastId(), scrollRequest.size());
         final List<RoadmapReviewReadDto> roadmapReviewReadDtos = makeRoadmapReviewReadDtos(roadmapReviews);
         return RoadmapMapper.convertToRoadmapReviewResponses(roadmapReviewReadDtos);
@@ -239,7 +244,7 @@ public class RoadmapReadService {
     }
 
     private RoadmapReviewReadDto makeRoadmapReviewReadDto(final RoadmapReview review) {
-        final Member member = review.getMember();
+        final Member member = findMemberById(review.getMemberId());
         final URL memberImageURl = fileService.generateUrl(member.getImage().getServerFilePath(), HttpMethod.GET);
         return new RoadmapReviewReadDto(review.getId(),
                 new MemberDto(member.getId(), member.getNickname().getValue(), memberImageURl.toExternalForm()),

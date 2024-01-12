@@ -1,26 +1,15 @@
 package co.kirikiri.roadmap.domain;
 
+import co.kirikiri.roadmap.domain.exception.RoadmapException;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static co.kirikiri.roadmap.domain.RoadmapDifficulty.DIFFICULT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.roadmap.domain.Roadmap;
-import co.kirikiri.roadmap.domain.RoadmapCategory;
-import co.kirikiri.roadmap.domain.RoadmapContent;
-import co.kirikiri.roadmap.domain.RoadmapNode;
-import co.kirikiri.roadmap.domain.RoadmapNodes;
-import co.kirikiri.roadmap.domain.exception.RoadmapException;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 class RoadmapContentTest {
 
@@ -79,11 +68,9 @@ class RoadmapContentTest {
     void 로드맵_본문의_로드맵인_경우_false를_반환한다() {
         // given
         final RoadmapContent content = new RoadmapContent("content");
-        final MemberProfile profile = new MemberProfile(Gender.FEMALE, "kirikiri1@email.com");
-        final Member creator = new Member(new Identifier("creator"),
-                new EncryptedPassword(new Password("password1")), new Nickname("nickname"), null, profile);
+        final Long creatorId = 1L;
         final RoadmapCategory category = new RoadmapCategory(1L, "여가");
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creatorId, category);
 
         // when
         roadmap.addContent(content);

@@ -3,6 +3,7 @@ package co.kirikiri.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PreUpdate;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

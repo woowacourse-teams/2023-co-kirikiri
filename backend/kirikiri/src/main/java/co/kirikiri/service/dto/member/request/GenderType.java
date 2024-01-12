@@ -1,6 +1,7 @@
 package co.kirikiri.service.dto.member.request;
 
 import co.kirikiri.service.exception.BadRequestException;
+
 import java.util.Arrays;
 
 public enum GenderType {

@@ -1,22 +1,8 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로그인한_사용자가_생성한_로드맵을_이전에_받은_로드맵의_제일마지막_아이디_이후의_조건으로_조회한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로그인한_사용자가_생성한_로드맵을_조회한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.모든_카테고리를_조회한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.사이즈_없이_로드맵을_조회한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.사이즈별로_로드맵을_조회한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.정렬된_카테고리별_로드맵_리스트_조회;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리들_생성;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
@@ -26,13 +12,19 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapCategoryResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.service.dto.ErrorResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+
 import java.io.IOException;
 import java.util.List;
+
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoadmapReadIntegrationTest extends InitIntegrationTest {
 

@@ -9,7 +9,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.roadmap.domain.QRoadmapReview.roadmapReview;
 
 public class RoadmapReviewQueryRepositoryImpl extends QuerydslRepositorySupporter implements
@@ -20,12 +19,10 @@ public class RoadmapReviewQueryRepositoryImpl extends QuerydslRepositorySupporte
     }
 
     @Override
-    public List<RoadmapReview> findRoadmapReviewWithMemberByRoadmapOrderByLatest(final Roadmap roadmap,
-                                                                                 final Long lastId,
-                                                                                 final int pageSize) {
+    public List<RoadmapReview> findRoadmapReviewByRoadmapOrderByLatest(final Roadmap roadmap,
+                                                                       final Long lastId,
+                                                                       final int pageSize) {
         return selectFrom(roadmapReview)
-                .innerJoin(roadmapReview.member, member)
-                .fetchJoin()
                 .where(roadmapCond(roadmap), lessThanLastId(lastId))
                 .limit(pageSize)
                 .orderBy(orderByCreatedAtDesc())

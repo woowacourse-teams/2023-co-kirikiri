@@ -1,14 +1,5 @@
 package co.kirikiri.service;
 
-import static co.kirikiri.domain.goalroom.GoalRoomStatus.RECRUITING;
-import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
@@ -25,6 +16,9 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -34,19 +28,24 @@ import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodeImage;
 import co.kirikiri.roadmap.domain.RoadmapNodeImages;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.service.scheduler.GoalRoomScheduler;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+
+import static co.kirikiri.domain.goalroom.GoalRoomStatus.RECRUITING;
+import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomSchedulerTest {
@@ -60,7 +59,7 @@ class GoalRoomSchedulerTest {
 
     @Mock
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-    
+
     @Mock
     private GoalRoomMemberRepository goalRoomMemberRepository;
 
@@ -149,7 +148,7 @@ class GoalRoomSchedulerTest {
         final RoadmapCategory category = new RoadmapCategory("게임");
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
         final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
         roadmap.addContent(roadmapContent);
         return roadmap;
     }

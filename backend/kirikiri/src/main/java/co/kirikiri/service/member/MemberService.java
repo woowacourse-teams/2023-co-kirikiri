@@ -26,14 +26,15 @@ import co.kirikiri.service.exception.ConflictException;
 import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.AuthMapper;
 import co.kirikiri.service.mapper.MemberMapper;
-import java.net.URL;
-import java.util.Map;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.net.URL;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)

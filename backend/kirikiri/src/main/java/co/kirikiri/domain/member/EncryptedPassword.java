@@ -2,13 +2,14 @@ package co.kirikiri.domain.member;
 
 import co.kirikiri.domain.exception.UnexpectedDomainException;
 import co.kirikiri.domain.member.vo.Password;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Objects;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EncryptedPassword {

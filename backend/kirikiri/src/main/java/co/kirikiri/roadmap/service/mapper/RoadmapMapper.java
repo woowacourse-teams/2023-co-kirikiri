@@ -1,9 +1,8 @@
 package co.kirikiri.roadmap.service.mapper;
 
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
+import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.service.dto.RoadmapCategoryDto;
 import co.kirikiri.roadmap.service.dto.RoadmapContentDto;
 import co.kirikiri.roadmap.service.dto.RoadmapDto;
@@ -177,8 +176,8 @@ public final class RoadmapMapper {
     }
 
     public static RoadmapReviewDto convertRoadmapReviewDto(final RoadmapReviewSaveRequest request,
-                                                           final Member member) {
-        return new RoadmapReviewDto(request.content(), request.rate(), member);
+                                                           final Long memberId) {
+        return new RoadmapReviewDto(request.content(), request.rate(), memberId);
     }
 
     public static MemberRoadmapResponses convertMemberRoadmapResponses(final List<Roadmap> roadmaps,

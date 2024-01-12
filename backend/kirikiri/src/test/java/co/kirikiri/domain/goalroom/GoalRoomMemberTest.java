@@ -1,14 +1,15 @@
 package co.kirikiri.domain.goalroom;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class GoalRoomMemberTest {
 

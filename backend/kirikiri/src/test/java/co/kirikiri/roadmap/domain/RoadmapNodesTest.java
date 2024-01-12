@@ -1,13 +1,11 @@
 package co.kirikiri.roadmap.domain;
 
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-
-import co.kirikiri.roadmap.domain.RoadmapContent;
-import co.kirikiri.roadmap.domain.RoadmapNode;
-import co.kirikiri.roadmap.domain.RoadmapNodes;
-import org.junit.jupiter.api.Test;
-import java.util.List;
 
 class RoadmapNodesTest {
 

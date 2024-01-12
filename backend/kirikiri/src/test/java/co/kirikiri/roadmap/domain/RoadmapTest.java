@@ -1,10 +1,5 @@
 package co.kirikiri.roadmap.domain;
 
-import static co.kirikiri.roadmap.domain.RoadmapDifficulty.DIFFICULT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -12,21 +7,21 @@ import co.kirikiri.domain.member.MemberProfile;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Nickname;
 import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.roadmap.domain.Roadmap;
-import co.kirikiri.roadmap.domain.RoadmapCategory;
-import co.kirikiri.roadmap.domain.RoadmapContent;
-import co.kirikiri.roadmap.domain.RoadmapContents;
-import co.kirikiri.roadmap.domain.RoadmapNode;
-import co.kirikiri.roadmap.domain.RoadmapNodes;
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
+
+import static co.kirikiri.roadmap.domain.RoadmapDifficulty.DIFFICULT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 class RoadmapTest {
 
-    private final Member creator = 크리에이터를_생성한다();
+    private final Long creatorId = 1L;
     private final RoadmapCategory category = 카테고리를_생성한다();
     private final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
     private final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
@@ -35,13 +30,13 @@ class RoadmapTest {
     void 로드맵이_성공적으로_생성된다() {
         // expect
         assertDoesNotThrow(() -> new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT,
-                creator, category));
+                creatorId, category));
     }
 
     @Test
     void 로드맵에_본문을_추가한다() {
         // given
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, DIFFICULT, creatorId, category);
 
         // when
         roadmap.addContent(roadmapContent);
@@ -58,7 +53,7 @@ class RoadmapTest {
         final String title = "a".repeat(titleLength);
 
         // expect
-        assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT, creator, category))
+        assertThatThrownBy(() -> new Roadmap(title, "로드맵 소개글", 30, DIFFICULT, creatorId, category))
                 .isInstanceOf(RoadmapException.class);
     }
 
@@ -69,7 +64,7 @@ class RoadmapTest {
         final String introduction = "a".repeat(introductionLength);
 
         // expect
-        assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT, creator, category))
+        assertThatThrownBy(() -> new Roadmap("로드맵 제목", introduction, 30, DIFFICULT, creatorId, category))
                 .isInstanceOf(RoadmapException.class);
     }
 
@@ -77,7 +72,7 @@ class RoadmapTest {
     @ValueSource(ints = {-1, 1001})
     void 로드맵_추천_소요_기간이_0보다_작고_1000보다_크면_예외가_발생한다(final int requiredPeriod) {
         // expect
-        assertThatThrownBy(() -> new Roadmap("로드맵 제목", "로드맵 소개글", requiredPeriod, DIFFICULT, creator, category))
+        assertThatThrownBy(() -> new Roadmap("로드맵 제목", "로드맵 소개글", requiredPeriod, DIFFICULT, creatorId, category))
                 .isInstanceOf(RoadmapException.class);
     }
 

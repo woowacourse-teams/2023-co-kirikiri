@@ -11,7 +11,6 @@ import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
@@ -19,6 +18,7 @@ import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
@@ -40,16 +40,17 @@ import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
 import co.kirikiri.service.exception.ForbiddenException;
 import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.GoalRoomMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)

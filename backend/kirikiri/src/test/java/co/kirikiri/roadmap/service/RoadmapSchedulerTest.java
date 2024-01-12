@@ -60,7 +60,7 @@ class RoadmapSchedulerTest {
         roadmapContent1_1.addNodes(new RoadmapNodes(List.of(roadmapNode1)));
         roadmapContent1_2.addNodes(new RoadmapNodes(List.of(roadmapNode1)));
 
-        final Roadmap roadmap1 = new Roadmap("로드맵2", "로드맵 설명2", 30, RoadmapDifficulty.DIFFICULT, member1, category);
+        final Roadmap roadmap1 = new Roadmap("로드맵2", "로드맵 설명2", 30, RoadmapDifficulty.DIFFICULT, member1.getId(), category);
         roadmap1.addContent(roadmapContent1_1);
         roadmap1.addContent(roadmapContent1_2);
 
@@ -89,7 +89,7 @@ class RoadmapSchedulerTest {
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵1 노드", "로드맵 노드 내용");
         roadmapContent1.addNodes(new RoadmapNodes(List.of(roadmapNode1)));
 
-        final Roadmap roadmap1 = new Roadmap("로드맵1", "로드맵 설명1", 30, RoadmapDifficulty.DIFFICULT, member1, category);
+        final Roadmap roadmap1 = new Roadmap("로드맵1", "로드맵 설명1", 30, RoadmapDifficulty.DIFFICULT, member1.getId(), category);
         roadmap1.addContent(roadmapContent1);
 
         given(roadmapRepository.findWithRoadmapContentByStatus(any()))
@@ -117,7 +117,7 @@ class RoadmapSchedulerTest {
         final RoadmapNode roadmapNode = new RoadmapNode("로드맵 노드", "로드맵 노드 내용");
         roadmapContent1.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
-        final Roadmap roadmap1 = new Roadmap("로드맵1", "로드맵 설명1", 30, RoadmapDifficulty.DIFFICULT, member1, category);
+        final Roadmap roadmap1 = new Roadmap("로드맵1", "로드맵 설명1", 30, RoadmapDifficulty.DIFFICULT, member1.getId(), category);
         roadmap1.addContent(roadmapContent1);
 
         given(roadmapRepository.findWithRoadmapContentByStatus(any()))

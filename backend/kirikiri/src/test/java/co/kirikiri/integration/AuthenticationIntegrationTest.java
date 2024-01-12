@@ -1,11 +1,5 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.응답을_반환하는_로그인;
-import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.토큰_재발행;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
@@ -15,9 +9,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.응답을_반환하는_로그인;
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.토큰_재발행;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthenticationIntegrationTest extends InitIntegrationTest {
 

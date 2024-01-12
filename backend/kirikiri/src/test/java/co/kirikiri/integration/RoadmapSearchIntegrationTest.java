@@ -1,23 +1,21 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.제목으로_최신순_정렬된_로드맵을_검색한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.크리에이터_닉네임으로_정렬된_로드맵을_생성한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.태그_이름으로_최신순_정렬된_로드맵을_검색한다;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
 import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponses;
+import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.List;
+
+import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class RoadmapSearchIntegrationTest extends InitIntegrationTest {
 

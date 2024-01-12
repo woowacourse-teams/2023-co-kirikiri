@@ -3,6 +3,7 @@ package co.kirikiri.service.dto.goalroom.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 public record GoalRoomCreateRequest(

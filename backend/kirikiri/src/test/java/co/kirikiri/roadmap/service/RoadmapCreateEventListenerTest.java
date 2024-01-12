@@ -1,12 +1,5 @@
 package co.kirikiri.roadmap.service;
 
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -42,9 +35,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateEventListenerTest {
 
-    private static final Member member = new Member(1L, new Identifier("identifier1"),
-            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"), null,
-            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
+    private final Long memberId = 1L;
 
     @Mock
     private RoadmapContentRepository roadmapContentRepository;
@@ -65,7 +56,7 @@ class RoadmapCreateEventListenerTest {
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
         final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
-                RoadmapDifficulty.DIFFICULT, member, new RoadmapCategory("category"));
+                RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
@@ -92,7 +83,7 @@ class RoadmapCreateEventListenerTest {
     void 로드맵에_컨텐츠가_존재하지_않을_경우_예외를_던진다() throws IOException {
         //given
         final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
-                RoadmapDifficulty.DIFFICULT, member, new RoadmapCategory("category"));
+                RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile("roadmapNodeTitle",
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
@@ -120,7 +111,7 @@ class RoadmapCreateEventListenerTest {
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
         final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
-                RoadmapDifficulty.DIFFICULT, member, new RoadmapCategory("category"));
+                RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
@@ -150,7 +141,7 @@ class RoadmapCreateEventListenerTest {
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
         final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
-                RoadmapDifficulty.DIFFICULT, member, new RoadmapCategory("category"));
+                RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(), null,
                 "image/jpeg", "tempImage".getBytes());

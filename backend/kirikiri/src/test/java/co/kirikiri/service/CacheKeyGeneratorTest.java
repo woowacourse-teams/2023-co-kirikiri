@@ -1,9 +1,10 @@
 package co.kirikiri.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CacheKeyGeneratorTest {
 

@@ -1,9 +1,5 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_회원가입;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
@@ -15,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
+
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_회원가입;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberCreateIntegrationTest extends InitIntegrationTest {
 

@@ -1,9 +1,10 @@
 package co.kirikiri.persistence.goalroom;
 
 import co.kirikiri.domain.goalroom.GoalRoomMember;
-import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class GoalRoomMemberJdbcRepositoryImpl implements GoalRoomMemberJdbcRepository {

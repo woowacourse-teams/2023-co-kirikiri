@@ -115,6 +115,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(roadmap.getContents().getValues().get(0)));
         when(roadmapGoalRoomService.findRoadmapGoalRoomsByRoadmap(any()))
                 .thenReturn(new RoadmapGoalRoomNumberDto(2, 2, 2));
+        when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
+                .thenReturn(Optional.of(member));
         when(fileService.generateUrl(anyString(), any()))
                 .thenReturn(new URL("http://example.com/serverFilePath"));
 
@@ -177,6 +179,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(category));
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
+                .thenReturn(Optional.of(member));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -226,6 +230,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(category));
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
+                .thenReturn(Optional.of(member));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -263,6 +269,8 @@ class RoadmapReadServiceTest {
 
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
+                .thenReturn(Optional.of(member));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -310,6 +318,8 @@ class RoadmapReadServiceTest {
                 .thenReturn(Optional.of(new RoadmapCategory("여행")));
         when(roadmapRepository.findRoadmapsByCategory(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
+                .thenReturn(Optional.of(member));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -364,6 +374,8 @@ class RoadmapReadServiceTest {
 
         when(roadmapRepository.findRoadmapsByCond(any(), any(), any(), anyInt()))
                 .thenReturn(roadmaps);
+        when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
+                .thenReturn(Optional.of(member));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -412,7 +424,7 @@ class RoadmapReadServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(member));
-        when(roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(any(), any(), anyInt()))
                 .thenReturn(List.of(roadmap2, roadmap1));
 
         // when
@@ -454,7 +466,7 @@ class RoadmapReadServiceTest {
         final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(roadmapNode1, roadmapNode2));
         final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
         roadmapContent.addNodes(roadmapNodes);
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1,
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1.getId(),
                 new RoadmapCategory("it"));
 
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "name2");
@@ -512,17 +524,19 @@ class RoadmapReadServiceTest {
         final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(roadmapNode1, roadmapNode2));
         final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
         roadmapContent.addNodes(roadmapNodes);
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1,
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1.getId(),
                 new RoadmapCategory("it"));
 
-        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰 내용", 5.0, member1);
-        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰 내용", 4.5, member2);
+        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰 내용", 5.0, member1.getId());
+        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰 내용", 4.5, member2.getId());
         roadmapReview1.updateRoadmap(roadmap);
         roadmapReview2.updateRoadmap(roadmap);
 
         when(roadmapRepository.findRoadmapById(anyLong())).thenReturn(Optional.of(roadmap));
-        when(roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(any(), any(), anyInt()))
+        when(roadmapReviewRepository.findRoadmapReviewByRoadmapOrderByLatest(any(), any(), anyInt()))
                 .thenReturn(List.of(roadmapReview2, roadmapReview1));
+        when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
+                .thenReturn(Optional.of(member2), Optional.of(member1));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -565,7 +579,7 @@ class RoadmapReadServiceTest {
 
     private Roadmap 로드맵을_생성한다(final String roadmapTitle, final RoadmapCategory category) {
         final Roadmap roadmap = new Roadmap(1L, roadmapTitle, "로드맵 소개글", 30,
-                RoadmapDifficulty.valueOf("DIFFICULT"), member, category);
+                RoadmapDifficulty.valueOf("DIFFICULT"), member.getId(), category);
 
         final RoadmapTags roadmapTags = new RoadmapTags(
                 List.of(new RoadmapTag(1L, new RoadmapTagName("태그1")),

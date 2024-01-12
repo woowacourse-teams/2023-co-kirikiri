@@ -95,7 +95,7 @@ class RoadmapCreateServiceTest {
                 .willReturn(Optional.of(category));
         given(roadmapRepository.save(any()))
                 .willReturn(new Roadmap(1L, roadmapTitle, roadmapIntroduction, requiredPeriod,
-                        RoadmapDifficulty.valueOf(difficulty.name()), MEMBER, category));
+                        RoadmapDifficulty.valueOf(difficulty.name()), MEMBER.getId(), category));
         when(memberRepository.findByIdentifier(MEMBER.getIdentifier()))
                 .thenReturn(Optional.of(MEMBER));
 
@@ -155,7 +155,7 @@ class RoadmapCreateServiceTest {
                 .thenReturn(Optional.of(roadmap));
         when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
                 .thenReturn(follower);
-        when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
+        when(roadmapReviewRepository.findByRoadmapAndMemberId(any(), anyLong()))
                 .thenReturn(Optional.empty());
 
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("최고의 로드맵이네요", 5.0);
@@ -216,8 +216,8 @@ class RoadmapCreateServiceTest {
                 .thenReturn(Optional.of(roadmap));
         when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
                 .thenReturn(follower);
-        when(roadmapReviewRepository.findByRoadmapAndMember(any(), any()))
-                .thenReturn(Optional.of(new RoadmapReview("로드맵 짱!", 5.0, MEMBER)));
+        when(roadmapReviewRepository.findByRoadmapAndMemberId(any(), anyLong()))
+                .thenReturn(Optional.of(new RoadmapReview("로드맵 짱!", 5.0, MEMBER.getId())));
 
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("최고의 로드맵이네요", 5.0);
 
@@ -335,7 +335,7 @@ class RoadmapCreateServiceTest {
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
         final RoadmapContent content = new RoadmapContent("콘텐츠 제목");
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator.getId(), category);
         roadmap.addContent(content);
         return roadmap;
     }

@@ -42,8 +42,6 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     @Override
     public Optional<Roadmap> findRoadmapById(final Long roadmapId) {
         return Optional.ofNullable(selectFrom(roadmap)
-                .innerJoin(roadmap.creator, member)
-                .fetchJoin()
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
                 .leftJoin(roadmap.tags.values, roadmapTag)
@@ -57,8 +55,6 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
 
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
-                .fetchJoin()
-                .innerJoin(roadmap.creator, member)
                 .fetchJoin()
                 .where(
                         lessThanLastId(lastId, orderType),
@@ -75,8 +71,6 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
-                .innerJoin(roadmap.creator, member)
-                .fetchJoin()
                 .where(
                         lessThanLastId(lastId, orderType),
                         statusCond(RoadmapStatus.CREATED),
@@ -89,9 +83,9 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
-                                                                       final Long lastId,
-                                                                       final int pageSize) {
+    public List<Roadmap> findRoadmapsWithCategoryByMemberIdOrderByLatest(final Member member,
+                                                                         final Long lastId,
+                                                                         final int pageSize) {
         final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
         return selectFrom(roadmap)
                 .innerJoin(roadmap.category, roadmapCategory)
@@ -151,14 +145,17 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (creatorId == null) {
             return null;
         }
-        return roadmap.creator.id.eq(creatorId);
+        return roadmap.creatorId.eq(creatorId);
     }
 
     private BooleanExpression creatorNicknameCond(final RoadmapSearchCreatorNickname creatorName) {
         if (creatorName == null) {
             return null;
         }
-        return roadmap.creator.nickname.value.eq(creatorName.value());
+        return roadmap.creatorId
+                .eq(select(member.id)
+                        .from(member)
+                        .where(member.nickname.value.eq(creatorName.value())));
     }
 
     private BooleanExpression tagCond(final RoadmapSearchTagName tagName) {
@@ -239,6 +236,9 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
 
     private BooleanExpression creatorIdentifierCond(final String identifier) {
         final Identifier creatorIdentifier = new Identifier(identifier);
-        return roadmap.creator.identifier.eq(creatorIdentifier);
+        return roadmap.creatorId
+                .eq(select(member.id)
+                        .from(member)
+                        .where(member.identifier.eq(creatorIdentifier)));
     }
 }

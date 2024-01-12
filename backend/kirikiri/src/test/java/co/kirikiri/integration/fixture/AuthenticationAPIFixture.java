@@ -1,16 +1,16 @@
 package co.kirikiri.integration.fixture;
 
-import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
-import static io.restassured.RestAssured.given;
-
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.MediaType;
+
+import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
+import static io.restassured.RestAssured.given;
 
 public class AuthenticationAPIFixture {
 

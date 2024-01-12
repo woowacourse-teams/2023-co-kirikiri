@@ -5,6 +5,7 @@ import co.kirikiri.roadmap.domain.RoadmapContent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.Optional;
 
 public interface RoadmapContentRepository extends JpaRepository<RoadmapContent, Long> {

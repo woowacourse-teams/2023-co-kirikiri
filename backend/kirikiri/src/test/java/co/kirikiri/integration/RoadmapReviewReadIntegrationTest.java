@@ -1,19 +1,10 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
-import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_리뷰를_조회한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.리뷰를_생성한다;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
@@ -21,9 +12,6 @@ import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
-import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
-import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
@@ -31,9 +19,17 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
+import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.*;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoadmapReviewReadIntegrationTest extends InitIntegrationTest {
 

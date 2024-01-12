@@ -12,15 +12,16 @@ import co.kirikiri.service.dto.member.OauthMemberJoinDto;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.mapper.OauthMapper;
 import co.kirikiri.service.member.MemberService;
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

@@ -1,5 +1,25 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
+import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.member.request.GenderType;
+import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.service.exception.BadRequestException;
+import co.kirikiri.service.exception.ConflictException;
+import co.kirikiri.service.member.MemberService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+
+import java.util.List;
+
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,25 +30,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
-import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ConflictException;
-import co.kirikiri.service.member.MemberService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 @WebMvcTest(MemberController.class)
 class MemberCreateApiTest extends ControllerTestHelper {

@@ -1,6 +1,7 @@
 package co.kirikiri.domain;
 
 import co.kirikiri.domain.exception.ImageExtensionException;
+
 import java.util.Arrays;
 
 public enum ImageContentType {

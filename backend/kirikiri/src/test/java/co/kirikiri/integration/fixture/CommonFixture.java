@@ -1,11 +1,11 @@
 package co.kirikiri.integration.fixture;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommonFixture {
 

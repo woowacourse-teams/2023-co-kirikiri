@@ -1,12 +1,13 @@
 package co.kirikiri.persistence.member;
 
+import co.kirikiri.domain.member.Member;
+import co.kirikiri.persistence.QuerydslRepositorySupporter;
+
+import java.util.Optional;
+
 import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.member.QMemberImage.memberImage;
 import static co.kirikiri.domain.member.QMemberProfile.memberProfile;
-
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import java.util.Optional;
 
 public class MemberQueryRepositoryImpl extends QuerydslRepositorySupporter implements MemberQueryRepository {
 

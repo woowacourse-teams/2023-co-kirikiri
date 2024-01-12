@@ -24,9 +24,9 @@ public interface RoadmapQueryRepository {
                                      final Long lastId,
                                      final int pageSize);
 
-    List<Roadmap> findRoadmapsWithCategoryByMemberOrderByLatest(final Member member,
-                                                                final Long lastId,
-                                                                final int pageSize);
+    List<Roadmap> findRoadmapsWithCategoryByMemberIdOrderByLatest(final Member member,
+                                                                  final Long lastId,
+                                                                  final int pageSize);
 
     Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier);
 

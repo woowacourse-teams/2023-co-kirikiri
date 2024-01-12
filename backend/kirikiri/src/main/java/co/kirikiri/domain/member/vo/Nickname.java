@@ -2,8 +2,9 @@ package co.kirikiri.domain.member.vo;
 
 import co.kirikiri.domain.member.exception.MemberException;
 import jakarta.persistence.Column;
-import java.util.Objects;
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 @NoArgsConstructor
 public class Nickname {

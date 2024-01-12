@@ -70,7 +70,7 @@ class RoadmapRepositoryTest {
         // given
         final Member creator = 사용자를_생성한다("cokirikiri", "코끼리");
         final RoadmapCategory category = 카테고리를_생성한다("여가");
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
 
         // when
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
@@ -295,17 +295,17 @@ class RoadmapRepositoryTest {
         노드_정보를_포함한_삭제된_로드맵을_저장한다("여행 로드맵2", creator, travelCategory);
 
         // gameRoadmap1 : 4.5
-        final RoadmapReview gameRoadmap1Review = new RoadmapReview("리뷰1", 4.5, follower);
+        final RoadmapReview gameRoadmap1Review = new RoadmapReview("리뷰1", 4.5, follower.getId());
         gameRoadmap1.addReview(gameRoadmap1Review);
         roadmapRepository.save(gameRoadmap1);
 
         // gameRoadmap2 : 5.0
-        final RoadmapReview gameRoadmap2Review = new RoadmapReview("리뷰2", 5.0, follower);
+        final RoadmapReview gameRoadmap2Review = new RoadmapReview("리뷰2", 5.0, follower.getId());
         gameRoadmap2.addReview(gameRoadmap2Review);
         roadmapRepository.save(gameRoadmap2);
 
         // travelRoadmap : 4.0
-        final RoadmapReview travelRoadmapReview = new RoadmapReview("리뷰3", 4.0, follower);
+        final RoadmapReview travelRoadmapReview = new RoadmapReview("리뷰3", 4.0, follower.getId());
         travelRoadmap.addReview(travelRoadmapReview);
         roadmapRepository.save(travelRoadmap);
 
@@ -463,9 +463,9 @@ class RoadmapRepositoryTest {
         roadmapRepository.saveAll(List.of(gameRoadmap, travelRoadmap, deletedGameRoadmap));
 
         // when
-        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(creator,
+        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(creator,
                 null, 2);
-        final List<Roadmap> roadmapsSecondPage = roadmapRepository.findRoadmapsWithCategoryByMemberOrderByLatest(
+        final List<Roadmap> roadmapsSecondPage = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(
                 creator, roadmapsFirstPage.get(1).getId(), 2);
 
         // then
@@ -560,13 +560,13 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
         roadmap.addContent(new RoadmapContent("로드맵 본문"));
         return roadmapRepository.save(roadmap);
     }
 
     private Roadmap 삭제된_로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator, category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator.getId(), category);
         roadmap.addContent(new RoadmapContent("로드맵 본문2"));
         roadmap.delete();
         return roadmapRepository.save(roadmap);
@@ -574,13 +574,13 @@ class RoadmapRepositoryTest {
 
     private Roadmap 로드맵을_태그와_저장한다(final String title, final Member creator, final RoadmapCategory category,
                                   final RoadmapTags roadmapTags) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
         roadmap.addTags(roadmapTags);
         return roadmapRepository.save(roadmap);
     }
 
     private Roadmap 노드_정보를_포함한_로드맵을_생성한다(final String title, final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
         final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
         final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
@@ -589,7 +589,7 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 노드_정보를_포함한_삭제된_로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
         final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
         final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));

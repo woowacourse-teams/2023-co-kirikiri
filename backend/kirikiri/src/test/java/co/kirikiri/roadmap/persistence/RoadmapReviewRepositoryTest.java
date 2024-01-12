@@ -51,16 +51,16 @@ class RoadmapReviewRepositoryTest {
         final RoadmapCategory category = 카테고리를_저장한다("게임");
         final Roadmap roadmap = 로드맵을_저장한다(member, category);
 
-        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 1.5, member);
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 1.5, member.getId());
         roadmapReview.updateRoadmap(roadmap);
         roadmapReviewRepository.save(roadmapReview);
 
         // when
-        final RoadmapReview findRoadmapReview = roadmapReviewRepository.findByRoadmapAndMember(roadmap, member).get();
+        final RoadmapReview findRoadmapReview = roadmapReviewRepository.findByRoadmapAndMemberId(roadmap, member.getId())
+                .get();
 
         // then
-        assertThat(findRoadmapReview)
-                .isEqualTo(roadmapReview);
+        assertThat(findRoadmapReview).isEqualTo(roadmapReview);
     }
 
     @Test
@@ -71,17 +71,16 @@ class RoadmapReviewRepositoryTest {
         final RoadmapCategory category = 카테고리를_저장한다("게임");
         final Roadmap roadmap = 로드맵을_저장한다(member, category);
 
-        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member);
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member.getId());
         roadmapReview.updateRoadmap(roadmap);
         roadmapReviewRepository.save(roadmapReview);
 
         // when
-        final Optional<RoadmapReview> findRoadmapReview = roadmapReviewRepository.findByRoadmapAndMember(roadmap,
-                member2);
+        final Optional<RoadmapReview> findRoadmapReview = roadmapReviewRepository.findByRoadmapAndMemberId(roadmap,
+                member2.getId());
 
         // then
-        assertThat(findRoadmapReview)
-                .isEmpty();
+        assertThat(findRoadmapReview).isEmpty();
     }
 
     @Test
@@ -93,9 +92,9 @@ class RoadmapReviewRepositoryTest {
         final RoadmapCategory category = 카테고리를_저장한다("게임");
         final Roadmap roadmap = 로드맵을_저장한다(member, category);
 
-        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰1", 2.5, member);
-        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰2", 4.0, member2);
-        final RoadmapReview roadmapReview3 = new RoadmapReview("리뷰3", 5.0, member3);
+        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰1", 2.5, member.getId());
+        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰2", 4.0, member2.getId());
+        final RoadmapReview roadmapReview3 = new RoadmapReview("리뷰3", 5.0, member3.getId());
         roadmapReview1.updateRoadmap(roadmap);
         roadmapReview2.updateRoadmap(roadmap);
         roadmapReview3.updateRoadmap(roadmap);
@@ -104,10 +103,10 @@ class RoadmapReviewRepositoryTest {
         roadmapReviewRepository.save(roadmapReview3);
 
         // when
-        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewByRoadmapOrderByLatest(
                 roadmap, null, 2);
 
-        final List<RoadmapReview> roadmapReviewsSecondPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+        final List<RoadmapReview> roadmapReviewsSecondPage = roadmapReviewRepository.findRoadmapReviewByRoadmapOrderByLatest(
                 roadmap, roadmapReviewsFirstPage.get(1).getId(), 2);
 
         // then
@@ -128,12 +127,12 @@ class RoadmapReviewRepositoryTest {
         final Roadmap roadmap1 = 로드맵을_저장한다(member, category);
         final Roadmap roadmap2 = 로드맵을_저장한다(member2, category);
 
-        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member);
+        final RoadmapReview roadmapReview = new RoadmapReview("리뷰", 2.5, member.getId());
         roadmapReview.updateRoadmap(roadmap1);
         roadmapReviewRepository.save(roadmapReview);
 
         // when
-        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewWithMemberByRoadmapOrderByLatest(
+        final List<RoadmapReview> roadmapReviewsFirstPage = roadmapReviewRepository.findRoadmapReviewByRoadmapOrderByLatest(
                 roadmap2, null, 1);
 
         // then
@@ -156,7 +155,7 @@ class RoadmapReviewRepositoryTest {
     private Roadmap 로드맵을_저장한다(final Member creator, final RoadmapCategory category) {
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
         final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
         roadmap.addContent(roadmapContent);
         return roadmapRepository.save(roadmap);
     }

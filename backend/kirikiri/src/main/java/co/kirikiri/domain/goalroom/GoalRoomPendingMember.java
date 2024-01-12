@@ -2,9 +2,10 @@ package co.kirikiri.domain.goalroom;
 
 import co.kirikiri.domain.member.Member;
 import jakarta.persistence.Entity;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -1,16 +1,16 @@
 package co.kirikiri.roadmap.domain;
 
 import co.kirikiri.domain.BaseUpdatedTimeEntity;
-import co.kirikiri.domain.member.Member;
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.regex.Pattern;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,21 +29,19 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
     @Column(nullable = false)
     private Double rate = 0.0;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_id")
     private Roadmap roadmap;
 
-    public RoadmapReview(final String content, final Double rate, final Member member) {
+    public RoadmapReview(final String content, final Double rate, final Long memberId) {
         if (content != null) {
             validate(content, rate);
         }
         this.content = content;
         this.rate = rate;
-        this.member = member;
+        this.memberId = memberId;
     }
 
     private void validate(final String content, final Double rate) {
@@ -82,7 +80,7 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
         return rate;
     }
 
-    public Member getMember() {
-        return member;
+    public Long getMemberId() {
+        return memberId;
     }
 }
