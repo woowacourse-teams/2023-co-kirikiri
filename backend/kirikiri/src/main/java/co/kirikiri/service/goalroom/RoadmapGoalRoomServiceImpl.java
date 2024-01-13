@@ -30,7 +30,7 @@ import java.net.URL;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @ExceptionConvert
 public class RoadmapGoalRoomServiceImpl implements RoadmapGoalRoomService {
@@ -91,13 +91,10 @@ public class RoadmapGoalRoomServiceImpl implements RoadmapGoalRoomService {
     }
 
     @Override
+    @Transactional
     public boolean canDeleteGoalRoomsInRoadmap(final Roadmap roadmap) {
         final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
-        final boolean canDelete = canDeleteRoadmapBasedOnGoalRooms(goalRooms);
-        if (canDelete) {
-            goalRoomRepository.deleteAll(goalRooms);
-        }
-        return canDelete;
+        return canDeleteRoadmapBasedOnGoalRooms(goalRooms);
     }
 
     private boolean canDeleteRoadmapBasedOnGoalRooms(final List<GoalRoom> goalRooms) {

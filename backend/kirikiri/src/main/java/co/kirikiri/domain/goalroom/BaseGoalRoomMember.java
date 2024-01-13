@@ -12,6 +12,8 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public abstract class BaseGoalRoomMember extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_room_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @QueryInit(value = {"roadmapContent.roadmap"})
     protected GoalRoom goalRoom;
 

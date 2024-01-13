@@ -32,12 +32,9 @@ public class RoadmapScheduler {
 
     private void delete(final Roadmap roadmap) {
         final boolean canDelete = roadmapGoalRoomService.canDeleteGoalRoomsInRoadmap(roadmap);
+        // TODO : GoalRoom 내부의 Roadmap 직접 의존 제거 시 로드맵에 포함된 GoalRoom 따로 제거해주기 (이벤트 활용)
         if (canDelete) {
-            deleteRoadmap(roadmap);
+            roadmapRepository.delete(roadmap);
         }
-    }
-
-    private void deleteRoadmap(final Roadmap roadmap) {
-        roadmapRepository.delete(roadmap);
     }
 }

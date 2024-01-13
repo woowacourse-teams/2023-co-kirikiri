@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
@@ -27,6 +29,7 @@ public class GoalRoomRoadmapNode extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_node_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private RoadmapNode roadmapNode;
 
     public GoalRoomRoadmapNode(final Period period, final Integer checkCount, final RoadmapNode roadmapNode) {
