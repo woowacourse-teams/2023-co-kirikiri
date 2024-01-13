@@ -1,6 +1,5 @@
 package co.kirikiri.roadmap.persistence;
 
-import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.roadmap.domain.Roadmap;
@@ -83,7 +82,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
     }
 
     @Override
-    public List<Roadmap> findRoadmapsWithCategoryByMemberIdOrderByLatest(final Member member,
+    public List<Roadmap> findRoadmapsWithCategoryByMemberIdOrderByLatest(final Long memberId,
                                                                          final Long lastId,
                                                                          final int pageSize) {
         final RoadmapOrderType orderType = RoadmapOrderType.LATEST;
@@ -91,7 +90,7 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .innerJoin(roadmap.category, roadmapCategory)
                 .fetchJoin()
                 .where(
-                        creatorIdCond(member.getId()),
+                        creatorIdCond(memberId),
                         lessThanLastId(lastId, orderType))
                 .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))

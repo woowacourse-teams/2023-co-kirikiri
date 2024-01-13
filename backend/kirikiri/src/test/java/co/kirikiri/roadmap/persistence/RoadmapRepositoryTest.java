@@ -463,10 +463,10 @@ class RoadmapRepositoryTest {
         roadmapRepository.saveAll(List.of(gameRoadmap, travelRoadmap, deletedGameRoadmap));
 
         // when
-        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(creator,
+        final List<Roadmap> roadmapsFirstPage = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(creator.getId(),
                 null, 2);
         final List<Roadmap> roadmapsSecondPage = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(
-                creator, roadmapsFirstPage.get(1).getId(), 2);
+                creator.getId(), roadmapsFirstPage.get(1).getId(), 2);
 
         // then
         assertAll(

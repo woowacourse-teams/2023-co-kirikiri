@@ -153,14 +153,14 @@ public class GoalRoomMapper {
     private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(
             final RoadmapGoalRoomDto roadmapGoalRoomDto) {
         return new RoadmapGoalRoomResponse(roadmapGoalRoomDto.goalRoomId(), roadmapGoalRoomDto.name(),
-                roadmapGoalRoomDto.status(), roadmapGoalRoomDto.currentMemberCount(),
+                roadmapGoalRoomDto.status().name(), roadmapGoalRoomDto.currentMemberCount(),
                 roadmapGoalRoomDto.limitedMemberCount(),
                 roadmapGoalRoomDto.createdAt(), roadmapGoalRoomDto.startDate(),
                 roadmapGoalRoomDto.endDate(), convertToMemberResponse(roadmapGoalRoomDto.goalRoomLeader()));
     }
 
-    private static MemberResponse convertToMemberResponse(final MemberDto memberDto) {
-        return new MemberResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl());
+    private static co.kirikiri.roadmap.service.dto.response.MemberResponse convertToMemberResponse(final MemberDto memberDto) {
+        return new co.kirikiri.roadmap.service.dto.response.MemberResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl());
     }
 
     public static GoalRoomMemberSortType convertGoalRoomMemberSortType(final GoalRoomMemberSortTypeDto sortType) {

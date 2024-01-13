@@ -30,6 +30,7 @@ import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.roadmap.service.dto.request.RoadmapOrderTypeRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSearchRequest;
+import co.kirikiri.roadmap.service.dto.response.MemberResponse;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapCategoryResponse;
@@ -43,7 +44,6 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
 import co.kirikiri.service.FileService;
-import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -424,7 +424,7 @@ class RoadmapReadServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(member));
-        when(roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(any(), any(), anyInt()))
+        when(roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(anyLong(), any(), anyInt()))
                 .thenReturn(List.of(roadmap2, roadmap1));
 
         // when
@@ -476,12 +476,12 @@ class RoadmapReadServiceTest {
                 .willReturn(Optional.of(roadmap));
         final RoadmapGoalRoomResponses expected =
                 new RoadmapGoalRoomResponses(List.of(
-                        new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING, 1, 10,
+                        new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING.name(), 1, 10,
                                 LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member3.getId(), member3.getNickname().getValue(),
                                         "http://example.com/serverFilePath")),
-                        new RoadmapGoalRoomResponse(1L, "goalroom1", GoalRoomStatus.RECRUITING, 1, 10,
+                        new RoadmapGoalRoomResponse(1L, "goalroom1", GoalRoomStatus.RECRUITING.name(), 1, 10,
                                 LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue(),

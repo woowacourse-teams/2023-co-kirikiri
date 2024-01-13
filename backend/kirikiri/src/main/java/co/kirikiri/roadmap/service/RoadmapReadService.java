@@ -18,6 +18,7 @@ import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
+import co.kirikiri.roadmap.service.dto.MemberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapCategoryDto;
 import co.kirikiri.roadmap.service.dto.RoadmapContentDto;
 import co.kirikiri.roadmap.service.dto.RoadmapDto;
@@ -39,7 +40,6 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.aop.ExceptionConvert;
-import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -211,7 +211,7 @@ public class RoadmapReadService {
     public MemberRoadmapResponses findAllMemberRoadmaps(final String identifier,
                                                         final CustomScrollRequest scrollRequest) {
         final Member member = findMemberByIdentifier(identifier);
-        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(member,
+        final List<Roadmap> roadmaps = roadmapRepository.findRoadmapsWithCategoryByMemberIdOrderByLatest(member.getId(),
                 scrollRequest.lastId(), scrollRequest.size());
         return RoadmapMapper.convertMemberRoadmapResponses(roadmaps, scrollRequest.size());
     }
