@@ -1,8 +1,8 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.exception.BadRequestException;

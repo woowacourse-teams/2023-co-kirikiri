@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.controller;
 
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.roadmap.service.RoadmapCreateService;
 import co.kirikiri.roadmap.service.RoadmapReadService;
@@ -9,7 +10,6 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.exception.AuthenticationException;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.ConflictException;

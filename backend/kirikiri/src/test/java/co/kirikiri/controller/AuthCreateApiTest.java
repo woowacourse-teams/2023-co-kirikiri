@@ -1,10 +1,10 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.service.auth.AuthService;
 import co.kirikiri.service.auth.NaverOauthService;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.OauthRedirectResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;

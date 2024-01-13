@@ -1,4 +1,4 @@
-package co.kirikiri.common.resolver;
+package co.kirikiri.roadmap.resolver;
 
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 

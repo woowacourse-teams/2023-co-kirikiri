@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.service;
 
+import co.kirikiri.common.dto.CustomScrollRequest;
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.EncryptedPassword;
@@ -42,7 +43,6 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
 import co.kirikiri.service.FileService;
-import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.NotFoundException;
 import org.junit.jupiter.api.Test;

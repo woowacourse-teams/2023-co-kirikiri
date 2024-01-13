@@ -1,5 +1,6 @@
 package co.kirikiri.service.goalroom;
 
+import co.kirikiri.common.dto.CustomScrollRequest;
 import co.kirikiri.common.mapper.ScrollResponseMapper;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -15,7 +16,6 @@ import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.aop.ExceptionConvert;
-import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
 import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomScrollDto;
 import co.kirikiri.service.dto.member.MemberDto;

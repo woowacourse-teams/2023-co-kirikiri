@@ -1,8 +1,8 @@
 package co.kirikiri.integration;
 
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;

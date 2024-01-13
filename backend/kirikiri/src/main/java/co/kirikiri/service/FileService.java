@@ -1,6 +1,6 @@
 package co.kirikiri.service;
 
-import co.kirikiri.service.dto.FileInformation;
+import co.kirikiri.common.dto.FileInformation;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;

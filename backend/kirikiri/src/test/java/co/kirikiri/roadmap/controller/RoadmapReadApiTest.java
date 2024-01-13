@@ -1,5 +1,7 @@
 package co.kirikiri.roadmap.controller;
 
+import co.kirikiri.common.dto.CustomScrollRequest;
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
@@ -18,8 +20,6 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
-import co.kirikiri.service.dto.CustomScrollRequest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.NotFoundException;
 import com.fasterxml.jackson.core.type.TypeReference;

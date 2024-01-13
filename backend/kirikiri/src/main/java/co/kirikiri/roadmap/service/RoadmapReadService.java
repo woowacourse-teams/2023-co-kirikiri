@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.service;
 
+import co.kirikiri.common.dto.CustomScrollRequest;
 import co.kirikiri.common.mapper.ScrollResponseMapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
@@ -38,7 +39,6 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.aop.ExceptionConvert;
-import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;

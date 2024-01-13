@@ -1,6 +1,6 @@
 package co.kirikiri.roadmap.service.dto;
 
-import co.kirikiri.service.dto.FileInformation;
+import co.kirikiri.common.dto.FileInformation;
 
 import java.util.List;
 

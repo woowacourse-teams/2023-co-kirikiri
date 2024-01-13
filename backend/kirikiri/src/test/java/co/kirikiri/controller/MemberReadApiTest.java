@@ -1,8 +1,8 @@
 package co.kirikiri.controller;
 
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.member.Gender;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
 import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import co.kirikiri.service.exception.NotFoundException;

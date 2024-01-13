@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.service.mapper;
 
+import co.kirikiri.common.dto.FileInformation;
 import co.kirikiri.common.mapper.ScrollResponseMapper;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
@@ -33,7 +34,6 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
-import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.ServerException;

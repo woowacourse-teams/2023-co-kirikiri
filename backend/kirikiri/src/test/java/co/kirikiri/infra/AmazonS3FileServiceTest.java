@@ -1,6 +1,6 @@
 package co.kirikiri.infra;
 
-import co.kirikiri.service.dto.FileInformation;
+import co.kirikiri.common.dto.FileInformation;
 import co.kirikiri.service.exception.ServerException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.Protocol;

@@ -1,4 +1,4 @@
-package co.kirikiri.service.dto;
+package co.kirikiri.common.dto;
 
 import jakarta.validation.constraints.NotNull;
 

@@ -1,6 +1,5 @@
 package co.kirikiri.roadmap.resolver;
 
-import co.kirikiri.common.resolver.RoadmapSaveArgumentResolver;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.service.exception.BadRequestException;

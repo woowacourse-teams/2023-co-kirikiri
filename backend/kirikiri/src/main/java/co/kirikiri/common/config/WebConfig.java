@@ -2,7 +2,7 @@ package co.kirikiri.common.config;
 
 import co.kirikiri.common.interceptor.AuthInterceptor;
 import co.kirikiri.common.resolver.MemberIdentifierArgumentResolver;
-import co.kirikiri.common.resolver.RoadmapSaveArgumentResolver;
+import co.kirikiri.roadmap.resolver.RoadmapSaveArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

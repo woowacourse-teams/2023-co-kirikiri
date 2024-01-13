@@ -1,9 +1,9 @@
 package co.kirikiri.integration;
 
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;

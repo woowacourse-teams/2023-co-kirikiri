@@ -1,7 +1,7 @@
 package co.kirikiri.integration;
 
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;
 import io.restassured.common.mapper.TypeRef;

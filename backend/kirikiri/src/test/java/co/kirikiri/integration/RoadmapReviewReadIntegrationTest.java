@@ -1,12 +1,12 @@
 package co.kirikiri.integration;
 
+import co.kirikiri.common.dto.CustomScrollRequest;
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
-import co.kirikiri.service.dto.CustomScrollRequest;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.member.request.GenderType;
 import co.kirikiri.service.dto.member.request.MemberJoinRequest;

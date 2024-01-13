@@ -1,6 +1,6 @@
 package co.kirikiri.controller;
 
-import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.common.dto.ErrorResponse;
 import co.kirikiri.service.exception.AuthenticationException;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.ConflictException;

@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.service;
 
+import co.kirikiri.common.dto.FileInformation;
 import co.kirikiri.domain.ImageContentType;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -13,7 +14,6 @@ import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.ImageDirType;
 import co.kirikiri.service.aop.ExceptionConvert;
-import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;

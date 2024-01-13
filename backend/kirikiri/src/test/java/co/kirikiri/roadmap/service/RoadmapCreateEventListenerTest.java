@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.service;
 
+import co.kirikiri.common.dto.FileInformation;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -14,7 +15,6 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
 import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.FileService;
-import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.ServerException;
 import org.junit.jupiter.api.Test;

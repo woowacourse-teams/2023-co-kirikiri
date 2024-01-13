@@ -1,5 +1,6 @@
 package co.kirikiri.service.mapper;
 
+import co.kirikiri.common.dto.FileInformation;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
 import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
@@ -17,7 +18,6 @@ import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
-import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;

@@ -1,7 +1,6 @@
-package co.kirikiri.persistence.dto;
+package co.kirikiri.roadmap.persistence.dto;
 
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
-import co.kirikiri.roadmap.persistence.dto.RoadmapSearchTagName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
