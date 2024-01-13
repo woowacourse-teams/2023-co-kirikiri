@@ -1,5 +1,6 @@
 package co.kirikiri.service.goalroom;
 
+import co.kirikiri.common.mapper.ScrollResponseMapper;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
@@ -20,7 +21,6 @@ import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomScrollDto;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import co.kirikiri.service.mapper.ScrollResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;

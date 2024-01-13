@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.service.mapper;
 
+import co.kirikiri.common.mapper.ScrollResponseMapper;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
@@ -36,7 +37,6 @@ import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.exception.ServerException;
-import co.kirikiri.service.mapper.ScrollResponseMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;

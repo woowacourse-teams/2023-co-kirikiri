@@ -1,4 +1,4 @@
-package co.kirikiri.service.mapper;
+package co.kirikiri.common.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

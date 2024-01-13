@@ -1,5 +1,6 @@
 package co.kirikiri.roadmap.service;
 
+import co.kirikiri.common.mapper.ScrollResponseMapper;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -40,7 +41,6 @@ import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.CustomScrollRequest;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.exception.NotFoundException;
-import co.kirikiri.service.mapper.ScrollResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
