@@ -23,6 +23,7 @@ import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.service.dto.GoalRoomCreateDto;
 import co.kirikiri.goalroom.service.dto.GoalRoomRoadmapNodeDto;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
+import co.kirikiri.goalroom.service.event.EmptyGoalRoomDeleteEvent;
 import co.kirikiri.goalroom.service.event.GoalRoomLeaderUpdateEvent;
 import co.kirikiri.goalroom.service.mapper.GoalRoomMapper;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -174,10 +175,7 @@ public class GoalRoomCreateService {
             leaveCompletedGoalRoom(member, goalRoom);
         }
 
-        // todo: 이벤트 분리 (회원이 나가는 것과 빈 골룸이면 삭제되는 것은 다른 관심사)
-//        if (goalRoom.isEmptyGoalRoom()) {
-//            goalRoomRepository.delete(goalRoom);
-//        }
+        applicationEventPublisher.publishEvent(new EmptyGoalRoomDeleteEvent(goalRoomId));
     }
 
     private GoalRoom findGoalRoomById(final Long goalRoomId) {

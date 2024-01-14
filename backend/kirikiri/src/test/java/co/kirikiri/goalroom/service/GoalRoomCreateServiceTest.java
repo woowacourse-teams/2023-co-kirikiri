@@ -500,27 +500,6 @@ class GoalRoomCreateServiceTest {
                 .isInstanceOf(BadRequestException.class);
     }
 
-    // todo: event 분리 후 수정
-//    @Test
-//    void 골룸을_나갈때_골룸에_남아있는_사용자가_없으면_골룸이_삭제된다() {
-//        // given
-//        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("골룸"), new LimitedMemberCount(3), 1L,
-//                골룸_로드맵_노드들을_생성한다());
-//
-//        given(memberRepository.findByIdentifier(any()))
-//                .willReturn(Optional.of(MEMBER));
-//        given(goalRoomRepository.findById(anyLong()))
-//                .willReturn(Optional.of(goalRoom));
-//        given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
-//                .willReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, MEMBER.getId())));
-//
-//        // when
-//        goalRoomCreateService.leave("identifier2", 1L);
-//
-//        // then
-//        verify(goalRoomRepository, times(1)).delete(goalRoom);
-//    }
-
     private Member 사용자를_생성한다(final Long memberId, final String identifier, final String password, final String nickname,
                              final String email) {
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
