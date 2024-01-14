@@ -24,14 +24,14 @@ public class RoadmapScheduler {
     @Scheduled(cron = "0 0 4 * * *")
     public void deleteRoadmaps() {
         final RoadmapStatus status = RoadmapStatus.DELETED;
-        final List<Roadmap> deletedStatusRoadmaps = roadmapRepository.findWithRoadmapContentByStatus(status);
+        final List<Roadmap> deletedStatusRoadmaps = roadmapRepository.findByStatus(status);
         for (final Roadmap roadmap : deletedStatusRoadmaps) {
             delete(roadmap);
         }
     }
 
     private void delete(final Roadmap roadmap) {
-        final boolean canDelete = roadmapGoalRoomService.canDeleteGoalRoomsInRoadmap(roadmap);
+        final boolean canDelete = roadmapGoalRoomService.canDeleteGoalRoomsInRoadmap(roadmap.getId());
         // TODO : GoalRoom 내부의 Roadmap 직접 의존 제거 시 로드맵에 포함된 GoalRoom 따로 제거해주기 (이벤트 활용)
         if (canDelete) {
             roadmapRepository.delete(roadmap);

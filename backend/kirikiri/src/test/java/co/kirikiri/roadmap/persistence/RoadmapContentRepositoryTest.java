@@ -15,6 +15,8 @@ import co.kirikiri.roadmap.domain.RoadmapContent;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -37,73 +39,51 @@ class RoadmapContentRepositoryTest {
     }
 
     @Test
-    void 로드맵_컨텐츠를_로드맵과_함께_조회한다() {
-        // given
-        final Roadmap roadmap = 로드맵을_생성한다();
-        final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
-        final Long roadmapContentId = savedRoadmap.getContents().getValues().get(0).getId();
-
-        // when
-        final RoadmapContent roadmapContent = roadmapContentRepository.findByIdWithRoadmap(roadmapContentId).get();
-
-        // then
-        assertAll(
-                () -> assertThat(roadmapContent).isEqualTo(savedRoadmap.getContents().getValues().get(0)),
-                () -> assertThat(roadmapContent.getRoadmap()).isEqualTo(savedRoadmap)
-        );
-    }
-
-    @Test
     void 로드맵_아이디로_로드맵의_가장_최근_컨텐츠를_조회한다() {
         // given
-        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
+        final Roadmap roadmap = 로드맵을_저장한다();
+        로드맵_컨텐츠를_저장한다(roadmap.getId());
         final RoadmapContent oldRoadmapContent = roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(
-                savedRoadmap.getId()).get();
+                roadmap.getId()).get();
 
-        final RoadmapContent newRoadmapContent = new RoadmapContent("로드맵 제목");
-        savedRoadmap.addContent(newRoadmapContent);
+        final RoadmapContent newRoadmapContent = 로드맵_컨텐츠를_저장한다(roadmap.getId());
 
         // when
         final RoadmapContent expectedRoadmapContent = roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(
-                savedRoadmap.getId()).get();
+                roadmap.getId()).get();
 
         // then
         assertAll(
                 () -> assertThat(oldRoadmapContent).isNotEqualTo(expectedRoadmapContent),
-                () -> assertThat(expectedRoadmapContent).isEqualTo(newRoadmapContent)
+                () -> assertThat(newRoadmapContent).isEqualTo(expectedRoadmapContent)
         );
     }
 
     @Test
-    void 로드맵의_가장_최근_컨텐츠를_조회한다() {
+    void 로드맵에_생성된_모든_컨텐츠를_삭제한다() {
         // given
-        final Roadmap savedRoadmap = roadmapRepository.save(로드맵을_생성한다());
-        final RoadmapContent oldRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
-                savedRoadmap).get();
-
-        final RoadmapContent newRoadmapContent = new RoadmapContent("로드맵 제목");
-        savedRoadmap.addContent(newRoadmapContent);
+        final Roadmap roadmap = 로드맵을_저장한다();
+        로드맵_컨텐츠를_저장한다(roadmap.getId());
+        로드맵_컨텐츠를_저장한다(roadmap.getId());
 
         // when
-        final RoadmapContent expectedRoadmapContent = roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(
-                savedRoadmap).get();
+        final List<RoadmapContent> roadmapContents = roadmapContentRepository.findAllByRoadmapId(roadmap.getId());
+        roadmapContentRepository.deleteAllByRoadmapId(roadmap.getId());
 
         // then
         assertAll(
-                () -> assertThat(oldRoadmapContent).isNotEqualTo(expectedRoadmapContent),
-                () -> assertThat(expectedRoadmapContent).isEqualTo(newRoadmapContent)
+                () -> assertThat(roadmapContents).hasSize(2),
+                () -> assertThat(roadmapContentRepository.findAllByRoadmapId(roadmap.getId()))
+                        .isEmpty()
         );
     }
 
-    private Roadmap 로드맵을_생성한다() {
+    private Roadmap 로드맵을_저장한다() {
         final Member creator = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
-        final RoadmapContent content = new RoadmapContent("로드맵 제목");
-
         final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator.getId(), category);
-        roadmap.addContent(content);
 
-        return roadmap;
+        return roadmapRepository.save(roadmap);
     }
 
     private Member 사용자를_생성한다() {
@@ -117,5 +97,9 @@ class RoadmapContentRepositoryTest {
     private RoadmapCategory 로드맵_카테고리를_생성한다() {
         final RoadmapCategory category = new RoadmapCategory("운동");
         return roadmapCategoryRepository.save(category);
+    }
+
+    private RoadmapContent 로드맵_컨텐츠를_저장한다(final Long roadmapId) {
+        return roadmapContentRepository.save(new RoadmapContent("content", roadmapId));
     }
 }

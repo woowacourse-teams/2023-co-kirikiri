@@ -17,10 +17,11 @@ class RoadmapReviewTest {
         // given
         final String content = "a".repeat(1000);
         final Long memberId = 1L;
+        final Long roadmapId = 1L;
 
         // expected
         final RoadmapReview roadmapReview =
-                assertDoesNotThrow(() -> new RoadmapReview(content, rate, memberId));
+                assertDoesNotThrow(() -> new RoadmapReview(content, rate, memberId, roadmapId));
         assertThat(roadmapReview)
                 .isInstanceOf(RoadmapReview.class);
     }
@@ -30,9 +31,10 @@ class RoadmapReviewTest {
         // given
         final String content = "a".repeat(1001);
         final Long memberId = 1L;
+        final Long roadmapId = 1L;
 
         // expected
-        assertThatThrownBy(() -> new RoadmapReview(content, null, memberId))
+        assertThatThrownBy(() -> new RoadmapReview(content, null, memberId, roadmapId))
                 .isInstanceOf(RoadmapException.class);
     }
 
@@ -41,9 +43,10 @@ class RoadmapReviewTest {
     void 리뷰_별점이_0과_5사이의_소수점_5_단위의_값이_아니면_예외가_발생한다(final double rate) {
         // given
         final Long memberId = 1L;
+        final Long roadmapId = 1L;
 
         // expected
-        assertThatThrownBy(() -> new RoadmapReview("리뷰", rate, memberId))
+        assertThatThrownBy(() -> new RoadmapReview("리뷰", rate, memberId, roadmapId))
                 .isInstanceOf(RoadmapException.class);
     }
 }

@@ -5,7 +5,6 @@ import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
-import co.kirikiri.roadmap.domain.Roadmap;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.persistence.LockModeType;
@@ -60,17 +59,16 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findGoalRoomsByRoadmapAndCond(final Roadmap roadmap,
-                                                        final RoadmapGoalRoomsOrderType orderType,
-                                                        final Long lastId,
-                                                        final int pageSize) {
+    public List<GoalRoom> findGoalRoomsByRoadmapIdAndCond(final Long roadmapId,
+                                                          final RoadmapGoalRoomsOrderType orderType,
+                                                          final Long lastId,
+                                                          final int pageSize) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .on(roadmapContent.roadmap.eq(roadmap))
+                .on(roadmapContent.roadmapId.eq(roadmapId))
                 .where(
                         statusCond(orderType),
-                        lessThanLastId(lastId, orderType),
-                        roadmapCond(roadmap))
+                        lessThanLastId(lastId, orderType))
                 .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
                 .fetch();
@@ -118,10 +116,10 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findByRoadmap(final Roadmap roadmap) {
+    public List<GoalRoom> findByRoadmapId(final Long roadmapId) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .where(roadmapContent.roadmap.eq(roadmap))
+                .where(roadmapContent.roadmapId.eq(roadmapId))
                 .fetch();
     }
 
@@ -172,10 +170,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                         .from(goalRoom)
                         .where(goalRoom.id.eq(lastId))
         );
-    }
-
-    private BooleanExpression roadmapCond(final Roadmap roadmap) {
-        return goalRoom.roadmapContent.roadmap.eq(roadmap);
     }
 
     private BooleanExpression equalOrEarlierStartDateThan(final LocalDate date) {

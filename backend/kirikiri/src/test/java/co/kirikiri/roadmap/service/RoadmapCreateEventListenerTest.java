@@ -52,12 +52,11 @@ class RoadmapCreateEventListenerTest {
 
     @Test
     void 정상적으로_로드맵_노드_이미지를_저장한다() throws IOException {
-        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent");
-        final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
-        roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
-
         final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "introduction", 10,
                 RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
+        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId());
+        final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
+        roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
@@ -68,8 +67,6 @@ class RoadmapCreateEventListenerTest {
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
                 roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
                 List.of(new RoadmapTagSaveDto("tag")));
-
-        roadmap.addContent(roadmapContent);
 
         final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap.getId(), roadmapSaveDto);
 
@@ -113,12 +110,11 @@ class RoadmapCreateEventListenerTest {
     @Test
     void 로드맵_노드_제목을_가진_노드가_로드맵에_존재하지_않을때_예외를_던진다() throws IOException {
         //given
-        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent");
-        final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
-        roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
-
         final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "introduction", 10,
                 RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
+        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId());
+        final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
+        roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
@@ -129,8 +125,6 @@ class RoadmapCreateEventListenerTest {
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
                 roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
                 List.of(new RoadmapTagSaveDto("tag")));
-
-        roadmap.addContent(roadmapContent);
 
         final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap.getId(), roadmapSaveDto);
 
@@ -147,12 +141,11 @@ class RoadmapCreateEventListenerTest {
     @Test
     void 로드맵_노드_이미지에_원본_파일_이름이_없을_경우_예외를_던진다() throws IOException {
         //given
-        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent");
-        final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
-        roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
-
         final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "inroduction", 10,
                 RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
+        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId());
+        final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
+        roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(), null,
                 "image/jpeg", "tempImage".getBytes());
@@ -163,8 +156,6 @@ class RoadmapCreateEventListenerTest {
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
                 roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
                 List.of(new RoadmapTagSaveDto("tag")));
-
-        roadmap.addContent(roadmapContent);
 
         final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap.getId(), roadmapSaveDto);
 

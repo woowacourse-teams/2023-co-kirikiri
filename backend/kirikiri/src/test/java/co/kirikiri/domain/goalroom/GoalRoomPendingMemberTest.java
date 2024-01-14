@@ -25,7 +25,7 @@ class GoalRoomPendingMemberTest {
                 new Nickname("nickname"), null,
                 new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content"), member);
+                new RoadmapContent("content", null), member);
 
         // when
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom,
@@ -42,7 +42,7 @@ class GoalRoomPendingMemberTest {
                 new Nickname("nickname"), null,
                 new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content"), member);
+                new RoadmapContent("content", 1L), member);
 
         // when
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom,

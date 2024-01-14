@@ -14,6 +14,7 @@ import co.kirikiri.roadmap.domain.RoadmapTag;
 import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
 import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
+import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
 import co.kirikiri.roadmap.service.dto.RoadmapNodeSaveDto;
@@ -47,6 +48,7 @@ public class RoadmapCreateService {
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
     private final RoadmapReviewRepository roadmapReviewRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
     private final RoadmapGoalRoomService roadmapGoalRoomService;
@@ -59,9 +61,13 @@ public class RoadmapCreateService {
         final Roadmap roadmap = createRoadmap(member.getId(), roadmapSaveDto, roadmapCategory);
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
 
+        final RoadmapNodes roadmapNodes = makeRoadmapNodes(roadmapSaveDto.roadmapNodes());
+        final RoadmapContent roadmapContent = makeRoadmapContent(roadmapSaveDto, savedRoadmap.getId(), roadmapNodes);
+        roadmapContentRepository.save(roadmapContent);
+
         applicationEventPublisher.publishEvent(new RoadmapCreateEvent(savedRoadmap.getId(), roadmapSaveDto));
 
-        return savedRoadmap.getId();
+        return roadmap.getId();
     }
 
     private Member findMemberByIdentifier(final String identifier) {
@@ -76,27 +82,17 @@ public class RoadmapCreateService {
 
     private Roadmap createRoadmap(final Long memberId, final RoadmapSaveDto roadmapSaveDto,
                                   final RoadmapCategory roadmapCategory) {
-        final RoadmapNodes roadmapNodes = makeRoadmapNodes(roadmapSaveDto.roadmapNodes());
-        final RoadmapContent roadmapContent = makeRoadmapContent(roadmapSaveDto, roadmapNodes);
-        final RoadmapTags roadmapTags = makeRoadmapTags(roadmapSaveDto.tags());
         final Roadmap roadmap = makeRoadmap(memberId, roadmapSaveDto, roadmapCategory);
-        roadmap.addContent(roadmapContent);
+        final RoadmapTags roadmapTags = makeRoadmapTags(roadmapSaveDto.tags());
         roadmap.addTags(roadmapTags);
         return roadmap;
     }
 
-    private RoadmapNodes makeRoadmapNodes(final List<RoadmapNodeSaveDto> roadmapNodeSaveDtos) {
-        return new RoadmapNodes(
-                roadmapNodeSaveDtos.stream()
-                        .map(node -> new RoadmapNode(node.title(), node.content()))
-                        .toList()
-        );
-    }
-
-    private RoadmapContent makeRoadmapContent(final RoadmapSaveDto roadmapSaveDto, final RoadmapNodes roadmapNodes) {
-        final RoadmapContent roadmapContent = new RoadmapContent(roadmapSaveDto.content());
-        roadmapContent.addNodes(roadmapNodes);
-        return roadmapContent;
+    private Roadmap makeRoadmap(final Long memberId, final RoadmapSaveDto roadmapSaveDto,
+                                final RoadmapCategory roadmapCategory) {
+        return new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(),
+                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), memberId,
+                roadmapCategory);
     }
 
     private RoadmapTags makeRoadmapTags(final List<RoadmapTagSaveDto> roadmapTagSaveDto) {
@@ -107,11 +103,18 @@ public class RoadmapCreateService {
         );
     }
 
-    private Roadmap makeRoadmap(final Long memberId, final RoadmapSaveDto roadmapSaveDto,
-                                final RoadmapCategory roadmapCategory) {
-        return new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(),
-                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), memberId,
-                roadmapCategory);
+    private RoadmapNodes makeRoadmapNodes(final List<RoadmapNodeSaveDto> roadmapNodeSaveDtos) {
+        return new RoadmapNodes(
+                roadmapNodeSaveDtos.stream()
+                        .map(node -> new RoadmapNode(node.title(), node.content()))
+                        .toList()
+        );
+    }
+
+    private RoadmapContent makeRoadmapContent(final RoadmapSaveDto roadmapSaveDto, final Long roadmapId, final RoadmapNodes roadmapNodes) {
+        final RoadmapContent roadmapContent = new RoadmapContent(roadmapSaveDto.content(), roadmapId);
+        roadmapContent.addNodes(roadmapNodes);
+        return roadmapContent;
     }
 
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
@@ -120,10 +123,10 @@ public class RoadmapCreateService {
                 .getId();
 
         validateReviewQualification(roadmap, memberId);
-        validateReviewCount(roadmap, memberId);
+        validateReviewCount(roadmapId, memberId);
         final RoadmapReviewDto roadmapReviewDto = RoadmapMapper.convertRoadmapReviewDto(request, memberId);
-        final RoadmapReview roadmapReview = new RoadmapReview(roadmapReviewDto.content(), roadmapReviewDto.rate(), memberId);
-        roadmap.addReview(roadmapReview);
+        final RoadmapReview roadmapReview = new RoadmapReview(roadmapReviewDto.content(), roadmapReviewDto.rate(), memberId, roadmapId);
+        roadmapReviewRepository.save(roadmapReview);
     }
 
     private Roadmap findRoadmapById(final Long id) {
@@ -138,10 +141,10 @@ public class RoadmapCreateService {
         }
     }
 
-    private void validateReviewCount(final Roadmap roadmap, final Long memberId) {
-        if (roadmapReviewRepository.findByRoadmapAndMemberId(roadmap, memberId).isPresent()) {
+    private void validateReviewCount(final Long roadmapId, final Long memberId) {
+        if (roadmapReviewRepository.findByRoadmapIdAndMemberId(roadmapId, memberId).isPresent()) {
             throw new BadRequestException(
-                    "이미 작성한 리뷰가 존재합니다. roadmapId = " + roadmap.getId() + " memberId = " + memberId);
+                    "이미 작성한 리뷰가 존재합니다. roadmapId = " + roadmapId + " memberId = " + memberId);
         }
     }
 
@@ -149,8 +152,10 @@ public class RoadmapCreateService {
     public void deleteRoadmap(final String identifier, final Long roadmapId) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         validateRoadmapCreator(roadmapId, identifier);
-        if (!roadmapGoalRoomService.hasGoalRooms(roadmap)) {
+        if (!roadmapGoalRoomService.hasGoalRooms(roadmapId)) {
             roadmapRepository.delete(roadmap);
+            roadmapContentRepository.deleteAllByRoadmapId(roadmapId);
+            roadmapReviewRepository.deleteAllByRoadmapId(roadmapId);
             return;
         }
         roadmap.delete();

@@ -51,23 +51,23 @@ public class RoadmapGoalRoomServiceImpl implements RoadmapGoalRoomService {
     }
 
     @Override
-    public boolean hasGoalRooms(final Roadmap roadmap) {
-        return !findGoalRoomsByRoadmap(roadmap).isEmpty();
+    public boolean hasGoalRooms(final Long roadmapId) {
+        return !findGoalRoomsByRoadmapId(roadmapId).isEmpty();
     }
 
-    private List<GoalRoom> findGoalRoomsByRoadmap(final Roadmap roadmap) {
-        return goalRoomRepository.findByRoadmap(roadmap);
+    private List<GoalRoom> findGoalRoomsByRoadmapId(final Long roadmapId) {
+        return goalRoomRepository.findByRoadmapId(roadmapId);
     }
 
     @Override
     public RoadmapGoalRoomNumberDto findRoadmapGoalRoomsByRoadmap(final Roadmap roadmap) {
-        return GoalRoomMapper.convertRoadmapGoalRoomDto(findGoalRoomsByRoadmap(roadmap));
+        return GoalRoomMapper.convertRoadmapGoalRoomDto(findGoalRoomsByRoadmapId(roadmap.getId()));
     }
 
     @Override
-    public RoadmapGoalRoomResponses makeRoadmapGoalRoomResponsesByOrderType(final Roadmap roadmap, final RoadmapGoalRoomsOrderTypeDto orderTypeDto, final CustomScrollRequest scrollRequest) {
+    public RoadmapGoalRoomResponses makeRoadmapGoalRoomResponsesByOrderType(final Long roadmapId, final RoadmapGoalRoomsOrderTypeDto orderTypeDto, final CustomScrollRequest scrollRequest) {
         final RoadmapGoalRoomsOrderType orderType = GoalRoomMapper.convertToGoalRoomOrderType(orderTypeDto);
-        final List<RoadmapGoalRoomDto> roadmapGoalRoomDtos = goalRoomRepository.findGoalRoomsByRoadmapAndCond(roadmap, orderType, scrollRequest.lastId(), scrollRequest.size())
+        final List<RoadmapGoalRoomDto> roadmapGoalRoomDtos = goalRoomRepository.findGoalRoomsByRoadmapIdAndCond(roadmapId, orderType, scrollRequest.lastId(), scrollRequest.size())
                 .stream()
                 .map(this::makeGoalRoomDto)
                 .toList();
@@ -92,8 +92,8 @@ public class RoadmapGoalRoomServiceImpl implements RoadmapGoalRoomService {
 
     @Override
     @Transactional
-    public boolean canDeleteGoalRoomsInRoadmap(final Roadmap roadmap) {
-        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmap(roadmap);
+    public boolean canDeleteGoalRoomsInRoadmap(final Long roadmapId) {
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmapId(roadmapId);
         return canDeleteRoadmapBasedOnGoalRooms(goalRooms);
     }
 

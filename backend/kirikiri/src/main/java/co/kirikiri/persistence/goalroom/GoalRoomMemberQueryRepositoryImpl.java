@@ -38,7 +38,7 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(goalRoomMember.member, member)
                 .fetchJoin()
                 .where(
-                        goalRoom.roadmapContent.roadmap.id.eq(roadmapId),
+                        goalRoom.roadmapContent.roadmapId.eq(roadmapId),
                         member.identifier.eq(identifier),
                         goalRoom.status.eq(status))
                 .fetchOne());

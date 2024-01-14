@@ -2,7 +2,6 @@ package co.kirikiri.roadmap.persistence;
 
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
-import co.kirikiri.roadmap.domain.RoadmapStatus;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
 
@@ -28,6 +27,4 @@ public interface RoadmapQueryRepository {
                                                                   final int pageSize);
 
     Optional<Roadmap> findByIdAndMemberIdentifier(final Long roadmapId, final String identifier);
-
-    List<Roadmap> findWithRoadmapContentByStatus(final RoadmapStatus status);
 }

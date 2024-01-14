@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,13 +52,7 @@ public class Roadmap extends BaseCreatedTimeEntity {
     private RoadmapCategory category;
 
     @Embedded
-    private RoadmapContents contents = new RoadmapContents();
-
-    @Embedded
     private RoadmapTags tags = new RoadmapTags();
-
-    @Embedded
-    private RoadmapReviews reviews = new RoadmapReviews();
 
     public Roadmap(final String title, final String introduction, final int requiredPeriod,
                    final RoadmapDifficulty difficulty, final Long creatorId, final RoadmapCategory category) {
@@ -123,13 +116,6 @@ public class Roadmap extends BaseCreatedTimeEntity {
         }
     }
 
-    public void addContent(final RoadmapContent content) {
-        contents.add(content);
-        if (content.isNotSameRoadmap(this)) {
-            content.updateRoadmap(this);
-        }
-    }
-
     public void addTags(final RoadmapTags tags) {
         this.tags.addAll(tags);
     }
@@ -138,19 +124,8 @@ public class Roadmap extends BaseCreatedTimeEntity {
         return Objects.equals(creatorId, memberId);
     }
 
-    public void addReview(final RoadmapReview review) {
-        reviews.add(review);
-        if (review.isNotSameRoadmap(this)) {
-            review.updateRoadmap(this);
-        }
-    }
-
     public void delete() {
         this.status = RoadmapStatus.DELETED;
-    }
-
-    public Optional<RoadmapContent> findLastRoadmapContent() {
-        return this.contents.findLastRoadmapContent();
     }
 
     public boolean isDeleted() {
@@ -167,10 +142,6 @@ public class Roadmap extends BaseCreatedTimeEntity {
 
     public RoadmapCategory getCategory() {
         return category;
-    }
-
-    public RoadmapContents getContents() {
-        return contents;
     }
 
     public String getIntroduction() {

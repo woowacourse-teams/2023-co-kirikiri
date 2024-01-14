@@ -1,13 +1,12 @@
 package co.kirikiri.roadmap.persistence;
 
-import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapReview;
 
 import java.util.List;
 
 public interface RoadmapReviewQueryRepository {
 
-    List<RoadmapReview> findRoadmapReviewByRoadmapOrderByLatest(final Roadmap roadmap,
-                                                                final Long lastId,
-                                                                final int pageSize);
+    List<RoadmapReview> findRoadmapReviewByRoadmapIdOrderByLatest(final Long roadmapId,
+                                                                  final Long lastId,
+                                                                  final int pageSize);
 }

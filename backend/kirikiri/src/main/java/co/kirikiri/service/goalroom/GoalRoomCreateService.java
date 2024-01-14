@@ -22,6 +22,7 @@ import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapContent;
 import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.service.FilePathGenerator;
 import co.kirikiri.service.FileService;
 import co.kirikiri.service.ImageDirType;
@@ -32,6 +33,7 @@ import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.exception.AuthenticationException;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.mapper.GoalRoomMapper;
@@ -55,6 +57,7 @@ public class GoalRoomCreateService {
     private final FilePathGenerator filePathGenerator;
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
+    private final RoadmapRepository roadmapRepository;
     private final RoadmapContentRepository roadmapContentRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
@@ -76,15 +79,20 @@ public class GoalRoomCreateService {
     }
 
     private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
-        return roadmapContentRepository.findByIdWithRoadmap(roadmapContentId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다."));
+        return roadmapContentRepository.findById(roadmapContentId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵 컨텐츠입니다."));
     }
 
     private void validateDeletedRoadmap(final RoadmapContent roadmapContent) {
-        final Roadmap roadmap = roadmapContent.getRoadmap();
+        final Roadmap roadmap = findRoadmapById(roadmapContent.getRoadmapId());
         if (roadmap.isDeleted()) {
             throw new BadRequestException("삭제된 로드맵에 대해 골룸을 생성할 수 없습니다.");
         }
+    }
+
+    private Roadmap findRoadmapById(final Long roadmapId) {
+        return roadmapRepository.findById(roadmapId)
+                .orElseThrow(() -> new AuthenticationException("존재하지 않는 로드맵입니다."));
     }
 
     private void validateNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {

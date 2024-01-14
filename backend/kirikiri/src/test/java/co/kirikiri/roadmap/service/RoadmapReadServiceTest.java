@@ -104,15 +104,13 @@ class RoadmapReadServiceTest {
     void 특정_아이디를_가지는_로드맵_단일_조회시_해당_로드맵의_정보를_반환한다() throws MalformedURLException {
         //given
         final RoadmapCategory category = 로드맵_카테고리를_생성한다(1L, "운동");
-        final RoadmapContent content = 로드맵_컨텐츠를_생성한다(1L, "콘텐츠 내용");
         final Roadmap roadmap = 로드맵을_생성한다("로드맵 제목", category);
-        roadmap.addContent(content);
-        final Long roadmapId = 1L;
+        final RoadmapContent roadmapContent = 로드맵_컨텐츠를_생성한다("로드맵 본문", roadmap.getId());
 
-        when(roadmapRepository.findRoadmapById(anyLong()))
+        when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(any()))
-                .thenReturn(Optional.of(roadmap.getContents().getValues().get(0)));
+        when(roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(anyLong()))
+                .thenReturn(Optional.of(roadmapContent));
         when(roadmapGoalRoomService.findRoadmapGoalRoomsByRoadmap(any()))
                 .thenReturn(new RoadmapGoalRoomNumberDto(2, 2, 2));
         when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
@@ -121,11 +119,11 @@ class RoadmapReadServiceTest {
                 .thenReturn(new URL("http://example.com/serverFilePath"));
 
         //when
-        final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmapId);
+        final RoadmapResponse roadmapResponse = roadmapService.findRoadmap(roadmap.getId());
 
         //then
         final RoadmapResponse expectedResponse = new RoadmapResponse(
-                roadmapId, new RoadmapCategoryResponse(1L, "운동"), "로드맵 제목", "로드맵 소개글",
+                roadmap.getId(), new RoadmapCategoryResponse(1L, "운동"), "로드맵 제목", "로드맵 소개글",
                 new MemberResponse(1L, "닉네임", "http://example.com/serverFilePath"),
                 new RoadmapContentResponse(1L, "로드맵 본문", List.of(
                         new RoadmapNodeResponse(1L, "로드맵 노드1 제목", "로드맵 노드1 설명", Collections.emptyList())
@@ -144,7 +142,7 @@ class RoadmapReadServiceTest {
     @Test
     void 로드맵_단일_조회_시_로드맵_아이디가_존재하지_않는_아이디일_경우_예외를_반환한다() {
         //when
-        when(roadmapRepository.findRoadmapById(anyLong()))
+        when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         //then
@@ -461,19 +459,12 @@ class RoadmapReadServiceTest {
     void 로드맵의_골룸_목록을_최신순으로_조회한다() throws MalformedURLException {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "name1");
-        final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
-        final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(roadmapNode1, roadmapNode2));
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(roadmapNodes);
         final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1.getId(),
                 new RoadmapCategory("it"));
 
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "name2");
         final Member member3 = 사용자를_생성한다(3L, "identifier2", "name3");
 
-        given(roadmapRepository.findRoadmapById(anyLong()))
-                .willReturn(Optional.of(roadmap));
         final RoadmapGoalRoomResponses expected =
                 new RoadmapGoalRoomResponses(List.of(
                         new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING.name(), 1, 10,
@@ -486,6 +477,9 @@ class RoadmapReadServiceTest {
                                 TODAY, TODAY.plusDays(20),
                                 new MemberResponse(member2.getId(), member2.getNickname().getValue(),
                                         "http://example.com/serverFilePath"))), false);
+
+        given(roadmapRepository.findById(anyLong()))
+                .willReturn(Optional.of(roadmap));
         given(roadmapGoalRoomService.makeRoadmapGoalRoomResponsesByOrderType(any(), any(), any()))
                 .willReturn(expected);
 
@@ -502,7 +496,7 @@ class RoadmapReadServiceTest {
     @Test
     void 로드맵의_골룸_목록을_조회할때_존재하지_않는_로드맵이면_예외가_발생한다() {
         // given
-        given(roadmapRepository.findRoadmapById(anyLong()))
+        given(roadmapRepository.findById(anyLong()))
                 .willThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
         // when
@@ -519,21 +513,14 @@ class RoadmapReadServiceTest {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "리뷰어1");
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "리뷰어2");
-        final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
-        final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(List.of(roadmapNode1, roadmapNode2));
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(roadmapNodes);
         final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1.getId(),
                 new RoadmapCategory("it"));
 
-        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰 내용", 5.0, member1.getId());
-        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰 내용", 4.5, member2.getId());
-        roadmapReview1.updateRoadmap(roadmap);
-        roadmapReview2.updateRoadmap(roadmap);
+        final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰 내용", 5.0, member1.getId(), roadmap.getId());
+        final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰 내용", 4.5, member2.getId(), roadmap.getId());
 
-        when(roadmapRepository.findRoadmapById(anyLong())).thenReturn(Optional.of(roadmap));
-        when(roadmapReviewRepository.findRoadmapReviewByRoadmapOrderByLatest(any(), any(), anyInt()))
+        when(roadmapRepository.findById(anyLong())).thenReturn(Optional.of(roadmap));
+        when(roadmapReviewRepository.findRoadmapReviewByRoadmapIdOrderByLatest(any(), any(), anyInt()))
                 .thenReturn(List.of(roadmapReview2, roadmapReview1));
         when(memberRepository.findWithMemberProfileAndImageById(anyLong()))
                 .thenReturn(Optional.of(member2), Optional.of(member1));
@@ -560,7 +547,7 @@ class RoadmapReadServiceTest {
     @Test
     void 로드맵_리뷰_조회_시_유효하지_않은_로드맵_아이디라면_예외를_반환한다() {
         // given
-        when(roadmapRepository.findRoadmapById(anyLong()))
+        when(roadmapRepository.findById(anyLong()))
                 .thenThrow(new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = 1"));
 
         // when, then
@@ -586,12 +573,6 @@ class RoadmapReadServiceTest {
                         new RoadmapTag(2L, new RoadmapTagName("태그2"))));
         roadmap.addTags(roadmapTags);
 
-        final RoadmapContent roadmapContent = new RoadmapContent(1L, "로드맵 본문");
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(
-                List.of(new RoadmapNode(1L, "로드맵 노드1 제목", "로드맵 노드1 설명")));
-        roadmapContent.addNodes(roadmapNodes);
-        roadmap.addContent(roadmapContent);
-
         return roadmap;
     }
 
@@ -599,8 +580,12 @@ class RoadmapReadServiceTest {
         return new RoadmapCategory(id, title);
     }
 
-    private RoadmapContent 로드맵_컨텐츠를_생성한다(final Long id, final String content) {
-        return new RoadmapContent(id, content);
+    private RoadmapContent 로드맵_컨텐츠를_생성한다(final String content, final Long roadmapId) {
+        final RoadmapContent roadmapContent = new RoadmapContent(1L, content, roadmapId);
+        final RoadmapNodes roadmapNodes = new RoadmapNodes(
+                List.of(new RoadmapNode(1L, "로드맵 노드1 제목", "로드맵 노드1 설명")));
+        roadmapContent.addNodes(roadmapNodes);
+        return roadmapContent;
     }
 
     private List<RoadmapCategory> 로드맵_카테고리_리스트를_반환한다() {

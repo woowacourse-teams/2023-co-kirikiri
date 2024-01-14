@@ -65,21 +65,21 @@ public class RoadmapReadService {
     private final FileService fileService;
 
     @Cacheable(value = "roadmap", keyGenerator = "cacheKeyGenerator", cacheManager = "redisCacheManager")
-    public RoadmapResponse findRoadmap(final Long id) {
-        final Roadmap roadmap = findRoadmapById(id);
-        final RoadmapContent recentRoadmapContent = findRecentContent(roadmap);
+    public RoadmapResponse findRoadmap(final Long roadmapId) {
+        final Roadmap roadmap = findRoadmapById(roadmapId);
+        final RoadmapContent recentRoadmapContent = findRecentContent(roadmapId);
         final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto = roadmapGoalRoomService.findRoadmapGoalRoomsByRoadmap(roadmap);
         final RoadmapDto roadmapDto = makeRoadmapDto(roadmap, recentRoadmapContent);
         return RoadmapMapper.convertToRoadmapResponse(roadmapDto, roadmapGoalRoomNumberDto);
     }
 
     private Roadmap findRoadmapById(final Long id) {
-        return roadmapRepository.findRoadmapById(id)
+        return roadmapRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다. roadmapId = " + id));
     }
 
-    private RoadmapContent findRecentContent(final Roadmap roadmap) {
-        return roadmapContentRepository.findFirstByRoadmapOrderByCreatedAtDesc(roadmap)
+    private RoadmapContent findRecentContent(final Long roadmapId) {
+        return roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(roadmapId)
                 .orElseThrow(() -> new NotFoundException("로드맵에 컨텐츠가 존재하지 않습니다."));
     }
 
@@ -225,14 +225,14 @@ public class RoadmapReadService {
                                                                     final RoadmapGoalRoomsOrderTypeDto orderTypeDto,
                                                                     final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        return roadmapGoalRoomService.makeRoadmapGoalRoomResponsesByOrderType(roadmap, orderTypeDto, scrollRequest);
+        return roadmapGoalRoomService.makeRoadmapGoalRoomResponsesByOrderType(roadmap.getId(), orderTypeDto, scrollRequest);
     }
 
     public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId,
                                                           final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewByRoadmapOrderByLatest(
-                roadmap, scrollRequest.lastId(), scrollRequest.size());
+        final List<RoadmapReview> roadmapReviews = roadmapReviewRepository.findRoadmapReviewByRoadmapIdOrderByLatest(
+                roadmap.getId(), scrollRequest.lastId(), scrollRequest.size());
         final List<RoadmapReviewReadDto> roadmapReviewReadDtos = makeRoadmapReviewReadDtos(roadmapReviews);
         return RoadmapMapper.convertToRoadmapReviewResponses(roadmapReviewReadDtos);
     }

@@ -5,9 +5,6 @@ import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,21 +21,20 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
     @Column(length = 2200)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roadmap_id", nullable = false)
-    private Roadmap roadmap;
+    private Long roadmapId;
 
     @Embedded
     private final RoadmapNodes nodes = new RoadmapNodes();
 
-    public RoadmapContent(final String content) {
-        this(null, content);
+    public RoadmapContent(final String content, final Long roadmapId) {
+        this(null, content, roadmapId);
     }
 
-    public RoadmapContent(final Long id, final String content) {
+    public RoadmapContent(final Long id, final String content, final Long roadmapId) {
         validate(content);
         this.id = id;
         this.content = content;
+        this.roadmapId = roadmapId;
     }
 
     private void validate(final String content) {
@@ -58,16 +54,6 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
         this.nodes.addAll(nodes);
     }
 
-    public boolean isNotSameRoadmap(final Roadmap roadmap) {
-        return this.roadmap == null || !this.roadmap.equals(roadmap);
-    }
-
-    public void updateRoadmap(final Roadmap roadmap) {
-        if (this.roadmap == null) {
-            this.roadmap = roadmap;
-        }
-    }
-
     public int nodesSize() {
         return nodes.size();
     }
@@ -84,11 +70,11 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
         return content;
     }
 
-    public RoadmapNodes getNodes() {
-        return nodes;
+    public Long getRoadmapId() {
+        return roadmapId;
     }
 
-    public Roadmap getRoadmap() {
-        return roadmap;
+    public RoadmapNodes getNodes() {
+        return nodes;
     }
 }

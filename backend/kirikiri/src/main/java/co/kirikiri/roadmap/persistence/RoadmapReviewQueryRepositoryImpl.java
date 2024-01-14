@@ -1,7 +1,6 @@
 package co.kirikiri.roadmap.persistence;
 
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
-import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapReview;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -19,18 +18,18 @@ public class RoadmapReviewQueryRepositoryImpl extends QuerydslRepositorySupporte
     }
 
     @Override
-    public List<RoadmapReview> findRoadmapReviewByRoadmapOrderByLatest(final Roadmap roadmap,
-                                                                       final Long lastId,
-                                                                       final int pageSize) {
+    public List<RoadmapReview> findRoadmapReviewByRoadmapIdOrderByLatest(final Long roadmapId,
+                                                                         final Long lastId,
+                                                                         final int pageSize) {
         return selectFrom(roadmapReview)
-                .where(roadmapCond(roadmap), lessThanLastId(lastId))
+                .where(roadmapCond(roadmapId), lessThanLastId(lastId))
                 .limit(pageSize)
                 .orderBy(orderByCreatedAtDesc())
                 .fetch();
     }
 
-    private BooleanExpression roadmapCond(final Roadmap roadmap) {
-        return roadmapReview.roadmap.eq(roadmap);
+    private BooleanExpression roadmapCond(final Long roadmapId) {
+        return roadmapReview.roadmapId.eq(roadmapId);
     }
 
     private BooleanExpression lessThanLastId(final Long lastId) {

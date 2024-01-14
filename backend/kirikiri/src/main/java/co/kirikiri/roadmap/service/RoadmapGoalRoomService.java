@@ -11,11 +11,11 @@ public interface RoadmapGoalRoomService {
 
     Member findCompletedGoalRoomMember(final Long roadmapId, final String identifier);
 
-    boolean hasGoalRooms(final Roadmap roadmap);
+    boolean hasGoalRooms(final Long roadmapId);
 
     RoadmapGoalRoomNumberDto findRoadmapGoalRoomsByRoadmap(final Roadmap roadmap);
 
-    RoadmapGoalRoomResponses makeRoadmapGoalRoomResponsesByOrderType(final Roadmap roadmap, final RoadmapGoalRoomsOrderTypeDto orderTypeDto, final CustomScrollRequest scrollRequest);
+    RoadmapGoalRoomResponses makeRoadmapGoalRoomResponsesByOrderType(final Long roadmapId, final RoadmapGoalRoomsOrderTypeDto orderTypeDto, final CustomScrollRequest scrollRequest);
 
-    boolean canDeleteGoalRoomsInRoadmap(final Roadmap roadmap);
+    boolean canDeleteGoalRoomsInRoadmap(final Long roadmapId);
 }

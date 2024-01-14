@@ -4,9 +4,6 @@ import co.kirikiri.domain.BaseUpdatedTimeEntity;
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -31,17 +28,16 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
 
     private Long memberId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roadmap_id")
-    private Roadmap roadmap;
+    private Long roadmapId;
 
-    public RoadmapReview(final String content, final Double rate, final Long memberId) {
+    public RoadmapReview(final String content, final Double rate, final Long memberId, final Long roadmapId) {
         if (content != null) {
             validate(content, rate);
         }
         this.content = content;
         this.rate = rate;
         this.memberId = memberId;
+        this.roadmapId = roadmapId;
     }
 
     private void validate(final String content, final Double rate) {
@@ -62,16 +58,6 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
         }
     }
 
-    public void updateRoadmap(final Roadmap roadmap) {
-        if (this.roadmap == null) {
-            this.roadmap = roadmap;
-        }
-    }
-
-    public boolean isNotSameRoadmap(final Roadmap roadmap) {
-        return this.roadmap == null || !this.roadmap.equals(roadmap);
-    }
-
     public String getContent() {
         return content;
     }
@@ -82,5 +68,9 @@ public class RoadmapReview extends BaseUpdatedTimeEntity {
 
     public Long getMemberId() {
         return memberId;
+    }
+
+    public Long getRoadmapId() {
+        return roadmapId;
     }
 }
