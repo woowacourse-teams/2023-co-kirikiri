@@ -4,6 +4,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ServerException;
+import co.kirikiri.common.service.FilePathGenerator;
+import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.service.dto.FileInformation;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -18,14 +23,11 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
-import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.roadmap.RoadmapNodeSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapSaveDto;
 import co.kirikiri.service.dto.roadmap.RoadmapTagSaveDto;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.event.RoadmapCreateEvent;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ServerException;
 import co.kirikiri.service.roadmap.RoadmapCreateEventListener;
 import java.io.IOException;
 import java.util.List;
@@ -58,6 +60,7 @@ class RoadmapCreateEventListenerTest {
 
     @Test
     void 정상적으로_로드맵_노드_이미지를_저장한다() throws IOException {
+        // given
         final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent");
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
@@ -79,10 +82,10 @@ class RoadmapCreateEventListenerTest {
 
         final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap, roadmapSaveDto);
 
-        // When
+        // when
         roadmapCreateEventListener.handleRoadmapCreate(roadmapCreateEvent);
 
-        // Then
+        // then
         verify(roadmapContentRepository, times(1)).save(roadmapContent);
     }
 

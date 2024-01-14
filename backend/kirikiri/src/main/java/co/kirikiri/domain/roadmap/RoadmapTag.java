@@ -1,12 +1,12 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.common.entity.BaseEntity;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

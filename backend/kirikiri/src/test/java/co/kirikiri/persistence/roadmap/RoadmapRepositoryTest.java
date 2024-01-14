@@ -3,15 +3,8 @@ package co.kirikiri.persistence.roadmap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNode;
-import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
-import co.kirikiri.domain.goalroom.vo.GoalRoomName;
-import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.goalroom.vo.Period;
+import co.kirikiri.common.helper.RepositoryTest;
+import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
 import co.kirikiri.domain.member.Member;
@@ -31,11 +24,18 @@ import co.kirikiri.domain.roadmap.RoadmapStatus;
 import co.kirikiri.domain.roadmap.RoadmapTag;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.domain.roadmap.vo.RoadmapTagName;
+import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
+import co.kirikiri.goalroom.domain.vo.GoalRoomName;
+import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
+import co.kirikiri.goalroom.domain.vo.Period;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
 import co.kirikiri.persistence.dto.RoadmapSearchDto;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
-import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.persistence.member.MemberRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -248,13 +248,14 @@ class RoadmapRepositoryTest {
         // gameRoadmap1 : 참가인원 0명
         // gameRoadmap2 : 참가인원 1명
         final List<GoalRoomMember> gameRoadmap2GoalRoomMembers = List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), gameRoadmap2GoalRoom, creator));
+                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), gameRoadmap2GoalRoom, creator.getId()));
         goalRoomMemberRepository.saveAllInBatch(gameRoadmap2GoalRoomMembers);
 
         // travelRoadmap : 참가인원 2명
         final List<GoalRoomMember> travelRoadmapGoalRoomMembers = List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), travelRoadmapGoalRoom, creator),
-                new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), travelRoadmapGoalRoom, follower));
+                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), travelRoadmapGoalRoom, creator.getId()),
+                new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), travelRoadmapGoalRoom,
+                        follower.getId()));
         goalRoomMemberRepository.saveAllInBatch(travelRoadmapGoalRoomMembers);
 
         final RoadmapCategory category = null;
@@ -616,14 +617,13 @@ class RoadmapRepositoryTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2));
 
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(5), roadmapContent,
-                member);
-        goalRoom.addAllGoalRoomRoadmapNodes(goalRoomRoadmapNodes);
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(5),
+                roadmapContent.getId(), goalRoomRoadmapNodes);
         return goalRoomRepository.save(goalRoom);
     }
 
     private GoalRoomRoadmapNode 골룸_로드맵_노드를_생성한다(final LocalDate startDate, final LocalDate endDate,
                                                 final RoadmapNode roadmapNode) {
-        return new GoalRoomRoadmapNode(new Period(startDate, endDate), 1, roadmapNode);
+        return new GoalRoomRoadmapNode(new Period(startDate, endDate), 1, roadmapNode.getId());
     }
 }

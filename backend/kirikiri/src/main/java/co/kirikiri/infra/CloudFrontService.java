@@ -1,6 +1,6 @@
 package co.kirikiri.infra;
 
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.common.exception.ServerException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import lombok.RequiredArgsConstructor;

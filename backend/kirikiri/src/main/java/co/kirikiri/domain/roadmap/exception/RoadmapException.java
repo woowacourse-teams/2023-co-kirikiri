@@ -1,6 +1,6 @@
 package co.kirikiri.domain.roadmap.exception;
 
-import co.kirikiri.domain.exception.DomainException;
+import co.kirikiri.common.exception.DomainException;
 
 public class RoadmapException extends DomainException {
 

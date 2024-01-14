@@ -1,16 +1,16 @@
 package co.kirikiri.service.auth;
 
+import co.kirikiri.common.aop.ExceptionConvert;
+import co.kirikiri.common.exception.AuthenticationException;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.persistence.auth.RefreshTokenRepository;
 import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.auth.LoginDto;
 import co.kirikiri.service.dto.auth.request.LoginRequest;
 import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
 import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
-import co.kirikiri.service.exception.AuthenticationException;
 import co.kirikiri.service.mapper.AuthMapper;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

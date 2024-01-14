@@ -11,17 +11,17 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.goalroom.domain.GoalRoomStatus;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import co.kirikiri.service.scheduler.RoadmapScheduler;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import org.junit.jupiter.api.Test;
+import co.kirikiri.service.scheduler.RoadmapScheduler;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
 

@@ -13,10 +13,10 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.카테고리들_
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
 import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
 import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
@@ -29,10 +29,10 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class RoadmapReadIntegrationTest extends InitIntegrationTest {
 

@@ -1,10 +1,11 @@
 package co.kirikiri.service.mapper;
 
+import co.kirikiri.common.exception.ServerException;
+import co.kirikiri.common.service.dto.FileInformation;
 import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapCategory;
 import co.kirikiri.persistence.dto.RoadmapOrderType;
-import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.member.MemberDto;
 import co.kirikiri.service.dto.member.response.MemberResponse;
 import co.kirikiri.service.dto.roadmap.RoadmapCategoryDto;
@@ -36,7 +37,6 @@ import co.kirikiri.service.dto.roadmap.response.RoadmapNodeResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
 import co.kirikiri.service.dto.roadmap.response.RoadmapTagResponse;
-import co.kirikiri.service.exception.ServerException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;

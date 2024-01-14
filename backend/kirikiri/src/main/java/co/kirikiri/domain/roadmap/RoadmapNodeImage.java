@@ -1,7 +1,7 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseEntity;
-import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.common.entity.BaseEntity;
+import co.kirikiri.common.type.ImageContentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
