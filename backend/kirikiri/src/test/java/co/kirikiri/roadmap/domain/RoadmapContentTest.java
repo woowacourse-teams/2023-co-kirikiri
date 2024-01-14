@@ -36,18 +36,18 @@ class RoadmapContentTest {
     void 로드맵_본문에_노드들을_추가한다() {
         // given
         final RoadmapContent content = new RoadmapContent("content");
+        final RoadmapNodes roadmapNodes = new RoadmapNodes(
+                List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title2", "content1")));
 
         // when
-        content.addNodes(
-                new RoadmapNodes(
-                        List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title2", "content1"))));
+        content.addNodes(roadmapNodes);
 
         // then
         final RoadmapNodes nodes = content.getNodes();
         assertAll(
                 () -> assertThat(nodes.getValues()).hasSize(2),
-                () -> assertThat(nodes.getValues().get(0).getRoadmapContent()).isEqualTo(content),
-                () -> assertThat(nodes.getValues().get(1).getRoadmapContent()).isEqualTo(content)
+                () -> assertThat(nodes.getValues().get(0).getTitle()).isEqualTo("title1"),
+                () -> assertThat(nodes.getValues().get(1).getTitle()).isEqualTo("title2")
         );
     }
 
@@ -60,8 +60,7 @@ class RoadmapContentTest {
         // then
         final String title = "title";
         assertThatThrownBy(() -> content.addNodes(
-                new RoadmapNodes(
-                        List.of(new RoadmapNode(title, "content1"), new RoadmapNode(title, "content1")))));
+                new RoadmapNodes(List.of(new RoadmapNode(title, "content1"), new RoadmapNode(title, "content1")))));
     }
 
     @Test

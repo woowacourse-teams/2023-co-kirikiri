@@ -56,7 +56,6 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
 
     public void addNodes(final RoadmapNodes nodes) {
         this.nodes.addAll(nodes);
-        nodes.updateAllRoadmapContent(this);
     }
 
     public boolean isNotSameRoadmap(final Roadmap roadmap) {

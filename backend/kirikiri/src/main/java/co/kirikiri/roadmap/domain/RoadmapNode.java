@@ -5,9 +5,6 @@ import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -25,10 +22,6 @@ public class RoadmapNode extends BaseEntity {
 
     @Column(length = 2200, nullable = false)
     private String content;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roadmap_content_id", nullable = false)
-    private RoadmapContent roadmapContent;
 
     @Embedded
     private final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
@@ -67,26 +60,12 @@ public class RoadmapNode extends BaseEntity {
         this.roadmapNodeImages.addAll(roadmapNodeImages);
     }
 
-    public boolean isNotSameRoadmapContent(final RoadmapContent roadmapContent) {
-        return this.roadmapContent == null || !this.roadmapContent.equals(roadmapContent);
-    }
-
-    public void updateRoadmapContent(final RoadmapContent roadmapContent) {
-        if (this.roadmapContent == null) {
-            this.roadmapContent = roadmapContent;
-        }
-    }
-
     public String getTitle() {
         return title;
     }
 
     public String getContent() {
         return content;
-    }
-
-    public RoadmapContent getRoadmapContent() {
-        return roadmapContent;
     }
 
     public RoadmapNodeImages getRoadmapNodeImages() {

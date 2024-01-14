@@ -4,6 +4,7 @@ import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,8 @@ public class RoadmapNodes {
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            mappedBy = "roadmapContent")
+            orphanRemoval = true)
+    @JoinColumn(name = "roadmap_content_id", nullable = false)
     private final List<RoadmapNode> values = new ArrayList<>();
 
     public RoadmapNodes(final List<RoadmapNode> roadmapNodes) {
@@ -45,18 +47,6 @@ public class RoadmapNodes {
     public void addAll(final RoadmapNodes roadmapNodes) {
         this.values.addAll(new ArrayList<>(roadmapNodes.values));
         validateTitleDistinct(values);
-    }
-
-    public void updateAllRoadmapContent(final RoadmapContent content) {
-        for (final RoadmapNode roadmapNode : values) {
-            updateRoadmapContent(roadmapNode, content);
-        }
-    }
-
-    private void updateRoadmapContent(final RoadmapNode roadmapNode, final RoadmapContent content) {
-        if (roadmapNode.isNotSameRoadmapContent(content)) {
-            roadmapNode.updateRoadmapContent(content);
-        }
     }
 
     public Optional<RoadmapNode> findById(final Long roadmapNodeId) {
