@@ -2,7 +2,6 @@ package co.kirikiri.checkfeed.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -62,6 +61,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,6 +89,9 @@ class GoalRoomCheckFeedServiceTest {
 
     @Mock
     private FilePathGenerator filePathGenerator;
+
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private GoalRoomCheckFeedService goalRoomCheckFeedService;
@@ -131,10 +134,7 @@ class GoalRoomCheckFeedServiceTest {
         final String response = goalRoomCheckFeedService.createCheckFeed("cokirikiri", 1L, request);
 
         // then
-        assertAll(
-                () -> assertThat(goalRoomLeader.getAccomplishmentRate()).isEqualTo(100 / (double) 10),
-                () -> assertThat(response).contains("originalFileName")
-        );
+        assertThat(response).contains("originalFileName");
     }
 
     @Test

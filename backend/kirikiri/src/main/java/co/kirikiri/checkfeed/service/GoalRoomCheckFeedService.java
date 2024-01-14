@@ -7,6 +7,7 @@ import co.kirikiri.checkfeed.service.dto.CheckFeedMemberDto;
 import co.kirikiri.checkfeed.service.dto.GoalRoomCheckFeedDto;
 import co.kirikiri.checkfeed.service.dto.request.CheckFeedRequest;
 import co.kirikiri.checkfeed.service.dto.response.GoalRoomCheckFeedResponse;
+import co.kirikiri.checkfeed.service.event.AccomplishmentRateUpdateEvent;
 import co.kirikiri.checkfeed.service.mapper.CheckFeedMapper;
 import co.kirikiri.common.aop.ExceptionConvert;
 import co.kirikiri.common.exception.BadRequestException;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,7 @@ public class GoalRoomCheckFeedService {
     private final MemberRepository memberRepository;
     private final FileService fileService;
     private final FilePathGenerator filePathGenerator;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public String createCheckFeed(final String identifier, final Long goalRoomId,
                                   final CheckFeedRequest checkFeedRequest) {
@@ -61,7 +64,9 @@ public class GoalRoomCheckFeedService {
         final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberIdAndGoalRoomRoadmapNodeId(
                 goalRoomMember.getId(), currentNode.getId());
         validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
-        updateAccomplishmentRate(goalRoom, goalRoomMember, currentMemberCheckCount);
+
+        applicationEventPublisher.publishEvent(
+                new AccomplishmentRateUpdateEvent(goalRoomId, goalRoomMember.getId(), currentMemberCheckCount));
 
         final String path = filePathGenerator.makeFilePath(ImageDirType.CHECK_FEED,
                 checkFeedImage.getOriginalFilename());
@@ -125,14 +130,6 @@ public class GoalRoomCheckFeedService {
                 .isPresent()) {
             throw new BadRequestException("이미 오늘 인증 피드를 등록하였습니다.");
         }
-    }
-
-    private void updateAccomplishmentRate(final GoalRoom goalRoom, final GoalRoomMember goalRoomMember,
-                                          final int pastCheckCount) {
-        final int wholeCheckCount = goalRoom.getAllCheckCount();
-        final int memberCheckCount = pastCheckCount + 1;
-        final Double accomplishmentRate = 100 * memberCheckCount / (double) wholeCheckCount;
-        goalRoomMember.updateAccomplishmentRate(accomplishmentRate);
     }
 
     private void saveCheckFeed(final CheckFeedRequest checkFeedRequest, final MultipartFile checkFeedImage,
