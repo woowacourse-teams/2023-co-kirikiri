@@ -60,6 +60,7 @@ class RoadmapCreateEventListenerTest {
 
     @Test
     void 정상적으로_로드맵_노드_이미지를_저장한다() throws IOException {
+        // given
         final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent");
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
@@ -81,10 +82,10 @@ class RoadmapCreateEventListenerTest {
 
         final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap, roadmapSaveDto);
 
-        // When
+        // when
         roadmapCreateEventListener.handleRoadmapCreate(roadmapCreateEvent);
 
-        // Then
+        // then
         verify(roadmapContentRepository, times(1)).save(roadmapContent);
     }
 

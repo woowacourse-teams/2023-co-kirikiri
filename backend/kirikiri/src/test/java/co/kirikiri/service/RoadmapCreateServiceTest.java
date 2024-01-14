@@ -42,6 +42,7 @@ import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
+import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapRepository;
 import co.kirikiri.persistence.roadmap.RoadmapReviewRepository;
 import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
@@ -68,8 +69,7 @@ class RoadmapCreateServiceTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
             null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
-            null,
-            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
+            null, new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock
     private MemberRepository memberRepository;
@@ -88,6 +88,9 @@ class RoadmapCreateServiceTest {
 
     @Mock
     private RoadmapCategoryRepository roadmapCategoryRepository;
+
+    @Mock
+    private RoadmapContentRepository roadmapContentRepository;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;

@@ -60,6 +60,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
@@ -113,6 +114,9 @@ class GoalRoomCreateServiceTest {
     @Mock
     private FilePathGenerator filePathGenerator;
 
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @InjectMocks
     private GoalRoomCreateService goalRoomCreateService;
 
@@ -140,8 +144,6 @@ class GoalRoomCreateServiceTest {
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.of(member));
         given(goalRoomRepository.save(any()))
                 .willReturn(new GoalRoom(1L, new GoalRoomName("name"), new LimitedMemberCount(20), 1L,
                         new GoalRoomRoadmapNodes(goalRoomRoadmapNodes)));
@@ -208,23 +210,6 @@ class GoalRoomCreateServiceTest {
 
         given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
                 .willReturn(Optional.of(ROADMAP_CONTENT));
-
-        //when
-        //then
-        assertThatThrownBy(() -> goalRoomCreateService.create(request, member.getIdentifier().getValue()))
-                .isInstanceOf(NotFoundException.class);
-    }
-
-    @Test
-    void 골룸_생성_시_존재하지_않은_회원의_Identifier가_들어올때_예외를_던진다() {
-        //given
-        final GoalRoomCreateRequest request = new GoalRoomCreateRequest(1L, "name",
-                20, new ArrayList<>(List.of(new GoalRoomRoadmapNodeRequest(1L, 10, TODAY, TEN_DAY_LATER))));
-
-        given(roadmapContentRepository.findByIdWithRoadmap(anyLong()))
-                .willReturn(Optional.of(ROADMAP_CONTENT));
-        given(memberRepository.findByIdentifier(any()))
-                .willReturn(Optional.empty());
 
         //when
         //then

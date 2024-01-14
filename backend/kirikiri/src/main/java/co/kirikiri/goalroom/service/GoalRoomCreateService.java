@@ -23,11 +23,13 @@ import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.service.dto.GoalRoomCreateDto;
 import co.kirikiri.goalroom.service.dto.GoalRoomRoadmapNodeDto;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
+import co.kirikiri.goalroom.service.event.GoalRoomLeaderUpdateEvent;
 import co.kirikiri.goalroom.service.mapper.GoalRoomMapper;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,24 +44,17 @@ public class GoalRoomCreateService {
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapContentRepository roadmapContentRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public Long create(final GoalRoomCreateRequest goalRoomCreateRequest, final String memberIdentifier) {
         final GoalRoomCreateDto goalRoomCreateDto = GoalRoomMapper.convertToGoalRoomCreateDto(goalRoomCreateRequest);
         final RoadmapContent roadmapContent = findRoadmapContentById(goalRoomCreateDto.roadmapContentId());
         validateDeletedRoadmap(roadmapContent);
         validateNodeSizeEqual(roadmapContent.nodesSize(), goalRoomCreateDto.goalRoomRoadmapNodeDtosSize());
-        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = convertToGoalRoomRoadmapNodes(
-                goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
-        validateGoalRoomRoadmapNodeSize(goalRoomRoadmapNodes, roadmapContent);
-        final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(),
-                roadmapContent.getId(), goalRoomRoadmapNodes);
-
+        final GoalRoom goalRoom = createGoalRoom(goalRoomCreateDto, roadmapContent);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final Member leader = findMemberByIdentifier(memberIdentifier);
-        // todo: leader update event
-        goalRoomPendingMemberRepository.save(
-                new GoalRoomPendingMember(GoalRoomRole.LEADER, savedGoalRoom, leader.getId()));
+        applicationEventPublisher.publishEvent(new GoalRoomLeaderUpdateEvent(savedGoalRoom.getId(), memberIdentifier));
 
         return savedGoalRoom.getId();
     }
@@ -82,7 +77,15 @@ public class GoalRoomCreateService {
         }
     }
 
-    private static GoalRoomRoadmapNodes convertToGoalRoomRoadmapNodes(
+    private GoalRoom createGoalRoom(final GoalRoomCreateDto goalRoomCreateDto, final RoadmapContent roadmapContent) {
+        final GoalRoomRoadmapNodes goalRoomRoadmapNodes = makeGoalRoomRoadmapNodes(
+                goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
+        validateGoalRoomRoadmapNodeSize(goalRoomRoadmapNodes, roadmapContent);
+        return new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(),
+                roadmapContent.getId(), goalRoomRoadmapNodes);
+    }
+
+    private static GoalRoomRoadmapNodes makeGoalRoomRoadmapNodes(
             final List<GoalRoomRoadmapNodeDto> goalRoomRoadmapNodeDtos,
             final RoadmapContent roadmapContent) {
         final List<GoalRoomRoadmapNode> goalRoomRoadmapNodes = goalRoomRoadmapNodeDtos.stream()
@@ -110,11 +113,6 @@ public class GoalRoomCreateService {
         }
     }
 
-    private Member findMemberByIdentifier(final String memberIdentifier) {
-        return memberRepository.findByIdentifier(new Identifier(memberIdentifier))
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
-    }
-
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
         final GoalRoom goalRoom = findGoalRoomByIdWithPessimisticLock(goalRoomId);
@@ -122,6 +120,11 @@ public class GoalRoomCreateService {
         final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom,
                 member.getId());
         goalRoomPendingMemberRepository.save(newMember);
+    }
+
+    private Member findMemberByIdentifier(final String memberIdentifier) {
+        return memberRepository.findByIdentifier(new Identifier(memberIdentifier))
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
     private GoalRoom findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
