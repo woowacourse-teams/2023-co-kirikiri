@@ -52,7 +52,6 @@ public class RoadmapCreateService {
     private final RoadmapGoalRoomService roadmapGoalRoomService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    @CacheEvict(value = "roadmapList", allEntries = true)
     public Long create(final RoadmapSaveRequest request, final String identifier) {
         final Member member = findMemberByIdentifier(identifier);
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
@@ -60,7 +59,7 @@ public class RoadmapCreateService {
         final Roadmap roadmap = createRoadmap(member.getId(), roadmapSaveDto, roadmapCategory);
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
 
-        applicationEventPublisher.publishEvent(new RoadmapCreateEvent(savedRoadmap, roadmapSaveDto));
+        applicationEventPublisher.publishEvent(new RoadmapCreateEvent(savedRoadmap.getId(), roadmapSaveDto));
 
         return savedRoadmap.getId();
     }

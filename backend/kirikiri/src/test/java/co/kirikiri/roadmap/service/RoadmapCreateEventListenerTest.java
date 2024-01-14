@@ -27,10 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateEventListenerTest {
@@ -55,7 +56,7 @@ class RoadmapCreateEventListenerTest {
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
-        final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
+        final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "introduction", 10,
                 RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
@@ -70,9 +71,11 @@ class RoadmapCreateEventListenerTest {
 
         roadmap.addContent(roadmapContent);
 
-        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap, roadmapSaveDto);
+        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap.getId(), roadmapSaveDto);
 
         // When
+        when(roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(anyLong()))
+                .thenReturn(Optional.of(roadmapContent));
         roadmapCreateEventListener.handleRoadmapCreate(roadmapCreateEvent);
 
         // Then
@@ -82,7 +85,7 @@ class RoadmapCreateEventListenerTest {
     @Test
     void 로드맵에_컨텐츠가_존재하지_않을_경우_예외를_던진다() throws IOException {
         //given
-        final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
+        final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "inroduction", 10,
                 RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile("roadmapNodeTitle",
@@ -95,12 +98,16 @@ class RoadmapCreateEventListenerTest {
                 "roadmapNodeContent", RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
                 List.of(new RoadmapTagSaveDto("tag")));
 
-        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap, roadmapSaveDto);
+        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap.getId(), roadmapSaveDto);
 
         //when
+        when(roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(anyLong()))
+                .thenReturn(Optional.empty());
+
         //then
         assertThatThrownBy(() -> roadmapCreateEventListener.handleRoadmapCreate(roadmapCreateEvent))
-                .isInstanceOf(ServerException.class);
+                .isInstanceOf(ServerException.class)
+                .hasMessage("로드맵 컨텐츠가 존재하지 않습니다.");
     }
 
     @Test
@@ -110,7 +117,7 @@ class RoadmapCreateEventListenerTest {
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
-        final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
+        final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "introduction", 10,
                 RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
@@ -125,12 +132,16 @@ class RoadmapCreateEventListenerTest {
 
         roadmap.addContent(roadmapContent);
 
-        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap, roadmapSaveDto);
+        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap.getId(), roadmapSaveDto);
 
         //when
+        when(roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(anyLong()))
+                .thenReturn(Optional.of(roadmapContent));
+
         //then
         assertThatThrownBy(() -> roadmapCreateEventListener.handleRoadmapCreate(roadmapCreateEvent))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("해당 제목을 가지고 있는 로드맵 노드가 없습니다. title = Wrong Title");
     }
 
     @Test
@@ -140,14 +151,14 @@ class RoadmapCreateEventListenerTest {
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
         roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode)));
 
-        final Roadmap roadmap = new Roadmap("roadmapTitle", "inroduction", 10,
+        final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "inroduction", 10,
                 RoadmapDifficulty.DIFFICULT, memberId, new RoadmapCategory("category"));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(), null,
                 "image/jpeg", "tempImage".getBytes());
-        final FileInformation fileInformation = new FileInformation(imageFile.getOriginalFilename(),
-                imageFile.getSize(), imageFile.getContentType(), imageFile.getInputStream());
-        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("Wrong Title", roadmapNode.getContent(),
+        final FileInformation fileInformation = new FileInformation(null, imageFile.getSize(),
+                imageFile.getContentType(), imageFile.getInputStream());
+        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("roadmapNodeTitle", roadmapNode.getContent(),
                 List.of(fileInformation));
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
                 roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),
@@ -155,11 +166,15 @@ class RoadmapCreateEventListenerTest {
 
         roadmap.addContent(roadmapContent);
 
-        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap, roadmapSaveDto);
+        final RoadmapCreateEvent roadmapCreateEvent = new RoadmapCreateEvent(roadmap.getId(), roadmapSaveDto);
 
         //when
+        when(roadmapContentRepository.findFirstByRoadmapIdOrderByCreatedAtDesc(anyLong()))
+                .thenReturn(Optional.of(roadmapContent));
+
         //then
         assertThatThrownBy(() -> roadmapCreateEventListener.handleRoadmapCreate(roadmapCreateEvent))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("원본 파일의 이름이 존재하지 않습니다.");
     }
 }

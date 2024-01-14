@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface RoadmapContentRepository extends JpaRepository<RoadmapContent, Long> {
 
+    Optional<RoadmapContent> findFirstByRoadmapIdOrderByCreatedAtDesc(final Long roadmapId);
+
     Optional<RoadmapContent> findFirstByRoadmapOrderByCreatedAtDesc(final Roadmap roadmap);
 
     @Query("select rc from RoadmapContent rc "
