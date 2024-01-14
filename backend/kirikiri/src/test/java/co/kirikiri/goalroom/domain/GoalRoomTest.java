@@ -1,8 +1,6 @@
 package co.kirikiri.goalroom.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import co.kirikiri.domain.member.EncryptedPassword;
 import co.kirikiri.domain.member.Gender;
@@ -19,7 +17,6 @@ import co.kirikiri.domain.roadmap.RoadmapDifficulty;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.domain.roadmap.RoadmapNodeImages;
 import co.kirikiri.domain.roadmap.RoadmapNodes;
-import co.kirikiri.goalroom.domain.exception.GoalRoomException;
 import co.kirikiri.goalroom.domain.vo.GoalRoomName;
 import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
 import co.kirikiri.goalroom.domain.vo.Period;
@@ -35,55 +32,6 @@ class GoalRoomTest {
     private static final LocalDate TEN_DAY_LATER = TODAY.plusDays(10);
     private static final LocalDate TWENTY_DAY_LAYER = TODAY.plusDays(20);
     private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
-
-    @Test
-    void 골룸에_사용자를_추가한다() {
-        //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
-
-        //when
-        final Long followerId = 2L;
-        goalRoom.join(followerId);
-
-        //then
-        final Integer currentMemberCount = goalRoom.getCurrentMemberCount();
-        assertThat(currentMemberCount)
-                .isEqualTo(2);
-    }
-
-    @Test
-    void 모집중이_아닌_골룸에_사용자를_추가하면_예외가_발생한다() {
-        //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
-        goalRoom.start();
-
-        //when, then
-        assertThatThrownBy(() -> goalRoom.join(2L))
-                .isInstanceOf(GoalRoomException.class)
-                .hasMessage("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
-    }
-
-    @Test
-    void 제한_인원이_가득_찬_골룸에_사용자를_추가하면_예외가_발생한다() {
-        //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
-
-        //when,then
-        assertThatThrownBy(() -> goalRoom.join(2L))
-                .isInstanceOf(GoalRoomException.class)
-                .hasMessage("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
-    }
-
-    @Test
-    void 이미_참여_중인_사용자를_골룸에_추가하면_예외가_발생한다() {
-        //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
-
-        //when,then
-        assertThatThrownBy(() -> goalRoom.join(1L))
-                .isInstanceOf(GoalRoomException.class)
-                .hasMessage("이미 참여한 골룸에는 참여할 수 없습니다.");
-    }
 
     @Test
     void 골룸의_총_기간을_계산한다() {
@@ -103,20 +51,6 @@ class GoalRoomTest {
     }
 
     @Test
-    void 골룸에_대기중인_인원수를_계산한다() {
-        // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
-                골룸_로드맵_노드들을_생성한다());
-
-        // when
-        goalRoom.join(2L);
-        goalRoom.join(3L);
-
-        // then
-        assertThat(goalRoom.getCurrentMemberCount()).isEqualTo(3);
-    }
-
-    @Test
     void 골룸의_총_인증_횟수를_구한다() {
         //given
         final Member creator = 크리에이터를_생성한다();
@@ -128,50 +62,6 @@ class GoalRoomTest {
 
         //expect
         assertThat(goalRoom.getAllCheckCount()).isEqualTo(20);
-    }
-
-    @Test
-    void 골룸이_시작하기_전에_참여_멤버를_확인한다() {
-        //given
-        final Member creator = 크리에이터를_생성한다();
-        final Roadmap roadmap = 로드맵을_생성한다(creator);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-
-        goalRoom.join(2L);
-
-        //expect
-        assertAll(
-                () -> assertThat(goalRoom.isGoalRoomMember(2L)).isTrue(),
-                () -> assertThat(goalRoom.getCurrentMemberCount()).isEqualTo(2)
-        );
-    }
-
-    @Test
-    void 골룸을_나간다() {
-        //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
-
-        // when
-        goalRoom.leave(1L);
-
-        // then
-        assertThat(goalRoom.isEmptyGoalRoom()).isTrue();
-    }
-
-    @Test
-    void 골룸에_참여하지_않은_멤버가_나가면_예외가_발생한다() {
-        //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2), 1L, 1L, 골룸_로드맵_노드들을_생성한다());
-
-        // when
-        final Long notJoinMemberId = 2L;
-
-        // then
-        assertThatThrownBy(() -> goalRoom.leave(notJoinMemberId))
-                .isInstanceOf(GoalRoomException.class);
     }
 
     @Test
@@ -233,7 +123,7 @@ class GoalRoomTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
 
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), creator.getId(),
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(),
                 goalRoomRoadmapNodes);
     }
 

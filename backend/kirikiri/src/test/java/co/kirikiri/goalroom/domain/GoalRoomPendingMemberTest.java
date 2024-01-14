@@ -15,7 +15,7 @@ class GoalRoomPendingMemberTest {
     @Test
     void 골룸의_리더이면_True를_반환한다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
+        final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L,
                 골룸_로드맵_노드들을_생성한다());
 
         // when
@@ -29,7 +29,7 @@ class GoalRoomPendingMemberTest {
     @Test
     void 골룸의_리더가_아니면_false를_반환한다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L,
                 골룸_로드맵_노드들을_생성한다());
 
         // when

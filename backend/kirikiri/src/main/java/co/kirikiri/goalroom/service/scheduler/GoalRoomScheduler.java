@@ -1,7 +1,6 @@
 package co.kirikiri.goalroom.service.scheduler;
 
 import co.kirikiri.common.aop.ExceptionConvert;
-import co.kirikiri.common.entity.BaseEntity;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
@@ -30,7 +29,8 @@ public class GoalRoomScheduler {
         final List<GoalRoom> goalRoomsToStart = goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(
                 LocalDate.now());
         for (final GoalRoom goalRoom : goalRoomsToStart) {
-            final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoom.getGoalRoomPendingMembers().getValues();
+            final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoom(
+                    goalRoom);
             saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers);
             goalRoom.start();
         }
@@ -39,8 +39,7 @@ public class GoalRoomScheduler {
     private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
         final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
         goalRoomMemberRepository.saveAllInBatch(goalRoomMembers);
-        final List<Long> ids = makeGoalRoomPendingMemberIds(goalRoomPendingMembers);
-        goalRoomPendingMemberRepository.deleteAllByIdIn(ids);
+        goalRoomPendingMemberRepository.deleteAllInBatch(goalRoomPendingMembers);
     }
 
     private List<GoalRoomMember> makeGoalRoomMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
@@ -52,12 +51,6 @@ public class GoalRoomScheduler {
     private GoalRoomMember makeGoalRoomMember(final GoalRoomPendingMember goalRoomPendingMember) {
         return new GoalRoomMember(goalRoomPendingMember.getRole(), goalRoomPendingMember.getJoinedAt(),
                 goalRoomPendingMember.getGoalRoom(), goalRoomPendingMember.getMemberId());
-    }
-
-    private List<Long> makeGoalRoomPendingMemberIds(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
-        return goalRoomPendingMembers.stream()
-                .map(BaseEntity::getId)
-                .toList();
     }
 
     @Scheduled(cron = "0 0 4 * * *")

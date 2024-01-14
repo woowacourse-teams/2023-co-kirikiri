@@ -367,7 +367,7 @@ class RoadmapCreateServiceTest {
     }
 
     private GoalRoom 골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId(),
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(),
                 골룸_로드맵_노드들을_생성한다());
     }
 

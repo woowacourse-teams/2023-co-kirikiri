@@ -618,7 +618,7 @@ class RoadmapRepositoryTest {
                 List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2));
 
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(5),
-                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
+                roadmapContent.getId(), goalRoomRoadmapNodes);
         return goalRoomRepository.save(goalRoom);
     }
 

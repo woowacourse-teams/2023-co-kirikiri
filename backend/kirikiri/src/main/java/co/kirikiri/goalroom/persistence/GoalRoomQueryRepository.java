@@ -1,7 +1,6 @@
 package co.kirikiri.goalroom.persistence;
 
 import co.kirikiri.goalroom.domain.GoalRoom;
-import co.kirikiri.goalroom.domain.GoalRoomStatus;
 import co.kirikiri.goalroom.persistence.dto.RoadmapGoalRoomsOrderType;
 import java.time.LocalDate;
 import java.util.List;
@@ -15,10 +14,6 @@ public interface GoalRoomQueryRepository {
                                                           final RoadmapGoalRoomsOrderType filterType,
                                                           final Long lastId,
                                                           final int pageSize);
-
-    List<GoalRoom> findByMemberId(final Long memberId);
-
-    List<GoalRoom> findByMemberAndStatus(final Long memberId, final GoalRoomStatus goalRoomStatus);
 
     Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId);
 

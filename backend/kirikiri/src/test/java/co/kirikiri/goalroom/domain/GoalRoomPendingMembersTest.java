@@ -17,7 +17,7 @@ class GoalRoomPendingMembersTest {
     @Test
     void 골룸의_리더를_찾는다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L,
                 골룸_로드맵_노드들을_생성한다());
 
         // when
@@ -33,7 +33,7 @@ class GoalRoomPendingMembersTest {
     @Test
     void 골룸의_리더가_없으면_예외가_발생한다() {
         // given
-        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L, 1L,
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10), 1L,
                 골룸_로드맵_노드들을_생성한다());
 
         // when
@@ -48,21 +48,40 @@ class GoalRoomPendingMembersTest {
     }
 
     @Test
-    void 입력받은_사용자를_골룸_사용자_중에서_찾는다() {
+    void 골룸의_멤버를_멤버_아이디로_찾는다() {
         // given
-        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER, null,
-                null, 1L);
-        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(2L, GoalRoomRole.FOLLOWER, null,
-                null, 2L);
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
+                LocalDateTime.now(), null, 1L);
+        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(1L, GoalRoomRole.FOLLOWER,
+                LocalDateTime.now(), null, 2L);
 
         final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
                 List.of(goalRoomPendingMember1, goalRoomPendingMember2));
 
         // when
-        final GoalRoomPendingMember findGoalRoomPendingMember = goalRoomPendingMembers.findByMemberId(1L).get();
+        final GoalRoomPendingMember goalRoomPendingMember = goalRoomPendingMembers.findByMemberId(1L).get();
 
         // then
-        assertThat(findGoalRoomPendingMember).isEqualTo(goalRoomPendingMember1);
+        assertThat(goalRoomPendingMember).isEqualTo(goalRoomPendingMember1);
+    }
+
+    @Test
+    void 리더가_떠나면_리더가_바뀐다() {
+        // given
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
+                LocalDateTime.now(), null, 1L);
+        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(1L, GoalRoomRole.FOLLOWER,
+                LocalDateTime.now(), null, 2L);
+
+        final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
+                List.of(goalRoomPendingMember1, goalRoomPendingMember2));
+
+        // when
+        goalRoomPendingMembers.getValues().remove(goalRoomPendingMember1);
+        goalRoomPendingMembers.changeLeaderIfLeaderLeave(goalRoomPendingMember1);
+
+        // then
+        assertThat(goalRoomPendingMember2.isLeader()).isTrue();
     }
 
     @Test
@@ -99,26 +118,6 @@ class GoalRoomPendingMembersTest {
 
         // then
         assertThat(size).isEqualTo(2);
-    }
-
-    @Test
-    void 골룸_사용자에서_입렵받은_사용자를_제거한다() {
-        // given
-        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
-                LocalDateTime.now(), null, 1L);
-        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(1L, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), null, 2L);
-
-        final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
-                List.of(goalRoomPendingMember1, goalRoomPendingMember2));
-
-        // when
-        goalRoomPendingMembers.remove(goalRoomPendingMember1);
-
-        // then
-        assertThat(goalRoomPendingMembers)
-                .usingRecursiveComparison()
-                .isEqualTo(new GoalRoomPendingMembers(List.of(goalRoomPendingMember2)));
     }
 
     private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다() {

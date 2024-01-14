@@ -152,6 +152,37 @@ class GoalRoomMemberRepositoryTest {
     }
 
     @Test
+    void 골룸의_리더를_찾는다() {
+        // given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+
+        final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
+
+        final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER,
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, creator.getId());
+        final GoalRoomMember goalRoomMember2 = new GoalRoomMember(GoalRoomRole.FOLLOWER,
+                LocalDateTime.of(2023, 7, 20, 12, 0, 0), savedGoalRoom, member1.getId());
+        final List<GoalRoomMember> expected = goalRoomMemberRepository.saveAll(
+                List.of(goalRoomMember1, goalRoomMember2));
+
+        // when
+        final GoalRoomMember goalRoomLeader = goalRoomMemberRepository.findLeaderByGoalRoomAndRole(
+                goalRoom, GoalRoomRole.LEADER).get();
+
+        // then
+        assertThat(goalRoomLeader)
+                .isEqualTo(goalRoomMember1);
+    }
+
+    @Test
     void 골룸_아이디로_골룸_사용자를_조회하고_들어온지_오래된_순서대로_정렬한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
@@ -358,7 +389,7 @@ class GoalRoomMemberRepositoryTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
 
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId(),
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(),
                 goalRoomRoadmapNodes);
     }
 }

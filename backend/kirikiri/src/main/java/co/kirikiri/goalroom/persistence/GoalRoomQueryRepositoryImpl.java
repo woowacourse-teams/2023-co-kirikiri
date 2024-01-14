@@ -1,8 +1,6 @@
 package co.kirikiri.goalroom.persistence;
 
 import static co.kirikiri.goalroom.domain.QGoalRoom.goalRoom;
-import static co.kirikiri.goalroom.domain.QGoalRoomMember.goalRoomMember;
-import static co.kirikiri.goalroom.domain.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.goalroom.domain.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
 
 import co.kirikiri.common.persistence.QuerydslRepositorySupporter;
@@ -27,8 +25,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     @Override
     public Optional<GoalRoom> findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
-                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .fetchJoin()
                 .where(goalRoom.id.eq(goalRoomId))
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchOne());
@@ -50,27 +46,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findByMemberId(final Long memberId) {
-        return selectFrom(goalRoom)
-                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
-                .where(goalRoomPendingMember.memberId.eq(memberId)
-                        .or(goalRoomMember.memberId.eq(memberId)))
-                .fetch();
-    }
-
-    @Override
-    public List<GoalRoom> findByMemberAndStatus(final Long memberId, final GoalRoomStatus goalRoomStatus) {
-        return selectFrom(goalRoom)
-                .leftJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .leftJoin(goalRoom.goalRoomMembers.values, goalRoomMember)
-                .where(goalRoomPendingMember.memberId.eq(memberId)
-                        .or(goalRoomMember.memberId.eq(memberId)))
-                .where(statusCond(goalRoomStatus))
-                .fetch();
-    }
-
-    @Override
     public Optional<GoalRoom> findByIdWithNodes(final Long goalRoomId) {
         return Optional.ofNullable(selectFrom(goalRoom)
                 .innerJoin(goalRoom.goalRoomRoadmapNodes.values, goalRoomRoadmapNode)
@@ -82,8 +57,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     @Override
     public List<GoalRoom> findAllRecruitingGoalRoomsByStartDateEarlierThan(final LocalDate date) {
         return selectFrom(goalRoom)
-                .innerJoin(goalRoom.goalRoomPendingMembers.values, goalRoomPendingMember)
-                .fetchJoin()
                 .where(statusCond(GoalRoomStatus.RECRUITING))
                 .where(equalOrEarlierStartDateThan(date))
                 .fetch();

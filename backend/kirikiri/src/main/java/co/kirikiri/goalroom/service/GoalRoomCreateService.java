@@ -10,10 +10,15 @@ import co.kirikiri.domain.roadmap.RoadmapContent;
 import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomMembers;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
+import co.kirikiri.goalroom.domain.GoalRoomPendingMembers;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
 import co.kirikiri.goalroom.domain.vo.Period;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.service.dto.GoalRoomCreateDto;
 import co.kirikiri.goalroom.service.dto.GoalRoomRoadmapNodeDto;
@@ -33,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class GoalRoomCreateService {
 
     private final GoalRoomRepository goalRoomRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final RoadmapContentRepository roadmapContentRepository;
     private final MemberRepository memberRepository;
 
@@ -44,10 +51,17 @@ public class GoalRoomCreateService {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = convertToGoalRoomRoadmapNodes(
                 goalRoomCreateDto.goalRoomRoadmapNodeDtos(), roadmapContent);
         validateGoalRoomRoadmapNodeSize(goalRoomRoadmapNodes, roadmapContent);
-        final Member leader = findMemberByIdentifier(memberIdentifier);
         final GoalRoom goalRoom = new GoalRoom(goalRoomCreateDto.goalRoomName(), goalRoomCreateDto.limitedMemberCount(),
-                roadmapContent.getId(), leader.getId(), goalRoomRoadmapNodes);
-        return goalRoomRepository.save(goalRoom).getId();
+                roadmapContent.getId(), goalRoomRoadmapNodes);
+
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+
+        final Member leader = findMemberByIdentifier(memberIdentifier);
+        // todo: leader update event
+        goalRoomPendingMemberRepository.save(
+                new GoalRoomPendingMember(GoalRoomRole.LEADER, savedGoalRoom, leader.getId()));
+
+        return savedGoalRoom.getId();
     }
 
     private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
@@ -104,7 +118,10 @@ public class GoalRoomCreateService {
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
         final GoalRoom goalRoom = findGoalRoomByIdWithPessimisticLock(goalRoomId);
-        goalRoom.join(member.getId());
+        validateJoinGoalRoom(goalRoom, member);
+        final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom,
+                member.getId());
+        goalRoomPendingMemberRepository.save(newMember);
     }
 
     private GoalRoom findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
@@ -112,14 +129,52 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
+    private void validateJoinGoalRoom(final GoalRoom goalRoom, final Member member) {
+        final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
+                findGoalRoomPendingMembers(goalRoom));
+        validateMemberCount(goalRoomPendingMembers, goalRoom);
+        validateRecruiting(goalRoom);
+        validateAlreadyParticipated(goalRoomPendingMembers, member);
+    }
+
+    private List<GoalRoomPendingMember> findGoalRoomPendingMembers(final GoalRoom goalRoom) {
+        return goalRoomPendingMemberRepository.findByGoalRoom(goalRoom);
+    }
+
+    private void validateMemberCount(final GoalRoomPendingMembers goalRoomPendingMembers, final GoalRoom goalRoom) {
+        if (goalRoomPendingMembers.size() >= goalRoom.getLimitedMemberCount().getValue()) {
+            throw new BadRequestException("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.");
+        }
+    }
+
+    private void validateRecruiting(final GoalRoom goalRoom) {
+        if (!goalRoom.isRecruiting()) {
+            throw new BadRequestException("모집 중이지 않은 골룸에는 참여할 수 없습니다.");
+        }
+    }
+
+    private void validateAlreadyParticipated(final GoalRoomPendingMembers goalRoomPendingMembers, final Member member) {
+        if (goalRoomPendingMembers.containGoalRoomPendingMember(member.getId())) {
+            throw new BadRequestException("이미 참여한 골룸에는 참여할 수 없습니다.");
+        }
+    }
+
     public void leave(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
-        validateStatus(goalRoom);
-        goalRoom.leave(member.getId());
-        if (goalRoom.isEmptyGoalRoom()) {
-            goalRoomRepository.delete(goalRoom);
+        validateRunning(goalRoom);
+
+        if (goalRoom.isRecruiting()) {
+            leaveRecruitingGoalRoom(member, goalRoom);
         }
+        if (goalRoom.isCompleted()) {
+            leaveCompletedGoalRoom(member, goalRoom);
+        }
+
+        // todo: 이벤트 분리 (회원이 나가는 것과 빈 골룸이면 삭제되는 것은 다른 관심사)
+//        if (goalRoom.isEmptyGoalRoom()) {
+//            goalRoomRepository.delete(goalRoom);
+//        }
     }
 
     private GoalRoom findGoalRoomById(final Long goalRoomId) {
@@ -127,43 +182,75 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
-    private void validateStatus(final GoalRoom goalRoom) {
+    private void validateRunning(final GoalRoom goalRoom) {
         if (goalRoom.isRunning()) {
             throw new BadRequestException("진행중인 골룸에서는 나갈 수 없습니다.");
         }
     }
 
+    private void leaveRecruitingGoalRoom(final Member member, final GoalRoom goalRoom) {
+        final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
+                findGoalRoomPendingMembers(goalRoom));
+        final GoalRoomPendingMember goalRoomPendingMember = goalRoomPendingMembers.findByMemberId(member.getId())
+                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+        goalRoomPendingMembers.changeLeaderIfLeaderLeave(goalRoomPendingMember);
+        goalRoomPendingMemberRepository.delete(goalRoomPendingMember);
+    }
+
+    private void leaveCompletedGoalRoom(final Member member, final GoalRoom goalRoom) {
+        final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(findGoalRoomMembers(goalRoom));
+        final GoalRoomMember goalRoomMember = goalRoomMembers.findByMemberId(member.getId())
+                .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
+        goalRoomMembers.changeLeaderIfLeaderLeave(goalRoomMember);
+        goalRoomMemberRepository.delete(goalRoomMember);
+    }
+
+    private List<GoalRoomMember> findGoalRoomMembers(final GoalRoom goalRoom) {
+        return goalRoomMemberRepository.findAllByGoalRoom(goalRoom);
+    }
+
     public void startGoalRoom(final String memberIdentifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(memberIdentifier);
+
         final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
-        checkGoalRoomLeader(member.getId(), goalRoom);
-        validateGoalRoomStart(goalRoom);
-        final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoom.getGoalRoomPendingMembers().getValues();
-        saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers, goalRoom);
+        checkGoalRoomStartDate(goalRoom);
+
+        final List<GoalRoomPendingMember> findGoalRoomPendingMembers = findGoalRoomPendingMembers(goalRoom);
+        checkAlreadyStarted(findGoalRoomPendingMembers);
+
+        final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(findGoalRoomPendingMembers);
+        checkGoalRoomLeader(member.getId(), goalRoomPendingMembers);
+
+        saveGoalRoomMemberFromPendingMembers(goalRoomPendingMembers);
         goalRoom.start();
     }
 
-    private void checkGoalRoomLeader(final Long memberId, final GoalRoom goalRoom) {
-        if (goalRoom.isNotLeader(memberId)) {
-            throw new BadRequestException("골룸의 리더만 골룸을 시작할 수 있습니다.");
-        }
-    }
-
-    private void validateGoalRoomStart(final GoalRoom goalRoom) {
+    private void checkGoalRoomStartDate(final GoalRoom goalRoom) {
         if (goalRoom.cannotStart()) {
             throw new BadRequestException("골룸의 시작 날짜가 되지 않았습니다.");
         }
     }
 
-    private void saveGoalRoomMemberFromPendingMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers,
-                                                      final GoalRoom goalRoom) {
-        final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
-        goalRoom.addAllGoalRoomMembers(goalRoomMembers);
-        goalRoom.deleteAllPendingMembers();
+    private void checkAlreadyStarted(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
+        if (goalRoomPendingMembers.isEmpty()) {
+            throw new BadRequestException("이미 시작된 골룸입니다.");
+        }
     }
 
-    private List<GoalRoomMember> makeGoalRoomMembers(final List<GoalRoomPendingMember> goalRoomPendingMembers) {
-        return goalRoomPendingMembers.stream()
+    private void checkGoalRoomLeader(final Long memberId, final GoalRoomPendingMembers goalRoomPendingMembers) {
+        if (goalRoomPendingMembers.isNotLeader(memberId)) {
+            throw new BadRequestException("골룸의 리더만 골룸을 시작할 수 있습니다.");
+        }
+    }
+
+    private void saveGoalRoomMemberFromPendingMembers(final GoalRoomPendingMembers goalRoomPendingMembers) {
+        final List<GoalRoomMember> goalRoomMembers = makeGoalRoomMembers(goalRoomPendingMembers);
+        goalRoomMemberRepository.saveAllInBatch(goalRoomMembers);
+        goalRoomPendingMemberRepository.deleteAllInBatch(goalRoomPendingMembers.getValues());
+    }
+
+    private List<GoalRoomMember> makeGoalRoomMembers(final GoalRoomPendingMembers goalRoomPendingMembers) {
+        return goalRoomPendingMembers.getValues().stream()
                 .map(this::makeGoalRoomMember)
                 .toList();
     }

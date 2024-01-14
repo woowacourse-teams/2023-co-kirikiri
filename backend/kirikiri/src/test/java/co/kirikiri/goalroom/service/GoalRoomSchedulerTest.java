@@ -4,8 +4,9 @@ import static co.kirikiri.goalroom.domain.GoalRoomStatus.RECRUITING;
 import static co.kirikiri.goalroom.domain.GoalRoomStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,13 +83,10 @@ class GoalRoomSchedulerTest {
         final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
         final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "kirikiri@email.com");
 
-        골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.FOLLOWER);
+        골룸_대기자를_생성한다(goalRoom1, creator, GoalRoomRole.LEADER);
+        골룸_대기자를_생성한다(goalRoom2, creator, GoalRoomRole.LEADER);
         골룸_대기자를_생성한다(goalRoom1, follower1, GoalRoomRole.FOLLOWER);
         골룸_대기자를_생성한다(goalRoom1, follower2, GoalRoomRole.FOLLOWER);
-
-        goalRoom1.join(follower1.getId());
-        goalRoom1.join(follower2.getId());
-        goalRoom2.join(follower3.getId());
 
         when(goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now()))
                 .thenReturn(List.of(goalRoom1));
@@ -97,6 +95,9 @@ class GoalRoomSchedulerTest {
         goalRoomScheduler.startGoalRooms();
 
         // then
+        verify(goalRoomMemberRepository, times(1)).saveAllInBatch(any());
+        verify(goalRoomPendingMemberRepository, times(1)).deleteAllInBatch(any());
+
         assertAll(
                 () -> assertThat(goalRoom1.getStatus()).isEqualTo(RUNNING),
                 () -> assertThat(goalRoom2.getStatus()).isEqualTo(RECRUITING)
@@ -118,10 +119,6 @@ class GoalRoomSchedulerTest {
         final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
         final Member follower3 = 사용자를_생성한다(4L, "identifier3", "password4!", "name3", "kirikiri@email.com");
 
-        goalRoom1.join(follower1.getId());
-        goalRoom1.join(follower2.getId());
-        goalRoom2.join(follower3.getId());
-
         when(goalRoomRepository.findAllRecruitingGoalRoomsByStartDateEarlierThan(LocalDate.now()))
                 .thenReturn(Collections.emptyList());
 
@@ -129,7 +126,8 @@ class GoalRoomSchedulerTest {
         goalRoomScheduler.startGoalRooms();
 
         // then
-        verify(goalRoomPendingMemberRepository, never()).deleteAllByIdIn(anyList());
+        verify(goalRoomMemberRepository, never()).saveAllInBatch(any());
+        verify(goalRoomPendingMemberRepository, never()).deleteAllByIdIn(any());
 
         assertAll(
                 () -> assertThat(goalRoom1.getStatus()).isEqualTo(RECRUITING),
@@ -177,7 +175,7 @@ class GoalRoomSchedulerTest {
     private GoalRoom 골룸을_생성한다(final Long goalRoomId, final Member creator, final RoadmapContent roadmapContent,
                               final Integer limitedMemberCount) {
         return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
-                roadmapContent.getId(), creator.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
+                roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
     }
 
     private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다(final RoadmapNodes roadmapNodes) {

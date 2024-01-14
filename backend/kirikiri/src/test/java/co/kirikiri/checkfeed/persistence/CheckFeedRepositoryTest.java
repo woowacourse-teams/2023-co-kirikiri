@@ -372,7 +372,7 @@ class CheckFeedRepositoryTest {
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
 
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
+                roadmapContent.getId(), goalRoomRoadmapNodes);
         return goalRoomRepository.save(goalRoom);
     }
 

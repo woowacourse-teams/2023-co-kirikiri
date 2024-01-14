@@ -54,7 +54,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
-        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null, 골룸_로드맵_노드들을_생성한다());
+        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, 골룸_로드맵_노드들을_생성한다());
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "follower", GenderType.FEMALE, DEFAULT_EMAIL);
@@ -81,7 +81,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
-        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null, 골룸_로드맵_노드들을_생성한다());
+        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, 골룸_로드맵_노드들을_생성한다());
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "follower", GenderType.FEMALE, DEFAULT_EMAIL);
@@ -109,7 +109,7 @@ class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
 
         final Long 기본_골룸_아이디 = 기본_골룸_생성(기본_로그인_토큰, 로드맵_응답);
-        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, null, 골룸_로드맵_노드들을_생성한다());
+        final GoalRoom 골룸 = new GoalRoom(기본_골룸_아이디, null, null, null, 골룸_로드맵_노드들을_생성한다());
 
         final MemberJoinRequest 팔로워_회원_가입_요청 = new MemberJoinRequest("identifier2", "paswword2@",
                 "follower", GenderType.FEMALE, DEFAULT_EMAIL);

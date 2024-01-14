@@ -123,6 +123,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(roadmapContent));
         given(roadmapNodeRepository.findAllByRoadmapContent(any()))
                 .willReturn(roadmapNodes);
+        given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+                .willReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
 
         // when
         final GoalRoomResponse goalRoomResponse = goalRoomReadService.findGoalRoom(goalRoom.getId());
@@ -167,6 +169,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(roadmapNodes);
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
+        given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+                .willReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
 
         // when
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(
@@ -198,6 +202,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(roadmapNodes);
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
+        given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+                .willReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
 
         // when
         final GoalRoomCertifiedResponse goalRoomResponse = goalRoomReadService.findGoalRoom(
@@ -450,17 +456,19 @@ class GoalRoomReadServiceTest {
 
         final Member member = 사용자를_생성한다(1L);
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
+                roadmapContent.getId(), goalRoomRoadmapNodes);
         goalRoom.start();
 
-        goalRoom.addAllGoalRoomMembers(
-                List.of(new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member.getId())));
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                member.getId());
 
         final List<DashBoardCheckFeedResponse> dashBoardCheckFeedResponses = 대시보드_인증_피드_목록_응답을_생성한다();
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
                 .willReturn(Optional.of(goalRoom));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
+        given(goalRoomMemberRepository.findByGoalRoomAndMemberId(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
         given(roadmapContentRepository.findById(any()))
                 .willReturn(Optional.of(roadmapContent));
         given(roadmapNodeRepository.findAllByRoadmapContent(any()))
@@ -469,9 +477,13 @@ class GoalRoomReadServiceTest {
                 .willReturn(dashBoardCheckFeedResponses);
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
                 .willReturn(Collections.emptyList());
+        given(goalRoomMemberRepository.findByGoalRoom(any()))
+                .willReturn(List.of(goalRoomLeader));
+        given(goalRoomMemberRepository.findLeaderByGoalRoomAndRole(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
 
         final MemberGoalRoomResponse expected = new MemberGoalRoomResponse(goalRoom.getName().getValue(),
-                goalRoom.getStatus().name(), member.getId(), goalRoom.getCurrentMemberCount(),
+                goalRoom.getStatus().name(), member.getId(), 1,
                 goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 roadmapContent.getId(), new GoalRoomRoadmapNodesResponse(false, true,
                 List.of(
@@ -528,12 +540,16 @@ class GoalRoomReadServiceTest {
 
         final Member member = 사용자를_생성한다(1L);
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
+                roadmapContent.getId(), goalRoomRoadmapNodes);
+        final GoalRoomPendingMember goalRoomLeader = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom,
+                member.getId());
 
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
                 .willReturn(Optional.of(goalRoom));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
+        given(goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
         given(roadmapContentRepository.findById(any()))
                 .willReturn(Optional.of(roadmapContent));
         given(roadmapNodeRepository.findAllByRoadmapContent(any()))
@@ -542,9 +558,13 @@ class GoalRoomReadServiceTest {
                 .willReturn(Collections.emptyList());
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
                 .willReturn(Collections.emptyList());
+        given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+                .willReturn(List.of(goalRoomLeader));
+        given(goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
 
         final MemberGoalRoomResponse expected = new MemberGoalRoomResponse(goalRoom.getName().getValue(),
-                goalRoom.getStatus().name(), member.getId(), goalRoom.getCurrentMemberCount(),
+                goalRoom.getStatus().name(), member.getId(), 1,
                 goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 roadmapContent.getId(), new GoalRoomRoadmapNodesResponse(false, true,
                 List.of(
@@ -588,18 +608,20 @@ class GoalRoomReadServiceTest {
 
         final Member member = 사용자를_생성한다(1L);
         final GoalRoom goalRoom = new GoalRoom(1L, new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
+                roadmapContent.getId(), goalRoomRoadmapNodes);
+        final GoalRoomMember goalRoomLeader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                member.getId());
+
         goalRoom.start();
         goalRoom.complete();
-
-        goalRoom.addAllGoalRoomMembers(
-                List.of(new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom, member.getId())));
 
         final List<DashBoardCheckFeedResponse> dashBoardCheckFeedResponses = 대시보드_인증_피드_목록_응답을_생성한다();
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
                 .willReturn(Optional.of(goalRoom));
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
+        given(goalRoomMemberRepository.findByGoalRoomAndMemberId(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
         given(roadmapContentRepository.findById(any()))
                 .willReturn(Optional.of(roadmapContent));
         given(roadmapNodeRepository.findAllByRoadmapContent(any()))
@@ -608,9 +630,13 @@ class GoalRoomReadServiceTest {
                 .willReturn(dashBoardCheckFeedResponses);
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
                 .willReturn(Collections.emptyList());
+        given(goalRoomMemberRepository.findByGoalRoom(any()))
+                .willReturn(List.of(goalRoomLeader));
+        given(goalRoomMemberRepository.findLeaderByGoalRoomAndRole(any(), any()))
+                .willReturn(Optional.of(goalRoomLeader));
 
         final MemberGoalRoomResponse expected = new MemberGoalRoomResponse(goalRoom.getName().getValue(),
-                goalRoom.getStatus().name(), member.getId(), goalRoom.getCurrentMemberCount(),
+                goalRoom.getStatus().name(), member.getId(), 1,
                 goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 roadmapContent.getId(), new GoalRoomRoadmapNodesResponse(false, true,
                 List.of(
@@ -712,17 +738,31 @@ class GoalRoomReadServiceTest {
         골룸을_생성한다(creator, roadmapContent);
 
         final Member member = 사용자를_생성한다(2L);
-        goalRoom1.join(member.getId());
-        goalRoom3.join(member.getId());
+        final GoalRoomPendingMember goalRoom1Leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom1,
+                creator.getId());
+        final GoalRoomPendingMember goalRoom3Leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom3,
+                creator.getId());
+        final GoalRoomPendingMember goalRoom1Member = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom1,
+                member.getId());
+        final GoalRoomPendingMember goalRoom3Member = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom3,
+                member.getId());
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
         given(goalRoomRepository.findByMemberId(any()))
                 .willReturn(List.of(goalRoom1, goalRoom3));
+        given(goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(goalRoom1, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom1Leader));
+        given(goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(goalRoom3, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom3Leader));
         given(memberRepository.findWithMemberProfileAndImageById(1L))
                 .willReturn(Optional.of(creator));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
+        given(goalRoomPendingMemberRepository.findByGoalRoom(goalRoom1))
+                .willReturn(List.of(goalRoom1Leader, goalRoom1Member));
+        given(goalRoomPendingMemberRepository.findByGoalRoom(goalRoom3))
+                .willReturn(List.of(goalRoom3Leader, goalRoom3Member));
 
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2, 10, LocalDateTime.now(), TODAY,
@@ -775,10 +815,15 @@ class GoalRoomReadServiceTest {
 
         final Member member = 사용자를_생성한다(2L);
         final Long memberId = member.getId();
-        goalRoom1.join(memberId);
-        goalRoom2.join(memberId);
-        goalRoom3.join(memberId);
-        goalRoom4.join(memberId);
+
+        final GoalRoomPendingMember goalRoom1Leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom1,
+                creator.getId());
+        final GoalRoomPendingMember goalRoom2Leader = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom2,
+                creator.getId());
+        final GoalRoomPendingMember goalRoom1Member = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom1,
+                member.getId());
+        final GoalRoomPendingMember goalRoom2Member = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom2,
+                member.getId());
 
         goalRoom3.start();
         goalRoom4.complete();
@@ -787,10 +832,18 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(member));
         given(goalRoomRepository.findByMemberAndStatus(any(), any()))
                 .willReturn(List.of(goalRoom1, goalRoom2));
+        given(goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(goalRoom1, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom1Leader));
+        given(goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(goalRoom3, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom2Leader));
         given(memberRepository.findWithMemberProfileAndImageById(1L))
                 .willReturn(Optional.of(creator));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
+        given(goalRoomPendingMemberRepository.findByGoalRoom(goalRoom1))
+                .willReturn(List.of(goalRoom1Leader, goalRoom1Member));
+        given(goalRoomPendingMemberRepository.findByGoalRoom(goalRoom2))
+                .willReturn(List.of(goalRoom2Leader, goalRoom2Member));
 
         final List<MemberGoalRoomForListResponse> expected = List.of(
                 new MemberGoalRoomForListResponse(1L, "골룸", "RECRUITING", 2,
@@ -827,21 +880,18 @@ class GoalRoomReadServiceTest {
         final GoalRoom goalRoom4 = 골룸을_생성한다(creator, roadmapContent);
 
         final Member member = 사용자를_생성한다(2L);
-        final Long memberId = member.getId();
-        goalRoom1.join(memberId);
-        goalRoom2.join(memberId);
-        goalRoom3.join(memberId);
-        goalRoom4.join(memberId);
 
         goalRoom3.start();
         goalRoom4.start();
 
-        goalRoom3.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3, creator.getId()),
-                new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom3, member.getId())));
-        goalRoom4.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3, creator.getId()),
-                new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom3, member.getId())));
+        final GoalRoomMember goalRoom3Leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3,
+                creator.getId());
+        final GoalRoomMember goalRoom3Member = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom3,
+                member.getId());
+        final GoalRoomMember goalRoom4Leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom4,
+                creator.getId());
+        final GoalRoomMember goalRoom4Member = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom4,
+                member.getId());
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -849,6 +899,14 @@ class GoalRoomReadServiceTest {
                 .willReturn(List.of(goalRoom3, goalRoom4));
         given(memberRepository.findWithMemberProfileAndImageById(1L))
                 .willReturn(Optional.of(creator));
+        given(goalRoomMemberRepository.findLeaderByGoalRoomAndRole(goalRoom3, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom3Leader));
+        given(goalRoomMemberRepository.findLeaderByGoalRoomAndRole(goalRoom4, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom4Leader));
+        given(goalRoomMemberRepository.findByGoalRoom(goalRoom3))
+                .willReturn(List.of(goalRoom3Leader, goalRoom3Member));
+        given(goalRoomMemberRepository.findByGoalRoom(goalRoom4))
+                .willReturn(List.of(goalRoom4Leader, goalRoom4Member));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -887,21 +945,18 @@ class GoalRoomReadServiceTest {
         final GoalRoom goalRoom4 = 골룸을_생성한다(creator, roadmapContent);
 
         final Member member = 사용자를_생성한다(2L);
-        final Long memberId = member.getId();
-        goalRoom1.join(memberId);
-        goalRoom2.join(memberId);
-        goalRoom3.join(memberId);
-        goalRoom4.join(memberId);
+
+        final GoalRoomMember goalRoom3Leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3,
+                creator.getId());
+        final GoalRoomMember goalRoom3Member = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom3,
+                member.getId());
+        final GoalRoomMember goalRoom4Leader = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom4,
+                creator.getId());
+        final GoalRoomMember goalRoom4Member = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom4,
+                member.getId());
 
         goalRoom3.complete();
         goalRoom4.complete();
-
-        goalRoom3.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3, creator.getId()),
-                new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom3, member.getId())));
-        goalRoom4.addAllGoalRoomMembers(List.of(
-                new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom3, creator.getId()),
-                new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), goalRoom3, member.getId())));
 
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(member));
@@ -909,6 +964,14 @@ class GoalRoomReadServiceTest {
                 .willReturn(List.of(goalRoom3, goalRoom4));
         given(memberRepository.findWithMemberProfileAndImageById(1L))
                 .willReturn(Optional.of(creator));
+        given(goalRoomMemberRepository.findLeaderByGoalRoomAndRole(goalRoom3, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom3Leader));
+        given(goalRoomMemberRepository.findLeaderByGoalRoomAndRole(goalRoom4, GoalRoomRole.LEADER))
+                .willReturn(Optional.of(goalRoom4Leader));
+        given(goalRoomMemberRepository.findByGoalRoom(goalRoom3))
+                .willReturn(List.of(goalRoom3Leader, goalRoom3Member));
+        given(goalRoomMemberRepository.findByGoalRoom(goalRoom4))
+                .willReturn(List.of(goalRoom4Leader, goalRoom4Member));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
 
@@ -1063,7 +1126,7 @@ class GoalRoomReadServiceTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
 
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId(),
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(),
                 goalRoomRoadmapNodes);
     }
 

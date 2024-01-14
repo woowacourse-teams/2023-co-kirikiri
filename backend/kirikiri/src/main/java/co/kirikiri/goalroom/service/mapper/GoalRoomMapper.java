@@ -72,12 +72,13 @@ public class GoalRoomMapper {
                 .toList();
     }
 
-    public static GoalRoomResponse convertGoalRoomResponse(final GoalRoom goalRoom, final RoadmapNodes roadmapNodes) {
+    public static GoalRoomResponse convertGoalRoomResponse(final GoalRoom goalRoom, final int currentMemberCount,
+                                                           final RoadmapNodes roadmapNodes) {
         final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
         final List<GoalRoomRoadmapNodeResponse> roadmapNodeResponses = convertGoalRoomNodeResponses(nodes,
                 roadmapNodes);
         final int period = goalRoom.calculateTotalPeriod();
-        return new GoalRoomResponse(goalRoom.getName().getValue(), goalRoom.getCurrentMemberCount(),
+        return new GoalRoomResponse(goalRoom.getName().getValue(), currentMemberCount,
                 goalRoom.getLimitedMemberCount().getValue(), roadmapNodeResponses, period);
     }
 
@@ -114,13 +115,14 @@ public class GoalRoomMapper {
     }
 
     public static GoalRoomCertifiedResponse convertGoalRoomCertifiedResponse(final GoalRoom goalRoom,
+                                                                             final int currentMemberCount,
                                                                              final RoadmapNodes roadmapNodes,
                                                                              final boolean isJoined) {
         final GoalRoomRoadmapNodes nodes = goalRoom.getGoalRoomRoadmapNodes();
         final List<GoalRoomRoadmapNodeResponse> roadmapNodeResponses = convertGoalRoomNodeResponses(nodes,
                 roadmapNodes);
         final int period = goalRoom.calculateTotalPeriod();
-        return new GoalRoomCertifiedResponse(goalRoom.getName().getValue(), goalRoom.getCurrentMemberCount(),
+        return new GoalRoomCertifiedResponse(goalRoom.getName().getValue(), currentMemberCount,
                 goalRoom.getLimitedMemberCount().getValue(), roadmapNodeResponses, period, isJoined);
     }
 
@@ -174,6 +176,8 @@ public class GoalRoomMapper {
     }
 
     public static MemberGoalRoomResponse convertToMemberGoalRoomResponse(final GoalRoom goalRoom,
+                                                                         final Long goalRoomLeaderId,
+                                                                         final int currentMemberCount,
                                                                          final RoadmapNodes roadmapNodes,
                                                                          final List<DashBoardCheckFeedResponse> allCheckFeedResponses,
                                                                          final List<DashBoardToDoResponse> todoResponses) {
@@ -182,9 +186,9 @@ public class GoalRoomMapper {
         final List<DashBoardCheckFeedResponse> checkFeedResponses = makeCheckFeedToLimit(allCheckFeedResponses);
 
         return new MemberGoalRoomResponse(goalRoom.getName().getValue(), goalRoom.getStatus().name(),
-                goalRoom.findGoalRoomLeaderId(), goalRoom.getCurrentMemberCount(),
-                goalRoom.getLimitedMemberCount().getValue(), goalRoom.getStartDate(), goalRoom.getEndDate(),
-                goalRoom.getRoadmapContentId(), nodeResponses, todoResponses, checkFeedResponses);
+                goalRoomLeaderId, currentMemberCount, goalRoom.getLimitedMemberCount().getValue(),
+                goalRoom.getStartDate(), goalRoom.getEndDate(), goalRoom.getRoadmapContentId(), nodeResponses,
+                todoResponses, checkFeedResponses);
     }
 
     private static GoalRoomRoadmapNodesResponse convertToGoalRoomRoadmapNodesResponse(

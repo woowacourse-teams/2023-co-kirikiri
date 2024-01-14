@@ -585,7 +585,7 @@ class GoalRoomCheckFeedServiceTest {
     private GoalRoom 골룸을_생성한다(final Long goalRoomId, final Member creator, final RoadmapContent roadmapContent,
                               final Integer limitedMemberCount) {
         return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
-                roadmapContent.getId(), creator.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
+                roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
     }
 
     private GoalRoom 시작_날짜가_미래인_골룸을_생성한다(final Long goalRoomId, final Member creator,
@@ -593,7 +593,7 @@ class GoalRoomCheckFeedServiceTest {
         final GoalRoomRoadmapNode goalRoomRoadmapNode = new GoalRoomRoadmapNode(
                 new Period(TEN_DAY_LATER, TWENTY_DAY_LATER), 5, roadmapContent.getNodes().getValues().get(0).getId());
         return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
-                roadmapContent.getId(), creator.getId(), new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode)));
+                roadmapContent.getId(), new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode)));
     }
 
     private GoalRoom 진행중인_노드가_없는_골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {
@@ -611,7 +611,7 @@ class GoalRoomCheckFeedServiceTest {
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
 
         return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member.getId(), goalRoomRoadmapNodes);
+                roadmapContent.getId(), goalRoomRoadmapNodes);
     }
 
     private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다(final RoadmapNodes roadmapNodes) {

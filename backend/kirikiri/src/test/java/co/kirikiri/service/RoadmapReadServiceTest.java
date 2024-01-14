@@ -481,13 +481,11 @@ class RoadmapReadServiceTest {
 
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "name2");
         final GoalRoom goalRoom1 = new GoalRoom(1L, new GoalRoomName("goalroom1"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member2.getId(),
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
+                roadmapContent.getId(), new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode1, goalRoomRoadmapNode2)));
 
         final Member member3 = 사용자를_생성한다(3L, "identifier2", "name3");
         final GoalRoom goalRoom2 = new GoalRoom(2L, new GoalRoomName("goalroom2"), new LimitedMemberCount(10),
-                roadmapContent.getId(), member3.getId(),
-                new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)));
+                roadmapContent.getId(), new GoalRoomRoadmapNodes(List.of(goalRoomRoadmapNode3, goalRoomRoadmapNode4)));
 
         final List<GoalRoom> goalRooms = List.of(goalRoom2, goalRoom1);
         given(roadmapRepository.findRoadmapById(anyLong()))
@@ -662,17 +660,17 @@ class RoadmapReadServiceTest {
     private List<GoalRoom> 상태별_골룸_목록을_생성한다() {
         final RoadmapContent roadmapContent = new RoadmapContent("로드맵 내용");
         final GoalRoom recruitedGoalRoom1 = new GoalRoom(new GoalRoomName("모집 중 골룸 1"),
-                new LimitedMemberCount(20), roadmapContent.getId(), member.getId(), 골룸_로드맵_노드들을_생성한다());
+                new LimitedMemberCount(20), roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다());
         final GoalRoom recruitedGoalRoom2 = new GoalRoom(new GoalRoomName("모집 중 골룸 2"),
-                new LimitedMemberCount(20), roadmapContent.getId(), member.getId(), 골룸_로드맵_노드들을_생성한다());
+                new LimitedMemberCount(20), roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다());
         final GoalRoom runningGoalRoom1 = new GoalRoom(new GoalRoomName("진행 중 골룸 1"),
-                new LimitedMemberCount(20), roadmapContent.getId(), member.getId(), 골룸_로드맵_노드들을_생성한다());
+                new LimitedMemberCount(20), roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다());
         final GoalRoom runningGoalRoom2 = new GoalRoom(new GoalRoomName("진행 중 골룸 2"),
-                new LimitedMemberCount(20), roadmapContent.getId(), member.getId(), 골룸_로드맵_노드들을_생성한다());
+                new LimitedMemberCount(20), roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다());
         final GoalRoom completedGoalRoom1 = new GoalRoom(new GoalRoomName("완료된 골룸 1"),
-                new LimitedMemberCount(20), roadmapContent.getId(), member.getId(), 골룸_로드맵_노드들을_생성한다());
+                new LimitedMemberCount(20), roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다());
         final GoalRoom completedGoalRoom2 = new GoalRoom(new GoalRoomName("완료된 골룸 2"),
-                new LimitedMemberCount(20), roadmapContent.getId(), member.getId(), 골룸_로드맵_노드들을_생성한다());
+                new LimitedMemberCount(20), roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다());
 
         runningGoalRoom1.start();
         runningGoalRoom2.start();

@@ -144,6 +144,6 @@ class GoalRoomToDoRepositoryTest {
     private GoalRoom 골룸을_생성한다(final String name, final Integer limitedMemberCount, final RoadmapContent roadmapContent,
                               final GoalRoomRoadmapNodes goalRoomRoadmapNodes, final Member member) {
         return new GoalRoom(new GoalRoomName(name), new LimitedMemberCount(limitedMemberCount), roadmapContent.getId(),
-                member.getId(), goalRoomRoadmapNodes);
+                goalRoomRoadmapNodes);
     }
 }

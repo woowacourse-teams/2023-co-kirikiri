@@ -8,6 +8,7 @@ import co.kirikiri.domain.member.Member;
 import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomMembers;
 import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.persistence.member.MemberRepository;
@@ -64,7 +65,9 @@ public class GoalRoomToDoService {
     }
 
     private void checkGoalRoomLeader(final Long memberId, final GoalRoom goalRoom) {
-        if (goalRoom.isNotLeader(memberId)) {
+        final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(
+                goalRoomMemberRepository.findAllByGoalRoom(goalRoom));
+        if (goalRoomMembers.isNotLeader(memberId)) {
             throw new BadRequestException("골룸의 리더만 투두리스트를 추가할 수 있습니다.");
         }
     }

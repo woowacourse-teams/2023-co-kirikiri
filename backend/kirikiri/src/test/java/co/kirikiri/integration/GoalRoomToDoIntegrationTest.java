@@ -46,7 +46,7 @@ class GoalRoomToDoIntegrationTest extends InitIntegrationTest {
         final Long 기본_로드맵_아이디 = 로드맵_생성(기본_로드맵_생성_요청, 기본_로그인_토큰);
         final RoadmapResponse 로드맵_응답 = 로드맵을_아이디로_조회하고_응답객체를_반환한다(기본_로드맵_아이디);
         final Long 골룸_아이디 = 정상적인_골룸_생성(기본_로그인_토큰, 기본_로드맵_아이디, 로드맵_응답.content().nodes().get(0).id());
-
+        골룸을_시작한다(기본_로그인_토큰, 골룸_아이디);
         final GoalRoomTodoRequest 골룸_투두리스트_추가_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
 
         // when
@@ -72,7 +72,7 @@ class GoalRoomToDoIntegrationTest extends InitIntegrationTest {
                 로그인(new LoginRequest(팔로워_회원가입_요청.identifier(), 팔로워_회원가입_요청.password())).accessToken());
 
         final Long 골룸_아이디 = 정상적인_골룸_생성(기본_로그인_토큰, 로드맵_응답.roadmapId(), 로드맵_응답.content().nodes().get(0).id());
-
+        골룸을_시작한다(기본_로그인_토큰, 골룸_아이디);
         final GoalRoomTodoRequest 골룸_투두리스트_추가_요청 = new GoalRoomTodoRequest(정상적인_골룸_투두_컨텐츠, 오늘, 십일_후);
 
         // when

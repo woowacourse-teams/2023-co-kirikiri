@@ -79,8 +79,9 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        final GoalRoomPendingMember expected = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
                 LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, creator.getId());
+        goalRoomPendingMemberRepository.save(goalRoomPendingMember);
 
         // when
         final Optional<GoalRoomPendingMember> findGoalRoomPendingMember = goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(
@@ -90,7 +91,7 @@ class GoalRoomPendingMemberRepositoryTest {
         assertThat(findGoalRoomPendingMember.get())
                 .usingRecursiveComparison()
                 .ignoringFields("id", "joinedAt")
-                .isEqualTo(expected);
+                .isEqualTo(goalRoomPendingMember);
     }
 
     @Test
@@ -141,7 +142,7 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member3.getId());
         goalRoomPendingMemberRepository.saveAll(
-                List.of(goalRoomPendingMember1, goalRoomPendingMember2, goalRoomPendingMember3));
+                List.of(goalRoomPendingMember, goalRoomPendingMember1, goalRoomPendingMember2, goalRoomPendingMember3));
 
         final List<GoalRoomPendingMember> expected = List.of(goalRoomPendingMember, goalRoomPendingMember1,
                 goalRoomPendingMember2, goalRoomPendingMember3);
@@ -167,11 +168,15 @@ class GoalRoomPendingMemberRepositoryTest {
         final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
         final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        goalRoomPendingMemberRepository.save(
+                new GoalRoomPendingMember(GoalRoomRole.LEADER, savedGoalRoom, creator.getId()));
 
         final Member follower = 사용자를_생성한다("identifier2", "password!2", "name", "kirikiri1@email.com");
+        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                savedGoalRoom, follower.getId());
 
         //when
-        savedGoalRoom.join(follower.getId());
+        goalRoomPendingMemberRepository.save(goalRoomPendingMember);
 
         //then
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoom(
@@ -185,6 +190,33 @@ class GoalRoomPendingMemberRepositoryTest {
                 () -> assertThat(goalRoomPendingMembers).hasSize(2),
                 () -> assertThat(memberIds).contains(follower.getId())
         );
+    }
+
+    @Test
+    void 골룸의_리더를_찾는다() {
+        //given
+        final Member creator = 크리에이터를_저장한다();
+        final RoadmapCategory category = 카테고리를_저장한다("게임");
+        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
+        final RoadmapContents roadmapContents = roadmap.getContents();
+        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
+        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
+        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                savedGoalRoom, creator.getId());
+        goalRoomPendingMemberRepository.save(goalRoomPendingMember1);
+
+        final Member follower = 사용자를_생성한다("identifier2", "password!2", "name", "kirikiri1@email.com");
+        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                savedGoalRoom, follower.getId());
+        goalRoomPendingMemberRepository.save(goalRoomPendingMember2);
+
+        //when
+        final GoalRoomPendingMember goalRoomLeader = goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(
+                goalRoom, GoalRoomRole.LEADER).get();
+
+        //then
+        assertThat(goalRoomLeader).isEqualTo(goalRoomPendingMember1);
     }
 
     @Test
@@ -204,7 +236,8 @@ class GoalRoomPendingMemberRepositoryTest {
         final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
         final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
-        final GoalRoomPendingMember goalRoomPendingMember0 = goalRoom.getGoalRoomPendingMembers().getValues().get(0);
+        final GoalRoomPendingMember goalRoomPendingMember0 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
+                LocalDateTime.now(), savedGoalRoom, creator.getId());
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member1.getId());
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
@@ -212,7 +245,8 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member3.getId());
         goalRoomPendingMemberRepository.saveAll(
-                List.of(goalRoomPendingMember1, goalRoomPendingMember2, goalRoomPendingMember3));
+                List.of(goalRoomPendingMember0, goalRoomPendingMember1, goalRoomPendingMember2,
+                        goalRoomPendingMember3));
         final List<GoalRoomPendingMember> expected = List.of(goalRoomPendingMember0, goalRoomPendingMember1,
                 goalRoomPendingMember2, goalRoomPendingMember3);
 
@@ -244,13 +278,16 @@ class GoalRoomPendingMemberRepositoryTest {
         final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
         final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
-        final GoalRoomPendingMember goalRoomPendingMember0 = goalRoom.getGoalRoomPendingMembers().getValues().get(0);
-        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
+        final GoalRoomPendingMember goalRoomPendingMember0 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
+                LocalDateTime.now(), savedGoalRoom, creator.getId());
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member1.getId());
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member2.getId());
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member3.getId());
+        final GoalRoomPendingMember savedGoalRoomPendingMember0 = goalRoomPendingMemberRepository.save(
+                goalRoomPendingMember0);
         final GoalRoomPendingMember savedGoalRoomPendingMember1 = goalRoomPendingMemberRepository.save(
                 goalRoomPendingMember1);
         final GoalRoomPendingMember savedGoalRoomPendingMember2 = goalRoomPendingMemberRepository.save(
@@ -258,7 +295,7 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoomPendingMember savedGoalRoomPendingMember3 = goalRoomPendingMemberRepository.save(
                 goalRoomPendingMember3);
         final List<GoalRoomPendingMember> expected = List.of(savedGoalRoomPendingMember3, savedGoalRoomPendingMember2,
-                savedGoalRoomPendingMember1, goalRoomPendingMember0);
+                savedGoalRoomPendingMember1, savedGoalRoomPendingMember0);
 
         // when
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
@@ -286,15 +323,17 @@ class GoalRoomPendingMemberRepositoryTest {
         final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
         final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
-        final GoalRoomPendingMember goalRoomPendingMember0 = goalRoom.getGoalRoomPendingMembers().getValues().get(0);
-        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
+        final GoalRoomPendingMember goalRoomPendingMember0 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
+                LocalDateTime.now(), savedGoalRoom, creator.getId());
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member1.getId());
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member2.getId());
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
                 LocalDateTime.now(), savedGoalRoom, member3.getId());
         goalRoomPendingMemberRepository.saveAll(
-                List.of(goalRoomPendingMember1, goalRoomPendingMember2, goalRoomPendingMember3));
+                List.of(goalRoomPendingMember0, goalRoomPendingMember1, goalRoomPendingMember2,
+                        goalRoomPendingMember3));
         final List<GoalRoomPendingMember> expected = List.of(goalRoomPendingMember0, goalRoomPendingMember1,
                 goalRoomPendingMember2, goalRoomPendingMember3);
 
@@ -381,7 +420,7 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
 
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(), member.getId(),
+        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(),
                 goalRoomRoadmapNodes);
     }
 }

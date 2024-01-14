@@ -114,6 +114,9 @@ class GoalRoomToDoServiceTest {
                 .willReturn(Optional.of(creator));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findAllByGoalRoom(any()))
+                .willReturn(List.of(new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                        creator.getId())));
         given(goalRoomToDoRepository.save(any()))
                 .willReturn(goalRoomTodo);
 
@@ -203,6 +206,9 @@ class GoalRoomToDoServiceTest {
                 .willReturn(Optional.of(member));
         given(goalRoomRepository.findById(anyLong()))
                 .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findAllByGoalRoom(any()))
+                .willReturn(List.of(new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                        creator.getId())));
 
         final GoalRoomTodoRequest goalRoomTodoRequest = new GoalRoomTodoRequest("goalRoomContent", TODAY,
                 TEN_DAY_LATER);
@@ -454,7 +460,7 @@ class GoalRoomToDoServiceTest {
     private GoalRoom 골룸을_생성한다(final Long goalRoomId, final Member creator, final RoadmapContent roadmapContent,
                               final Integer limitedMemberCount) {
         return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
-                roadmapContent.getId(), creator.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
+                roadmapContent.getId(), 골룸_로드맵_노드들을_생성한다(roadmapContent.getNodes()));
     }
 
     private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다(final RoadmapNodes roadmapNodes) {

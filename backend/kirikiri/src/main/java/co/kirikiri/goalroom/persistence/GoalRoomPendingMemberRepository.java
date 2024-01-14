@@ -2,6 +2,7 @@ package co.kirikiri.goalroom.persistence;
 
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,8 +15,8 @@ public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomP
 
     @Query("select gp from GoalRoomPendingMember gp "
             + "inner join fetch gp.goalRoom g "
-            + "where g=:goalRoom "
-            + "and gp.memberId =:memberId")
+            + "where g = :goalRoom "
+            + "and gp.memberId = :memberId")
     Optional<GoalRoomPendingMember> findByGoalRoomAndMemberId(
             @Param("goalRoom") final GoalRoom goalRoom, @Param("memberId") final Long memberId);
 
@@ -23,10 +24,13 @@ public interface GoalRoomPendingMemberRepository extends JpaRepository<GoalRoomP
 
     @Query("select gp from GoalRoomPendingMember gp "
             + "join fetch gp.goalRoom g "
-            + "where g=:goalRoom ")
+            + "where g = :goalRoom ")
     List<GoalRoomPendingMember> findAllByGoalRoom(@Param("goalRoom") final GoalRoom goalRoom);
 
     @Modifying
     @Query("DELETE FROM GoalRoomPendingMember gp WHERE gp.id IN :ids")
     void deleteAllByIdIn(@Param("ids") final List<Long> ids);
+
+    Optional<GoalRoomPendingMember> findLeaderByGoalRoomAndRole(final GoalRoom goalRoom,
+                                                                final GoalRoomRole goalRoomRole);
 }

@@ -13,6 +13,9 @@ import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.domain.roadmap.RoadmapReview;
 import co.kirikiri.domain.roadmap.RoadmapTags;
 import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.persistence.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.goalroom.service.dto.RoadmapGoalRoomDto;
@@ -66,6 +69,8 @@ public class RoadmapReadService {
     private final RoadmapContentRepository roadmapContentRepository;
     private final RoadmapReviewRepository roadmapReviewRepository;
     private final GoalRoomRepository goalRoomRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
     private final MemberRepository memberRepository;
     private final FileService fileService;
 
@@ -250,11 +255,31 @@ public class RoadmapReadService {
     }
 
     private RoadmapGoalRoomDto makeGoalRoomDto(final GoalRoom goalRoom) {
-        final Long goalRoomLeaderId = goalRoom.findGoalRoomLeaderId();
+        final Long goalRoomLeaderId = findGoalRoomLeaderId(goalRoom);
         return new RoadmapGoalRoomDto(goalRoom.getId(), goalRoom.getName().getValue(), goalRoom.getStatus(),
-                goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
-                goalRoom.getCreatedAt(), goalRoom.getStartDate(),
-                goalRoom.getEndDate(), makeMemberDto(goalRoomLeaderId));
+                getCurrentMemberCount(goalRoom), goalRoom.getLimitedMemberCount().getValue(),
+                goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
+                makeMemberDto(goalRoomLeaderId));
+    }
+
+    private Long findGoalRoomLeaderId(final GoalRoom goalRoom) {
+        if (goalRoom.isRecruiting()) {
+            return goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(goalRoom, GoalRoomRole.LEADER)
+                    .orElseThrow(() -> new NotFoundException("골룸의 리더가 존재하지 않습니다."))
+                    .getMemberId();
+        }
+        return goalRoomMemberRepository.findLeaderByGoalRoomAndRole(goalRoom, GoalRoomRole.LEADER)
+                .orElseThrow(() -> new NotFoundException("골룸의 리더가 존재하지 않습니다."))
+                .getMemberId();
+    }
+
+    private int getCurrentMemberCount(final GoalRoom goalRoom) {
+        if (goalRoom.isRecruiting()) {
+            return goalRoomPendingMemberRepository.findByGoalRoom(goalRoom)
+                    .size();
+        }
+        return goalRoomMemberRepository.findAllByGoalRoom(goalRoom)
+                .size();
     }
 
     private co.kirikiri.goalroom.service.dto.MemberDto makeMemberDto(final Long creatorId) {

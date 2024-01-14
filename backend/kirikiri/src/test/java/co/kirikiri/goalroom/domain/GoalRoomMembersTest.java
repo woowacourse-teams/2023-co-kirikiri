@@ -24,6 +24,37 @@ class GoalRoomMembersTest {
     }
 
     @Test
+    void 골룸의_멤버를_멤버_아이디로_찾는다() {
+        // given
+        final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), null, 1L);
+        final GoalRoomMember goalRoomMember2 = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), null, 2L);
+
+        final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(List.of(goalRoomMember1, goalRoomMember2));
+
+        // when
+        final GoalRoomMember goalRoomMember = goalRoomMembers.findByMemberId(1L).get();
+
+        // then
+        assertThat(goalRoomMember).isEqualTo(goalRoomMember1);
+    }
+
+    @Test
+    void 리더가_떠나면_리더가_바뀐다() {
+        // given
+        final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), null, 1L);
+        final GoalRoomMember goalRoomMember2 = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), null, 2L);
+
+        final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(List.of(goalRoomMember1, goalRoomMember2));
+
+        // when
+        goalRoomMembers.getValues().remove(goalRoomMember1);
+        goalRoomMembers.changeLeaderIfLeaderLeave(goalRoomMember1);
+
+        // then
+        assertThat(goalRoomMember2.isLeader()).isTrue();
+    }
+
+    @Test
     void 다음_리더가_될_사용자를_찾는다() {
         // given
         final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), null, 1L);
@@ -51,22 +82,5 @@ class GoalRoomMembersTest {
 
         // then
         assertThat(size).isEqualTo(2);
-    }
-
-    @Test
-    void 골룸_사용자에서_입렵받은_사용자를_제거한다() {
-        // given
-        final GoalRoomMember goalRoomMember1 = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), null, 1L);
-        final GoalRoomMember goalRoomMember2 = new GoalRoomMember(GoalRoomRole.FOLLOWER, LocalDateTime.now(), null, 2L);
-
-        final GoalRoomMembers goalRoomMembers = new GoalRoomMembers(List.of(goalRoomMember1, goalRoomMember2));
-
-        // when
-        goalRoomMembers.remove(goalRoomMember1);
-
-        // then
-        assertThat(goalRoomMembers)
-                .usingRecursiveComparison()
-                .isEqualTo(new GoalRoomMembers(List.of(goalRoomMember2)));
     }
 }

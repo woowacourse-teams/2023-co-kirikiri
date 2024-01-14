@@ -14,6 +14,7 @@ import co.kirikiri.goalroom.domain.GoalRoomMember;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
 import co.kirikiri.goalroom.domain.GoalRoomStatus;
 import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
@@ -68,7 +69,8 @@ public class GoalRoomReadService {
         final List<RoadmapNode> roadmapNodes = roadmapNodeRepository.findAllByRoadmapContent(roadmapContent);
 
         final boolean isJoined = isMemberGoalRoomJoin(new Identifier(identifier), goalRoom);
-        return GoalRoomMapper.convertGoalRoomCertifiedResponse(goalRoom, new RoadmapNodes(roadmapNodes), isJoined);
+        return GoalRoomMapper.convertGoalRoomCertifiedResponse(goalRoom, getCurrentMemberCount(goalRoom),
+                new RoadmapNodes(roadmapNodes), isJoined);
     }
 
     private GoalRoom findGoalRoomWithRoadmapContentById(final Long goalRoomId) {
@@ -90,11 +92,21 @@ public class GoalRoomReadService {
         return goalRoomMemberRepository.findByGoalRoomAndMemberId(goalRoom, member.getId()).isPresent();
     }
 
+    private int getCurrentMemberCount(final GoalRoom goalRoom) {
+        if (goalRoom.isRecruiting()) {
+            return goalRoomPendingMemberRepository.findByGoalRoom(goalRoom)
+                    .size();
+        }
+        return goalRoomMemberRepository.findByGoalRoom(goalRoom)
+                .size();
+    }
+
     public GoalRoomResponse findGoalRoom(final Long goalRoomId) {
         final GoalRoom goalRoom = findGoalRoomWithRoadmapContentById(goalRoomId);
         final RoadmapContent roadmapContent = findRoadmapContentById(goalRoom.getRoadmapContentId());
         final List<RoadmapNode> roadmapNodes = roadmapNodeRepository.findAllByRoadmapContent(roadmapContent);
-        return GoalRoomMapper.convertGoalRoomResponse(goalRoom, new RoadmapNodes(roadmapNodes));
+        return GoalRoomMapper.convertGoalRoomResponse(goalRoom, getCurrentMemberCount(goalRoom),
+                new RoadmapNodes(roadmapNodes));
     }
 
     public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId,
@@ -167,8 +179,8 @@ public class GoalRoomReadService {
                 goalRoom, currentGoalRoomRoadmapNode);
         final List<DashBoardToDoResponse> checkedTodos = dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(
                 goalRoom, member.getId());
-        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, new RoadmapNodes(roadmapNodes), checkFeeds,
-                checkedTodos);
+        return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, findGoalRoomLeaderId(goalRoom),
+                getCurrentMemberCount(goalRoom), new RoadmapNodes(roadmapNodes), checkFeeds, checkedTodos);
     }
 
     private GoalRoom findGoalRoomWithNodesById(final Long goalRoomId) {
@@ -182,13 +194,28 @@ public class GoalRoomReadService {
     }
 
     private void validateMemberInGoalRoom(final GoalRoom goalRoom, final Long memberId) {
-        if (!goalRoom.isGoalRoomMember(memberId)) {
-            throw new ForbiddenException("해당 골룸에 참여하지 않은 사용자입니다.");
+        if (goalRoom.isRecruiting()) {
+            goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(goalRoom, memberId)
+                    .orElseThrow(() -> new ForbiddenException("해당 골룸에 참여하지 않은 사용자입니다."));
+            return;
         }
+        goalRoomMemberRepository.findByGoalRoomAndMemberId(goalRoom, memberId)
+                .orElseThrow(() -> new ForbiddenException("해당 골룸에 참여하지 않은 사용자입니다."));
     }
 
     private Optional<GoalRoomRoadmapNode> findCurrentGoalRoomNode(final GoalRoom goalRoom) {
         return goalRoom.findNodeByDate(LocalDate.now());
+    }
+
+    private Long findGoalRoomLeaderId(final GoalRoom goalRoom) {
+        if (goalRoom.isRecruiting()) {
+            return goalRoomPendingMemberRepository.findLeaderByGoalRoomAndRole(goalRoom, GoalRoomRole.LEADER)
+                    .orElseThrow(() -> new NotFoundException("골룸의 리더가 존재하지 않습니다."))
+                    .getMemberId();
+        }
+        return goalRoomMemberRepository.findLeaderByGoalRoomAndRole(goalRoom, GoalRoomRole.LEADER)
+                .orElseThrow(() -> new NotFoundException("골룸의 리더가 존재하지 않습니다."))
+                .getMemberId();
     }
 
     public List<MemberGoalRoomForListResponse> findMemberGoalRooms(final String identifier) {
@@ -206,11 +233,11 @@ public class GoalRoomReadService {
     }
 
     private MemberGoalRoomForListDto makeMemberGoalRoomForListDto(final GoalRoom goalRoom) {
-        final Long goalRoomLeaderId = goalRoom.findGoalRoomLeaderId();
+        final Long goalRoomLeaderId = findGoalRoomLeaderId(goalRoom);
         final Member leader = findMemberWithProfileAndImageById(goalRoomLeaderId);
         final URL leaderImageUrl = fileService.generateUrl(leader.getImage().getServerFilePath(), HttpMethod.GET);
         return new MemberGoalRoomForListDto(goalRoom.getId(), goalRoom.getName().getValue(),
-                goalRoom.getStatus().name(), goalRoom.getCurrentMemberCount(),
+                goalRoom.getStatus().name(), getCurrentMemberCount(goalRoom),
                 goalRoom.getLimitedMemberCount().getValue(),
                 goalRoom.getCreatedAt(), goalRoom.getStartDate(), goalRoom.getEndDate(),
                 new MemberDto(leader.getId(), leader.getNickname().getValue(), leaderImageUrl.toExternalForm()));
@@ -225,7 +252,8 @@ public class GoalRoomReadService {
                                                                                final GoalRoomStatusTypeRequest goalRoomStatusTypeRequest) {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         final GoalRoomStatus goalRoomStatus = GoalRoomMapper.convertToGoalRoomStatus(goalRoomStatusTypeRequest);
-        final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMemberAndStatus(member.getId(), goalRoomStatus);
+        final List<GoalRoom> memberGoalRooms = goalRoomRepository.findByMemberAndStatus(member.getId(),
+                goalRoomStatus.name());
         final List<MemberGoalRoomForListDto> memberGoalRoomForListDtos = makeMemberGoalRoomForListDto(
                 memberGoalRooms);
         return GoalRoomMapper.convertToMemberGoalRoomForListResponses(memberGoalRoomForListDtos);
