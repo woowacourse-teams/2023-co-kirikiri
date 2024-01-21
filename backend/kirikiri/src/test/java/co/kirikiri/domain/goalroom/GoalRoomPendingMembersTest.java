@@ -30,7 +30,7 @@ class GoalRoomPendingMembersTest {
     void 골룸의_리더를_찾는다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content", 1L), MEMBER1);
+                new RoadmapContent("content", 1L, null), MEMBER1);
 
         // when
         final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(List.of(
@@ -46,7 +46,7 @@ class GoalRoomPendingMembersTest {
     void 골룸의_리더가_없으면_예외가_발생한다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content", 1L), MEMBER1);
+                new RoadmapContent("content", 1L, null), MEMBER1);
 
         // when
         final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(List.of(

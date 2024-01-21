@@ -27,6 +27,7 @@ import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodeImage;
 import co.kirikiri.roadmap.domain.RoadmapNodeImages;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.service.scheduler.GoalRoomScheduler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -143,14 +145,13 @@ class GoalRoomSchedulerTest {
 
     private Roadmap 로드맵을_생성한다(final Member creator) {
         final RoadmapCategory category = new RoadmapCategory("게임");
-        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
+        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
+                creator.getId(), category, new RoadmapTags(new ArrayList<>()));
     }
 
     private RoadmapContent 로드맵_본문을_생성한다(final Long roadmapId) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
-        return roadmapContent;
+        return new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(roadmapNodes));
     }
 
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {

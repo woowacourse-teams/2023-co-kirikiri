@@ -34,6 +34,7 @@ import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
 import co.kirikiri.roadmap.domain.RoadmapStatus;
+import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
@@ -44,7 +45,6 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.exception.BadRequestException;
 import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.goalroom.GoalRoomCreateService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -82,13 +82,15 @@ class GoalRoomCreateServiceTest {
             new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     private static final Roadmap ROADMAP = new Roadmap(1L, "roadmap", "introduction", 30, RoadmapDifficulty.DIFFICULT,
-            MEMBER.getId(), new RoadmapCategory("IT"));
+            RoadmapStatus.CREATED, MEMBER.getId(), new RoadmapCategory("IT"), new RoadmapTags(new ArrayList<>()));
 
-    private static final Roadmap DELETED_ROADMAP = new Roadmap(2L, "roadmap", "introduction", 30,
-            RoadmapDifficulty.DIFFICULT, RoadmapStatus.DELETED, MEMBER.getId(), new RoadmapCategory("IT"));
+    private static final Roadmap DELETED_ROADMAP = new Roadmap(2L, "roadmap", "introduction", 30, RoadmapDifficulty.DIFFICULT,
+            RoadmapStatus.DELETED, MEMBER.getId(), new RoadmapCategory("IT"), new RoadmapTags(new ArrayList<>()));
 
-    private static final RoadmapContent ROADMAP_CONTENT = new RoadmapContent(1L, "content", ROADMAP.getId());
-    private static final RoadmapContent DELETED_ROADMAP_CONTENT = new RoadmapContent(2L, "content2", DELETED_ROADMAP.getId());
+    private static final RoadmapNode roadmapNode1 = new RoadmapNode(1L, "title1", "content1");
+    private static final RoadmapNode roadmapNode2 = new RoadmapNode(2L, "title2", "content2");
+    private static final RoadmapContent ROADMAP_CONTENT = new RoadmapContent(1L, "content", ROADMAP.getId(), new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
+    private static final RoadmapContent DELETED_ROADMAP_CONTENT = new RoadmapContent(2L, "content2", DELETED_ROADMAP.getId(), null);
 
     @Mock
     private GoalRoomRepository goalRoomRepository;
@@ -119,13 +121,6 @@ class GoalRoomCreateServiceTest {
 
     @InjectMocks
     private GoalRoomCreateService goalRoomCreateService;
-
-    @BeforeAll
-    static void setUp() {
-        final RoadmapNode roadmapNode1 = new RoadmapNode(1L, "title1", "content1");
-        final RoadmapNode roadmapNode2 = new RoadmapNode(2L, "title2", "content2");
-        ROADMAP_CONTENT.addNodes(new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
-    }
 
     @Test
     void 정상적으로_골룸을_생성한다() {

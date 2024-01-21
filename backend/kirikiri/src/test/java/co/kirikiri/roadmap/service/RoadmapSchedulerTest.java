@@ -10,6 +10,8 @@ import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
+import co.kirikiri.roadmap.domain.RoadmapStatus;
+import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.service.scheduler.RoadmapScheduler;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,7 +55,8 @@ class RoadmapSchedulerTest {
                 new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");
-        final Roadmap roadmap = new Roadmap(1L, "로드맵2", "로드맵 설명2", 30, RoadmapDifficulty.DIFFICULT, member.getId(), category);
+        final Roadmap roadmap = new Roadmap(1L, "로드맵2", "로드맵 설명2", 30, RoadmapDifficulty.DIFFICULT,
+                RoadmapStatus.CREATED, member.getId(), category, new RoadmapTags(new ArrayList<>()));
 
         given(roadmapRepository.findByStatus(any()))
                 .willReturn(List.of(roadmap));
@@ -75,7 +79,7 @@ class RoadmapSchedulerTest {
                 new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
         final RoadmapCategory category = new RoadmapCategory("여행");
-        final Roadmap roadmap = new Roadmap("로드맵1", "로드맵 설명1", 30, RoadmapDifficulty.DIFFICULT, member.getId(), category);
+        final Roadmap roadmap = new Roadmap("로드맵1", "로드맵 설명1", 30, RoadmapDifficulty.DIFFICULT, member.getId(), category, new RoadmapTags(new ArrayList<>()));
 
         given(roadmapRepository.findByStatus(any()))
                 .willReturn(List.of(roadmap));

@@ -65,7 +65,7 @@ class GoalRoomTest {
     void 골룸에_대기중인_인원수를_계산한다() {
         // given
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content", 1L), member);
+                new RoadmapContent("content", 1L, null), member);
         final Member member1 = new Member(2L, new Identifier("identifier2"),
                 null, new EncryptedPassword(new Password("password1")), new Nickname("닉네임2"),
                 null,
@@ -87,7 +87,7 @@ class GoalRoomTest {
     void 골룸에_사용자를_추가한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10),
-                new RoadmapContent("로드맵 내용", 1L), member);
+                new RoadmapContent("로드맵 내용", 1L, null), member);
         final Member follower = 사용자를_생성한다(2L, "identifier12", "시진이");
 
         //when
@@ -102,7 +102,7 @@ class GoalRoomTest {
     @Test
     void 모집중이_아닌_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), new RoadmapContent("로드맵 내용", 1L),
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(10), new RoadmapContent("로드맵 내용", 1L, null),
                 사용자를_생성한다(2L, "identifier1", "시진이"));
         goalRoom.start();
 
@@ -115,7 +115,7 @@ class GoalRoomTest {
     @Test
     void 제한_인원이_가득_찬_골룸에_사용자를_추가하면_예외가_발생한다() {
         //given
-        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), new RoadmapContent("로드맵 내용", 1L),
+        final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(1), new RoadmapContent("로드맵 내용", 1L, null),
                 사용자를_생성한다(2L, "identifier1", "시진이"));
 
         //when,then
@@ -128,7 +128,7 @@ class GoalRoomTest {
     void 이미_참여_중인_사용자를_골룸에_추가하면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
-                new RoadmapContent("로드맵 내용", 1L), member);
+                new RoadmapContent("로드맵 내용", 1L, null), member);
 
         //when,then
         assertThatThrownBy(() -> goalRoom.join(member))
@@ -186,7 +186,7 @@ class GoalRoomTest {
     void 골룸을_나간다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
-                new RoadmapContent("로드맵 내용", 1L), member);
+                new RoadmapContent("로드맵 내용", 1L, null), member);
 
         // when
         goalRoom.leave(member);
@@ -199,7 +199,7 @@ class GoalRoomTest {
     void 골룸에_참여하지_않은_멤버가_나가면_예외가_발생한다() {
         //given
         final GoalRoom goalRoom = new GoalRoom(GOAL_ROOM_NAME, new LimitedMemberCount(2),
-                new RoadmapContent("로드맵 내용", 1L), member);
+                new RoadmapContent("로드맵 내용", 1L, null), member);
 
         final Member notJoinMember = new Member(new Identifier("identifier2"),
                 new EncryptedPassword(new Password("password2!")),
@@ -250,8 +250,7 @@ class GoalRoomTest {
     }
 
     private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L);
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L, new RoadmapNodes(roadmapNodes));
         return roadmapContent;
     }
 

@@ -19,6 +19,7 @@ import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
 import co.kirikiri.roadmap.domain.RoadmapReview;
+import co.kirikiri.roadmap.domain.RoadmapStatus;
 import co.kirikiri.roadmap.domain.RoadmapTag;
 import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
@@ -55,6 +56,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -456,11 +458,11 @@ class RoadmapReadServiceTest {
     }
 
     @Test
-    void 로드맵의_골룸_목록을_최신순으로_조회한다() throws MalformedURLException {
+    void 로드맵의_골룸_목록을_최신순으로_조회한다() {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "name1");
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1.getId(),
-                new RoadmapCategory("it"));
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, RoadmapStatus.CREATED,
+                member1.getId(), new RoadmapCategory("it"), new RoadmapTags(new ArrayList<>()));
 
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "name2");
         final Member member3 = 사용자를_생성한다(3L, "identifier2", "name3");
@@ -513,8 +515,8 @@ class RoadmapReadServiceTest {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "리뷰어1");
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "리뷰어2");
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, member1.getId(),
-                new RoadmapCategory("it"));
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, RoadmapStatus.CREATED,
+                member1.getId(), new RoadmapCategory("it"), new RoadmapTags(new ArrayList<>()));
 
         final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰 내용", 5.0, member1.getId(), roadmap.getId());
         final RoadmapReview roadmapReview2 = new RoadmapReview("리뷰 내용", 4.5, member2.getId(), roadmap.getId());
@@ -565,15 +567,12 @@ class RoadmapReadServiceTest {
     }
 
     private Roadmap 로드맵을_생성한다(final String roadmapTitle, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(1L, roadmapTitle, "로드맵 소개글", 30,
-                RoadmapDifficulty.valueOf("DIFFICULT"), member.getId(), category);
-
         final RoadmapTags roadmapTags = new RoadmapTags(
                 List.of(new RoadmapTag(1L, new RoadmapTagName("태그1")),
                         new RoadmapTag(2L, new RoadmapTagName("태그2"))));
-        roadmap.addTags(roadmapTags);
 
-        return roadmap;
+        return new Roadmap(1L, roadmapTitle, "로드맵 소개글", 30,
+                RoadmapDifficulty.valueOf("DIFFICULT"), RoadmapStatus.CREATED, member.getId(), category, roadmapTags);
     }
 
     private RoadmapCategory 로드맵_카테고리를_생성한다(final Long id, final String title) {
@@ -581,11 +580,9 @@ class RoadmapReadServiceTest {
     }
 
     private RoadmapContent 로드맵_컨텐츠를_생성한다(final String content, final Long roadmapId) {
-        final RoadmapContent roadmapContent = new RoadmapContent(1L, content, roadmapId);
         final RoadmapNodes roadmapNodes = new RoadmapNodes(
                 List.of(new RoadmapNode(1L, "로드맵 노드1 제목", "로드맵 노드1 설명")));
-        roadmapContent.addNodes(roadmapNodes);
-        return roadmapContent;
+        return new RoadmapContent(1L, content, roadmapId, roadmapNodes);
     }
 
     private List<RoadmapCategory> 로드맵_카테고리_리스트를_반환한다() {

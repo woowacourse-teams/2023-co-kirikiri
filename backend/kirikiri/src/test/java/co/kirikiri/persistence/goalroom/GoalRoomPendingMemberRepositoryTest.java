@@ -28,6 +28,7 @@ import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodeImage;
 import co.kirikiri.roadmap.domain.RoadmapNodeImages;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -310,14 +312,13 @@ class GoalRoomPendingMemberRepositoryTest {
     }
 
     private Roadmap 로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
         return roadmapRepository.save(roadmap);
     }
 
     private RoadmapContent 로드맵_본문을_저장한다(final Long roadmapId) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(roadmapNodes));
         return roadmapContentRepository.save(roadmapContent);
     }
 

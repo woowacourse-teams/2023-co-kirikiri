@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +77,7 @@ class RoadmapRepositoryTest {
         // given
         final Member creator = 사용자를_생성한다("cokirikiri", "코끼리");
         final RoadmapCategory category = 카테고리를_생성한다("여가");
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
 
         // when
         final Roadmap savedRoadmap = roadmapRepository.save(roadmap);
@@ -573,12 +574,12 @@ class RoadmapRepositoryTest {
     }
 
     private Roadmap 로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
         return roadmapRepository.save(roadmap);
     }
 
     private Roadmap 삭제된_로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator.getId(), category);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글2", 7, RoadmapDifficulty.DIFFICULT, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
         roadmap.delete();
         return roadmapRepository.save(roadmap);
     }
@@ -586,15 +587,13 @@ class RoadmapRepositoryTest {
     private RoadmapContent 로드맵_컨텐츠를_저장한다(final Long roadmapId) {
         final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId);
-        roadmapContent.addNodes(new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
         return roadmapContentRepository.save(roadmapContent);
     }
 
     private Roadmap 로드맵을_태그와_저장한다(final String title, final Member creator, final RoadmapCategory category,
                                   final RoadmapTags roadmapTags) {
-        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
-        roadmap.addTags(roadmapTags);
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category, roadmapTags);
         return roadmapRepository.save(roadmap);
     }
 

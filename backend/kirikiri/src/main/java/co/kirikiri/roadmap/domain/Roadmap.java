@@ -11,14 +11,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Roadmap extends BaseCreatedTimeEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;
@@ -54,25 +52,14 @@ public class Roadmap extends BaseCreatedTimeEntity {
     @Embedded
     private RoadmapTags tags = new RoadmapTags();
 
-    public Roadmap(final String title, final String introduction, final int requiredPeriod,
-                   final RoadmapDifficulty difficulty, final Long creatorId, final RoadmapCategory category) {
-        this(null, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creatorId, category);
-    }
-
-    public Roadmap(final String title, final String introduction, final Integer requiredPeriod,
-                   final RoadmapDifficulty difficulty, final RoadmapStatus status, final Long creatorId,
-                   final RoadmapCategory category) {
-        this(null, title, introduction, requiredPeriod, difficulty, status, creatorId, category);
-    }
-
-    public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
-                   final RoadmapDifficulty difficulty, final Long creatorId, final RoadmapCategory category) {
-        this(id, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creatorId, category);
+    public Roadmap(final String title, final String introduction, final int requiredPeriod, final RoadmapDifficulty difficulty,
+                   final Long creatorId, final RoadmapCategory category, final RoadmapTags tags) {
+        this(null, title, introduction, requiredPeriod, difficulty, RoadmapStatus.CREATED, creatorId, category, tags);
     }
 
     public Roadmap(final Long id, final String title, final String introduction, final Integer requiredPeriod,
                    final RoadmapDifficulty difficulty, final RoadmapStatus status, final Long creatorId,
-                   final RoadmapCategory category) {
+                   final RoadmapCategory category, final RoadmapTags tags) {
         validate(title, introduction, requiredPeriod);
         this.id = id;
         this.title = title;
@@ -82,6 +69,7 @@ public class Roadmap extends BaseCreatedTimeEntity {
         this.status = status;
         this.creatorId = creatorId;
         this.category = category;
+        this.tags = tags;
     }
 
     private void validate(final String title, final String introduction, final int requiredPeriod) {
@@ -114,10 +102,6 @@ public class Roadmap extends BaseCreatedTimeEntity {
                     String.format("로드맵 추천 소요 기간은 최소 %d일, 최대 %d일입니다.", REQUIRED_MIN_PERIOD, REQUIRED_MAX_PERIOD)
             );
         }
-    }
-
-    public void addTags(final RoadmapTags tags) {
-        this.tags.addAll(tags);
     }
 
     public boolean isCreator(final Long memberId) {

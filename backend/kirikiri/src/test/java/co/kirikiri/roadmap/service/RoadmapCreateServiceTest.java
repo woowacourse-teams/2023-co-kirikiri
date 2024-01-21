@@ -13,6 +13,10 @@ import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import co.kirikiri.roadmap.domain.RoadmapReview;
+import co.kirikiri.roadmap.domain.RoadmapStatus;
+import co.kirikiri.roadmap.domain.RoadmapTag;
+import co.kirikiri.roadmap.domain.RoadmapTags;
+import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
 import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
@@ -35,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -99,10 +104,10 @@ class RoadmapCreateServiceTest {
         given(roadmapCategoryRepository.findById(any()))
                 .willReturn(Optional.of(category));
         given(roadmapRepository.save(any()))
-                .willReturn(new Roadmap(1L, roadmapTitle, roadmapIntroduction, requiredPeriod,
-                        RoadmapDifficulty.valueOf(difficulty.name()), MEMBER.getId(), category));
+                .willReturn(new Roadmap(1L, roadmapTitle, roadmapIntroduction, requiredPeriod, RoadmapDifficulty.valueOf(difficulty.name()),
+                        RoadmapStatus.CREATED, MEMBER.getId(), category, new RoadmapTags(List.of(new RoadmapTag(new RoadmapTagName("태그 1"))))));
         given(roadmapContentRepository.save(any()))
-                .willReturn(new RoadmapContent(roadmapContent, 1L));
+                .willReturn(new RoadmapContent(roadmapContent, 1L, null));
 
         // expect
         assertDoesNotThrow(() -> roadmapCreateService.create(request, "identifier1"));
@@ -327,6 +332,7 @@ class RoadmapCreateServiceTest {
     }
 
     private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
-        return new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator.getId(), category);
+        return new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL,
+                RoadmapStatus.CREATED, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
     }
 }

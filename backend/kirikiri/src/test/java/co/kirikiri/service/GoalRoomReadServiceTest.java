@@ -36,6 +36,8 @@ import co.kirikiri.roadmap.domain.RoadmapNode;
 import co.kirikiri.roadmap.domain.RoadmapNodeImage;
 import co.kirikiri.roadmap.domain.RoadmapNodeImages;
 import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.domain.RoadmapStatus;
+import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
@@ -64,6 +66,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -445,14 +448,13 @@ class GoalRoomReadServiceTest {
     @Test
     void 진행중인_사용자_단일_골룸을_조회한다() throws MalformedURLException {
         // given
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L);
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
         final RoadmapNode roadmapNode3 = new RoadmapNode("로드맵 3주차", "로드맵 3주차 내용");
         final RoadmapNode roadmapNode4 = new RoadmapNode("로드맵 4주차", "로드맵 4주차 내용");
         final RoadmapNodes roadmapNodes = new RoadmapNodes(
                 List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        roadmapContent.addNodes(roadmapNodes);
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L, roadmapNodes);
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(
                 new Period(TODAY, TODAY.plusDays(10)), 5, roadmapNode1);
@@ -511,14 +513,13 @@ class GoalRoomReadServiceTest {
     @Test
     void 모집중인_사용자_단일_골룸_조회시_인증피드가_빈_응답을_반환한다() {
         // given
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L);
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
         final RoadmapNode roadmapNode3 = new RoadmapNode("로드맵 3주차", "로드맵 3주차 내용");
         final RoadmapNode roadmapNode4 = new RoadmapNode("로드맵 4주차", "로드맵 4주차 내용");
         final RoadmapNodes roadmapNodes = new RoadmapNodes(
                 List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        roadmapContent.addNodes(roadmapNodes);
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L, roadmapNodes);
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(
                 new Period(TODAY, TODAY.plusDays(10)), 5, roadmapNode1);
@@ -564,14 +565,13 @@ class GoalRoomReadServiceTest {
     @Test
     void 종료된_사용자_단일_골룸을_조회시_전체_인증피드를_대상으로_반환한다() throws MalformedURLException {
         // given
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L);
         final RoadmapNode roadmapNode1 = new RoadmapNode("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
         final RoadmapNode roadmapNode3 = new RoadmapNode("로드맵 3주차", "로드맵 3주차 내용");
         final RoadmapNode roadmapNode4 = new RoadmapNode("로드맵 4주차", "로드맵 4주차 내용");
         final RoadmapNodes roadmapNodes = new RoadmapNodes(
                 List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        roadmapContent.addNodes(roadmapNodes);
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L, roadmapNodes);
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(
                 new Period(TODAY, TODAY.plusDays(10)), 5, roadmapNode1);
@@ -1172,14 +1172,13 @@ class GoalRoomReadServiceTest {
 
     private Roadmap 로드맵을_생성한다(final Member creator) {
         final RoadmapCategory category = new RoadmapCategory("게임");
-        return new Roadmap(1L, "로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category);
+        return new Roadmap(1L, "로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
+                RoadmapStatus.CREATED, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
     }
 
     private RoadmapContent 로드맵_본문을_생성한다(final Long roadmapId) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
-        return roadmapContent;
+        return new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(roadmapNodes));
     }
 
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {

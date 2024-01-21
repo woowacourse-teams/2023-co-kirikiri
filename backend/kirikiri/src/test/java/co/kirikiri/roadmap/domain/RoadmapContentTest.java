@@ -3,11 +3,7 @@ package co.kirikiri.roadmap.domain;
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class RoadmapContentTest {
@@ -18,7 +14,7 @@ class RoadmapContentTest {
         final String content = "a".repeat(2001);
 
         // expect
-        assertThatThrownBy(() -> new RoadmapContent(content, 1L))
+        assertThatThrownBy(() -> new RoadmapContent(content, 1L, null))
                 .isInstanceOf(RoadmapException.class);
     }
 
@@ -28,37 +24,6 @@ class RoadmapContentTest {
         final String content = null;
 
         // expect
-        assertDoesNotThrow(() -> new RoadmapContent(content, 1L));
-    }
-
-    @Test
-    void 로드맵_본문에_노드들을_추가한다() {
-        // given
-        final RoadmapContent content = new RoadmapContent("content", 1L);
-        final RoadmapNodes roadmapNodes = new RoadmapNodes(
-                List.of(new RoadmapNode("title1", "content1"), new RoadmapNode("title2", "content1")));
-
-        // when
-        content.addNodes(roadmapNodes);
-
-        // then
-        final RoadmapNodes nodes = content.getNodes();
-        assertAll(
-                () -> assertThat(nodes.getValues()).hasSize(2),
-                () -> assertThat(nodes.getValues().get(0).getTitle()).isEqualTo("title1"),
-                () -> assertThat(nodes.getValues().get(1).getTitle()).isEqualTo("title2")
-        );
-    }
-
-    @Test
-    void 로드맵_본문에_노드를_추가할때_이름이_겹치면_예외를_던진다() {
-        // given
-        final RoadmapContent content = new RoadmapContent("content", 1L);
-
-        // when
-        // then
-        final String title = "title";
-        assertThatThrownBy(() -> content.addNodes(
-                new RoadmapNodes(List.of(new RoadmapNode(title, "content1"), new RoadmapNode(title, "content1")))));
+        assertDoesNotThrow(() -> new RoadmapContent(content, 1L, null));
     }
 }

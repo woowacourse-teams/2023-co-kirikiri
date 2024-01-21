@@ -24,17 +24,18 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
     private Long roadmapId;
 
     @Embedded
-    private final RoadmapNodes nodes = new RoadmapNodes();
+    private RoadmapNodes nodes;
 
-    public RoadmapContent(final String content, final Long roadmapId) {
-        this(null, content, roadmapId);
+    public RoadmapContent(final String content, final Long roadmapId, final RoadmapNodes nodes) {
+        this(null, content, roadmapId, nodes);
     }
 
-    public RoadmapContent(final Long id, final String content, final Long roadmapId) {
+    public RoadmapContent(final Long id, final String content, final Long roadmapId, final RoadmapNodes nodes) {
         validate(content);
         this.id = id;
         this.content = content;
         this.roadmapId = roadmapId;
+        this.nodes = nodes;
     }
 
     private void validate(final String content) {
@@ -48,10 +49,6 @@ public class RoadmapContent extends BaseUpdatedTimeEntity {
         if (content.length() > CONTENT_MAX_LENGTH) {
             throw new RoadmapException(String.format("로드맵 본문의 길이는 최대 %d글자입니다.", CONTENT_MAX_LENGTH));
         }
-    }
-
-    public void addNodes(final RoadmapNodes nodes) {
-        this.nodes.addAll(nodes);
     }
 
     public int nodesSize() {

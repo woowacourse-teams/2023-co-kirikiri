@@ -13,8 +13,10 @@ import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
+import co.kirikiri.roadmap.domain.RoadmapTags;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,7 +83,7 @@ class RoadmapContentRepositoryTest {
     private Roadmap 로드맵을_저장한다() {
         final Member creator = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator.getId(), category);
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
 
         return roadmapRepository.save(roadmap);
     }
@@ -100,6 +102,6 @@ class RoadmapContentRepositoryTest {
     }
 
     private RoadmapContent 로드맵_컨텐츠를_저장한다(final Long roadmapId) {
-        return roadmapContentRepository.save(new RoadmapContent("content", roadmapId));
+        return roadmapContentRepository.save(new RoadmapContent("content", roadmapId, null));
     }
 }
