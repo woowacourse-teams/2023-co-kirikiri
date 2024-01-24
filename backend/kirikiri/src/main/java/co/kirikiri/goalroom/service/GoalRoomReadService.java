@@ -39,9 +39,7 @@ import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
 import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -174,9 +172,8 @@ public class GoalRoomReadService {
 
         final RoadmapContent roadmapContent = findRoadmapContentById(goalRoom.getRoadmapContentId());
         final List<RoadmapNode> roadmapNodes = roadmapNodeRepository.findAllByRoadmapContent(roadmapContent);
-        final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
         final List<DashBoardCheckFeedResponse> checkFeeds = dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(
-                goalRoom, currentGoalRoomRoadmapNode);
+                goalRoom);
         final List<DashBoardToDoResponse> checkedTodos = dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(
                 goalRoom, member.getId());
         return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, findGoalRoomLeaderId(goalRoom),
@@ -201,10 +198,6 @@ public class GoalRoomReadService {
         }
         goalRoomMemberRepository.findByGoalRoomAndMemberId(goalRoom, memberId)
                 .orElseThrow(() -> new ForbiddenException("해당 골룸에 참여하지 않은 사용자입니다."));
-    }
-
-    private Optional<GoalRoomRoadmapNode> findCurrentGoalRoomNode(final GoalRoom goalRoom) {
-        return goalRoom.findNodeByDate(LocalDate.now());
     }
 
     private Long findGoalRoomLeaderId(final GoalRoom goalRoom) {

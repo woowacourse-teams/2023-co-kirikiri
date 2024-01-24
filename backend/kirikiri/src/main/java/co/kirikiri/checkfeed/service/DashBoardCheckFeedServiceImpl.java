@@ -9,6 +9,7 @@ import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
 import co.kirikiri.goalroom.service.DashBoardCheckFeedService;
 import co.kirikiri.goalroom.service.dto.response.DashBoardCheckFeedResponse;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,10 +29,14 @@ public class DashBoardCheckFeedServiceImpl implements DashBoardCheckFeedService 
 
     @Override
     @Transactional(readOnly = true)
-    public List<DashBoardCheckFeedResponse> findCheckFeedsByNodeAndGoalRoomStatus(final GoalRoom goalRoom,
-                                                                                  final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode) {
+    public List<DashBoardCheckFeedResponse> findCheckFeedsByNodeAndGoalRoomStatus(final GoalRoom goalRoom) {
+        final Optional<GoalRoomRoadmapNode> currentGoalRoomRoadmapNode = findCurrentGoalRoomNode(goalRoom);
         final List<CheckFeed> checkFeeds = findCheckFeeds(goalRoom, currentGoalRoomRoadmapNode);
         return makeCheckFeedResponses(checkFeeds);
+    }
+
+    private Optional<GoalRoomRoadmapNode> findCurrentGoalRoomNode(final GoalRoom goalRoom) {
+        return goalRoom.findNodeByDate(LocalDate.now());
     }
 
     private List<CheckFeed> findCheckFeeds(final GoalRoom goalRoom,

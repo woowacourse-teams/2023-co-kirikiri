@@ -473,7 +473,7 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(roadmapContent));
         given(roadmapNodeRepository.findAllByRoadmapContent(any()))
                 .willReturn(List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any(), any()))
+        given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any()))
                 .willReturn(dashBoardCheckFeedResponses);
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
                 .willReturn(Collections.emptyList());
@@ -554,7 +554,7 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(roadmapContent));
         given(roadmapNodeRepository.findAllByRoadmapContent(any()))
                 .willReturn(List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any(), any()))
+        given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any()))
                 .willReturn(Collections.emptyList());
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
                 .willReturn(Collections.emptyList());
@@ -626,7 +626,7 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(roadmapContent));
         given(roadmapNodeRepository.findAllByRoadmapContent(any()))
                 .willReturn(List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any(), any()))
+        given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any()))
                 .willReturn(dashBoardCheckFeedResponses);
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
                 .willReturn(Collections.emptyList());
