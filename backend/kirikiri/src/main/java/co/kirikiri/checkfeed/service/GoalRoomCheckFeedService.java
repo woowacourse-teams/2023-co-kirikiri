@@ -7,7 +7,7 @@ import co.kirikiri.checkfeed.service.dto.CheckFeedMemberDto;
 import co.kirikiri.checkfeed.service.dto.GoalRoomCheckFeedDto;
 import co.kirikiri.checkfeed.service.dto.request.CheckFeedRequest;
 import co.kirikiri.checkfeed.service.dto.response.GoalRoomCheckFeedResponse;
-import co.kirikiri.checkfeed.service.event.AccomplishmentRateUpdateEvent;
+import co.kirikiri.checkfeed.service.event.CheckFeedCreateEvent;
 import co.kirikiri.checkfeed.service.mapper.CheckFeedMapper;
 import co.kirikiri.common.aop.ExceptionConvert;
 import co.kirikiri.common.exception.BadRequestException;
@@ -61,16 +61,14 @@ public class GoalRoomCheckFeedService {
         final GoalRoom goalRoom = findGoalRoomWithNodesById(goalRoomId);
         final GoalRoomMember goalRoomMember = findGoalRoomMemberByGoalRoomAndIdentifier(goalRoom, identifier);
         final GoalRoomRoadmapNode currentNode = getNodeByDate(goalRoom);
-        final int currentMemberCheckCount = checkFeedRepository.countByGoalRoomMemberIdAndGoalRoomRoadmapNodeId(
-                goalRoomMember.getId(), currentNode.getId());
+        final int currentMemberCheckCount = getCurrentMemberCheckCount(goalRoomMember, currentNode);
         validateCheckCount(currentMemberCheckCount, goalRoomMember, currentNode);
-
-        applicationEventPublisher.publishEvent(
-                new AccomplishmentRateUpdateEvent(goalRoomId, goalRoomMember.getId(), currentMemberCheckCount));
 
         final String path = filePathGenerator.makeFilePath(ImageDirType.CHECK_FEED,
                 checkFeedImage.getOriginalFilename());
-        saveCheckFeed(checkFeedRequest, checkFeedImage, goalRoomMember, currentNode, path);
+        final CheckFeed checkFeed = saveCheckFeed(checkFeedRequest, checkFeedImage, goalRoomMember, currentNode, path);
+
+        applicationEventPublisher.publishEvent(new CheckFeedCreateEvent(checkFeed.getId(), goalRoomId));
 
         final FileInformation fileInformation = FileInformation.from(checkFeedImage);
         fileService.save(path, fileInformation);
@@ -108,6 +106,11 @@ public class GoalRoomCheckFeedService {
                 .orElseThrow(() -> new BadRequestException("인증 피드는 노드 기간 내에만 작성할 수 있습니다."));
     }
 
+    private int getCurrentMemberCheckCount(final GoalRoomMember goalRoomMember, final GoalRoomRoadmapNode currentNode) {
+        return checkFeedRepository.countByGoalRoomMemberIdAndGoalRoomRoadmapNodeId(
+                goalRoomMember.getId(), currentNode.getId());
+    }
+
     private void validateCheckCount(final int memberCheckCount, final GoalRoomMember member,
                                     final GoalRoomRoadmapNode goalRoomRoadmapNode) {
         validateNodeCheckCount(memberCheckCount, goalRoomRoadmapNode);
@@ -132,10 +135,10 @@ public class GoalRoomCheckFeedService {
         }
     }
 
-    private void saveCheckFeed(final CheckFeedRequest checkFeedRequest, final MultipartFile checkFeedImage,
-                               final GoalRoomMember goalRoomMember, final GoalRoomRoadmapNode currentNode,
-                               final String path) {
-        checkFeedRepository.save(
+    private CheckFeed saveCheckFeed(final CheckFeedRequest checkFeedRequest, final MultipartFile checkFeedImage,
+                                    final GoalRoomMember goalRoomMember, final GoalRoomRoadmapNode currentNode,
+                                    final String path) {
+        return checkFeedRepository.save(
                 new CheckFeed(path, ImageContentType.findImageContentType(checkFeedImage.getContentType()),
                         checkFeedImage.getOriginalFilename(), checkFeedRequest.description(), currentNode.getId(),
                         goalRoomMember.getId()));
