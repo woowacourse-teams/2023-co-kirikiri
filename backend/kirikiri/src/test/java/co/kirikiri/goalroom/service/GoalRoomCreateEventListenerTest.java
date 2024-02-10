@@ -22,7 +22,7 @@ import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
 import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
-import co.kirikiri.goalroom.service.event.GoalRoomLeaderUpdateEvent;
+import co.kirikiri.goalroom.service.event.GoalRoomCreateEvent;
 import co.kirikiri.persistence.member.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class GoalRoomLeaderUpdateEventListenerTest {
+class GoalRoomCreateEventListenerTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
             null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
@@ -50,7 +50,7 @@ class GoalRoomLeaderUpdateEventListenerTest {
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     @InjectMocks
-    private GoalRoomLeaderUpdateEventListener goalRoomLeaderUpdateEventListener;
+    private GoalRoomCreateEventListener goalRoomCreateEventListener;
 
     @Test
     void 정상적으로_골룸의_리더를_저장한다() {
@@ -64,8 +64,8 @@ class GoalRoomLeaderUpdateEventListenerTest {
 
         // when
         // then
-        assertDoesNotThrow(() -> goalRoomLeaderUpdateEventListener.handleGoalRoomLeaderUpdate(
-                new GoalRoomLeaderUpdateEvent(1L, "identifier1")));
+        assertDoesNotThrow(() -> goalRoomCreateEventListener.handleGoalRoomLeaderUpdate(
+                new GoalRoomCreateEvent(1L, "identifier1")));
     }
 
     @Test
@@ -76,8 +76,8 @@ class GoalRoomLeaderUpdateEventListenerTest {
         // when
         // then
         assertThatThrownBy(
-                () -> goalRoomLeaderUpdateEventListener.handleGoalRoomLeaderUpdate(
-                        new GoalRoomLeaderUpdateEvent(1L, "identifier2")))
+                () -> goalRoomCreateEventListener.handleGoalRoomLeaderUpdate(
+                        new GoalRoomCreateEvent(1L, "identifier2")))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -92,8 +92,8 @@ class GoalRoomLeaderUpdateEventListenerTest {
         // when
         // then
         assertThatThrownBy(
-                () -> goalRoomLeaderUpdateEventListener.handleGoalRoomLeaderUpdate(
-                        new GoalRoomLeaderUpdateEvent(2L, "identifier1")))
+                () -> goalRoomCreateEventListener.handleGoalRoomLeaderUpdate(
+                        new GoalRoomCreateEvent(2L, "identifier1")))
                 .isInstanceOf(NotFoundException.class);
     }
 

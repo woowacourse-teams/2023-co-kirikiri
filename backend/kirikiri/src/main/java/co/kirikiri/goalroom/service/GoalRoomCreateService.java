@@ -23,8 +23,8 @@ import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.service.dto.GoalRoomCreateDto;
 import co.kirikiri.goalroom.service.dto.GoalRoomRoadmapNodeDto;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
-import co.kirikiri.goalroom.service.event.EmptyGoalRoomDeleteEvent;
-import co.kirikiri.goalroom.service.event.GoalRoomLeaderUpdateEvent;
+import co.kirikiri.goalroom.service.event.GoalRoomCreateEvent;
+import co.kirikiri.goalroom.service.event.GoalRoomLeaveEvent;
 import co.kirikiri.goalroom.service.mapper.GoalRoomMapper;
 import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
@@ -55,7 +55,7 @@ public class GoalRoomCreateService {
         final GoalRoom goalRoom = createGoalRoom(goalRoomCreateDto, roadmapContent);
         final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
 
-        applicationEventPublisher.publishEvent(new GoalRoomLeaderUpdateEvent(savedGoalRoom.getId(), memberIdentifier));
+        applicationEventPublisher.publishEvent(new GoalRoomCreateEvent(savedGoalRoom.getId(), memberIdentifier));
 
         return savedGoalRoom.getId();
     }
@@ -175,7 +175,7 @@ public class GoalRoomCreateService {
             leaveCompletedGoalRoom(member, goalRoom);
         }
 
-        applicationEventPublisher.publishEvent(new EmptyGoalRoomDeleteEvent(goalRoomId));
+        applicationEventPublisher.publishEvent(new GoalRoomLeaveEvent(goalRoomId));
     }
 
     private GoalRoom findGoalRoomById(final Long goalRoomId) {

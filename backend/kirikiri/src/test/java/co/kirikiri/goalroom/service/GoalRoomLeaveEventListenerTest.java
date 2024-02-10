@@ -26,7 +26,7 @@ import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
-import co.kirikiri.goalroom.service.event.EmptyGoalRoomDeleteEvent;
+import co.kirikiri.goalroom.service.event.GoalRoomLeaveEvent;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -39,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmptyGoalRoomDeleteEventListenerTest {
+class GoalRoomLeaveEventListenerTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
             null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
@@ -55,7 +55,7 @@ class EmptyGoalRoomDeleteEventListenerTest {
     private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     @InjectMocks
-    private EmptyGoalRoomDeleteEventListener emptyGoalRoomDeleteEventListener;
+    private GoalRoomLeaveEventListener goalRoomLeaveEventListener;
 
     @Test
     void 정상적으로_빈_골룸을_삭제한다() {
@@ -71,8 +71,8 @@ class EmptyGoalRoomDeleteEventListenerTest {
 
         // when
         // then
-        assertDoesNotThrow(() -> emptyGoalRoomDeleteEventListener.handleDeleteEmptyGoalRoom(
-                new EmptyGoalRoomDeleteEvent(1L)));
+        assertDoesNotThrow(() -> goalRoomLeaveEventListener.handleDeleteEmptyGoalRoom(
+                new GoalRoomLeaveEvent(1L)));
     }
 
     @Test
@@ -83,8 +83,8 @@ class EmptyGoalRoomDeleteEventListenerTest {
         // when
         // then
         assertThatThrownBy(
-                () -> emptyGoalRoomDeleteEventListener.handleDeleteEmptyGoalRoom(
-                        new EmptyGoalRoomDeleteEvent(2L)))
+                () -> goalRoomLeaveEventListener.handleDeleteEmptyGoalRoom(
+                        new GoalRoomLeaveEvent(2L)))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -102,8 +102,8 @@ class EmptyGoalRoomDeleteEventListenerTest {
 
         // when
         // then
-        assertDoesNotThrow(() -> emptyGoalRoomDeleteEventListener.handleDeleteEmptyGoalRoom(
-                new EmptyGoalRoomDeleteEvent(1L)));
+        assertDoesNotThrow(() -> goalRoomLeaveEventListener.handleDeleteEmptyGoalRoom(
+                new GoalRoomLeaveEvent(1L)));
 
         verify(goalRoomRepository, never()).delete(any());
     }

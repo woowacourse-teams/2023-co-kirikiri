@@ -8,7 +8,7 @@ import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
 import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
-import co.kirikiri.goalroom.service.event.EmptyGoalRoomDeleteEvent;
+import co.kirikiri.goalroom.service.event.GoalRoomLeaveEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -19,7 +19,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Service
 @RequiredArgsConstructor
 @ExceptionConvert
-public class EmptyGoalRoomDeleteEventListener {
+public class GoalRoomLeaveEventListener {
 
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
@@ -28,8 +28,8 @@ public class EmptyGoalRoomDeleteEventListener {
     @Async
     @TransactionalEventListener
     @Transactional
-    public void handleDeleteEmptyGoalRoom(final EmptyGoalRoomDeleteEvent emptyGoalRoomDeleteEvent) {
-        final GoalRoom goalRoom = findGoalRoomById(emptyGoalRoomDeleteEvent.goalRoomId());
+    public void handleDeleteEmptyGoalRoom(final GoalRoomLeaveEvent goalRoomLeaveEvent) {
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomLeaveEvent.goalRoomId());
         final List<GoalRoomMember> goalRoomMembers = goalRoomMemberRepository.findByGoalRoom(goalRoom);
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoom(
                 goalRoom);

@@ -9,7 +9,7 @@ import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
 import co.kirikiri.goalroom.domain.GoalRoomRole;
 import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
-import co.kirikiri.goalroom.service.event.GoalRoomLeaderUpdateEvent;
+import co.kirikiri.goalroom.service.event.GoalRoomCreateEvent;
 import co.kirikiri.persistence.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Service
 @RequiredArgsConstructor
 @ExceptionConvert
-public class GoalRoomLeaderUpdateEventListener {
+public class GoalRoomCreateEventListener {
 
     private final GoalRoomRepository goalRoomRepository;
     private final MemberRepository memberRepository;
@@ -28,9 +28,9 @@ public class GoalRoomLeaderUpdateEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     @Transactional
-    public void handleGoalRoomLeaderUpdate(final GoalRoomLeaderUpdateEvent goalRoomLeaderUpdateEvent) {
-        final Member leader = findMemberByIdentifier(goalRoomLeaderUpdateEvent.leaderIdentifier());
-        final GoalRoom goalRoom = findGoalRoomById(goalRoomLeaderUpdateEvent);
+    public void handleGoalRoomLeaderUpdate(final GoalRoomCreateEvent goalRoomCreateEvent) {
+        final Member leader = findMemberByIdentifier(goalRoomCreateEvent.leaderIdentifier());
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomCreateEvent);
 
         final GoalRoomPendingMember goalRoomLeader = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom,
                 leader.getId());
@@ -42,8 +42,8 @@ public class GoalRoomLeaderUpdateEventListener {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
-    private GoalRoom findGoalRoomById(final GoalRoomLeaderUpdateEvent goalRoomLeaderUpdateEvent) {
-        return goalRoomRepository.findById(goalRoomLeaderUpdateEvent.goalRoomId())
+    private GoalRoom findGoalRoomById(final GoalRoomCreateEvent goalRoomCreateEvent) {
+        return goalRoomRepository.findById(goalRoomCreateEvent.goalRoomId())
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다."));
     }
 }

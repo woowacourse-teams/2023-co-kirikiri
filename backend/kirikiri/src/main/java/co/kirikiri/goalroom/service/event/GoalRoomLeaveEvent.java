@@ -1,6 +1,6 @@
 package co.kirikiri.goalroom.service.event;
 
-public record EmptyGoalRoomDeleteEvent(
+public record GoalRoomLeaveEvent(
         Long goalRoomId
 ) {
 
