@@ -18,8 +18,12 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ForbiddenException;
+import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomStatusTypeRequest;
 import co.kirikiri.service.dto.goalroom.response.CheckFeedResponse;
@@ -32,12 +36,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import co.kirikiri.service.goalroom.GoalRoomCreateService;
 import co.kirikiri.service.goalroom.GoalRoomReadService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -434,10 +434,10 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     void 골룸의_투두리스트를_조회한다() throws Exception {
         // given
         final LocalDate today = LocalDate.now();
-        final List<GoalRoomTodoResponse> goalRoomTodoResponses = List.of(
-                new GoalRoomTodoResponse(1L, "투두 1", today, today.plusDays(10), new GoalRoomToDoCheckResponse(true)),
-                new GoalRoomTodoResponse(2L, "투두 2", today.plusDays(20), today.plusDays(30),
-                        new GoalRoomToDoCheckResponse(false)));
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse> goalRoomTodoResponses = List.of(
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse(1L, "투두 1", today, today.plusDays(10), new co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse(true)),
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse(2L, "투두 2", today.plusDays(20), today.plusDays(30),
+                        new co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse(false)));
 
         when(goalRoomReadService.findAllGoalRoomTodo(any(), any()))
                 .thenReturn(goalRoomTodoResponses);
@@ -465,7 +465,7 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
                 .andReturn();
 
         // then
-        final List<GoalRoomTodoResponse> response = jsonToClass(mvcResult, new TypeReference<>() {
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse> response = jsonToClass(mvcResult, new TypeReference<>() {
         });
 
         assertThat(response)
@@ -642,10 +642,10 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
         // given
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse1 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(1L, "name1", "imageUrl"),
-                new CheckFeedResponse(1L, "imageUrl", "image description1", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(1L, "imageUrl", "image description1", LocalDate.now()));
         final GoalRoomCheckFeedResponse goalRoomCheckFeedResponse2 = new GoalRoomCheckFeedResponse(
                 new MemberResponse(2L, "name2", "imageUrl"),
-                new CheckFeedResponse(2L, "imageUrl", "image description2", LocalDate.now()));
+                new co.kirikiri.service.dto.goalroom.response.CheckFeedResponse(2L, "imageUrl", "image description2", LocalDate.now()));
 
         final List<GoalRoomCheckFeedResponse> expected = List.of(goalRoomCheckFeedResponse2,
                 goalRoomCheckFeedResponse1);
@@ -745,19 +745,19 @@ class GoalRoomReadApiTest extends ControllerTestHelper {
     }
 
     private GoalRoomResponse 골룸_조회_응답을_생성한다() {
-        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", LocalDate.of(2023, 7, 19),
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", LocalDate.of(2023, 8, 1),
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
         return new GoalRoomResponse("골룸", 1, 10, goalRoomNodeResponses, 17);
     }
 
     private GoalRoomCertifiedResponse 로그인시_골룸_조회_응답을_생성한다(final boolean isJoined) {
-        final List<GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
-                new GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", LocalDate.of(2023, 7, 19),
+        final List<co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse> goalRoomNodeResponses = List.of(
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(1L, "로드맵 1주차", LocalDate.of(2023, 7, 19),
                         LocalDate.of(2023, 7, 30), 10),
-                new GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", LocalDate.of(2023, 8, 1),
+                new co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse(2L, "로드맵 2주차", LocalDate.of(2023, 8, 1),
                         LocalDate.of(2023, 8, 5), 2));
         return new GoalRoomCertifiedResponse("골룸", 1, 10, goalRoomNodeResponses, 17, isJoined);
     }

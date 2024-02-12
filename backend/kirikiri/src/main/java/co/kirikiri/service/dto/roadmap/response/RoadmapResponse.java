@@ -1,6 +1,6 @@
 package co.kirikiri.service.dto.roadmap.response;
 
-import co.kirikiri.service.dto.member.response.MemberResponse;
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 

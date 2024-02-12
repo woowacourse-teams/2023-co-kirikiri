@@ -1,7 +1,7 @@
 package co.kirikiri.persistence.roadmap;
 
-import static co.kirikiri.domain.member.QMember.member;
 import static co.kirikiri.domain.roadmap.QRoadmapReview.roadmapReview;
+import static co.kirikiri.member.domain.QMember.member;
 
 import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.domain.roadmap.RoadmapReview;

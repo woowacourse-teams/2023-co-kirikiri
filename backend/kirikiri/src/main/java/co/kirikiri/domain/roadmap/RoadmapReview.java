@@ -1,7 +1,7 @@
 package co.kirikiri.domain.roadmap;
 
-import co.kirikiri.domain.BaseUpdatedTimeEntity;
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.common.entity.BaseUpdatedTimeEntity;
+import co.kirikiri.member.domain.Member;
 import co.kirikiri.domain.roadmap.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

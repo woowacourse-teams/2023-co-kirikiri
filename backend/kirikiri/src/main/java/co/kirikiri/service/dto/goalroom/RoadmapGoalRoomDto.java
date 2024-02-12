@@ -1,8 +1,7 @@
 package co.kirikiri.service.dto.goalroom;
 
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.service.dto.member.MemberDto;
-
+import co.kirikiri.member.service.dto.MemberDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

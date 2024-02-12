@@ -6,11 +6,11 @@ import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIE
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
+import co.kirikiri.auth.service.dto.request.ReissueTokenRequest;
+import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
-import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;

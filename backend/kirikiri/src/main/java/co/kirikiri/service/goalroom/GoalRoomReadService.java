@@ -1,5 +1,9 @@
 package co.kirikiri.service.goalroom;
 
+import co.kirikiri.common.aop.ExceptionConvert;
+import co.kirikiri.common.exception.ForbiddenException;
+import co.kirikiri.common.exception.NotFoundException;
+import co.kirikiri.common.service.FileService;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
@@ -9,18 +13,17 @@ import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.GoalRoomToDos;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.domain.roadmap.RoadmapNode;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.persistence.MemberRepository;
+import co.kirikiri.member.service.dto.MemberDto;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.service.FileService;
-import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberDto;
@@ -34,18 +37,14 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.MemberDto;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -178,7 +177,7 @@ public class GoalRoomReadService {
     private List<CheckFeedDto> makeCheckFeedDtos(final List<CheckFeed> checkFeeds) {
         return checkFeeds.stream()
                 .map(this::makeCheckFeedDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private CheckFeedDto makeCheckFeedDto(final CheckFeed checkFeed) {
