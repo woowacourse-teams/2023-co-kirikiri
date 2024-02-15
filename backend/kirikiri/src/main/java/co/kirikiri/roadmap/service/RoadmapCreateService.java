@@ -145,9 +145,9 @@ public class RoadmapCreateService {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         validateRoadmapCreator(roadmapId, identifier);
         if (!roadmapGoalRoomService.hasGoalRooms(roadmapId)) {
-            roadmapRepository.delete(roadmap);
             roadmapContentRepository.deleteAllByRoadmapId(roadmapId);
             roadmapReviewRepository.deleteAllByRoadmapId(roadmapId);
+            roadmapRepository.delete(roadmap);
             return;
         }
         roadmap.delete();
