@@ -25,6 +25,7 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
+import co.kirikiri.roadmap.service.event.RoadmapDeleteEvent;
 import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
 import co.kirikiri.service.aop.ExceptionConvert;
 import co.kirikiri.service.exception.AuthenticationException;
@@ -145,8 +146,8 @@ public class RoadmapCreateService {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         validateRoadmapCreator(roadmapId, identifier);
         if (!roadmapGoalRoomService.hasGoalRooms(roadmapId)) {
+            applicationEventPublisher.publishEvent(new RoadmapDeleteEvent(roadmap.getId(), "Review"));
             roadmapContentRepository.deleteAllByRoadmapId(roadmapId);
-            roadmapReviewRepository.deleteAllByRoadmapId(roadmapId);
             roadmapRepository.delete(roadmap);
             return;
         }
