@@ -2,8 +2,8 @@ package co.kirikiri.common.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
+import java.lang.reflect.Method;
 
 class CacheKeyGeneratorTest {
 

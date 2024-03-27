@@ -1,8 +1,8 @@
 package co.kirikiri.service;
 
 import co.kirikiri.common.service.NumberGenerator;
-import java.util.Random;
 import org.springframework.stereotype.Component;
+import java.util.Random;
 
 @Component
 public class RandomNumberGenerator implements NumberGenerator {

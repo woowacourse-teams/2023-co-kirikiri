@@ -1,23 +1,16 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_생성하고_아이디를_반환한다;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.십일_후;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.오늘;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_삭제;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import co.kirikiri.service.scheduler.RoadmapScheduler;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.scheduler.RoadmapScheduler;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -65,7 +58,7 @@ class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         roadmapScheduler.deleteRoadmaps();
 
         // then
-        assertThat(roadmapRepository.findAll()).hasSize(0);
+        assertThat(roadmapRepository.findAll()).isEmpty();
     }
 
     @Test

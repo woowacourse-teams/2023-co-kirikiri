@@ -11,7 +11,7 @@ import co.kirikiri.member.domain.MemberProfile;
 import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
-import co.kirikiri.domain.roadmap.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapContent;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
@@ -24,7 +24,7 @@ class GoalRoomPendingMemberTest {
                 new Nickname("nickname"), null,
                 new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content"), member);
+                new RoadmapContent("content", null, null), member);
 
         // when
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom,
@@ -41,7 +41,7 @@ class GoalRoomPendingMemberTest {
                 new Nickname("nickname"), null,
                 new MemberProfile(Gender.FEMALE, "kirikiri1@email.com"));
         final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("goalroom"), new LimitedMemberCount(10),
-                new RoadmapContent("content"), member);
+                new RoadmapContent("content", 1L, null), member);
 
         // when
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom,

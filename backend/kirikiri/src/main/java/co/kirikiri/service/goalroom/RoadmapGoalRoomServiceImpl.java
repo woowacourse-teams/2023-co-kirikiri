@@ -1,0 +1,103 @@
+package co.kirikiri.service.goalroom;
+
+import co.kirikiri.common.aop.ExceptionConvert;
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.mapper.ScrollResponseMapper;
+import co.kirikiri.common.service.FileService;
+import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.service.dto.MemberDto;
+import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
+import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
+import co.kirikiri.roadmap.domain.Roadmap;
+import co.kirikiri.roadmap.service.RoadmapGoalRoomService;
+import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
+import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
+import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
+import co.kirikiri.service.dto.CustomScrollRequest;
+import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomDto;
+import co.kirikiri.service.dto.goalroom.RoadmapGoalRoomScrollDto;
+import co.kirikiri.service.mapper.GoalRoomMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.net.URL;
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+@ExceptionConvert
+public class RoadmapGoalRoomServiceImpl implements RoadmapGoalRoomService {
+
+    private static final int DELETE_AFTER_MONTH = 3;
+
+    private final GoalRoomRepository goalRoomRepository;
+    private final GoalRoomMemberRepository goalRoomMemberRepository;
+    private final FileService fileService;
+
+    @Override
+    public Member findCompletedGoalRoomMember(final Long roadmapId, final String identifier) {
+        return goalRoomMemberRepository.findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(roadmapId,
+                        new Identifier(identifier), GoalRoomStatus.COMPLETED)
+                .orElseThrow(() -> new BadRequestException(
+                        "로드맵에 대해서 완료된 골룸이 존재하지 않습니다. roadmapId = " + roadmapId + " memberIdentifier = " + identifier))
+                .getMember();
+    }
+
+    @Override
+    public boolean hasGoalRooms(final Long roadmapId) {
+        return !findGoalRoomsByRoadmapId(roadmapId).isEmpty();
+    }
+
+    private List<GoalRoom> findGoalRoomsByRoadmapId(final Long roadmapId) {
+        return goalRoomRepository.findByRoadmapId(roadmapId);
+    }
+
+    @Override
+    public RoadmapGoalRoomNumberDto findRoadmapGoalRoomsByRoadmap(final Roadmap roadmap) {
+        return GoalRoomMapper.convertRoadmapGoalRoomDto(findGoalRoomsByRoadmapId(roadmap.getId()));
+    }
+
+    @Override
+    public RoadmapGoalRoomResponses makeRoadmapGoalRoomResponsesByOrderType(final Long roadmapId, final RoadmapGoalRoomsOrderTypeDto orderTypeDto, final CustomScrollRequest scrollRequest) {
+        final RoadmapGoalRoomsOrderType orderType = GoalRoomMapper.convertToGoalRoomOrderType(orderTypeDto);
+        final List<RoadmapGoalRoomDto> roadmapGoalRoomDtos = goalRoomRepository.findGoalRoomsByRoadmapIdAndCond(roadmapId, orderType, scrollRequest.lastId(), scrollRequest.size())
+                .stream()
+                .map(this::makeGoalRoomDto)
+                .toList();
+        final List<RoadmapGoalRoomDto> subDtos = ScrollResponseMapper.getSubResponses(roadmapGoalRoomDtos, scrollRequest.size());
+        final boolean hasNext = ScrollResponseMapper.hasNext(roadmapGoalRoomDtos.size(), scrollRequest.size());
+
+        return GoalRoomMapper.convertToRoadmapGoalRoomResponses(new RoadmapGoalRoomScrollDto(subDtos, hasNext));
+    }
+
+    private RoadmapGoalRoomDto makeGoalRoomDto(final GoalRoom goalRoom) {
+        final Member goalRoomLeader = goalRoom.findGoalRoomLeader();
+        return new RoadmapGoalRoomDto(goalRoom.getId(), goalRoom.getName().getValue(), goalRoom.getStatus(),
+                goalRoom.getCurrentMemberCount(), goalRoom.getLimitedMemberCount().getValue(),
+                goalRoom.getCreatedAt(), goalRoom.getStartDate(),
+                goalRoom.getEndDate(), makeMemberDto(goalRoomLeader));
+    }
+
+    private MemberDto makeMemberDto(final Member creator) {
+        final URL url = fileService.generateUrl(creator.getImage().getServerFilePath(), HttpMethod.GET);
+        return new MemberDto(creator.getId(), creator.getNickname().getValue(), url.toExternalForm());
+    }
+
+    @Override
+    @Transactional
+    public boolean canDeleteGoalRoomsInRoadmap(final Long roadmapId) {
+        final List<GoalRoom> goalRooms = goalRoomRepository.findByRoadmapId(roadmapId);
+        return canDeleteRoadmapBasedOnGoalRooms(goalRooms);
+    }
+
+    private boolean canDeleteRoadmapBasedOnGoalRooms(final List<GoalRoom> goalRooms) {
+        return goalRooms.stream()
+                .allMatch(goalRoom -> goalRoom.isCompleted() && goalRoom.isCompletedAfterMonths(DELETE_AFTER_MONTH));
+    }
+}

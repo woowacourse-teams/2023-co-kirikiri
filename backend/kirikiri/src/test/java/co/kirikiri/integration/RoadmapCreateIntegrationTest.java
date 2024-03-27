@@ -1,37 +1,32 @@
 package co.kirikiri.integration;
 
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
-import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
-import static co.kirikiri.integration.fixture.CommonFixture.아이디를_반환한다;
-import static co.kirikiri.integration.fixture.CommonFixture.응답_상태_코드_검증;
+import static co.kirikiri.integration.fixture.CommonFixture.*;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_삭제;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_카테고리를_생성한다;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.요청을_받는_이미지가_포함된_로드맵_생성;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.member.service.dto.request.GenderType;
 import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
+import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
+import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
 import co.kirikiri.service.dto.ErrorResponse;
-import co.kirikiri.service.dto.roadmap.request.RoadmapCategorySaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapDifficultyType;
-import co.kirikiri.service.dto.roadmap.request.RoadmapNodeSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapSaveRequest;
-import co.kirikiri.service.dto.roadmap.request.RoadmapTagSaveRequest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 class RoadmapCreateIntegrationTest extends InitIntegrationTest {
 

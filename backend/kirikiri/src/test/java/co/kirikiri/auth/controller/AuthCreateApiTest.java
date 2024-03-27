@@ -6,24 +6,21 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.auth.service.AuthService;
 import co.kirikiri.auth.service.NaverOauthService;
-import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.auth.service.dto.request.ReissueTokenRequest;
 import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
+import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.common.exception.AuthenticationException;
 import co.kirikiri.controller.helper.ControllerTestHelper;
 import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
 import co.kirikiri.service.dto.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import java.util.List;
 
 @WebMvcTest(AuthController.class)
 class AuthCreateApiTest extends ControllerTestHelper {

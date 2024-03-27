@@ -13,9 +13,9 @@ import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
 import co.kirikiri.persistence.helper.RepositoryTest;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import java.util.Optional;
 
 @RepositoryTest
 class MemberRepositoryTest {

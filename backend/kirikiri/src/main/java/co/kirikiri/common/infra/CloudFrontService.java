@@ -1,11 +1,11 @@
 package co.kirikiri.common.infra;
 
 import co.kirikiri.common.exception.ServerException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Service
 @RequiredArgsConstructor

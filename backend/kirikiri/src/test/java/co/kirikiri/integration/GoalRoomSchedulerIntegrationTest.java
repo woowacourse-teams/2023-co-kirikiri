@@ -3,17 +3,7 @@ package co.kirikiri.integration;
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
 import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
 import static co.kirikiri.integration.fixture.CommonFixture.LOCATION;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_생성;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸_참가_요청;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_시작한다;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.기본_골룸_생성;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.사용자의_특정_골룸_정보를_조회한다;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.십일_후;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.오늘;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.이십일_후;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
@@ -29,14 +19,14 @@ import co.kirikiri.member.service.dto.request.GenderType;
 import co.kirikiri.member.service.dto.request.MemberJoinRequest;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import co.kirikiri.service.scheduler.GoalRoomScheduler;
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
 class GoalRoomSchedulerIntegrationTest extends InitIntegrationTest {
 

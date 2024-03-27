@@ -1,12 +1,6 @@
 package co.kirikiri.integration;
 
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_GENDER_TYPE;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_NICKNAME;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_특정_사용자의_정보_조회;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.integration.helper.InitIntegrationTest;

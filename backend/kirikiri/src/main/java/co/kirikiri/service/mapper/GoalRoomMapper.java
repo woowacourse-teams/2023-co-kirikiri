@@ -16,6 +16,10 @@ import co.kirikiri.member.service.dto.MemberDto;
 import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
+import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
+import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
+import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.CheckFeedDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomCheckFeedDto;
@@ -43,19 +47,15 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
 import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomForListResponse;
 import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
-import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRoomMapper {
@@ -152,7 +152,7 @@ public class GoalRoomMapper {
     private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(
             final RoadmapGoalRoomDto roadmapGoalRoomDto) {
         return new RoadmapGoalRoomResponse(roadmapGoalRoomDto.goalRoomId(), roadmapGoalRoomDto.name(),
-                roadmapGoalRoomDto.status(), roadmapGoalRoomDto.currentMemberCount(),
+                roadmapGoalRoomDto.status().name(), roadmapGoalRoomDto.currentMemberCount(),
                 roadmapGoalRoomDto.limitedMemberCount(),
                 roadmapGoalRoomDto.createdAt(), roadmapGoalRoomDto.startDate(),
                 roadmapGoalRoomDto.endDate(), convertToMemberResponse(roadmapGoalRoomDto.goalRoomLeader()));

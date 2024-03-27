@@ -1,6 +1,7 @@
 package co.kirikiri.service.goalroom;
 
 import co.kirikiri.common.aop.ExceptionConvert;
+import co.kirikiri.common.exception.AuthenticationException;
 import co.kirikiri.common.exception.BadRequestException;
 import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.common.service.FilePathGenerator;
@@ -16,9 +17,6 @@ import co.kirikiri.domain.goalroom.GoalRoomRoadmapNodes;
 import co.kirikiri.domain.goalroom.GoalRoomToDo;
 import co.kirikiri.domain.goalroom.GoalRoomToDoCheck;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapNode;
 import co.kirikiri.member.domain.Member;
 import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.persistence.MemberRepository;
@@ -26,7 +24,11 @@ import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
-import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
+import co.kirikiri.roadmap.domain.Roadmap;
+import co.kirikiri.roadmap.domain.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.service.dto.FileInformation;
 import co.kirikiri.service.dto.goalroom.GoalRoomCreateDto;
 import co.kirikiri.service.dto.goalroom.GoalRoomRoadmapNodeDto;
@@ -35,14 +37,14 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.service.mapper.GoalRoomMapper;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -54,6 +56,7 @@ public class GoalRoomCreateService {
     private final FilePathGenerator filePathGenerator;
     private final MemberRepository memberRepository;
     private final GoalRoomRepository goalRoomRepository;
+    private final RoadmapRepository roadmapRepository;
     private final RoadmapContentRepository roadmapContentRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
     private final GoalRoomToDoCheckRepository goalRoomToDoCheckRepository;
@@ -75,15 +78,20 @@ public class GoalRoomCreateService {
     }
 
     private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
-        return roadmapContentRepository.findByIdWithRoadmap(roadmapContentId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵입니다."));
+        return roadmapContentRepository.findById(roadmapContentId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵 컨텐츠입니다."));
     }
 
     private void validateDeletedRoadmap(final RoadmapContent roadmapContent) {
-        final Roadmap roadmap = roadmapContent.getRoadmap();
+        final Roadmap roadmap = findRoadmapById(roadmapContent.getRoadmapId());
         if (roadmap.isDeleted()) {
             throw new BadRequestException("삭제된 로드맵에 대해 골룸을 생성할 수 없습니다.");
         }
+    }
+
+    private Roadmap findRoadmapById(final Long roadmapId) {
+        return roadmapRepository.findById(roadmapId)
+                .orElseThrow(() -> new AuthenticationException("존재하지 않는 로드맵입니다."));
     }
 
     private void validateNodeSizeEqual(final int roadmapNodesSize, final int goalRoomRoadmapNodeDtosSize) {

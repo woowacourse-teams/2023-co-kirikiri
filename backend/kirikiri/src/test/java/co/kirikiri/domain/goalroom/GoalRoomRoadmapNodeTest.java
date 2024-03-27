@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import java.time.LocalDate;
+import co.kirikiri.roadmap.domain.RoadmapNode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import java.time.LocalDate;
 
 class GoalRoomRoadmapNodeTest {
 

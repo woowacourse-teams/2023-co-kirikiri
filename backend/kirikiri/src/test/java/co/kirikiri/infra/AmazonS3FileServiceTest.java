@@ -15,9 +15,6 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.Protocol;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import java.io.FileInputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +22,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import java.io.FileInputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @ExtendWith(MockitoExtension.class)
 class AmazonS3FileServiceTest {

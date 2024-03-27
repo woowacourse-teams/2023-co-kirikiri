@@ -12,10 +12,10 @@ import co.kirikiri.member.domain.Member;
 import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Password;
 import co.kirikiri.member.persistence.MemberRepository;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

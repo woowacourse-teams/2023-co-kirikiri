@@ -11,7 +11,6 @@ import co.kirikiri.member.domain.MemberProfile;
 import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class RefreshTokenRepositoryTest {
@@ -36,14 +36,6 @@ class RefreshTokenRepositoryTest {
 
     private RefreshTokenRepository refreshTokenRepository;
 
-    @BeforeEach
-    void init() {
-        when(redisTemplate.opsForValue())
-                .thenReturn(valueOperations);
-        refreshTokenRepository = new RefreshTokenRepositoryImpl(redisTemplate, refreshTokenValidityInSeconds);
-    }
-
-
     @BeforeAll
     static void setUp() {
         final Identifier identifier = new Identifier("identifier1");
@@ -53,6 +45,13 @@ class RefreshTokenRepositoryTest {
         final String email = "kirikiri1@email.com";
         final MemberProfile memberProfile = new MemberProfile(Gender.MALE, email);
         member = new Member(identifier, encryptedPassword, nickname, null, memberProfile);
+    }
+
+    @BeforeEach
+    void init() {
+        when(redisTemplate.opsForValue())
+                .thenReturn(valueOperations);
+        refreshTokenRepository = new RefreshTokenRepositoryImpl(redisTemplate, refreshTokenValidityInSeconds);
     }
 
     @Test

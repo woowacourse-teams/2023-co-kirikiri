@@ -2,12 +2,11 @@ package co.kirikiri.auth.controller;
 
 import co.kirikiri.auth.service.AuthService;
 import co.kirikiri.auth.service.NaverOauthService;
-import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.auth.service.dto.request.ReissueTokenRequest;
 import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
+import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import jakarta.validation.Valid;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")

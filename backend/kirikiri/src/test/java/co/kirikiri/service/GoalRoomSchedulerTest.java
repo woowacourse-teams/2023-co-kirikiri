@@ -5,9 +5,7 @@ import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.domain.goalroom.GoalRoom;
@@ -25,28 +23,29 @@ import co.kirikiri.member.domain.MemberProfile;
 import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapContents;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
-import co.kirikiri.domain.roadmap.RoadmapNodeImages;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomPendingMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.roadmap.domain.Roadmap;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
+import co.kirikiri.roadmap.domain.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapDifficulty;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.domain.RoadmapNodeImage;
+import co.kirikiri.roadmap.domain.RoadmapNodeImages;
+import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.domain.RoadmapTags;
 import co.kirikiri.service.scheduler.GoalRoomScheduler;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomSchedulerTest {
@@ -59,10 +58,10 @@ class GoalRoomSchedulerTest {
     private GoalRoomRepository goalRoomRepository;
 
     @Mock
-    private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
-    
-    @Mock
     private GoalRoomMemberRepository goalRoomMemberRepository;
+
+    @Mock
+    private GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     @InjectMocks
     private GoalRoomScheduler goalRoomScheduler;
@@ -72,11 +71,10 @@ class GoalRoomSchedulerTest {
         // given
         final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "010-1234-5678");
         final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId());
 
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
-        final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
+        final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, roadmapContent, 10);
+        final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, roadmapContent, 10);
 
         final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "kirikiri@email.com");
         final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
@@ -108,11 +106,10 @@ class GoalRoomSchedulerTest {
         // given
         final Member creator = 사용자를_생성한다(1L, "cokirikiri", "password1!", "코끼리", "kirikiri@email.com");
         final Roadmap roadmap = 로드맵을_생성한다(creator);
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId());
 
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, targetRoadmapContent, 10);
-        final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, targetRoadmapContent, 10);
+        final GoalRoom goalRoom1 = 골룸을_생성한다(1L, creator, roadmapContent, 10);
+        final GoalRoom goalRoom2 = 골룸을_생성한다(2L, creator, roadmapContent, 10);
 
         final Member follower1 = 사용자를_생성한다(2L, "identifier1", "password2!", "name1", "kirikiri@email.com");
         final Member follower2 = 사용자를_생성한다(3L, "identifier2", "password3!", "name2", "kirikiri@email.com");
@@ -147,11 +144,13 @@ class GoalRoomSchedulerTest {
 
     private Roadmap 로드맵을_생성한다(final Member creator) {
         final RoadmapCategory category = new RoadmapCategory("게임");
+        return new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
+                creator.getId(), category, new RoadmapTags(new ArrayList<>()));
+    }
+
+    private RoadmapContent 로드맵_본문을_생성한다(final Long roadmapId) {
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
-        roadmap.addContent(roadmapContent);
-        return roadmap;
+        return new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(roadmapNodes));
     }
 
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {
@@ -159,12 +158,6 @@ class GoalRoomSchedulerTest {
         roadmapNode1.addImages(new RoadmapNodeImages(노드_이미지들을_생성한다()));
         final RoadmapNode roadmapNode2 = new RoadmapNode("로드맵 2주차", "로드맵 2주차 내용");
         return List.of(roadmapNode1, roadmapNode2);
-    }
-
-    private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
-        return roadmapContent;
     }
 
     private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {

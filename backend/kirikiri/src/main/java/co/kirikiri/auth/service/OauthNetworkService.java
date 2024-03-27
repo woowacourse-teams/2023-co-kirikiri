@@ -1,7 +1,7 @@
 package co.kirikiri.auth.service;
 
-import java.util.Map;
 import org.springframework.http.ResponseEntity;
+import java.util.Map;
 
 public interface OauthNetworkService {
 

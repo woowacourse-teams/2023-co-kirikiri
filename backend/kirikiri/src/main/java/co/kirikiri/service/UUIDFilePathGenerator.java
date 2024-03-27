@@ -3,10 +3,10 @@ package co.kirikiri.service;
 import co.kirikiri.common.exception.BadRequestException;
 import co.kirikiri.common.service.FilePathGenerator;
 import co.kirikiri.common.type.ImageDirType;
+import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UUIDFilePathGenerator implements FilePathGenerator {

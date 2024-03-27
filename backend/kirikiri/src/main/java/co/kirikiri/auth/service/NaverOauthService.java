@@ -3,23 +3,23 @@ package co.kirikiri.auth.service;
 import co.kirikiri.auth.service.dto.NaverMemberProfileDto;
 import co.kirikiri.auth.service.dto.NaverMemberProfileResponseDto;
 import co.kirikiri.auth.service.dto.NaverOauthTokenDto;
-import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
+import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.auth.service.mapper.OauthMapper;
 import co.kirikiri.member.domain.Member;
 import co.kirikiri.member.persistence.MemberRepository;
 import co.kirikiri.member.service.MemberService;
 import co.kirikiri.member.service.dto.OauthMemberJoinDto;
 import co.kirikiri.member.service.dto.request.GenderType;
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

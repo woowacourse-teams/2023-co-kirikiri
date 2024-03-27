@@ -1,11 +1,6 @@
 package co.kirikiri.integration.helper;
 
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_생성하고_아이디를_반환한다;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.십일_후;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.오늘;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static co.kirikiri.integration.helper.InitIntegrationTest.기본_로그인_토큰;
 
@@ -23,25 +18,24 @@ import co.kirikiri.member.domain.vo.Password;
 import co.kirikiri.member.service.dto.response.MemberInformationResponse;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class TestTransactionService {
 
-    @PersistenceContext
-    private EntityManager em;
-
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
+    @PersistenceContext
+    private EntityManager em;
 
     public TestTransactionService(final GoalRoomRepository goalRoomRepository,
                                   final GoalRoomMemberRepository goalRoomMemberRepository) {

@@ -2,11 +2,11 @@ package co.kirikiri.persistence.goalroom;
 
 import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
 import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
-import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
 import static co.kirikiri.member.domain.QMember.member;
 import static co.kirikiri.member.domain.QMemberImage.memberImage;
 import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.ACCOMPLISHMENT_RATE;
 import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.JOINED_ASC;
+import static co.kirikiri.roadmap.domain.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoomMember;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
@@ -37,7 +37,7 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(goalRoomMember.member, member)
                 .fetchJoin()
                 .where(
-                        goalRoom.roadmapContent.roadmap.id.eq(roadmapId),
+                        goalRoom.roadmapContent.roadmapId.eq(roadmapId),
                         member.identifier.eq(identifier),
                         goalRoom.status.eq(status))
                 .fetchOne());

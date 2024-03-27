@@ -3,10 +3,10 @@ package co.kirikiri.domain.goalroom.vo;
 import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

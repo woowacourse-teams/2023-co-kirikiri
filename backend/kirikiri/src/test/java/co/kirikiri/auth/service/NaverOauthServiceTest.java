@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 import co.kirikiri.auth.service.dto.NaverMemberProfileDto;
 import co.kirikiri.auth.service.dto.NaverMemberProfileResponseDto;
 import co.kirikiri.auth.service.dto.NaverOauthTokenDto;
-import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
+import co.kirikiri.auth.service.dto.response.OauthRedirectResponse;
 import co.kirikiri.member.domain.Gender;
 import co.kirikiri.member.domain.Member;
 import co.kirikiri.member.domain.MemberProfile;
@@ -17,8 +17,6 @@ import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.persistence.MemberRepository;
 import co.kirikiri.member.service.MemberService;
-import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +25,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class NaverOauthServiceTest {

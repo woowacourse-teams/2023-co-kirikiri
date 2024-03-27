@@ -5,12 +5,11 @@ import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
 import static co.kirikiri.domain.goalroom.QGoalRoomRoadmapNode.goalRoomRoadmapNode;
 import static co.kirikiri.domain.goalroom.QGoalRoomToDo.goalRoomToDo;
-import static co.kirikiri.domain.roadmap.QRoadmapContent.roadmapContent;
+import static co.kirikiri.roadmap.domain.QRoadmapContent.roadmapContent;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.member.domain.Member;
-import co.kirikiri.domain.roadmap.Roadmap;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import com.querydsl.core.types.OrderSpecifier;
@@ -59,17 +58,16 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findGoalRoomsByRoadmapAndCond(final Roadmap roadmap,
-                                                        final RoadmapGoalRoomsOrderType orderType,
-                                                        final Long lastId,
-                                                        final int pageSize) {
+    public List<GoalRoom> findGoalRoomsByRoadmapIdAndCond(final Long roadmapId,
+                                                          final RoadmapGoalRoomsOrderType orderType,
+                                                          final Long lastId,
+                                                          final int pageSize) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .on(roadmapContent.roadmap.eq(roadmap))
+                .on(roadmapContent.roadmapId.eq(roadmapId))
                 .where(
                         statusCond(orderType),
-                        lessThanLastId(lastId, orderType),
-                        roadmapCond(roadmap))
+                        lessThanLastId(lastId, orderType))
                 .limit(pageSize + LIMIT_OFFSET)
                 .orderBy(sortCond(orderType))
                 .fetch();
@@ -117,10 +115,10 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
     }
 
     @Override
-    public List<GoalRoom> findByRoadmap(final Roadmap roadmap) {
+    public List<GoalRoom> findByRoadmapId(final Long roadmapId) {
         return selectFrom(goalRoom)
                 .innerJoin(goalRoom.roadmapContent, roadmapContent)
-                .where(roadmapContent.roadmap.eq(roadmap))
+                .where(roadmapContent.roadmapId.eq(roadmapId))
                 .fetch();
     }
 
@@ -171,10 +169,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
                         .from(goalRoom)
                         .where(goalRoom.id.eq(lastId))
         );
-    }
-
-    private BooleanExpression roadmapCond(final Roadmap roadmap) {
-        return goalRoom.roadmapContent.roadmap.eq(roadmap);
     }
 
     private BooleanExpression equalOrEarlierStartDateThan(final LocalDate date) {

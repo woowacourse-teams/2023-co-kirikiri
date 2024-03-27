@@ -1,10 +1,10 @@
 package co.kirikiri.auth.persistence;
 
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Repository
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {

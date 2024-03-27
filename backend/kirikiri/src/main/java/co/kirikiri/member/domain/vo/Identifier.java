@@ -2,9 +2,9 @@ package co.kirikiri.member.domain.vo;
 
 import co.kirikiri.member.domain.exception.MemberException;
 import jakarta.persistence.Column;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Identifier {

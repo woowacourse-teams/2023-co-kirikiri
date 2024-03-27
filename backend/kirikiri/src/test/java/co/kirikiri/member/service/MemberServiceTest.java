@@ -25,9 +25,6 @@ import co.kirikiri.member.service.dto.request.GenderType;
 import co.kirikiri.member.service.dto.request.MemberJoinRequest;
 import co.kirikiri.member.service.dto.response.MemberInformationForPublicResponse;
 import co.kirikiri.member.service.dto.response.MemberInformationResponse;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,6 +33,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
