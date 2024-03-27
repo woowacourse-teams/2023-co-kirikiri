@@ -2,11 +2,10 @@ package co.kirikiri.persistence.goalroom;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.member.vo.Identifier;
+import co.kirikiri.member.domain.vo.Identifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
 

@@ -1,8 +1,9 @@
 package co.kirikiri.service.dto.member.request;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import co.kirikiri.member.service.dto.request.GenderType;
+import org.junit.jupiter.api.Test;
 
 class GenderTypeTest {
 

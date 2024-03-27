@@ -1,13 +1,25 @@
 package co.kirikiri.roadmap.service;
 
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.persistence.member.MemberRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+
+import co.kirikiri.common.exception.AuthenticationException;
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ConflictException;
+import co.kirikiri.common.exception.ForbiddenException;
+import co.kirikiri.common.exception.NotFoundException;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import co.kirikiri.member.persistence.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -27,29 +39,16 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
-import co.kirikiri.service.exception.AuthenticationException;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ConflictException;
-import co.kirikiri.service.exception.ForbiddenException;
-import co.kirikiri.service.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateServiceTest {

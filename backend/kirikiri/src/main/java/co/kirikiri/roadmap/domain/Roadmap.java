@@ -1,6 +1,6 @@
 package co.kirikiri.roadmap.domain;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
+import co.kirikiri.common.entity.BaseCreatedTimeEntity;
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -11,12 +11,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-
 import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Roadmap extends BaseCreatedTimeEntity {
 
     private static final int TITLE_MIN_LENGTH = 1;

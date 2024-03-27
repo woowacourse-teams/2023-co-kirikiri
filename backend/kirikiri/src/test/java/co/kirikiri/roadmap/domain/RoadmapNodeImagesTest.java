@@ -1,13 +1,12 @@
 package co.kirikiri.roadmap.domain;
 
-import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.roadmap.domain.exception.RoadmapException;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import co.kirikiri.common.type.ImageContentType;
+import co.kirikiri.roadmap.domain.exception.RoadmapException;
+import org.junit.jupiter.api.Test;
+import java.util.List;
 
 class RoadmapNodeImagesTest {
 

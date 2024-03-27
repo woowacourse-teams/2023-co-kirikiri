@@ -1,6 +1,6 @@
 package co.kirikiri.roadmap.domain;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.common.entity.BaseEntity;
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -16,15 +16,12 @@ public class RoadmapNode extends BaseEntity {
     private static final int TITLE_MAX_LENGTH = 40;
     private static final int CONTENT_MIN_LENGTH = 1;
     private static final int CONTENT_MAX_LENGTH = 2000;
-
-    @Column(length = 50, nullable = false)
-    private String title;
-
-    @Column(length = 2200, nullable = false)
-    private String content;
-
     @Embedded
     private final RoadmapNodeImages roadmapNodeImages = new RoadmapNodeImages();
+    @Column(length = 50, nullable = false)
+    private String title;
+    @Column(length = 2200, nullable = false)
+    private String content;
 
     public RoadmapNode(final String title, final String content) {
         this(null, title, content);

@@ -1,6 +1,6 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseEntity;
+import co.kirikiri.common.entity.BaseEntity;
 import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.Period;
 import co.kirikiri.roadmap.domain.RoadmapNode;
@@ -13,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import java.time.LocalDate;
 
 @Entity

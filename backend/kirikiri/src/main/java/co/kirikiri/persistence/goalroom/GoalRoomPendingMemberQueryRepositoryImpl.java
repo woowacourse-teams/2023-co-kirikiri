@@ -1,16 +1,15 @@
 package co.kirikiri.persistence.goalroom;
 
+import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
+import static co.kirikiri.member.domain.QMember.member;
+import static co.kirikiri.member.domain.QMemberImage.memberImage;
+import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.JOINED_DESC;
+
 import co.kirikiri.domain.goalroom.GoalRoomPendingMember;
 import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType;
 import com.querydsl.core.types.OrderSpecifier;
-
 import java.util.List;
-
-import static co.kirikiri.domain.goalroom.QGoalRoomPendingMember.goalRoomPendingMember;
-import static co.kirikiri.domain.member.QMember.member;
-import static co.kirikiri.domain.member.QMemberImage.memberImage;
-import static co.kirikiri.persistence.goalroom.dto.GoalRoomMemberSortType.JOINED_DESC;
 
 public class GoalRoomPendingMemberQueryRepositoryImpl extends QuerydslRepositorySupporter
         implements GoalRoomPendingMemberQueryRepository {

@@ -3,7 +3,6 @@ package co.kirikiri.service.dto.goalroom.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 
 public record GoalRoomTodoRequest(

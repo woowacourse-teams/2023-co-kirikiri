@@ -1,6 +1,6 @@
 package co.kirikiri.roadmap.domain;
 
-import co.kirikiri.domain.BaseUpdatedTimeEntity;
+import co.kirikiri.common.entity.BaseUpdatedTimeEntity;
 import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.Optional;
 
 @Entity

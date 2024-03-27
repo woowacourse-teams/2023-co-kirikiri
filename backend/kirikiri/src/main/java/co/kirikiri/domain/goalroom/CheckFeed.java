@@ -1,7 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseCreatedTimeEntity;
-import co.kirikiri.domain.ImageContentType;
+import co.kirikiri.common.entity.BaseCreatedTimeEntity;
+import co.kirikiri.common.type.ImageContentType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity

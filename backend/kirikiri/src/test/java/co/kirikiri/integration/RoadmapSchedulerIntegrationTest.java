@@ -1,5 +1,9 @@
 package co.kirikiri.integration;
 
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
@@ -8,14 +12,9 @@ import co.kirikiri.roadmap.service.scheduler.RoadmapScheduler;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
 

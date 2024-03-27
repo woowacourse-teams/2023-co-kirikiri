@@ -2,7 +2,6 @@ package co.kirikiri.roadmap.persistence;
 
 import co.kirikiri.roadmap.domain.RoadmapContent;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
 

@@ -1,11 +1,12 @@
 package co.kirikiri.roadmap.service.mapper;
 
-import co.kirikiri.common.dto.FileInformation;
+import co.kirikiri.common.exception.ServerException;
 import co.kirikiri.common.mapper.ScrollResponseMapper;
+import co.kirikiri.member.service.dto.MemberDto;
+import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
-import co.kirikiri.roadmap.service.dto.MemberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapCategoryDto;
 import co.kirikiri.roadmap.service.dto.RoadmapContentDto;
 import co.kirikiri.roadmap.service.dto.RoadmapDto;
@@ -25,7 +26,6 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapOrderTypeRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
-import co.kirikiri.roadmap.service.dto.response.MemberResponse;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapCategoryResponse;
@@ -36,11 +36,10 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.service.dto.FileInformation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;

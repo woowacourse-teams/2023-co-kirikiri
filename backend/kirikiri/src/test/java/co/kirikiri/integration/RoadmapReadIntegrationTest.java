@@ -1,6 +1,9 @@
 package co.kirikiri.integration;
 
-import co.kirikiri.common.dto.ErrorResponse;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import co.kirikiri.integration.helper.InitIntegrationTest;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
@@ -13,18 +16,14 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapCategoryResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.service.dto.ErrorResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
 import java.io.IOException;
 import java.util.List;
-
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoadmapReadIntegrationTest extends InitIntegrationTest {
 

@@ -1,10 +1,10 @@
 package co.kirikiri.roadmap.domain;
 
-import co.kirikiri.roadmap.domain.exception.RoadmapException;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import co.kirikiri.roadmap.domain.exception.RoadmapException;
+import org.junit.jupiter.api.Test;
 
 class RoadmapContentTest {
 

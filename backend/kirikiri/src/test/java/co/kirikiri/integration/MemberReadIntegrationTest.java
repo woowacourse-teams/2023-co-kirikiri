@@ -1,20 +1,20 @@
 package co.kirikiri.integration;
 
-import co.kirikiri.common.dto.ErrorResponse;
-import co.kirikiri.domain.member.Gender;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationForPublicResponse;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.service.dto.ErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
-import static co.kirikiri.integration.fixture.MemberAPIFixture.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberReadIntegrationTest extends InitIntegrationTest {
 

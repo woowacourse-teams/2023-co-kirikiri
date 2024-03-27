@@ -1,10 +1,10 @@
 package co.kirikiri.controller.helper;
 
-import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.restdocs.snippet.Attributes;
-
 import static co.kirikiri.controller.helper.RestDocsHelper.RESTRICT;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.snippet.Attributes;
 
 public class FieldDescriptionHelper {
 

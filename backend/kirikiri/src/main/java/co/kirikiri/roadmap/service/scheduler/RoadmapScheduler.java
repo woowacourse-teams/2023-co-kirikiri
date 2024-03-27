@@ -1,18 +1,17 @@
 package co.kirikiri.roadmap.service.scheduler;
 
+import co.kirikiri.common.aop.ExceptionConvert;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapStatus;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.service.RoadmapGoalRoomService;
 import co.kirikiri.roadmap.service.event.RoadmapDeleteEvent;
-import co.kirikiri.service.aop.ExceptionConvert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Component

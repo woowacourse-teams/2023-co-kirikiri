@@ -1,7 +1,6 @@
 package co.kirikiri.roadmap.persistence;
 
 import co.kirikiri.roadmap.domain.RoadmapReview;
-
 import java.util.List;
 
 public interface RoadmapReviewQueryRepository {

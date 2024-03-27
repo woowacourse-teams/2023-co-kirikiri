@@ -2,7 +2,6 @@ package co.kirikiri.common.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

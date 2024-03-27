@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 

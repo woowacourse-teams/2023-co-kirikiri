@@ -1,11 +1,10 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity

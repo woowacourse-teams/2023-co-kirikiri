@@ -1,14 +1,13 @@
 package co.kirikiri.roadmap.domain;
 
-import co.kirikiri.roadmap.domain.exception.RoadmapException;
-import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import co.kirikiri.roadmap.domain.exception.RoadmapException;
+import co.kirikiri.roadmap.domain.vo.RoadmapTagName;
+import org.junit.jupiter.api.Test;
+import java.util.List;
 
 class RoadmapTagsTest {
 

@@ -1,6 +1,13 @@
 package co.kirikiri.roadmap.service;
 
-import co.kirikiri.common.dto.FileInformation;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.ServerException;
+import co.kirikiri.common.service.FilePathGenerator;
+import co.kirikiri.common.service.FileService;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -15,10 +22,7 @@ import co.kirikiri.roadmap.service.dto.RoadmapSaveDto;
 import co.kirikiri.roadmap.service.dto.RoadmapTagSaveDto;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
-import co.kirikiri.service.FilePathGenerator;
-import co.kirikiri.service.FileService;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.ServerException;
+import co.kirikiri.service.dto.FileInformation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,15 +30,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateEventListenerTest {

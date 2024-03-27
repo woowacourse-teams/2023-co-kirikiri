@@ -1,9 +1,8 @@
 package co.kirikiri.integration.helper;
 
-import co.kirikiri.common.dto.FileInformation;
-import co.kirikiri.service.FileService;
+import co.kirikiri.common.service.FileService;
+import co.kirikiri.service.dto.FileInformation;
 import org.springframework.http.HttpMethod;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 

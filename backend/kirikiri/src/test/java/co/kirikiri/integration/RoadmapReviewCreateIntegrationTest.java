@@ -1,31 +1,30 @@
 package co.kirikiri.integration;
 
-import co.kirikiri.common.dto.ErrorResponse;
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
-import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import io.restassured.common.mapper.TypeRef;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-
-import java.io.IOException;
-import java.util.List;
-
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
 import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.*;
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import co.kirikiri.auth.service.dto.request.LoginRequest;
+import co.kirikiri.domain.goalroom.GoalRoom;
+import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
+import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import java.io.IOException;
+import java.util.List;
 
 class RoadmapReviewCreateIntegrationTest extends InitIntegrationTest {
 

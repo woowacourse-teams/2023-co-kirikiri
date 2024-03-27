@@ -4,7 +4,6 @@ import co.kirikiri.roadmap.domain.exception.RoadmapException;
 import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

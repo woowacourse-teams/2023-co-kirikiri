@@ -1,10 +1,9 @@
 package co.kirikiri.integration.helper;
 
-import co.kirikiri.persistence.auth.RefreshTokenRepository;
-
-import java.util.Optional;
-
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIER;
+
+import co.kirikiri.auth.persistence.RefreshTokenRepository;
+import java.util.Optional;
 
 public class TestRefreshTokenRepository implements RefreshTokenRepository {
 

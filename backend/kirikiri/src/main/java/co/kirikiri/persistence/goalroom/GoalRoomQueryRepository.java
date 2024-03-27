@@ -2,9 +2,8 @@ package co.kirikiri.persistence.goalroom;
 
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomStatus;
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.member.domain.Member;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

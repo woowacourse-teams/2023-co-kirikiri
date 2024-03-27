@@ -1,11 +1,11 @@
 package co.kirikiri.roadmap.service;
 
-import co.kirikiri.common.dto.CustomScrollRequest;
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.member.domain.Member;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
+import co.kirikiri.service.dto.CustomScrollRequest;
 
 public interface RoadmapGoalRoomService {
 

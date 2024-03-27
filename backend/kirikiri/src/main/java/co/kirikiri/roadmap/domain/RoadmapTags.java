@@ -10,7 +10,6 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

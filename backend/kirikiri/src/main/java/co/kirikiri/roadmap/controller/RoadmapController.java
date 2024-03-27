@@ -1,6 +1,5 @@
 package co.kirikiri.roadmap.controller;
 
-import co.kirikiri.common.dto.CustomScrollRequest;
 import co.kirikiri.common.interceptor.Authenticated;
 import co.kirikiri.common.resolver.MemberIdentifier;
 import co.kirikiri.roadmap.service.RoadmapCreateService;
@@ -17,6 +16,7 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.net.URI;
 import java.util.List;
 

@@ -1,7 +1,14 @@
 package co.kirikiri.integration;
 
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.사용자를_추가하고_토큰을_조회한다;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
@@ -13,18 +20,10 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapForListResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.util.List;
-
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.사용자를_추가하고_토큰을_조회한다;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.요청을_받는_사용자_자신의_정보_조회_요청;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class RoadmapReadOrderIntegrationTest extends InitIntegrationTest {
 

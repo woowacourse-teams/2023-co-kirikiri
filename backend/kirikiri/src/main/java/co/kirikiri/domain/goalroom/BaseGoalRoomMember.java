@@ -1,7 +1,7 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseEntity;
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.common.entity.BaseEntity;
+import co.kirikiri.member.domain.Member;
 import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -43,13 +42,13 @@ public abstract class BaseGoalRoomMember extends BaseEntity {
     @QueryInit(value = {"identifier"})
     protected Member member;
 
-    public BaseGoalRoomMember(final GoalRoomRole role, final LocalDateTime joinedAt,
-                              final GoalRoom goalRoom, final Member member) {
+    protected BaseGoalRoomMember(final GoalRoomRole role, final LocalDateTime joinedAt,
+                                 final GoalRoom goalRoom, final Member member) {
         this(null, role, joinedAt, goalRoom, member);
     }
 
-    public BaseGoalRoomMember(final Long id, final GoalRoomRole role, final LocalDateTime joinedAt,
-                              final GoalRoom goalRoom, final Member member) {
+    protected BaseGoalRoomMember(final Long id, final GoalRoomRole role, final LocalDateTime joinedAt,
+                                 final GoalRoom goalRoom, final Member member) {
         this.id = id;
         this.role = role;
         this.joinedAt = joinedAt;

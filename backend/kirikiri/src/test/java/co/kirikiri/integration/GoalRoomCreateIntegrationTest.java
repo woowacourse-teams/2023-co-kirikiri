@@ -1,35 +1,5 @@
 package co.kirikiri.integration;
 
-import co.kirikiri.common.dto.ErrorResponse;
-import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
-import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
-import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
-import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.common.mapper.TypeRef;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.IOException;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
 import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
 import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
@@ -38,6 +8,35 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+
+import co.kirikiri.auth.service.dto.request.LoginRequest;
+import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.service.dto.ErrorResponse;
+import co.kirikiri.service.dto.goalroom.GoalRoomFilterTypeDto;
+import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
+import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomMemberResponse;
+import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
+import java.io.IOException;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 
 class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
 

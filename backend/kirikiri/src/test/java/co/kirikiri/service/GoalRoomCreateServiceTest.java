@@ -1,7 +1,20 @@
 package co.kirikiri.service;
 
-import co.kirikiri.domain.ImageContentType;
-import co.kirikiri.domain.exception.ImageExtensionException;
+import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+
+import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.exception.NotFoundException;
+import co.kirikiri.common.exception.domain.ImageExtensionException;
+import co.kirikiri.common.service.FilePathGenerator;
+import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.domain.goalroom.CheckFeed;
 import co.kirikiri.domain.goalroom.GoalRoom;
 import co.kirikiri.domain.goalroom.GoalRoomMember;
@@ -15,18 +28,18 @@ import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.GoalRoomTodoContent;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
 import co.kirikiri.domain.goalroom.vo.Period;
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import co.kirikiri.member.persistence.MemberRepository;
 import co.kirikiri.persistence.goalroom.CheckFeedRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.persistence.goalroom.GoalRoomToDoCheckRepository;
-import co.kirikiri.persistence.member.MemberRepository;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -42,8 +55,6 @@ import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomTodoRequest;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomToDoCheckResponse;
-import co.kirikiri.service.exception.BadRequestException;
-import co.kirikiri.service.exception.NotFoundException;
 import co.kirikiri.service.goalroom.GoalRoomCreateService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +62,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -59,15 +69,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static co.kirikiri.domain.goalroom.GoalRoomStatus.RUNNING;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GoalRoomCreateServiceTest {
@@ -83,15 +84,12 @@ class GoalRoomCreateServiceTest {
 
     private static final Roadmap ROADMAP = new Roadmap(1L, "roadmap", "introduction", 30, RoadmapDifficulty.DIFFICULT,
             RoadmapStatus.CREATED, MEMBER.getId(), new RoadmapCategory("IT"), new RoadmapTags(new ArrayList<>()));
-
     private static final Roadmap DELETED_ROADMAP = new Roadmap(2L, "roadmap", "introduction", 30, RoadmapDifficulty.DIFFICULT,
             RoadmapStatus.DELETED, MEMBER.getId(), new RoadmapCategory("IT"), new RoadmapTags(new ArrayList<>()));
-
     private static final RoadmapNode roadmapNode1 = new RoadmapNode(1L, "title1", "content1");
     private static final RoadmapNode roadmapNode2 = new RoadmapNode(2L, "title2", "content2");
-    private static final RoadmapContent ROADMAP_CONTENT = new RoadmapContent(1L, "content", ROADMAP.getId(), new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
     private static final RoadmapContent DELETED_ROADMAP_CONTENT = new RoadmapContent(2L, "content2", DELETED_ROADMAP.getId(), null);
-
+    private static final RoadmapContent ROADMAP_CONTENT = new RoadmapContent(1L, "content", ROADMAP.getId(), new RoadmapNodes(List.of(roadmapNode1, roadmapNode2)));
     @Mock
     private GoalRoomRepository goalRoomRepository;
 

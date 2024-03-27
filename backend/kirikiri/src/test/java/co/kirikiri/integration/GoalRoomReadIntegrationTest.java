@@ -1,14 +1,25 @@
 package co.kirikiri.integration;
 
-import co.kirikiri.common.dto.ErrorResponse;
+import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
+import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
+import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
+import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
 import co.kirikiri.persistence.goalroom.dto.RoadmapGoalRoomsOrderType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
+import co.kirikiri.service.dto.ErrorResponse;
 import co.kirikiri.service.dto.goalroom.GoalRoomMemberSortTypeDto;
 import co.kirikiri.service.dto.goalroom.request.CheckFeedRequest;
 import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
@@ -23,10 +34,8 @@ import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeDetailRespon
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodeResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.service.dto.goalroom.response.GoalRoomTodoResponse;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomForListResponse;
-import co.kirikiri.service.dto.member.response.MemberGoalRoomResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomForListResponse;
+import co.kirikiri.service.dto.goalroom.response.MemberGoalRoomResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
@@ -34,19 +43,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-
-import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
-import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_EMAIL;
-import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성;
-import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class GoalRoomReadIntegrationTest extends InitIntegrationTest {
 

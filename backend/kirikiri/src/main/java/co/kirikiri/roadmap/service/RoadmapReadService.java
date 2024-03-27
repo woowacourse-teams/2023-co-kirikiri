@@ -1,10 +1,13 @@
 package co.kirikiri.roadmap.service;
 
-import co.kirikiri.common.dto.CustomScrollRequest;
+import co.kirikiri.common.aop.ExceptionConvert;
+import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.common.mapper.ScrollResponseMapper;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.common.service.FileService;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.persistence.MemberRepository;
+import co.kirikiri.member.service.dto.MemberDto;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -18,7 +21,6 @@ import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.roadmap.persistence.RoadmapReviewRepository;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.persistence.dto.RoadmapSearchDto;
-import co.kirikiri.roadmap.service.dto.MemberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapCategoryDto;
 import co.kirikiri.roadmap.service.dto.RoadmapContentDto;
 import co.kirikiri.roadmap.service.dto.RoadmapDto;
@@ -38,15 +40,12 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
-import co.kirikiri.service.FileService;
-import co.kirikiri.service.aop.ExceptionConvert;
-import co.kirikiri.service.exception.NotFoundException;
+import co.kirikiri.service.dto.CustomScrollRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.net.URL;
 import java.util.List;
 

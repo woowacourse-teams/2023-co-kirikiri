@@ -1,10 +1,10 @@
 package co.kirikiri.domain.goalroom;
 
-import co.kirikiri.domain.BaseUpdatedTimeEntity;
+import co.kirikiri.common.entity.BaseUpdatedTimeEntity;
 import co.kirikiri.domain.goalroom.exception.GoalRoomException;
 import co.kirikiri.domain.goalroom.vo.GoalRoomName;
 import co.kirikiri.domain.goalroom.vo.LimitedMemberCount;
-import co.kirikiri.domain.member.Member;
+import co.kirikiri.member.domain.Member;
 import co.kirikiri.roadmap.domain.RoadmapContent;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -18,7 +18,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -30,38 +29,28 @@ import java.util.Optional;
 public class GoalRoom extends BaseUpdatedTimeEntity {
 
     private static final int DATE_OFFSET = 1;
-
+    @Embedded
+    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
+    @Embedded
+    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
+    @Embedded
+    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos();
+    @Embedded
+    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
     @Embedded
     private GoalRoomName name;
-
     @Embedded
     private LimitedMemberCount limitedMemberCount;
-
     @Enumerated(value = EnumType.STRING)
     private GoalRoomStatus status = GoalRoomStatus.RECRUITING;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roadmap_content_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private RoadmapContent roadmapContent;
-
     @Column(nullable = false)
     private LocalDate startDate;
-
     @Column(nullable = false)
     private LocalDate endDate;
-
-    @Embedded
-    private final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers();
-
-    @Embedded
-    private final GoalRoomMembers goalRoomMembers = new GoalRoomMembers();
-
-    @Embedded
-    private final GoalRoomToDos goalRoomToDos = new GoalRoomToDos();
-
-    @Embedded
-    private final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes();
 
     public GoalRoom(final GoalRoomName name, final LimitedMemberCount limitedMemberCount,
                     final RoadmapContent roadmapContent, final Member member) {
@@ -188,7 +177,6 @@ public class GoalRoom extends BaseUpdatedTimeEntity {
         return goalRoomMembers.size();
     }
 
-    // FIXME 테스트용 메서드
     public void addAllGoalRoomMembers(final List<GoalRoomMember> members) {
         this.goalRoomMembers.addAll(new ArrayList<>(members));
     }
