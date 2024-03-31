@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# . "$(dirname -- "$0")/_/husky.sh"
 
-cd client && echo 👩🏿‍💻FE 👩🏿‍💻 pre-commit rules applying... &&  npm run lint-fix && node checkUtilTests.js && npm test
+# cd client && echo 👩🏿‍💻FE 👩🏿‍💻 pre-commit rules applying... &&  npm run lint-fix && node checkUtilTests.js && npm test

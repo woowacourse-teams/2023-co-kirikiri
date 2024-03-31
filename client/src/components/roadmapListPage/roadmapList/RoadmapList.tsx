@@ -11,7 +11,7 @@ type RoadmapListProps = {
   selectedCategoryId: SelectedCategoryId;
 };
 
-const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
+const RoadmapList = ({}: RoadmapListProps) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const categoryId = queryParams.get('category');

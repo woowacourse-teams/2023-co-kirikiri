@@ -10,7 +10,7 @@ type CategoriesProps = {
   selectCategory: ({ currentTarget }: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Categories = ({ selectedCategoryId, selectCategory }: CategoriesProps) => {
+const Categories = ({ selectedCategoryId }: CategoriesProps) => {
   const categories = Object.values(CategoriesInfo);
   const upCategories = categories.slice(0, 5);
   const downCategories = categories.slice(5);
