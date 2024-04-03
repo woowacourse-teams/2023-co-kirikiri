@@ -9,7 +9,6 @@ import co.kirikiri.goalroom.domain.GoalRoomStatus;
 import co.kirikiri.goalroom.persistence.dto.RoadmapGoalRoomsOrderType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import jakarta.persistence.LockModeType;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -20,14 +19,6 @@ public class GoalRoomQueryRepositoryImpl extends QuerydslRepositorySupporter imp
 
     public GoalRoomQueryRepositoryImpl() {
         super(GoalRoom.class);
-    }
-
-    @Override
-    public Optional<GoalRoom> findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
-        return Optional.ofNullable(selectFrom(goalRoom)
-                .where(goalRoom.id.eq(goalRoomId))
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                .fetchOne());
     }
 
     @Override

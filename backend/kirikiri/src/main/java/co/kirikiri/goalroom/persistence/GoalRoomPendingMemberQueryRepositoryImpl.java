@@ -7,6 +7,7 @@ import co.kirikiri.common.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
 import co.kirikiri.goalroom.persistence.dto.GoalRoomMemberSortType;
 import com.querydsl.core.types.OrderSpecifier;
+import jakarta.persistence.LockModeType;
 import java.util.List;
 
 public class GoalRoomPendingMemberQueryRepositoryImpl extends QuerydslRepositorySupporter
@@ -22,6 +23,14 @@ public class GoalRoomPendingMemberQueryRepositoryImpl extends QuerydslRepository
         return selectFrom(goalRoomPendingMember)
                 .where(goalRoomPendingMember.goalRoom.id.eq(goalRoomId))
                 .orderBy(sortCond(sortType))
+                .fetch();
+    }
+
+    @Override
+    public List<GoalRoomPendingMember> findByGoalRoomIdWithPessimisticLock(final Long goalRoomId) {
+        return selectFrom(goalRoomPendingMember)
+                .where(goalRoomPendingMember.goalRoom.id.eq(goalRoomId))
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetch();
     }
 

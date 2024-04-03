@@ -8,4 +8,6 @@ public interface GoalRoomPendingMemberQueryRepository {
 
     List<GoalRoomPendingMember> findByGoalRoomIdOrderedBySortType(final Long goalRoomId,
                                                                   final GoalRoomMemberSortType sortType);
+
+    List<GoalRoomPendingMember> findByGoalRoomIdWithPessimisticLock(final Long goalRoomId);
 }

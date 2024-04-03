@@ -116,7 +116,7 @@ public class GoalRoomCreateService {
 
     public void join(final String identifier, final Long goalRoomId) {
         final Member member = findMemberByIdentifier(identifier);
-        final GoalRoom goalRoom = findGoalRoomByIdWithPessimisticLock(goalRoomId);
+        final GoalRoom goalRoom = findGoalRoomById(goalRoomId);
         validateJoinGoalRoom(goalRoom, member);
         final GoalRoomPendingMember newMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom,
                 member.getId());
@@ -128,8 +128,8 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
     }
 
-    private GoalRoom findGoalRoomByIdWithPessimisticLock(final Long goalRoomId) {
-        return goalRoomRepository.findGoalRoomByIdWithPessimisticLock(goalRoomId)
+    private GoalRoom findGoalRoomById(final Long goalRoomId) {
+        return goalRoomRepository.findById(goalRoomId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
@@ -142,7 +142,7 @@ public class GoalRoomCreateService {
     }
 
     private List<GoalRoomPendingMember> findGoalRoomPendingMembers(final GoalRoom goalRoom) {
-        return goalRoomPendingMemberRepository.findByGoalRoom(goalRoom);
+        return goalRoomPendingMemberRepository.findByGoalRoomIdWithPessimisticLock(goalRoom.getId());
     }
 
     private void validateMemberCount(final GoalRoomPendingMembers goalRoomPendingMembers, final GoalRoom goalRoom) {
@@ -176,11 +176,6 @@ public class GoalRoomCreateService {
         }
 
         applicationEventPublisher.publishEvent(new GoalRoomLeaveEvent(goalRoomId));
-    }
-
-    private GoalRoom findGoalRoomById(final Long goalRoomId) {
-        return goalRoomRepository.findById(goalRoomId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 골룸입니다. goalRoomId = " + goalRoomId));
     }
 
     private void validateRunning(final GoalRoom goalRoom) {

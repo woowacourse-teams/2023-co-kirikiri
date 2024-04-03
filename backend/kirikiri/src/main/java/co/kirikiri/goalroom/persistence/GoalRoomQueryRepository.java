@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface GoalRoomQueryRepository {
 
-    Optional<GoalRoom> findGoalRoomByIdWithPessimisticLock(Long goalRoomId);
-
     List<GoalRoom> findGoalRoomsByRoadmapContentIdAndCond(final Long roadmapContentId,
                                                           final RoadmapGoalRoomsOrderType filterType,
                                                           final Long lastId,
