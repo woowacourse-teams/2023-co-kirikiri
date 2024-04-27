@@ -1,6 +1,6 @@
 import { ErrorInfo } from 'react';
-import { Runtime } from '../error/ErrorComponents';
 import ErrorBoundary from './ErrorBoundary';
+import { Runtime } from '../fallback/Fallback';
 
 class RuntimeErrorBoundary extends ErrorBoundary {
   static getDerivedStateFromError(error: Error): { didCatch: boolean; error: Error } {

@@ -1,16 +1,18 @@
 import Categories from '../categories/Categories';
 import * as S from './RoadmapListView.styles';
-import { useSelectCategory } from '@/hooks/roadmap/useSelectCategory';
 import RoadmapList from '../roadmapList/RoadmapList';
 import RoadmapSearch from '../roadmapSearch/RoadmapSearch';
-import { Link, Outlet } from 'react-router-dom';
-import useValidParams from '@/hooks/_common/useValidParams';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import SVGIcon from '@/components/icons/SVGIcon';
 import AsyncBoundary from '@/components/_common/errorBoundary/AsyncBoundary';
+import RoadmapSearchResult from '../roadmapSearch/RoadmapSearchResult';
+import QueryString from 'qs';
 
 const RoadmapListView = () => {
-  const [selectedCategoryId, selectCategory] = useSelectCategory();
-  const { search } = useValidParams();
+  const location = useLocation();
+  const { searchWord } = QueryString.parse(location.search, {
+    ignoreQueryPrefix: true,
+  });
 
   return (
     <S.RoadmapListView aria-label='로드맵 뷰'>
@@ -20,19 +22,14 @@ const RoadmapListView = () => {
         </S.ListTitle>
       </Link>
       <RoadmapSearch />
-      <Categories
-        selectedCategoryId={selectedCategoryId}
-        selectCategory={selectCategory}
-        aria-label='카테고리 선택'
-      />
+      <Categories aria-label='카테고리 선택' />
 
       <AsyncBoundary>
         <Outlet />
-        {!search && (
-          <RoadmapList
-            selectedCategoryId={selectedCategoryId}
-            aria-label='로드맵 리스트'
-          />
+        {!searchWord ? (
+          <RoadmapList aria-label='로드맵 리스트' />
+        ) : (
+          <RoadmapSearchResult />
         )}
       </AsyncBoundary>
     </S.RoadmapListView>

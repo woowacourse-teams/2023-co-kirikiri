@@ -77,7 +77,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
       <S.ItemFooter>
         <S.Tags>
           {item.tags.map((tag) => {
-            return <span># {tag.name}</span>;
+            return <span key={tag.id}># {tag.name}</span>;
           })}
         </S.Tags>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>

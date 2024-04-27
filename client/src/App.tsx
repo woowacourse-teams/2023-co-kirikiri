@@ -13,7 +13,6 @@ import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
 import ToastProvider from '@/components/_common/toast/Toast';
 import MyPage from '@pages/myPage/MyPage';
 import UserInfoProvider from './components/_providers/UserInfoProvider';
-import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
 import OAuthRedirect from './components/loginPage/OAuthRedirect';
 import SessionHandler from '@components/_common/sessionHandler/SessionHandler';
@@ -45,12 +44,7 @@ const App = () => {
                         <Route path='/' element={<MainPage />} />
                         <Route path='/login' element={<LoginPage />} />
                         <Route path='/join' element={<SignUpPage />} />
-                        <Route path='/roadmap-list' element={<RoadmapListPage />}>
-                          <Route
-                            path=':category/:search'
-                            element={<RoadmapSearchResult />}
-                          />
-                        </Route>
+                        <Route path='/roadmap-list' element={<RoadmapListPage />} />
                         <Route path='/roadmap/:id' element={<RoadmapDetailPage />} />
                         <Route
                           path='/roadmap/:id/goalroom-list'

@@ -31,10 +31,14 @@ const RoadmapSearch = () => {
   };
 
   const searchRoadmap = (e: FormEvent<HTMLFormElement>) => {
+    const searchParams = new URLSearchParams();
+
     e.preventDefault();
     if (searchWordRef.current?.value === '') return;
 
-    navigate(`/roadmap-list/${searchCategory}/${searchWordRef.current?.value}`);
+    searchParams.append('searchCategory', searchCategory);
+    searchParams.append('searchWord', searchWordRef.current?.value ?? '');
+    navigate(`/roadmap-list?${searchParams.toString()}`);
   };
 
   return (
