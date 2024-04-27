@@ -20,11 +20,7 @@ const RoadmapListView = () => {
         </S.ListTitle>
       </Link>
       <RoadmapSearch />
-      <Categories
-        selectedCategoryId={selectedCategoryId}
-        selectCategory={selectCategory}
-        aria-label='카테고리 선택'
-      />
+      <Categories selectedCategoryId={selectedCategoryId} aria-label='카테고리 선택' />
 
       <AsyncBoundary>
         {!location.search.search ? (

@@ -1,32 +1,21 @@
 import SVGIcon from '@components/icons/SVGIcon';
-
 import * as S from './GoalRoomDashboardHeader.styles';
 import recruitmentStatus from '@constants/goalRoom/recruitmentStatus';
-import { GoalRoomBrowseResponse } from '@myTypes/goalRoom/remote';
-import {
-  DialogBackdrop,
-  DialogBox,
-  DialogContent,
-  DialogTrigger,
-} from '@components/_common/dialog/dialog';
+import { Dialog } from 'ck-util-components';
 import GoalRoomParticipantsListModal from '@components/goalRoomDahsboardPage/goalRoomDashboardHeader/goalRoomParticipantsListModal/GoalRoomParticipantsListModal';
 import isTodayOrAfter from '@utils/_common/isTodayOrAfter';
 import { useGoalRoomDashboardContext } from '@/context/goalRoomDashboardContext';
-import { useStartGoalRoom } from '@hooks/queries/goalRoom';
+import { useFetchGoalRoom, useStartGoalRoom } from '@hooks/queries/goalRoom';
 
 type GoalRoomDashboardHeaderProps = {
-  goalRoomData: GoalRoomBrowseResponse;
   isLeader: boolean;
 };
 
-const GoalRoomDashboardHeader = ({
-  goalRoomData,
-  isLeader,
-}: GoalRoomDashboardHeaderProps) => {
-  const { name, status, currentMemberCount, limitedMemberCount, startDate, endDate } =
-    goalRoomData;
-
+const GoalRoomDashboardHeader = ({ isLeader }: GoalRoomDashboardHeaderProps) => {
   const { goalroomId } = useGoalRoomDashboardContext();
+  const { goalRoom } = useFetchGoalRoom(goalroomId);
+  const { name, status, currentMemberCount, limitedMemberCount, startDate, endDate } =
+    goalRoom;
 
   const { startGoalRoom } = useStartGoalRoom(goalroomId);
 
@@ -38,7 +27,7 @@ const GoalRoomDashboardHeader = ({
   };
 
   return (
-    <DialogBox>
+    <Dialog>
       <header>
         <S.GoalRoomDashboardTitle>{name}</S.GoalRoomDashboardTitle>
         {isStartButtonVisible && (
@@ -55,9 +44,9 @@ const GoalRoomDashboardHeader = ({
           <span>
             {currentMemberCount} / {limitedMemberCount} 명 참여 중
           </span>
-          <DialogTrigger asChild>
+          <Dialog.Trigger asChild>
             <S.LabelButton>전체 참여인원 보기</S.LabelButton>
-          </DialogTrigger>
+          </Dialog.Trigger>
         </S.GoalRoomLabel>
         <S.GoalRoomLabel>
           <SVGIcon name='CalendarIcon' />
@@ -67,14 +56,14 @@ const GoalRoomDashboardHeader = ({
         </S.GoalRoomLabel>
       </header>
 
-      <DialogBackdrop asChild>
+      <Dialog.BackDrop asChild>
         <S.ModalBackdrop />
-      </DialogBackdrop>
+      </Dialog.BackDrop>
 
-      <DialogContent>
+      <Dialog.Content>
         <GoalRoomParticipantsListModal />
-      </DialogContent>
-    </DialogBox>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 

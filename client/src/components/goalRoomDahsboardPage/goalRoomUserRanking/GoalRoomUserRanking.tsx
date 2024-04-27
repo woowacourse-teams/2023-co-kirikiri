@@ -5,12 +5,7 @@ import { GoalRoomDashboardContentParams } from '@components/goalRoomDahsboardPag
 import podiumImg from '@assets/images/podium.png';
 import podiumImgAV from '@assets/images/podium.avif';
 import { useUserInfoContext } from '@components/_providers/UserInfoProvider';
-import {
-  DialogBackdrop,
-  DialogBox,
-  DialogContent,
-  DialogTrigger,
-} from '@components/_common/dialog/dialog';
+import { Dialog } from 'ck-util-components';
 import SVGIcon from '@components/icons/SVGIcon';
 import GoalRoomRankingModal from '@components/goalRoomDahsboardPage/goalRoomUserRanking/goalRoomRankingModal/GoalRoomRankingModal';
 import ToolTip from '@components/_common/toolTip/ToolTip';
@@ -33,7 +28,7 @@ const GoalRoomUserRanking = () => {
     ) + 1;
 
   return (
-    <DialogBox>
+    <Dialog>
       <S.CalenderWrapper>
         <div>
           <h2>모임 유저 랭킹</h2>
@@ -43,12 +38,12 @@ const GoalRoomUserRanking = () => {
             </p>
           </ToolTip>
 
-          <DialogTrigger asChild>
+          <Dialog.Trigger asChild>
             <button aria-labelledby='유저 랭킹 전체보기'>
               <span>전체보기</span>
               <SVGIcon name='RightArrowIcon' aria-hidden='true' />
             </button>
-          </DialogTrigger>
+          </Dialog.Trigger>
         </div>
         <S.PodiumWrapper>
           <picture>
@@ -84,13 +79,13 @@ const GoalRoomUserRanking = () => {
           )}
         </S.PodiumWrapper>
       </S.CalenderWrapper>
-      <DialogBackdrop asChild>
+      <Dialog.BackDrop asChild>
         <S.ModalBackdrop />
-      </DialogBackdrop>
-      <DialogContent>
+      </Dialog.BackDrop>
+      <Dialog.Content>
         <GoalRoomRankingModal userRanking={goalRoomParticipants} />
-      </DialogContent>
-    </DialogBox>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 

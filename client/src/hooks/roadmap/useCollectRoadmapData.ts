@@ -1,4 +1,4 @@
-import { DummyCategoryType } from '@/components/roadmapCreatePage/category/Category';
+import { CategoriesInfo } from '@/constants/roadmap/category';
 import {
   DifficultyKeyType,
   NodeImagesType,
@@ -23,10 +23,10 @@ export const useCollectRoadmapData = () => {
   const [isSumbited, setIsSubmited] = useState(false);
   const { createRoadmap } = useCreateRoadmap();
 
-  const getSelectedCategoryId = (category: keyof DummyCategoryType | null) => {
+  const getSelectedCategoryId = (category: keyof typeof CategoriesInfo) => {
     setRoadmapValue((prev) => ({
       ...prev,
-      categoryId: category,
+      categoryId: CategoriesInfo[category].id,
     }));
   };
 

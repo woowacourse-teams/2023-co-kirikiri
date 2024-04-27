@@ -26,27 +26,25 @@ const GoalRoomDashboardContent = () => {
   const isLeader = userInfo.id === goalRoom.leaderId;
 
   return (
-    <>
-      <Suspense fallback={<Spinner />}>
-        <S.GoalRoomWrapper>
-          <GoalRoomDashboardHeader goalRoomData={goalRoom} isLeader={isLeader} />
-          <S.GoalRoomGridContainer>
-            <GoalRoomDashboardTodo goalRoomData={goalRoom} isLeader={isLeader} />
-            <GoalRoomDashboardRoadmap goalRoomStatus={goalRoom.status} />
-            <GoalRoomUserRanking />
-            <GoalRoomCertificationFeed goalRoomData={goalRoom} />
-          </S.GoalRoomGridContainer>
-          {goalRoom.status !== 'RUNNING' && (
-            <GoalRoomDashboardBarricade
-              status={goalRoom.status}
-              startDate={goalRoom.startDate}
-              isLeader={isLeader}
-              goalroomId={goalroomId}
-            />
-          )}
-        </S.GoalRoomWrapper>
-      </Suspense>
-    </>
+    <Suspense fallback={<Spinner />}>
+      <S.GoalRoomWrapper>
+        <GoalRoomDashboardHeader isLeader={isLeader} />
+        <S.GoalRoomGridContainer>
+          <GoalRoomDashboardTodo isLeader={isLeader} />
+          <GoalRoomDashboardRoadmap />
+          <GoalRoomUserRanking />
+          <GoalRoomCertificationFeed />
+        </S.GoalRoomGridContainer>
+        {goalRoom.status !== 'RUNNING' && (
+          <GoalRoomDashboardBarricade
+            status={goalRoom.status}
+            startDate={goalRoom.startDate}
+            isLeader={isLeader}
+            goalroomId={goalroomId}
+          />
+        )}
+      </S.GoalRoomWrapper>
+    </Suspense>
   );
 };
 

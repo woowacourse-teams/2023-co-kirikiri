@@ -6,9 +6,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -34,6 +35,9 @@
       "@utils/*": ["src/utils/*"],
       "@icons/*": ["src/icons/*"]
     }
+  },
+  "paths": {
+    "ck-util-components/*": ["node_modules/ck-util-components/dist/lib/*"]
   },
   "include": ["./src"]
 }

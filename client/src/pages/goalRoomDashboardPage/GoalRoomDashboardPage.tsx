@@ -1,15 +1,14 @@
 import GoalRoomDashboardContent from '@components/goalRoomDahsboardPage/goalRoomDashboardContent/GoalRoomDashboardContent';
 import GoalRoomDashboardProvider from '@components/_providers/GoalRoomDashboardProvider';
-import { Suspense } from 'react';
-import Spinner from '@components/_common/spinner/Spinner';
+import AsyncBoundary from '@/components/_common/errorBoundary/AsyncBoundary';
 
 const GoalRoomDashboardPage = () => {
   return (
-    <Suspense fallback={<Spinner />}>
+    <AsyncBoundary>
       <GoalRoomDashboardProvider>
         <GoalRoomDashboardContent />
       </GoalRoomDashboardProvider>
-    </Suspense>
+    </AsyncBoundary>
   );
 };
 

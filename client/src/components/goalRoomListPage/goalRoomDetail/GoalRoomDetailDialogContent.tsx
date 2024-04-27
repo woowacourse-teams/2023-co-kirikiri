@@ -1,4 +1,4 @@
-import { DialogTrigger } from '@/components/_common/dialog/dialog';
+import { Dialog } from 'ck-util-components';
 import { useGoalRoomDetail, useJoinGoalRoom } from '@hooks/queries/goalRoom';
 import { Link } from 'react-router-dom';
 import * as S from './goalRoomDetailDialog.styles';
@@ -19,9 +19,9 @@ const GoalRoomDetailDialogContent = ({
         <S.TitleWrapper>
           <div />
           <S.Title>{goalRoomInfo.name}</S.Title>
-          <DialogTrigger asChild>
+          <Dialog.Trigger asChild>
             <S.CloseButton>X</S.CloseButton>
-          </DialogTrigger>
+          </Dialog.Trigger>
         </S.TitleWrapper>
         <S.Participant>
           <p>{goalRoomInfo.currentMemberCount}</p>/{goalRoomInfo.limitedMemberCount}
