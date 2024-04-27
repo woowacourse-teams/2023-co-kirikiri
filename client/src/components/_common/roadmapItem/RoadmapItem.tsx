@@ -1,5 +1,4 @@
 import type { RoadmapDetailType } from '@myTypes/roadmap/internal';
-
 import { useNavigate } from 'react-router-dom';
 import SVGIcon from '@components/icons/SVGIcon';
 import { DIFFICULTY_ICON_NAME } from '@constants/roadmap/difficulty';
@@ -77,7 +76,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
       <S.ItemFooter>
         <S.Tags>
           {item.tags.map((tag) => {
-            return <span># {tag.name}</span>;
+            return <span key={tag.id}># {tag.name}</span>;
           })}
         </S.Tags>
         <S.CreatedBy>Created by {item.creator.name}</S.CreatedBy>

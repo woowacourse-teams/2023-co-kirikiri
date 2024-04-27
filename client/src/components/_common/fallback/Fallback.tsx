@@ -56,6 +56,13 @@ export const Runtime = () => {
 };
 
 export const Critical = () => {
+  const navigate = useNavigate();
+
+  const moveMainPage = () => {
+    navigate('/');
+    window.location.reload();
+  };
+
   return (
     <S.Container>
       <S.ElephantImage src={elephantImage} alt='crying-elephant' />
@@ -65,6 +72,7 @@ export const Critical = () => {
         다음에 다시 이용해주세요.
       </S.CriticalText>
       <S.MovePageButton>불편사항 문의하기</S.MovePageButton>
+      <S.MovePageButton onClick={moveMainPage}>메인페이지로 돌아가기</S.MovePageButton>
     </S.Container>
   );
 };

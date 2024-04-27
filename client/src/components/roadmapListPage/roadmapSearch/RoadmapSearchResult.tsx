@@ -3,13 +3,16 @@ import RoadmapItem from '@/components/_common/roadmapItem/RoadmapItem';
 import WavyLoading from '@/components/_common/wavyLoading/WavyLoading';
 import { useSearchRoadmapList } from '@/hooks/queries/roadmap';
 import { useInfiniteScroll } from '@/hooks/_common/useInfiniteScroll';
-import useValidParams from '@/hooks/_common/useValidParams';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import NoResult from './NoResult';
 import * as S from './roadmapSearch.styles';
 
 const RoadmapSearchResult = () => {
-  const { category, search } = useValidParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const category = searchParams.get('category');
+  const search = searchParams.get('search');
+
   const navigate = useNavigate();
   const { searchRoadmapListResponse, fetchNextPage } = useSearchRoadmapList({
     category,
