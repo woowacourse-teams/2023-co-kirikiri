@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
@@ -48,7 +48,11 @@ const App = () => {
                         <Route path='/roadmap/:id' element={<RoadmapDetailPage />} />
                         <Route
                           path='/roadmap/:id/goalroom-list'
-                          element={<GoalRoomListPage />}
+                          element={
+                            <Suspense>
+                              <GoalRoomListPage />
+                            </Suspense>
+                          }
                         />
                         <Route
                           path='/roadmap-create'
@@ -61,14 +65,20 @@ const App = () => {
                         <Route
                           path='/roadmap/:id/goalroom-create'
                           element={
-                            <PrivateRouter>
-                              <GoalRoomCreatePage />
-                            </PrivateRouter>
+                            <Suspense>
+                              <PrivateRouter>
+                                <GoalRoomCreatePage />
+                              </PrivateRouter>
+                            </Suspense>
                           }
                         />
                         <Route
                           path='/goalroom-dashboard/:goalroomId'
-                          element={<GoalRoomDashboardPage />}
+                          element={
+                            <Suspense>
+                              <GoalRoomDashboardPage />
+                            </Suspense>
+                          }
                         />
                         <Route
                           path='/myPage'
