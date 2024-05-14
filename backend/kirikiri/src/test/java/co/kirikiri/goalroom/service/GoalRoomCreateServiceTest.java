@@ -230,9 +230,9 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
+        when(goalRoomRepository.findById(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
-        when(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+        when(goalRoomPendingMemberRepository.findByGoalRoomIdWithPessimisticLock(any()))
                 .thenReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
         when(goalRoomPendingMemberRepository.save(any()))
                 .thenReturn(new GoalRoomPendingMember(GoalRoomRole.FOLLOWER, goalRoom, follower.getId()));
@@ -261,7 +261,7 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
+        when(goalRoomRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         //when, then
@@ -283,9 +283,9 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
+        when(goalRoomRepository.findById(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
-        when(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+        when(goalRoomPendingMemberRepository.findByGoalRoomIdWithPessimisticLock(any()))
                 .thenReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
 
         //when, then
@@ -307,9 +307,9 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(follower));
-        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
+        when(goalRoomRepository.findById(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
-        when(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+        when(goalRoomPendingMemberRepository.findByGoalRoomIdWithPessimisticLock(any()))
                 .thenReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
 
         //when, then
@@ -329,9 +329,9 @@ class GoalRoomCreateServiceTest {
 
         when(memberRepository.findByIdentifier(any()))
                 .thenReturn(Optional.of(creator));
-        when(goalRoomRepository.findGoalRoomByIdWithPessimisticLock(anyLong()))
+        when(goalRoomRepository.findById(anyLong()))
                 .thenReturn(Optional.of(goalRoom));
-        when(goalRoomPendingMemberRepository.findByGoalRoom(any()))
+        when(goalRoomPendingMemberRepository.findByGoalRoomIdWithPessimisticLock(any()))
                 .thenReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
 
         //when, then

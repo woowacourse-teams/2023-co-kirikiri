@@ -135,13 +135,13 @@ public class GoalRoomCreateService {
 
     private void validateJoinGoalRoom(final GoalRoom goalRoom, final Member member) {
         final GoalRoomPendingMembers goalRoomPendingMembers = new GoalRoomPendingMembers(
-                findGoalRoomPendingMembers(goalRoom));
+                findGoalRoomPendingMembersWithPessimisticLock(goalRoom));
         validateMemberCount(goalRoomPendingMembers, goalRoom);
         validateRecruiting(goalRoom);
         validateAlreadyParticipated(goalRoomPendingMembers, member);
     }
 
-    private List<GoalRoomPendingMember> findGoalRoomPendingMembers(final GoalRoom goalRoom) {
+    private List<GoalRoomPendingMember> findGoalRoomPendingMembersWithPessimisticLock(final GoalRoom goalRoom) {
         return goalRoomPendingMemberRepository.findByGoalRoomIdWithPessimisticLock(goalRoom.getId());
     }
 
@@ -191,6 +191,10 @@ public class GoalRoomCreateService {
                 .orElseThrow(() -> new BadRequestException("골룸에 참여한 사용자가 아닙니다. memberId = " + member.getId()));
         goalRoomPendingMembers.changeLeaderIfLeaderLeave(goalRoomPendingMember);
         goalRoomPendingMemberRepository.delete(goalRoomPendingMember);
+    }
+
+    private List<GoalRoomPendingMember> findGoalRoomPendingMembers(final GoalRoom goalRoom) {
+        return goalRoomPendingMemberRepository.findByGoalRoom(goalRoom);
     }
 
     private void leaveCompletedGoalRoom(final Member member, final GoalRoom goalRoom) {
