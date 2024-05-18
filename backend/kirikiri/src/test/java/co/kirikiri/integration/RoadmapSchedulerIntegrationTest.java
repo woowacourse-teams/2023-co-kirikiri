@@ -15,9 +15,9 @@ import co.kirikiri.goalroom.domain.GoalRoomStatus;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.persistence.roadmap.RoadmapRepository;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import co.kirikiri.service.scheduler.RoadmapScheduler;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.scheduler.RoadmapScheduler;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -65,7 +65,7 @@ class RoadmapSchedulerIntegrationTest extends InitIntegrationTest {
         roadmapScheduler.deleteRoadmaps();
 
         // then
-        assertThat(roadmapRepository.findAll()).hasSize(0);
+        assertThat(roadmapRepository.findAll()).isEmpty();
     }
 
     @Test

@@ -9,13 +9,6 @@ import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_�
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static co.kirikiri.integration.helper.InitIntegrationTest.기본_로그인_토큰;
 
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
 import co.kirikiri.goalroom.domain.GoalRoomRole;
@@ -24,8 +17,15 @@ import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
@@ -37,11 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TestTransactionService {
 
-    @PersistenceContext
-    private EntityManager em;
-
     private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomMemberRepository goalRoomMemberRepository;
+    @PersistenceContext
+    private EntityManager em;
 
     public TestTransactionService(final GoalRoomRepository goalRoomRepository,
                                   final GoalRoomMemberRepository goalRoomMemberRepository) {

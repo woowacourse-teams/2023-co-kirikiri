@@ -12,18 +12,18 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.리뷰를_생성
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
+import co.kirikiri.common.service.dto.CustomScrollRequest;
 import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.CustomScrollRequest;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.member.response.MemberResponse;
-import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapReviewResponse;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.member.service.dto.response.MemberResponse;
+import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;

@@ -21,6 +21,7 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.checkfeed.service.dto.request.CheckFeedRequest;
 import co.kirikiri.checkfeed.service.dto.response.GoalRoomCheckFeedResponse;
 import co.kirikiri.common.service.dto.ErrorResponse;
@@ -28,10 +29,9 @@ import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.goalroom.service.dto.response.GoalRoomMemberResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;

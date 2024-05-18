@@ -2,15 +2,15 @@ package co.kirikiri.goalroom.service;
 
 import co.kirikiri.common.aop.ExceptionConvert;
 import co.kirikiri.common.exception.NotFoundException;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
 import co.kirikiri.goalroom.domain.GoalRoomRole;
 import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import co.kirikiri.goalroom.service.event.GoalRoomCreateEvent;
-import co.kirikiri.persistence.member.MemberRepository;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

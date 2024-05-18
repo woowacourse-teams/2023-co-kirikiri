@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface GoalRoomMemberQueryRepository {
 
-    Optional<GoalRoomMember> findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(final Long roadmapId,
-                                                                                 final Long memberId,
-                                                                                 final GoalRoomStatus status);
+    Optional<GoalRoomMember> findByRoadmapIdAndMemberIdAndGoalRoomStatus(final Long roadmapId,
+                                                                         final Long memberId,
+                                                                         final GoalRoomStatus status);
 
     List<GoalRoomMember> findByGoalRoomIdOrderedBySortType(final Long goalRoomId,
                                                            final GoalRoomMemberSortType sortType);

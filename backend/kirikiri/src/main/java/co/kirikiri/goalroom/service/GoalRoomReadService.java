@@ -4,11 +4,6 @@ import co.kirikiri.common.aop.ExceptionConvert;
 import co.kirikiri.common.exception.ForbiddenException;
 import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.common.service.FileService;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
@@ -35,9 +30,13 @@ import co.kirikiri.goalroom.service.dto.response.GoalRoomRoadmapNodeDetailRespon
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomForListResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.goalroom.service.mapper.GoalRoomMapper;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
-import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.persistence.MemberRepository;
+import co.kirikiri.roadmap.domain.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
+import co.kirikiri.roadmap.persistence.RoadmapNodeRepository;
 import java.net.URL;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -63,12 +62,11 @@ public class GoalRoomReadService {
 
     public GoalRoomCertifiedResponse findGoalRoom(final String identifier, final Long goalRoomId) {
         final GoalRoom goalRoom = findGoalRoomWithRoadmapContentById(goalRoomId);
-        final RoadmapContent roadmapContent = findRoadmapContentById(goalRoom.getRoadmapContentId());
-        final List<RoadmapNode> roadmapNodes = roadmapNodeRepository.findAllByRoadmapContent(roadmapContent);
+        final RoadmapContent roadmapContent = findRoadmapContentByIdWithRoadmapNodes(goalRoom.getRoadmapContentId());
 
         final boolean isJoined = isMemberGoalRoomJoin(new Identifier(identifier), goalRoom);
         return GoalRoomMapper.convertGoalRoomCertifiedResponse(goalRoom, getCurrentMemberCount(goalRoom),
-                new RoadmapNodes(roadmapNodes), isJoined);
+                roadmapContent.getNodes(), isJoined);
     }
 
     private GoalRoom findGoalRoomWithRoadmapContentById(final Long goalRoomId) {
@@ -76,8 +74,8 @@ public class GoalRoomReadService {
                 .orElseThrow(() -> new NotFoundException("골룸 정보가 존재하지 않습니다. goalRoomId = " + goalRoomId));
     }
 
-    private RoadmapContent findRoadmapContentById(final Long roadmapContentId) {
-        return roadmapContentRepository.findById(roadmapContentId)
+    private RoadmapContent findRoadmapContentByIdWithRoadmapNodes(final Long roadmapContentId) {
+        return roadmapContentRepository.findByIdWithRoadmapNodes(roadmapContentId)
                 .orElseThrow(() -> new NotFoundException(
                         "존재하지 않는 로드맵 컨텐츠 아이디입니다. roadmapContentId = " + roadmapContentId));
     }
@@ -101,10 +99,9 @@ public class GoalRoomReadService {
 
     public GoalRoomResponse findGoalRoom(final Long goalRoomId) {
         final GoalRoom goalRoom = findGoalRoomWithRoadmapContentById(goalRoomId);
-        final RoadmapContent roadmapContent = findRoadmapContentById(goalRoom.getRoadmapContentId());
-        final List<RoadmapNode> roadmapNodes = roadmapNodeRepository.findAllByRoadmapContent(roadmapContent);
+        final RoadmapContent roadmapContent = findRoadmapContentByIdWithRoadmapNodes(goalRoom.getRoadmapContentId());
         return GoalRoomMapper.convertGoalRoomResponse(goalRoom, getCurrentMemberCount(goalRoom),
-                new RoadmapNodes(roadmapNodes));
+                roadmapContent.getNodes());
     }
 
     public List<GoalRoomMemberResponse> findGoalRoomMembers(final Long goalRoomId,
@@ -170,14 +167,13 @@ public class GoalRoomReadService {
         final Member member = findMemberByIdentifier(new Identifier(identifier));
         validateMemberInGoalRoom(goalRoom, member.getId());
 
-        final RoadmapContent roadmapContent = findRoadmapContentById(goalRoom.getRoadmapContentId());
-        final List<RoadmapNode> roadmapNodes = roadmapNodeRepository.findAllByRoadmapContent(roadmapContent);
+        final RoadmapContent roadmapContent = findRoadmapContentByIdWithRoadmapNodes(goalRoom.getRoadmapContentId());
         final List<DashBoardCheckFeedResponse> checkFeeds = dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(
                 goalRoom);
         final List<DashBoardToDoResponse> checkedTodos = dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(
                 goalRoom, member.getId());
         return GoalRoomMapper.convertToMemberGoalRoomResponse(goalRoom, findGoalRoomLeaderId(goalRoom),
-                getCurrentMemberCount(goalRoom), new RoadmapNodes(roadmapNodes), checkFeeds, checkedTodos);
+                getCurrentMemberCount(goalRoom), roadmapContent.getNodes(), checkFeeds, checkedTodos);
     }
 
     private GoalRoom findGoalRoomWithNodesById(final Long goalRoomId) {
@@ -291,7 +287,7 @@ public class GoalRoomReadService {
     }
 
     private RoadmapNode findRoadmapNodeById(final Long roadmapNodeId) {
-        return roadmapNodeRepository.findById(roadmapNodeId)
+        return roadmapNodeRepository.findByIdWithRoadmapNodeImages(roadmapNodeId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 로드맵 노드입니다. roadmapNodeId = " + roadmapNodeId));
     }
 

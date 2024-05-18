@@ -5,9 +5,9 @@ import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_IDENTIFIE
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static io.restassured.RestAssured.given;
 
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.auth.request.ReissueTokenRequest;
-import co.kirikiri.service.dto.auth.response.AuthenticationResponse;
+import co.kirikiri.auth.service.dto.request.LoginRequest;
+import co.kirikiri.auth.service.dto.request.ReissueTokenRequest;
+import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.MediaType;

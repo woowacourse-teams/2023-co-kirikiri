@@ -20,15 +20,12 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 @Import(TestConfig.class)
 public class IntegrationTest {
 
-    @LocalServerPort
-    private int port;
-
     @Autowired
     protected ObjectMapper objectMapper;
-
     @Autowired
     protected TestTransactionService testTransactionService;
-
+    @LocalServerPort
+    private int port;
     @Autowired
     private DatabaseCleaner databaseCleaner;
 

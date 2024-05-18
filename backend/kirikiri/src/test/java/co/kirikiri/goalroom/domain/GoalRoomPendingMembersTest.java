@@ -3,7 +3,7 @@ package co.kirikiri.goalroom.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import co.kirikiri.common.exception.UnexpectedDomainException;
+import co.kirikiri.common.exception.domain.UnexpectedDomainException;
 import co.kirikiri.goalroom.domain.vo.GoalRoomName;
 import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
 import co.kirikiri.goalroom.domain.vo.Period;

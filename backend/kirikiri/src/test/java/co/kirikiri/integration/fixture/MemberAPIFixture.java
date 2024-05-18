@@ -1,14 +1,12 @@
 package co.kirikiri.integration.fixture;
 
 import static co.kirikiri.integration.fixture.AuthenticationAPIFixture.로그인;
-import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
-import static co.kirikiri.integration.fixture.CommonFixture.AUTHORIZATION;
-import static co.kirikiri.integration.fixture.CommonFixture.BEARER_TOKEN_FORMAT;
+import static co.kirikiri.integration.fixture.CommonFixture.*;
 import static io.restassured.RestAssured.given;
 
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.auth.service.dto.request.LoginRequest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.MediaType;

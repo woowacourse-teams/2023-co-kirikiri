@@ -16,17 +16,17 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.리뷰를_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.roadmap.request.RoadmapReviewSaveRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

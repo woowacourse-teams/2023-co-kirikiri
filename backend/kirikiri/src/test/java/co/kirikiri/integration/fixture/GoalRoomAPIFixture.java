@@ -9,7 +9,7 @@ import co.kirikiri.checkfeed.service.dto.request.CheckFeedRequest;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.todo.service.dto.request.GoalRoomTodoRequest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.Header;
@@ -30,10 +30,10 @@ public class GoalRoomAPIFixture {
     public static final LocalDate 십일_후 = 오늘.plusDays(10L);
     public static final LocalDate 이십일_후 = 십일_후.plusDays(10L);
     public static final LocalDate 삼십일_후 = 이십일_후.plusDays(10L);
+    public static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
     public static final String 정상적인_골룸_이름 = "GOAL_ROOM_NAME";
     public static final int 정상적인_골룸_제한_인원 = 20;
     public static final String 정상적인_골룸_투두_컨텐츠 = "GOAL_ROOM_TO_DO_CONTENT";
-    public static final int 정상적인_골룸_노드_인증_횟수 = (int) ChronoUnit.DAYS.between(오늘, 십일_후);
 
     public static Long 골룸을_생성하고_아이디를_반환한다(final GoalRoomCreateRequest 골룸_생성_요청, final String 액세스_토큰) {
         final String 골룸_생성_응답_Location_헤더 = 골룸_생성(골룸_생성_요청, 액세스_토큰).response().getHeader(LOCATION);
@@ -160,7 +160,7 @@ public class GoalRoomAPIFixture {
     }
 
     public static ExtractableResponse<Response> 골룸을_시작한다(final String 로그인_토큰, final Long 골룸_아이디) {
-        final ExtractableResponse<Response> 골룸_시작_요청_응답 = given().log().all()
+        return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .header(new Header(HttpHeaders.AUTHORIZATION, 로그인_토큰))
@@ -168,7 +168,6 @@ public class GoalRoomAPIFixture {
                 .then()
                 .log().all()
                 .extract();
-        return 골룸_시작_요청_응답;
     }
 
     public static ExtractableResponse<Response> 골룸의_사용자_정보를_정렬_기준없이_조회(final Long 골룸_아이디, final String 로그인_토큰) {

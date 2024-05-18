@@ -20,12 +20,12 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵_생성
 import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아이디로_조회하고_응답객체를_반환한다;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.todo.service.dto.request.GoalRoomTodoRequest;
 import co.kirikiri.todo.service.dto.response.GoalRoomToDoCheckResponse;
 import co.kirikiri.todo.service.dto.response.GoalRoomTodoResponse;

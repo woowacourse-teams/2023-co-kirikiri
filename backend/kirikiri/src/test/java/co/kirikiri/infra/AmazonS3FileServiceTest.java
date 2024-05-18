@@ -8,6 +8,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.common.exception.ServerException;
+import co.kirikiri.common.infra.AmazonS3FileService;
+import co.kirikiri.common.infra.CloudFrontService;
 import co.kirikiri.common.service.dto.FileInformation;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.Protocol;

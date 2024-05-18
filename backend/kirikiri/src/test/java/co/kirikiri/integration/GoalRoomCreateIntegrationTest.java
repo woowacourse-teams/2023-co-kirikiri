@@ -24,6 +24,7 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.goalroom.service.dto.GoalRoomFilterTypeDto;
 import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
@@ -31,12 +32,11 @@ import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.goalroom.service.dto.response.GoalRoomMemberResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
-import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
@@ -278,7 +278,7 @@ class GoalRoomCreateIntegrationTest extends InitIntegrationTest {
                 () -> assertThat(예외_메시지).contains("제한 인원이 꽉 찬 골룸에는 참여할 수 없습니다.")
         );
     }
-    
+
     @Test
     void 이미_참여한_골룸에_참가_요청을_보내면_예외가_발생한다() throws IOException {
         //given

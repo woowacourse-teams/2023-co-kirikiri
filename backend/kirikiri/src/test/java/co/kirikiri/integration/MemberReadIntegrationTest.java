@@ -10,11 +10,11 @@ import static co.kirikiri.integration.fixture.MemberAPIFixture.회원가입;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.common.service.dto.ErrorResponse;
-import co.kirikiri.domain.member.Gender;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.member.response.MemberInformationForPublicResponse;
-import co.kirikiri.service.dto.member.response.MemberInformationResponse;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.member.service.dto.response.MemberInformationForPublicResponse;
+import co.kirikiri.member.service.dto.response.MemberInformationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;

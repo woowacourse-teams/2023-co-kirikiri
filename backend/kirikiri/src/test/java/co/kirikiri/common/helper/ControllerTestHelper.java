@@ -23,7 +23,7 @@ public class ControllerTestHelper extends RestDocsHelper {
     private MemberIdentifierArgumentResolver memberIdentifierArgumentResolver;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         when(authInterceptor.preHandle(any(), any(), any()))
                 .thenReturn(true);
         when(memberIdentifierArgumentResolver.resolveArgument(any(), any(), any(), any()))

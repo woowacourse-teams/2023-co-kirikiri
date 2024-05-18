@@ -1,8 +1,6 @@
 package co.kirikiri.goalroom.service.mapper;
 
 import co.kirikiri.common.exception.NotFoundException;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
@@ -34,10 +32,13 @@ import co.kirikiri.goalroom.service.dto.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomForListResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberResponse;
-import co.kirikiri.goalroom.service.dto.response.RoadmapGoalRoomResponse;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomNumberDto;
-import co.kirikiri.service.dto.roadmap.RoadmapGoalRoomsOrderTypeDto;
-import co.kirikiri.service.dto.roadmap.response.RoadmapGoalRoomResponses;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
+import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
+import co.kirikiri.roadmap.service.dto.response.MemberRoadmapGoalRoomResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponse;
+import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -146,14 +147,14 @@ public class GoalRoomMapper {
     private static RoadmapGoalRoomResponse convertToRoadmapGoalRoomResponse(
             final RoadmapGoalRoomDto roadmapGoalRoomDto) {
         return new RoadmapGoalRoomResponse(roadmapGoalRoomDto.goalRoomId(), roadmapGoalRoomDto.name(),
-                roadmapGoalRoomDto.status(), roadmapGoalRoomDto.currentMemberCount(),
+                roadmapGoalRoomDto.status().name(), roadmapGoalRoomDto.currentMemberCount(),
                 roadmapGoalRoomDto.limitedMemberCount(),
                 roadmapGoalRoomDto.createdAt(), roadmapGoalRoomDto.startDate(),
                 roadmapGoalRoomDto.endDate(), convertToMemberResponse(roadmapGoalRoomDto.goalRoomLeader()));
     }
 
-    private static MemberResponse convertToMemberResponse(final MemberDto memberDto) {
-        return new MemberResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl());
+    private static MemberRoadmapGoalRoomResponse convertToMemberResponse(final MemberDto memberDto) {
+        return new MemberRoadmapGoalRoomResponse(memberDto.id(), memberDto.name(), memberDto.imageUrl());
     }
 
     public static GoalRoomMemberSortType convertGoalRoomMemberSortType(final GoalRoomMemberSortTypeDto sortType) {

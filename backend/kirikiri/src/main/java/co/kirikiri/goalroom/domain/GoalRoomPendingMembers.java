@@ -1,6 +1,6 @@
 package co.kirikiri.goalroom.domain;
 
-import co.kirikiri.common.exception.UnexpectedDomainException;
+import co.kirikiri.common.exception.domain.UnexpectedDomainException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

@@ -4,23 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.common.helper.RepositoryTest;
 import co.kirikiri.common.type.ImageContentType;
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberImage;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapContents;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
-import co.kirikiri.domain.roadmap.RoadmapNodeImages;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
@@ -30,11 +13,30 @@ import co.kirikiri.goalroom.domain.vo.GoalRoomName;
 import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
 import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.dto.GoalRoomMemberSortType;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
-import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberImage;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import co.kirikiri.member.persistence.MemberRepository;
+import co.kirikiri.roadmap.domain.Roadmap;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
+import co.kirikiri.roadmap.domain.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapDifficulty;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.domain.RoadmapNodeImage;
+import co.kirikiri.roadmap.domain.RoadmapNodeImages;
+import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.domain.RoadmapTags;
+import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
+import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -49,19 +51,22 @@ class GoalRoomPendingMemberRepositoryTest {
     private static final LocalDate THIRTY_DAY_LATER = TODAY.plusDays(30);
 
     private final MemberRepository memberRepository;
-    private final RoadmapRepository roadmapRepository;
-    private final GoalRoomRepository goalRoomRepository;
     private final RoadmapCategoryRepository roadmapCategoryRepository;
+    private final RoadmapRepository roadmapRepository;
+    private final RoadmapContentRepository roadmapContentRepository;
+    private final GoalRoomRepository goalRoomRepository;
     private final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository;
 
     public GoalRoomPendingMemberRepositoryTest(final MemberRepository memberRepository,
                                                final RoadmapCategoryRepository roadmapCategoryRepository,
                                                final RoadmapRepository roadmapRepository,
+                                               final RoadmapContentRepository roadmapContentRepository,
                                                final GoalRoomRepository goalRoomRepository,
                                                final GoalRoomPendingMemberRepository goalRoomPendingMemberRepository) {
         this.memberRepository = memberRepository;
         this.roadmapCategoryRepository = roadmapCategoryRepository;
         this.roadmapRepository = roadmapRepository;
+        this.roadmapContentRepository = roadmapContentRepository;
         this.goalRoomRepository = goalRoomRepository;
         this.goalRoomPendingMemberRepository = goalRoomPendingMemberRepository;
     }
@@ -70,22 +75,18 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸과_사용자_아이디로_골룸_사용자_대기_목록을_조회한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
-                LocalDateTime.of(2023, 7, 19, 12, 0, 0), savedGoalRoom, creator.getId());
+                LocalDateTime.of(2023, 7, 19, 12, 0, 0), goalRoom, creator.getId());
         goalRoomPendingMemberRepository.save(goalRoomPendingMember);
 
         // when
         final Optional<GoalRoomPendingMember> findGoalRoomPendingMember = goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(
-                savedGoalRoom, creator.getId());
+                goalRoom, creator.getId());
 
         // then
         assertThat(findGoalRoomPendingMember.get())
@@ -98,18 +99,14 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸과_사용자_아이디로_골룸_사용자_대기_목록_조회시_없으면_빈값을_반환한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
 
         // when
         final Optional<GoalRoomPendingMember> findGoalRoomPendingMember = goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(
-                savedGoalRoom, 2L);
+                goalRoom, 2L);
 
         // then
         assertThat(findGoalRoomPendingMember)
@@ -120,27 +117,23 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸으로_사용자_대기_목록과_멤버를_함께_조회한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
 
         final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
         final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
         final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
-                LocalDateTime.now(), savedGoalRoom, creator.getId());
+                LocalDateTime.now(), goalRoom, creator.getId());
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member1.getId());
+                LocalDateTime.now(), goalRoom, member1.getId());
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member2.getId());
+                LocalDateTime.now(), goalRoom, member2.getId());
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member3.getId());
+                LocalDateTime.now(), goalRoom, member3.getId());
         goalRoomPendingMemberRepository.saveAll(
                 List.of(goalRoomPendingMember, goalRoomPendingMember1, goalRoomPendingMember2, goalRoomPendingMember3));
 
@@ -162,21 +155,21 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸에_참가한다() {
         //given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
-        goalRoomPendingMemberRepository.save(
-                new GoalRoomPendingMember(GoalRoomRole.LEADER, savedGoalRoom, creator.getId()));
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
+        final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
+                goalRoom, creator.getId());
+        goalRoomPendingMemberRepository.save(goalRoomPendingMember1);
 
         final Member follower = 사용자를_생성한다("identifier2", "password!2", "name", "kirikiri1@email.com");
-        final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
-                savedGoalRoom, follower.getId());
+        final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
+                goalRoom, follower.getId());
 
         //when
-        goalRoomPendingMemberRepository.save(goalRoomPendingMember);
+        goalRoomPendingMemberRepository.save(goalRoomPendingMember1);
+        goalRoomPendingMemberRepository.save(goalRoomPendingMember2);
 
         //then
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoom(
@@ -196,19 +189,17 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸의_리더를_찾는다() {
         //given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(GoalRoomRole.LEADER,
-                savedGoalRoom, creator.getId());
+                goalRoom, creator.getId());
         goalRoomPendingMemberRepository.save(goalRoomPendingMember1);
 
         final Member follower = 사용자를_생성한다("identifier2", "password!2", "name", "kirikiri1@email.com");
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(GoalRoomRole.FOLLOWER,
-                savedGoalRoom, follower.getId());
+                goalRoom, follower.getId());
         goalRoomPendingMemberRepository.save(goalRoomPendingMember2);
 
         //when
@@ -223,27 +214,23 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸_아이디로_골룸_사용자를_조회하고_들어온지_오래된_순서대로_정렬한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
 
         final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
         final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
         final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember0 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
-                LocalDateTime.now(), savedGoalRoom, creator.getId());
+                LocalDateTime.now(), goalRoom, creator.getId());
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member1.getId());
+                LocalDateTime.now(), goalRoom, member1.getId());
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member2.getId());
+                LocalDateTime.now(), goalRoom, member2.getId());
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member3.getId());
+                LocalDateTime.now(), goalRoom, member3.getId());
         goalRoomPendingMemberRepository.saveAll(
                 List.of(goalRoomPendingMember0, goalRoomPendingMember1, goalRoomPendingMember2,
                         goalRoomPendingMember3));
@@ -252,7 +239,7 @@ class GoalRoomPendingMemberRepositoryTest {
 
         // when
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
-                savedGoalRoom.getId(), GoalRoomMemberSortType.JOINED_ASC);
+                goalRoom.getId(), GoalRoomMemberSortType.JOINED_ASC);
 
         // then
         assertThat(goalRoomPendingMembers)
@@ -265,27 +252,23 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸_아이디로_골룸_사용자를_조회하고_마지막으로_들어온_순서대로_정렬한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
 
         final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
         final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
         final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember0 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
-                LocalDateTime.now(), savedGoalRoom, creator.getId());
+                LocalDateTime.now(), goalRoom, creator.getId());
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member1.getId());
+                LocalDateTime.now(), goalRoom, member1.getId());
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member2.getId());
+                LocalDateTime.now(), goalRoom, member2.getId());
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member3.getId());
+                LocalDateTime.now(), goalRoom, member3.getId());
         final GoalRoomPendingMember savedGoalRoomPendingMember0 = goalRoomPendingMemberRepository.save(
                 goalRoomPendingMember0);
         final GoalRoomPendingMember savedGoalRoomPendingMember1 = goalRoomPendingMemberRepository.save(
@@ -299,7 +282,7 @@ class GoalRoomPendingMemberRepositoryTest {
 
         // when
         final List<GoalRoomPendingMember> goalRoomPendingMembers = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
-                savedGoalRoom.getId(), GoalRoomMemberSortType.JOINED_DESC);
+                goalRoom.getId(), GoalRoomMemberSortType.JOINED_DESC);
 
         // then
         assertThat(goalRoomPendingMembers)
@@ -310,27 +293,23 @@ class GoalRoomPendingMemberRepositoryTest {
     void 골룸_아이디로_골룸_사용자를_조회하고_정렬조건을_달성률순_또는_입력하지_않은경우_참여한순으로_정렬한다() {
         // given
         final Member creator = 크리에이터를_저장한다();
-        final RoadmapCategory category = 카테고리를_저장한다("게임");
-        final Roadmap roadmap = 로드맵을_저장한다(creator, category);
-
-        final RoadmapContents roadmapContents = roadmap.getContents();
-        final RoadmapContent targetRoadmapContent = roadmapContents.getValues().get(0);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(targetRoadmapContent, creator);
-        final GoalRoom savedGoalRoom = goalRoomRepository.save(goalRoom);
+        final RoadmapCategory category = 카테고리를_생성한다("여행");
+        final Roadmap roadmap = 로드맵을_저장한다("title", creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_저장한다(roadmap.getId());
+        final GoalRoom goalRoom = 골룸을_저장한다(roadmapContent, creator);
 
         final Member member1 = 사용자를_생성한다("identifier1", "password2!", "name1", "kirikiri1@email.com");
         final Member member2 = 사용자를_생성한다("identifier2", "password3!", "name2", "kirikiri1@email.com");
         final Member member3 = 사용자를_생성한다("identifier3", "password4!", "name3", "kirikiri1@email.com");
 
         final GoalRoomPendingMember goalRoomPendingMember0 = new GoalRoomPendingMember(null, GoalRoomRole.LEADER,
-                LocalDateTime.now(), savedGoalRoom, creator.getId());
+                LocalDateTime.now(), goalRoom, creator.getId());
         final GoalRoomPendingMember goalRoomPendingMember1 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member1.getId());
+                LocalDateTime.now(), goalRoom, member1.getId());
         final GoalRoomPendingMember goalRoomPendingMember2 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member2.getId());
+                LocalDateTime.now(), goalRoom, member2.getId());
         final GoalRoomPendingMember goalRoomPendingMember3 = new GoalRoomPendingMember(null, GoalRoomRole.FOLLOWER,
-                LocalDateTime.now(), savedGoalRoom, member3.getId());
+                LocalDateTime.now(), goalRoom, member3.getId());
         goalRoomPendingMemberRepository.saveAll(
                 List.of(goalRoomPendingMember0, goalRoomPendingMember1, goalRoomPendingMember2,
                         goalRoomPendingMember3));
@@ -339,9 +318,9 @@ class GoalRoomPendingMemberRepositoryTest {
 
         // when
         final List<GoalRoomPendingMember> goalRoomPendingMembers1 = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
-                savedGoalRoom.getId(), GoalRoomMemberSortType.ACCOMPLISHMENT_RATE);
+                goalRoom.getId(), GoalRoomMemberSortType.ACCOMPLISHMENT_RATE);
         final List<GoalRoomPendingMember> goalRoomPendingMembers2 = goalRoomPendingMemberRepository.findByGoalRoomIdOrderedBySortType(
-                savedGoalRoom.getId(), null);
+                goalRoom.getId(), null);
 
         // then
         assertThat(goalRoomPendingMembers1)
@@ -371,17 +350,21 @@ class GoalRoomPendingMemberRepositoryTest {
         return memberRepository.save(member);
     }
 
-    private RoadmapCategory 카테고리를_저장한다(final String name) {
+    private RoadmapCategory 카테고리를_생성한다(final String name) {
         final RoadmapCategory roadmapCategory = new RoadmapCategory(name);
         return roadmapCategoryRepository.save(roadmapCategory);
     }
 
-    private Roadmap 로드맵을_저장한다(final Member creator, final RoadmapCategory category) {
-        final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
-        roadmap.addContent(roadmapContent);
+    private Roadmap 로드맵을_저장한다(final String title, final Member creator, final RoadmapCategory category) {
+        final Roadmap roadmap = new Roadmap(title, "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator.getId(), category,
+                new RoadmapTags(new ArrayList<>()));
         return roadmapRepository.save(roadmap);
+    }
+
+    private RoadmapContent 로드맵_본문을_저장한다(final Long roadmapId) {
+        final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(roadmapNodes));
+        return roadmapContentRepository.save(roadmapContent);
     }
 
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {
@@ -391,12 +374,6 @@ class GoalRoomPendingMemberRepositoryTest {
         return List.of(roadmapNode1, roadmapNode2);
     }
 
-    private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
-        return roadmapContent;
-    }
-
     private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
         return List.of(
                 new RoadmapNodeImage("node-image1.png", "node-image1-save-path", ImageContentType.PNG),
@@ -404,7 +381,7 @@ class GoalRoomPendingMemberRepositoryTest {
         );
     }
 
-    private GoalRoom 골룸을_생성한다(final RoadmapContent roadmapContent, final Member member) {
+    private GoalRoom 골룸을_저장한다(final RoadmapContent roadmapContent, final Member member) {
         final List<RoadmapNode> roadmapNodes = roadmapContent.getNodes().getValues();
 
         final RoadmapNode firstRoadmapNode = roadmapNodes.get(0);
@@ -420,7 +397,9 @@ class GoalRoomPendingMemberRepositoryTest {
         final GoalRoomRoadmapNodes goalRoomRoadmapNodes = new GoalRoomRoadmapNodes(
                 List.of(firstGoalRoomRoadmapNode, secondGoalRoomRoadmapNode));
 
-        return new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10), roadmapContent.getId(),
+        final GoalRoom goalRoom = new GoalRoom(new GoalRoomName("골룸"), new LimitedMemberCount(10),
+                roadmapContent.getId(),
                 goalRoomRoadmapNodes);
+        return goalRoomRepository.save(goalRoom);
     }
 }

@@ -13,22 +13,6 @@ import co.kirikiri.common.exception.ForbiddenException;
 import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.common.service.FileService;
 import co.kirikiri.common.type.ImageContentType;
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberImage;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodeImage;
-import co.kirikiri.domain.roadmap.RoadmapNodeImages;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
 import co.kirikiri.goalroom.domain.GoalRoomPendingMember;
@@ -53,13 +37,32 @@ import co.kirikiri.goalroom.service.dto.response.GoalRoomRoadmapNodesResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomForListResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.goalroom.service.dto.response.MemberResponse;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.persistence.roadmap.RoadmapContentRepository;
-import co.kirikiri.persistence.roadmap.RoadmapNodeRepository;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberImage;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import co.kirikiri.member.persistence.MemberRepository;
+import co.kirikiri.roadmap.domain.Roadmap;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
+import co.kirikiri.roadmap.domain.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapDifficulty;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.domain.RoadmapNodeImage;
+import co.kirikiri.roadmap.domain.RoadmapNodeImages;
+import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.domain.RoadmapStatus;
+import co.kirikiri.roadmap.domain.RoadmapTags;
+import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
+import co.kirikiri.roadmap.persistence.RoadmapNodeRepository;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -111,18 +114,15 @@ class GoalRoomReadServiceTest {
     void 골룸_아이디로_골룸_정보를_조회한다() {
         // given
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
         given(goalRoomRepository.findById(any()))
                 .willReturn(Optional.of(goalRoom));
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(roadmapNodes);
         given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
                 .willReturn(List.of(new GoalRoomPendingMember(GoalRoomRole.LEADER, goalRoom, creator.getId())));
 
@@ -150,10 +150,9 @@ class GoalRoomReadServiceTest {
     void 모집중인_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_조회시_참여하는_사용자면_참여여부가_true로_반환된다() {
         // given
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
         final GoalRoomPendingMember goalRoomPendingMember = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
@@ -163,10 +162,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(any(), any()))
                 .willReturn(Optional.of(goalRoomPendingMember));
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(roadmapNodes);
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
         given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
@@ -186,20 +183,17 @@ class GoalRoomReadServiceTest {
     void 모집중인_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_조회시_참여하지_않는_사용자면_참여여부가_false로_반환된다() {
         // given
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
         given(goalRoomRepository.findById(any()))
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(any(), any()))
                 .willReturn(Optional.empty());
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(roadmapNodes);
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
         given(goalRoomPendingMemberRepository.findByGoalRoom(any()))
@@ -219,10 +213,9 @@ class GoalRoomReadServiceTest {
     void 모집중이지_않은_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_조회시_참여하는_사용자면_참여여부가_true로_반환된다() {
         // given
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
         goalRoom.start();
 
@@ -233,10 +226,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomMemberRepository.findByGoalRoomAndMemberId(any(), any()))
                 .willReturn(Optional.of(goalRoomMember));
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(roadmapNodes);
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
 
@@ -254,10 +245,9 @@ class GoalRoomReadServiceTest {
     void 모집중이지_않은_골룸에_대해서_골룸_아이디와_사용자_아이디로_골룸_조회시_참여하지_않는_사용자면_참여여부가_false로_반환된다() {
         // given
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
         goalRoom.start();
 
@@ -265,10 +255,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(goalRoom));
         given(goalRoomMemberRepository.findByGoalRoomAndMemberId(any(), any()))
                 .willReturn(Optional.empty());
-        given(roadmapContentRepository.findById(anyLong()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(roadmapNodes);
         given(memberRepository.findByIdentifier(any()))
                 .willReturn(Optional.of(creator));
 
@@ -296,13 +284,11 @@ class GoalRoomReadServiceTest {
     @Test
     void 정상적으로_진행중인_골룸의_참여자를_조회한다() throws MalformedURLException {
         //given
-        final Member creator = 사용자를_생성한다(1L);
+        final Member creator = 크리에이터를_생성한다();
         final Member follower = 사용자를_생성한다(2L);
-
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
         goalRoom.start();
 
@@ -327,7 +313,7 @@ class GoalRoomReadServiceTest {
                 GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE);
 
         //then
-        final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "name1",
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "코끼리",
                 "http://example.com/serverFilePath", 0.0);
         final GoalRoomMemberResponse expectedGoalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "name1",
                 "http://example.com/serverFilePath", 0.0);
@@ -339,14 +325,12 @@ class GoalRoomReadServiceTest {
     @Test
     void 정상적으로_완료된_골룸의_참여자를_조회한다() throws MalformedURLException {
         //given
-        final Member creator = 사용자를_생성한다(1L);
         final Member follower = 사용자를_생성한다(2L);
-
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
         goalRoom.complete();
 
         final GoalRoomMember goalRoomMemberCreator = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(),
@@ -370,7 +354,7 @@ class GoalRoomReadServiceTest {
                 GoalRoomMemberSortTypeDto.ACCOMPLISHMENT_RATE);
 
         //then
-        final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "name1",
+        final GoalRoomMemberResponse expectedGoalRoomMemberResponse1 = new GoalRoomMemberResponse(1L, "코끼리",
                 "http://example.com/serverFilePath", 0.0);
         final GoalRoomMemberResponse expectedGoalRoomMemberResponse2 = new GoalRoomMemberResponse(2L, "name1",
                 "http://example.com/serverFilePath", 0.0);
@@ -384,12 +368,10 @@ class GoalRoomReadServiceTest {
         //given
         final Member creator = 사용자를_생성한다(1L);
         final Member follower = 사용자를_생성한다(2L);
-
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
         final GoalRoomPendingMember goalRoomMemberCreator = new GoalRoomPendingMember(1L, GoalRoomRole.LEADER,
                 LocalDateTime.now(), goalRoom, creator.getId());
@@ -444,8 +426,7 @@ class GoalRoomReadServiceTest {
         final RoadmapNode roadmapNode4 = new RoadmapNode(4L, "로드맵 4주차", "로드맵 4주차 내용");
         final RoadmapNodes roadmapNodes = new RoadmapNodes(
                 List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(roadmapNodes);
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L, roadmapNodes);
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(
                 new Period(TODAY, TODAY.plusDays(10)), 5, roadmapNode1.getId());
@@ -469,10 +450,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(member));
         given(goalRoomMemberRepository.findByGoalRoomAndMemberId(any(), any()))
                 .willReturn(Optional.of(goalRoomLeader));
-        given(roadmapContentRepository.findById(any()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
         given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any()))
                 .willReturn(dashBoardCheckFeedResponses);
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
@@ -524,8 +503,7 @@ class GoalRoomReadServiceTest {
         final RoadmapNode roadmapNode4 = new RoadmapNode(4L, "로드맵 4주차", "로드맵 4주차 내용");
         final RoadmapNodes roadmapNodes = new RoadmapNodes(
                 List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(roadmapNodes);
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L, roadmapNodes);
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(
                 new Period(TODAY, TODAY.plusDays(10)), 5, roadmapNode1.getId());
@@ -550,10 +528,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(member));
         given(goalRoomPendingMemberRepository.findByGoalRoomAndMemberId(any(), any()))
                 .willReturn(Optional.of(goalRoomLeader));
-        given(roadmapContentRepository.findById(any()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
         given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any()))
                 .willReturn(Collections.emptyList());
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
@@ -592,8 +568,7 @@ class GoalRoomReadServiceTest {
         final RoadmapNode roadmapNode4 = new RoadmapNode(4L, "로드맵 4주차", "로드맵 4주차 내용");
         final RoadmapNodes roadmapNodes = new RoadmapNodes(
                 List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(roadmapNodes);
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", 1L, roadmapNodes);
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = new GoalRoomRoadmapNode(
                 new Period(TODAY, TODAY.plusDays(10)), 5, roadmapNode1.getId());
@@ -622,10 +597,8 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(member));
         given(goalRoomMemberRepository.findByGoalRoomAndMemberId(any(), any()))
                 .willReturn(Optional.of(goalRoomLeader));
-        given(roadmapContentRepository.findById(any()))
+        given(roadmapContentRepository.findByIdWithRoadmapNodes(any()))
                 .willReturn(Optional.of(roadmapContent));
-        given(roadmapNodeRepository.findAllByRoadmapContent(any()))
-                .willReturn(List.of(roadmapNode1, roadmapNode2, roadmapNode3, roadmapNode4));
         given(dashBoardCheckFeedService.findCheckFeedsByNodeAndGoalRoomStatus(any()))
                 .willReturn(dashBoardCheckFeedResponses);
         given(dashBoardToDoService.findMemberCheckedGoalRoomToDoIds(any(), any()))
@@ -685,10 +658,9 @@ class GoalRoomReadServiceTest {
     void 사용자_단일_목록_조회_시_유효하지_않은_아이디일_경우_예외를_반환한다() {
         // given
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
@@ -707,10 +679,9 @@ class GoalRoomReadServiceTest {
         // given
         final Member creator = 크리에이터를_생성한다();
         final Member member = 사용자를_생성한다(2L);
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
         given(goalRoomRepository.findByIdWithNodes(anyLong()))
@@ -728,9 +699,9 @@ class GoalRoomReadServiceTest {
     void 사용자_골룸_목록을_조회한다() throws MalformedURLException {
         // given
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
 
         final GoalRoom goalRoom1 = 골룸을_생성한다(creator, roadmapContent);
         골룸을_생성한다(creator, roadmapContent);
@@ -804,10 +775,9 @@ class GoalRoomReadServiceTest {
     @Test
     void 사용자_골룸_목록_중_모집_중인_상태만_조회한다() throws MalformedURLException {
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom1 = 골룸을_생성한다(creator, roadmapContent);
         final GoalRoom goalRoom2 = 골룸을_생성한다(creator, roadmapContent);
         final GoalRoom goalRoom3 = 골룸을_생성한다(creator, roadmapContent);
@@ -870,10 +840,9 @@ class GoalRoomReadServiceTest {
     @Test
     void 사용자_골룸_목록_중_진행_중인_상태만_조회한다() throws MalformedURLException {
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom1 = 골룸을_생성한다(creator, roadmapContent);
         final GoalRoom goalRoom2 = 골룸을_생성한다(creator, roadmapContent);
         final GoalRoom goalRoom3 = 골룸을_생성한다(creator, roadmapContent);
@@ -935,10 +904,9 @@ class GoalRoomReadServiceTest {
     @Test
     void 사용자_골룸_목록_중_종료된_상태만_조회한다() throws MalformedURLException {
         final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
         final GoalRoom goalRoom1 = 골룸을_생성한다(creator, roadmapContent);
         final GoalRoom goalRoom2 = 골룸을_생성한다(creator, roadmapContent);
         final GoalRoom goalRoom3 = 골룸을_생성한다(creator, roadmapContent);
@@ -1000,12 +968,12 @@ class GoalRoomReadServiceTest {
     @Test
     void 골룸의_전체_노드를_조회한다() throws MalformedURLException {
         // given
-        final Member creator = 사용자를_생성한다(1L);
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
         final GoalRoomMember goalRoomMember = new GoalRoomMember(GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
                 creator.getId());
         given(goalRoomRepository.findByIdWithNodes(1L))
@@ -1014,9 +982,9 @@ class GoalRoomReadServiceTest {
                 .willReturn(Optional.of(creator));
         given(goalRoomMemberRepository.findByGoalRoomIdAndMemberId(anyLong(), any()))
                 .willReturn(Optional.of(goalRoomMember));
-        given(roadmapNodeRepository.findById(1L))
+        given(roadmapNodeRepository.findByIdWithRoadmapNodeImages(1L))
                 .willReturn(Optional.of(roadmapNodes.get(0)));
-        given(roadmapNodeRepository.findById(2L))
+        given(roadmapNodeRepository.findByIdWithRoadmapNodeImages(2L))
                 .willReturn(Optional.of(roadmapNodes.get(1)));
         given(fileService.generateUrl(anyString(), any()))
                 .willReturn(new URL("http://example.com/serverFilePath"));
@@ -1040,12 +1008,11 @@ class GoalRoomReadServiceTest {
     @Test
     void 골룸의_노드_조회시_골룸에_참여하지_않은_사용자면_예외가_발생한다() {
         // given
-        final Member creator = 사용자를_생성한다(1L);
+        final Member creator = 크리에이터를_생성한다();
+        final Roadmap roadmap = 로드맵을_생성한다(creator);
         final List<RoadmapNode> roadmapNodes = 로드맵_노드들을_생성한다();
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmapNodes);
-        final Roadmap roadmap = 로드맵을_생성한다(creator, roadmapContent);
-
-        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmap.getContents().getValues().get(0));
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), roadmapNodes);
+        final GoalRoom goalRoom = 골룸을_생성한다(creator, roadmapContent);
 
         given(goalRoomRepository.findByIdWithNodes(1L))
                 .willReturn(Optional.of(goalRoom));
@@ -1085,11 +1052,10 @@ class GoalRoomReadServiceTest {
                 new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
     }
 
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapContent roadmapContent) {
+    private Roadmap 로드맵을_생성한다(final Member creator) {
         final RoadmapCategory category = new RoadmapCategory("게임");
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL, creator, category);
-        roadmap.addContent(roadmapContent);
-        return roadmap;
+        return new Roadmap(1L, "로드맵 제목", "로드맵 소개글", 10, RoadmapDifficulty.NORMAL,
+                RoadmapStatus.CREATED, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
     }
 
     private List<RoadmapNode> 로드맵_노드들을_생성한다() {
@@ -1099,17 +1065,15 @@ class GoalRoomReadServiceTest {
         return List.of(roadmapNode1, roadmapNode2);
     }
 
-    private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-        final RoadmapContent roadmapContent = new RoadmapContent(1L, "로드맵 본문");
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
-        return roadmapContent;
-    }
-
     private List<RoadmapNodeImage> 노드_이미지들을_생성한다() {
         return List.of(
                 new RoadmapNodeImage("node-image1.png", "node-image1-save-path", ImageContentType.PNG),
                 new RoadmapNodeImage("node-image2.png", "node-image2-save-path", ImageContentType.PNG)
         );
+    }
+
+    private RoadmapContent 로드맵_본문을_생성한다(final Long roadmapId, final List<RoadmapNode> roadmapNodes) {
+        return new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(roadmapNodes));
     }
 
     private GoalRoom 골룸을_생성한다(final Member member, final RoadmapContent roadmapContent) {

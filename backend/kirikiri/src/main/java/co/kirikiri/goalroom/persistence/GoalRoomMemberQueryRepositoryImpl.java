@@ -22,9 +22,9 @@ public class GoalRoomMemberQueryRepositoryImpl extends QuerydslRepositorySupport
     }
 
     @Override
-    public Optional<GoalRoomMember> findByRoadmapIdAndMemberIdentifierAndGoalRoomStatus(final Long roadmapId,
-                                                                                        final Long memberId,
-                                                                                        final GoalRoomStatus status) {
+    public Optional<GoalRoomMember> findByRoadmapIdAndMemberIdAndGoalRoomStatus(final Long roadmapId,
+                                                                                final Long memberId,
+                                                                                final GoalRoomStatus status) {
         return Optional.ofNullable(selectFrom(goalRoomMember)
                 .innerJoin(goalRoomMember.goalRoom, goalRoom)
                 .fetchJoin()

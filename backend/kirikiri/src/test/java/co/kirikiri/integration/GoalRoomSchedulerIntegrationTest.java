@@ -14,6 +14,7 @@ import static co.kirikiri.integration.fixture.RoadmapAPIFixture.로드맵을_아
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
@@ -24,10 +25,9 @@ import co.kirikiri.goalroom.persistence.GoalRoomPendingMemberRepository;
 import co.kirikiri.goalroom.service.dto.response.MemberGoalRoomResponse;
 import co.kirikiri.goalroom.service.scheduler.GoalRoomScheduler;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.auth.request.LoginRequest;
-import co.kirikiri.service.dto.member.request.GenderType;
-import co.kirikiri.service.dto.member.request.MemberJoinRequest;
-import co.kirikiri.service.dto.roadmap.response.RoadmapResponse;
+import co.kirikiri.member.service.dto.request.GenderType;
+import co.kirikiri.member.service.dto.request.MemberJoinRequest;
+import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;

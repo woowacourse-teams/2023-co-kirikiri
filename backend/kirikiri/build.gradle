@@ -71,9 +71,10 @@ jacocoTestReport {
         classDirectories.setFrom(
                 files(classDirectories.files.collect {
                     fileTree(dir: it, excludes: [
-                            "co/kirikiri/persistence/QuerydslRepositorySupporter",
-                            "co/kirikiri/domain/**",
-                            "co/kirikiri/persistence/goalroom/dto/**",
+                            "co/kirikiri/common/persistence/QuerydslRepositorySupporter",
+                            "co/kirikiri/common/service/dto/**",
+                            "co/kirikiri/**/domain/**",
+                            "co/kirikiri/**/persistence/dto/**",
                             "**/*Application*",
                             "**/*Config*",
                             "**/*Dto*",
@@ -112,11 +113,12 @@ jacocoTestCoverageVerification {
                 value = 'COVEREDRATIO'
                 minimum = 0.80
             }
-
+            
             excludes = [
-                    "co.kirikiri.persistence.QuerydslRepositorySupporter",
-                    "co.kirikiri.domain.**.**",
-                    "co.kirikiri.persistence.goalroom.dto.**",
+                    "co.kirikiri.common.persistence.QuerydslRepositorySupporter",
+                    "co.kirikiri.common.service.dto.**",
+                    "co.kirikiri.**.domain.**",
+                    "co.kirikiri.**.persistence.dto.**",
                     "**.*Application*",
                     "**.*Config*",
                     "**.*Dto*",

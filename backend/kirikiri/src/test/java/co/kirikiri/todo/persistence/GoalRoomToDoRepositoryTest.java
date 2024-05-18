@@ -3,19 +3,6 @@ package co.kirikiri.todo.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kirikiri.common.helper.RepositoryTest;
-import co.kirikiri.domain.member.EncryptedPassword;
-import co.kirikiri.domain.member.Gender;
-import co.kirikiri.domain.member.Member;
-import co.kirikiri.domain.member.MemberProfile;
-import co.kirikiri.domain.member.vo.Identifier;
-import co.kirikiri.domain.member.vo.Nickname;
-import co.kirikiri.domain.member.vo.Password;
-import co.kirikiri.domain.roadmap.Roadmap;
-import co.kirikiri.domain.roadmap.RoadmapCategory;
-import co.kirikiri.domain.roadmap.RoadmapContent;
-import co.kirikiri.domain.roadmap.RoadmapDifficulty;
-import co.kirikiri.domain.roadmap.RoadmapNode;
-import co.kirikiri.domain.roadmap.RoadmapNodes;
 import co.kirikiri.goalroom.domain.GoalRoom;
 import co.kirikiri.goalroom.domain.GoalRoomMember;
 import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
@@ -26,9 +13,22 @@ import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
 import co.kirikiri.goalroom.domain.vo.Period;
 import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
 import co.kirikiri.goalroom.persistence.GoalRoomRepository;
-import co.kirikiri.persistence.member.MemberRepository;
-import co.kirikiri.persistence.roadmap.RoadmapCategoryRepository;
-import co.kirikiri.persistence.roadmap.RoadmapRepository;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import co.kirikiri.member.persistence.MemberRepository;
+import co.kirikiri.roadmap.domain.Roadmap;
+import co.kirikiri.roadmap.domain.RoadmapCategory;
+import co.kirikiri.roadmap.domain.RoadmapContent;
+import co.kirikiri.roadmap.domain.RoadmapDifficulty;
+import co.kirikiri.roadmap.domain.RoadmapNode;
+import co.kirikiri.roadmap.domain.RoadmapNodes;
+import co.kirikiri.roadmap.persistence.RoadmapCategoryRepository;
+import co.kirikiri.roadmap.persistence.RoadmapRepository;
 import co.kirikiri.todo.domain.GoalRoomToDo;
 import co.kirikiri.todo.domain.vo.GoalRoomTodoContent;
 import co.kirikiri.todo.domain.vo.ToDoPeriod;
@@ -70,8 +70,8 @@ class GoalRoomToDoRepositoryTest {
         final RoadmapCategory category = 카테고리를_저장한다("여가");
         final RoadmapNode roadmapNode1 = 로드맵_노드를_생성한다("로드맵 1주차", "로드맵 1주차 내용");
         final RoadmapNode roadmapNode2 = 로드맵_노드를_생성한다("로드맵 2주차", "로드맵 2주차 내용");
-        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(List.of(roadmapNode1, roadmapNode2));
-        로드맵을_생성한다(creator, category, roadmapContent);
+        final Roadmap roadmap = 로드맵을_생성한다(creator, category);
+        final RoadmapContent roadmapContent = 로드맵_본문을_생성한다(roadmap.getId(), List.of(roadmapNode1, roadmapNode2));
 
         final GoalRoomRoadmapNode goalRoomRoadmapNode1 = 골룸_로드맵_노드를_생성한다(TODAY, TODAY.plusDays(10),
                 roadmapNode1);
@@ -118,22 +118,19 @@ class GoalRoomToDoRepositoryTest {
         return memberRepository.save(creator);
     }
 
+    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category) {
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
+                creator.getId(), category, null);
+        return roadmapRepository.save(roadmap);
+    }
+
     private RoadmapNode 로드맵_노드를_생성한다(final String title, final String content) {
         return new RoadmapNode(title, content);
     }
 
-    private RoadmapContent 로드맵_본문을_생성한다(final List<RoadmapNode> roadmapNodes) {
-        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문");
-        roadmapContent.addNodes(new RoadmapNodes(roadmapNodes));
+    private RoadmapContent 로드맵_본문을_생성한다(final Long roadmapId, final List<RoadmapNode> roadmapNodes) {
+        final RoadmapContent roadmapContent = new RoadmapContent("로드맵 본문", roadmapId, new RoadmapNodes(roadmapNodes));
         return roadmapContent;
-    }
-
-    private Roadmap 로드맵을_생성한다(final Member creator, final RoadmapCategory category,
-                              final RoadmapContent roadmapContent) {
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 소개글", 30, RoadmapDifficulty.DIFFICULT,
-                creator, category);
-        roadmap.addContent(roadmapContent);
-        return roadmapRepository.save(roadmap);
     }
 
     private GoalRoomRoadmapNode 골룸_로드맵_노드를_생성한다(final LocalDate startDate, final LocalDate endDate,
