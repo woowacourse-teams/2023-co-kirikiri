@@ -4,8 +4,8 @@ import static co.kirikiri.member.domain.QMember.member;
 import static co.kirikiri.member.domain.QMemberImage.memberImage;
 import static co.kirikiri.member.domain.QMemberProfile.memberProfile;
 
+import co.kirikiri.common.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.member.domain.Member;
-import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import java.util.Optional;
 
 public class MemberQueryRepositoryImpl extends QuerydslRepositorySupporter implements MemberQueryRepository {
@@ -30,6 +30,15 @@ public class MemberQueryRepositoryImpl extends QuerydslRepositorySupporter imple
         return Optional.ofNullable(selectFrom(member)
                 .innerJoin(member.memberProfile, memberProfile)
                 .fetchJoin()
+                .innerJoin(member.image, memberImage)
+                .fetchJoin()
+                .where(member.id.eq(memberId))
+                .fetchOne());
+    }
+
+    @Override
+    public Optional<Member> findWithMemberImageById(final Long memberId) {
+        return Optional.ofNullable(selectFrom(member)
                 .innerJoin(member.image, memberImage)
                 .fetchJoin()
                 .where(member.id.eq(memberId))

@@ -13,12 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import co.kirikiri.common.exception.NotFoundException;
-import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.common.helper.ControllerTestHelper;
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.member.domain.Gender;
 import co.kirikiri.member.service.MemberService;
 import co.kirikiri.member.service.dto.response.MemberInformationForPublicResponse;
 import co.kirikiri.member.service.dto.response.MemberInformationResponse;
-import co.kirikiri.service.dto.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

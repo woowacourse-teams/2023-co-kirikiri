@@ -1,6 +1,5 @@
 package co.kirikiri.roadmap.service.dto.response;
 
-import co.kirikiri.member.service.dto.response.MemberResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -13,7 +12,7 @@ public record RoadmapGoalRoomResponse(
         LocalDateTime createdAt,
         LocalDate startDate,
         LocalDate endDate,
-        MemberResponse goalRoomLeader
+        MemberRoadmapGoalRoomResponse goalRoomLeader
 ) {
 
 }

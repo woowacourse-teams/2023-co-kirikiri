@@ -3,6 +3,7 @@ package co.kirikiri.roadmap.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.common.helper.RepositoryTest;
 import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.member.domain.EncryptedPassword;
 import co.kirikiri.member.domain.Gender;
@@ -13,12 +14,11 @@ import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
 import co.kirikiri.member.persistence.MemberRepository;
-import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapReview;
-import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapReviewRepositoryTest {
@@ -48,7 +48,8 @@ class RoadmapReviewRepositoryTest {
         roadmapReviewRepository.save(roadmapReview);
 
         // when
-        final RoadmapReview findRoadmapReview = roadmapReviewRepository.findByRoadmapIdAndMemberId(roadmapId, member.getId())
+        final RoadmapReview findRoadmapReview = roadmapReviewRepository.findByRoadmapIdAndMemberId(roadmapId,
+                        member.getId())
                 .get();
 
         // then

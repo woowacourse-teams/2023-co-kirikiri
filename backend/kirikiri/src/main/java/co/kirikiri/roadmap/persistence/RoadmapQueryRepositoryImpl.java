@@ -1,15 +1,16 @@
 package co.kirikiri.roadmap.persistence;
 
-import static co.kirikiri.domain.goalroom.QGoalRoom.goalRoom;
-import static co.kirikiri.domain.goalroom.QGoalRoomMember.goalRoomMember;
+import static co.kirikiri.goalroom.domain.QGoalRoom.goalRoom;
+import static co.kirikiri.goalroom.domain.QGoalRoomMember.goalRoomMember;
 import static co.kirikiri.member.domain.QMember.member;
 import static co.kirikiri.roadmap.domain.QRoadmap.roadmap;
 import static co.kirikiri.roadmap.domain.QRoadmapCategory.roadmapCategory;
+import static co.kirikiri.roadmap.domain.QRoadmapContent.roadmapContent;
 import static co.kirikiri.roadmap.domain.QRoadmapReview.roadmapReview;
 import static co.kirikiri.roadmap.domain.QRoadmapTag.roadmapTag;
 
+import co.kirikiri.common.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.member.domain.vo.Identifier;
-import co.kirikiri.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapStatus;
@@ -160,13 +161,15 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
         if (orderType == RoadmapOrderType.GOAL_ROOM_COUNT) {
             return new OrderSpecifier<>(
                     Order.DESC,
-                    goalRoomCountCond(goalRoom.roadmapContent.roadmapId.eq(roadmap.id))
+                    goalRoomCountCond(goalRoom.roadmapContentId.eq(getLatestRoadmapContentIdByRoadmap(roadmap.id)))
             );
         }
         if (orderType == RoadmapOrderType.PARTICIPANT_COUNT) {
             return new OrderSpecifier<>(
                     Order.DESC,
-                    participantCountCond(goalRoomMember.goalRoom.roadmapContent.roadmapId.eq(roadmap.id))
+                    participantCountCond(
+                            goalRoomMember.goalRoom.roadmapContentId.eq(getLatestRoadmapContentIdByRoadmap(roadmap.id))
+                    )
             );
         }
         if (orderType == RoadmapOrderType.REVIEW_RATE) {
@@ -196,19 +199,35 @@ public class RoadmapQueryRepositoryImpl extends QuerydslRepositorySupporter impl
                 .where(isSatisfiedRoadmap);
     }
 
+    private JPAQuery<Long> getLatestRoadmapContentIdByRoadmap(final NumberPath<Long> id) {
+        return select(roadmapContent.id)
+                .from(roadmapContent)
+                .where(roadmapContent.roadmapId.eq(id))
+                .orderBy(roadmapContent.createdAt.desc());
+    }
+
+    private JPAQuery<Long> getLatestRoadmapContentIdByRoadmap(final Long id) {
+        return select(roadmapContent.id)
+                .from(roadmapContent)
+                .where(roadmapContent.roadmapId.eq(id))
+                .orderBy(roadmapContent.createdAt.desc());
+    }
+
     private BooleanExpression lessThanLastId(final Long lastId, final RoadmapOrderType orderType) {
         if (lastId == null) {
             return null;
         }
         if (orderType == RoadmapOrderType.GOAL_ROOM_COUNT) {
-            final NumberPath<Long> goalRoomRoadmapId = goalRoom.roadmapContent.roadmapId;
-            return goalRoomCountCond(goalRoomRoadmapId.eq(roadmap.id))
-                    .lt(goalRoomCountCond(goalRoomRoadmapId.eq(lastId)));
+            final NumberPath<Long> goalRoomRoadmapContentId = goalRoom.roadmapContentId;
+            return goalRoomCountCond(goalRoomRoadmapContentId.eq(getLatestRoadmapContentIdByRoadmap(roadmap.id)))
+                    .lt(goalRoomCountCond(goalRoomRoadmapContentId.eq(getLatestRoadmapContentIdByRoadmap(lastId))));
         }
         if (orderType == RoadmapOrderType.PARTICIPANT_COUNT) {
-            final NumberPath<Long> goalRoomMemberRoadmapId = goalRoomMember.goalRoom.roadmapContent.roadmapId;
-            return participantCountCond(goalRoomMemberRoadmapId.eq(roadmap.id))
-                    .lt(participantCountCond(goalRoomMemberRoadmapId.eq(lastId)));
+            final NumberPath<Long> goalRoomMemberRoadmapContentId = goalRoomMember.goalRoom.roadmapContentId;
+            return participantCountCond(
+                    goalRoomMemberRoadmapContentId.eq(getLatestRoadmapContentIdByRoadmap(roadmap.id)))
+                    .lt(participantCountCond(
+                            goalRoomMemberRoadmapContentId.eq(getLatestRoadmapContentIdByRoadmap(lastId))));
         }
         if (orderType == RoadmapOrderType.REVIEW_RATE) {
             final NumberPath<Long> roadmapReviewRoadmapId = roadmapReview.roadmapId;

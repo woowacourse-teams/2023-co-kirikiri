@@ -4,6 +4,7 @@ import static co.kirikiri.integration.fixture.CommonFixture.API_PREFIX;
 import static co.kirikiri.integration.fixture.CommonFixture.AUTHORIZATION;
 import static io.restassured.RestAssured.given;
 
+import co.kirikiri.common.service.dto.CustomScrollRequest;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.persistence.dto.RoadmapOrderType;
 import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
@@ -11,18 +12,17 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
-import co.kirikiri.service.dto.CustomScrollRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 public class RoadmapAPIFixture {
 
@@ -215,7 +215,8 @@ public class RoadmapAPIFixture {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 로드맵_카테고리를_생성한다(final String 로그인_토큰_정보, final RoadmapCategorySaveRequest 카테고리_생성_요청) {
+    public static ExtractableResponse<Response> 로드맵_카테고리를_생성한다(final String 로그인_토큰_정보,
+                                                               final RoadmapCategorySaveRequest 카테고리_생성_요청) {
         return given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()

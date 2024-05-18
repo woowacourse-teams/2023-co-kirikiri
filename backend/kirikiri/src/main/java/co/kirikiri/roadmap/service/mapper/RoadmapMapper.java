@@ -2,6 +2,7 @@ package co.kirikiri.roadmap.service.mapper;
 
 import co.kirikiri.common.exception.ServerException;
 import co.kirikiri.common.mapper.ScrollResponseMapper;
+import co.kirikiri.common.service.dto.FileInformation;
 import co.kirikiri.member.service.dto.MemberDto;
 import co.kirikiri.member.service.dto.response.MemberResponse;
 import co.kirikiri.roadmap.domain.Roadmap;
@@ -36,13 +37,12 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
-import co.kirikiri.service.dto.FileInformation;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RoadmapMapper {

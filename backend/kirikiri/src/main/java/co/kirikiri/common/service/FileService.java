@@ -1,8 +1,8 @@
 package co.kirikiri.common.service;
 
-import co.kirikiri.service.dto.FileInformation;
-import org.springframework.http.HttpMethod;
+import co.kirikiri.common.service.dto.FileInformation;
 import java.net.URL;
+import org.springframework.http.HttpMethod;
 
 public interface FileService {
 

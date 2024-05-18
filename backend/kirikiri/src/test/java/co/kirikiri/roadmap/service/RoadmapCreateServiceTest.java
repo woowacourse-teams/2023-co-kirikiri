@@ -3,9 +3,14 @@ package co.kirikiri.roadmap.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import co.kirikiri.common.exception.AuthenticationException;
 import co.kirikiri.common.exception.BadRequestException;
@@ -39,24 +44,23 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateServiceTest {
 
     private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
             null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
-            null,
-            new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
+            null, new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
 
     @Mock
     private MemberRepository memberRepository;
@@ -103,8 +107,10 @@ class RoadmapCreateServiceTest {
         given(roadmapCategoryRepository.findById(any()))
                 .willReturn(Optional.of(category));
         given(roadmapRepository.save(any()))
-                .willReturn(new Roadmap(1L, roadmapTitle, roadmapIntroduction, requiredPeriod, RoadmapDifficulty.valueOf(difficulty.name()),
-                        RoadmapStatus.CREATED, MEMBER.getId(), category, new RoadmapTags(List.of(new RoadmapTag(new RoadmapTagName("태그 1"))))));
+                .willReturn(new Roadmap(1L, roadmapTitle, roadmapIntroduction, requiredPeriod,
+                        RoadmapDifficulty.valueOf(difficulty.name()),
+                        RoadmapStatus.CREATED, MEMBER.getId(), category,
+                        new RoadmapTags(List.of(new RoadmapTag(new RoadmapTagName("태그 1"))))));
         given(roadmapContentRepository.save(any()))
                 .willReturn(new RoadmapContent(roadmapContent, 1L, null));
 
@@ -159,8 +165,8 @@ class RoadmapCreateServiceTest {
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
-                .thenReturn(follower);
+        when(roadmapGoalRoomService.findCompletedGoalRoomMemberId(anyLong(), any()))
+                .thenReturn(follower.getId());
         when(roadmapReviewRepository.findByRoadmapIdAndMemberId(any(), anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -193,7 +199,7 @@ class RoadmapCreateServiceTest {
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
+        when(roadmapGoalRoomService.findCompletedGoalRoomMemberId(anyLong(), any()))
                 .thenThrow(new BadRequestException("Error Message"));
 
         final RoadmapReviewSaveRequest roadmapReviewSaveRequest = new RoadmapReviewSaveRequest("리뷰 내용", null);
@@ -217,8 +223,8 @@ class RoadmapCreateServiceTest {
 
         when(roadmapRepository.findById(anyLong()))
                 .thenReturn(Optional.of(roadmap));
-        when(roadmapGoalRoomService.findCompletedGoalRoomMember(anyLong(), any()))
-                .thenReturn(follower);
+        when(roadmapGoalRoomService.findCompletedGoalRoomMemberId(anyLong(), any()))
+                .thenReturn(follower.getId());
         when(roadmapReviewRepository.findByRoadmapIdAndMemberId(any(), anyLong()))
                 .thenReturn(Optional.of(new RoadmapReview("로드맵 짱!", 5.0, MEMBER.getId(), roadmap.getId())));
 

@@ -9,15 +9,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import co.kirikiri.auth.service.dto.request.LoginRequest;
 import co.kirikiri.auth.service.dto.request.ReissueTokenRequest;
 import co.kirikiri.auth.service.dto.response.AuthenticationResponse;
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.integration.helper.InitIntegrationTest;
-import co.kirikiri.service.dto.ErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import java.util.List;
 
 class AuthenticationIntegrationTest extends InitIntegrationTest {
 

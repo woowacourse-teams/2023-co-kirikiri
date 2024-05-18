@@ -1,11 +1,13 @@
 package co.kirikiri.roadmap.resolver;
 
 import co.kirikiri.common.exception.BadRequestException;
+import co.kirikiri.common.resolver.RoadmapSaveArgumentResolver;
 import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -19,12 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class RoadmapSaveArgumentResolverImpl implements RoadmapSaveArgumentResolver {
-
 
     private final ObjectMapper objectMapper;
     private final Validator validator;

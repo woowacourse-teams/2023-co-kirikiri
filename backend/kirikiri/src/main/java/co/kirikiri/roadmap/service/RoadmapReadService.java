@@ -4,6 +4,7 @@ import co.kirikiri.common.aop.ExceptionConvert;
 import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.common.mapper.ScrollResponseMapper;
 import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.service.dto.CustomScrollRequest;
 import co.kirikiri.member.domain.Member;
 import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.persistence.MemberRepository;
@@ -40,14 +41,13 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapGoalRoomResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
-import co.kirikiri.service.dto.CustomScrollRequest;
+import java.net.URL;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,7 +67,8 @@ public class RoadmapReadService {
     public RoadmapResponse findRoadmap(final Long roadmapId) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
         final RoadmapContent recentRoadmapContent = findRecentContent(roadmapId);
-        final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto = roadmapGoalRoomService.findRoadmapGoalRoomsByRoadmap(roadmap);
+        final RoadmapGoalRoomNumberDto roadmapGoalRoomNumberDto = roadmapGoalRoomService.findRoadmapGoalRoomsByRoadmap(
+                roadmap);
         final RoadmapDto roadmapDto = makeRoadmapDto(roadmap, recentRoadmapContent);
         return RoadmapMapper.convertToRoadmapResponse(roadmapDto, roadmapGoalRoomNumberDto);
     }
@@ -224,7 +225,8 @@ public class RoadmapReadService {
                                                                     final RoadmapGoalRoomsOrderTypeDto orderTypeDto,
                                                                     final CustomScrollRequest scrollRequest) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        return roadmapGoalRoomService.makeRoadmapGoalRoomResponsesByOrderType(roadmap.getId(), orderTypeDto, scrollRequest);
+        return roadmapGoalRoomService.makeRoadmapGoalRoomResponsesByOrderType(roadmap.getId(), orderTypeDto,
+                scrollRequest);
     }
 
     public List<RoadmapReviewResponse> findRoadmapReviews(final Long roadmapId,

@@ -3,6 +3,7 @@ package co.kirikiri.member.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.common.helper.RepositoryTest;
 import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.member.domain.EncryptedPassword;
 import co.kirikiri.member.domain.Gender;
@@ -12,10 +13,9 @@ import co.kirikiri.member.domain.MemberProfile;
 import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
-import co.kirikiri.persistence.helper.RepositoryTest;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import java.util.Optional;
 
 @RepositoryTest
 class MemberRepositoryTest {

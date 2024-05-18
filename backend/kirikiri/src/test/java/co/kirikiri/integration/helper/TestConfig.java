@@ -2,8 +2,8 @@ package co.kirikiri.integration.helper;
 
 import co.kirikiri.auth.persistence.RefreshTokenRepository;
 import co.kirikiri.common.service.FileService;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomRepository;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 

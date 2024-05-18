@@ -13,13 +13,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.kirikiri.common.exception.BadRequestException;
 import co.kirikiri.common.exception.ConflictException;
-import co.kirikiri.controller.helper.ControllerTestHelper;
-import co.kirikiri.controller.helper.FieldDescriptionHelper.FieldDescription;
+import co.kirikiri.common.helper.ControllerTestHelper;
+import co.kirikiri.common.helper.FieldDescriptionHelper.FieldDescription;
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.member.service.MemberService;
 import co.kirikiri.member.service.dto.request.GenderType;
 import co.kirikiri.member.service.dto.request.MemberJoinRequest;
-import co.kirikiri.service.dto.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,7 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-import java.util.List;
 
 @WebMvcTest(MemberController.class)
 class MemberCreateApiTest extends ControllerTestHelper {

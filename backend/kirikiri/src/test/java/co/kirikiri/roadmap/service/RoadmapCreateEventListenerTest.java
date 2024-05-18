@@ -2,12 +2,15 @@ package co.kirikiri.roadmap.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import co.kirikiri.common.exception.BadRequestException;
 import co.kirikiri.common.exception.ServerException;
 import co.kirikiri.common.service.FilePathGenerator;
 import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.service.dto.FileInformation;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -22,7 +25,10 @@ import co.kirikiri.roadmap.service.dto.RoadmapSaveDto;
 import co.kirikiri.roadmap.service.dto.RoadmapTagSaveDto;
 import co.kirikiri.roadmap.service.dto.request.RoadmapDifficultyType;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
-import co.kirikiri.service.dto.FileInformation;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,10 +36,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapCreateEventListenerTest {
@@ -55,9 +57,11 @@ class RoadmapCreateEventListenerTest {
     @Test
     void 정상적으로_로드맵_노드_이미지를_저장한다() throws IOException {
         final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "introduction", 10,
-                RoadmapDifficulty.DIFFICULT, RoadmapStatus.CREATED, memberId, new RoadmapCategory("category"), new RoadmapTags(new ArrayList<>()));
+                RoadmapDifficulty.DIFFICULT, RoadmapStatus.CREATED, memberId, new RoadmapCategory("category"),
+                new RoadmapTags(new ArrayList<>()));
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
-        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId(), new RoadmapNodes(List.of(roadmapNode)));
+        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId(),
+                new RoadmapNodes(List.of(roadmapNode)));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
@@ -114,7 +118,8 @@ class RoadmapCreateEventListenerTest {
         final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "introduction", 10, RoadmapDifficulty.DIFFICULT,
                 RoadmapStatus.CREATED, memberId, new RoadmapCategory("category"), new RoadmapTags(new ArrayList<>()));
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
-        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId(), new RoadmapNodes(List.of(roadmapNode)));
+        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId(),
+                new RoadmapNodes(List.of(roadmapNode)));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(),
                 "originalFileName.jpeg", "image/jpeg", "tempImage".getBytes());
@@ -144,13 +149,15 @@ class RoadmapCreateEventListenerTest {
         final Roadmap roadmap = new Roadmap(1L, "roadmapTitle", "inroduction", 10, RoadmapDifficulty.DIFFICULT,
                 RoadmapStatus.CREATED, memberId, new RoadmapCategory("category"), new RoadmapTags(new ArrayList<>()));
         final RoadmapNode roadmapNode = new RoadmapNode("roadmapNodeTitle", "roadmapNodeContent");
-        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId(), new RoadmapNodes(List.of(roadmapNode)));
+        final RoadmapContent roadmapContent = new RoadmapContent("roadmapContent", roadmap.getId(),
+                new RoadmapNodes(List.of(roadmapNode)));
 
         final MultipartFile imageFile = new MockMultipartFile(roadmapNode.getTitle(), null,
                 "image/jpeg", "tempImage".getBytes());
         final FileInformation fileInformation = new FileInformation(null, imageFile.getSize(),
                 imageFile.getContentType(), imageFile.getInputStream());
-        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("roadmapNodeTitle", roadmapNode.getContent(),
+        final RoadmapNodeSaveDto roadmapNodeSaveDto = new RoadmapNodeSaveDto("roadmapNodeTitle",
+                roadmapNode.getContent(),
                 List.of(fileInformation));
         final RoadmapSaveDto roadmapSaveDto = new RoadmapSaveDto(1L, roadmap.getTitle(), roadmap.getIntroduction(),
                 roadmapContent.getContent(), RoadmapDifficultyType.DIFFICULT, 10, List.of(roadmapNodeSaveDto),

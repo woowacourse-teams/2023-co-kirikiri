@@ -5,6 +5,7 @@ import co.kirikiri.common.exception.BadRequestException;
 import co.kirikiri.common.exception.ServerException;
 import co.kirikiri.common.service.FilePathGenerator;
 import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.service.dto.FileInformation;
 import co.kirikiri.common.type.ImageContentType;
 import co.kirikiri.common.type.ImageDirType;
 import co.kirikiri.roadmap.domain.RoadmapContent;
@@ -14,14 +15,13 @@ import co.kirikiri.roadmap.domain.RoadmapNodeImages;
 import co.kirikiri.roadmap.persistence.RoadmapContentRepository;
 import co.kirikiri.roadmap.service.dto.RoadmapNodeSaveDto;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
-import co.kirikiri.service.dto.FileInformation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

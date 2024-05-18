@@ -1,13 +1,22 @@
 package co.kirikiri.integration.helper;
 
-import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.*;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.골룸을_생성하고_아이디를_반환한다;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.십일_후;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.오늘;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_노드_인증_횟수;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_이름;
+import static co.kirikiri.integration.fixture.GoalRoomAPIFixture.정상적인_골룸_제한_인원;
 import static co.kirikiri.integration.fixture.MemberAPIFixture.DEFAULT_PASSWORD;
 import static co.kirikiri.integration.helper.InitIntegrationTest.기본_로그인_토큰;
 
-import co.kirikiri.domain.goalroom.GoalRoom;
-import co.kirikiri.domain.goalroom.GoalRoomMember;
-import co.kirikiri.domain.goalroom.GoalRoomRole;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
+import co.kirikiri.goalroom.domain.GoalRoomStatus;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomRepository;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomCreateRequest;
+import co.kirikiri.goalroom.service.dto.request.GoalRoomRoadmapNodeRequest;
 import co.kirikiri.member.domain.EncryptedPassword;
 import co.kirikiri.member.domain.Gender;
 import co.kirikiri.member.domain.Member;
@@ -16,18 +25,14 @@ import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
 import co.kirikiri.member.service.dto.response.MemberInformationResponse;
-import co.kirikiri.persistence.goalroom.GoalRoomMemberRepository;
-import co.kirikiri.persistence.goalroom.GoalRoomRepository;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomCreateRequest;
-import co.kirikiri.service.dto.goalroom.request.GoalRoomRoadmapNodeRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class TestTransactionService {
@@ -62,14 +67,14 @@ public class TestTransactionService {
                                      final MemberInformationResponse... 팔로워들_정보) {
         final Member 리더 = 사용자_정보에서_사용자를_생성한다(리더_정보);
         final GoalRoomMember 골룸_멤버_리더 = new GoalRoomMember(GoalRoomRole.LEADER,
-                LocalDateTime.of(2023, 7, 1, 12, 0), 골룸, 리더);
+                LocalDateTime.of(2023, 7, 1, 12, 0), 골룸, 리더.getId());
         final List<GoalRoomMember> 골룸_멤버_리스트 = new ArrayList<>();
         골룸_멤버_리스트.add(골룸_멤버_리더);
 
         for (final MemberInformationResponse 팔로워_정보 : 팔로워들_정보) {
             final Member 팔로워 = 사용자_정보에서_사용자를_생성한다(팔로워_정보);
             final GoalRoomMember 골룸_멤버_팔로워 = new GoalRoomMember(GoalRoomRole.FOLLOWER,
-                    LocalDateTime.of(2023, 7, 5, 18, 0), 골룸, 팔로워);
+                    LocalDateTime.of(2023, 7, 5, 18, 0), 골룸, 팔로워.getId());
             골룸_멤버_리스트.add(골룸_멤버_팔로워);
         }
         골룸_멤버를_저장한다(골룸_멤버_리스트);

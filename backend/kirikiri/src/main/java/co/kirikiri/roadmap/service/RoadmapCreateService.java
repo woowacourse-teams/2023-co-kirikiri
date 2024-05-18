@@ -33,12 +33,12 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.event.RoadmapCreateEvent;
 import co.kirikiri.roadmap.service.event.RoadmapDeleteEvent;
 import co.kirikiri.roadmap.service.mapper.RoadmapMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Service
 @Transactional
@@ -54,6 +54,7 @@ public class RoadmapCreateService {
     private final RoadmapGoalRoomService roadmapGoalRoomService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    @CacheEvict(value = "roadmapList", allEntries = true)
     public Long create(final RoadmapSaveRequest request, final String identifier) {
         final Member member = findMemberByIdentifier(identifier);
         final RoadmapCategory roadmapCategory = findRoadmapCategoryById(request.categoryId());
@@ -84,7 +85,8 @@ public class RoadmapCreateService {
                                 final RoadmapCategory roadmapCategory) {
         final RoadmapTags roadmapTags = makeRoadmapTags(roadmapSaveDto.tags());
         return new Roadmap(roadmapSaveDto.title(), roadmapSaveDto.introduction(),
-                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()), memberId,
+                roadmapSaveDto.requiredPeriod(), RoadmapDifficulty.valueOf(roadmapSaveDto.difficulty().name()),
+                memberId,
                 roadmapCategory, roadmapTags);
     }
 
@@ -111,13 +113,13 @@ public class RoadmapCreateService {
 
     public void createReview(final Long roadmapId, final String identifier, final RoadmapReviewSaveRequest request) {
         final Roadmap roadmap = findRoadmapById(roadmapId);
-        final Long memberId = roadmapGoalRoomService.findCompletedGoalRoomMember(roadmapId, identifier)
-                .getId();
+        final Long memberId = roadmapGoalRoomService.findCompletedGoalRoomMemberId(roadmapId, identifier);
 
         validateReviewQualification(roadmap, memberId);
         validateReviewCount(roadmapId, memberId);
         final RoadmapReviewDto roadmapReviewDto = RoadmapMapper.convertRoadmapReviewDto(request, memberId);
-        final RoadmapReview roadmapReview = new RoadmapReview(roadmapReviewDto.content(), roadmapReviewDto.rate(), memberId, roadmapId);
+        final RoadmapReview roadmapReview = new RoadmapReview(roadmapReviewDto.content(), roadmapReviewDto.rate(),
+                memberId, roadmapId);
         roadmapReviewRepository.save(roadmapReview);
     }
 

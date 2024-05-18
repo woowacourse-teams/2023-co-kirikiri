@@ -2,7 +2,7 @@ package co.kirikiri.roadmap.persistence;
 
 import static co.kirikiri.roadmap.domain.QRoadmapReview.roadmapReview;
 
-import co.kirikiri.persistence.QuerydslRepositorySupporter;
+import co.kirikiri.common.persistence.QuerydslRepositorySupporter;
 import co.kirikiri.roadmap.domain.RoadmapReview;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;

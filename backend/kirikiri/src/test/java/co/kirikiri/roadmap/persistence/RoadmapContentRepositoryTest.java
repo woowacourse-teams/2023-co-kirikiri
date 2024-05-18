@@ -3,6 +3,7 @@ package co.kirikiri.roadmap.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import co.kirikiri.common.helper.RepositoryTest;
 import co.kirikiri.member.domain.EncryptedPassword;
 import co.kirikiri.member.domain.Gender;
 import co.kirikiri.member.domain.Member;
@@ -11,15 +12,14 @@ import co.kirikiri.member.domain.vo.Identifier;
 import co.kirikiri.member.domain.vo.Nickname;
 import co.kirikiri.member.domain.vo.Password;
 import co.kirikiri.member.persistence.MemberRepository;
-import co.kirikiri.persistence.helper.RepositoryTest;
 import co.kirikiri.roadmap.domain.Roadmap;
 import co.kirikiri.roadmap.domain.RoadmapCategory;
 import co.kirikiri.roadmap.domain.RoadmapContent;
 import co.kirikiri.roadmap.domain.RoadmapDifficulty;
 import co.kirikiri.roadmap.domain.RoadmapTags;
-import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 @RepositoryTest
 class RoadmapContentRepositoryTest {
@@ -82,7 +82,8 @@ class RoadmapContentRepositoryTest {
     private Roadmap 로드맵을_저장한다() {
         final Member creator = 사용자를_생성한다();
         final RoadmapCategory category = 로드맵_카테고리를_생성한다();
-        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator.getId(), category, new RoadmapTags(new ArrayList<>()));
+        final Roadmap roadmap = new Roadmap("로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.NORMAL, creator.getId(),
+                category, new RoadmapTags(new ArrayList<>()));
 
         return roadmapRepository.save(roadmap);
     }

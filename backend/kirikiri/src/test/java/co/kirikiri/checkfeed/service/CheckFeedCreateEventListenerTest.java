@@ -1,0 +1,145 @@
+package co.kirikiri.checkfeed.service;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+
+import co.kirikiri.checkfeed.domain.CheckFeed;
+import co.kirikiri.checkfeed.persistence.CheckFeedRepository;
+import co.kirikiri.checkfeed.service.event.CheckFeedCreateEvent;
+import co.kirikiri.common.exception.NotFoundException;
+import co.kirikiri.common.type.ImageContentType;
+import co.kirikiri.goalroom.domain.GoalRoom;
+import co.kirikiri.goalroom.domain.GoalRoomMember;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNode;
+import co.kirikiri.goalroom.domain.GoalRoomRoadmapNodes;
+import co.kirikiri.goalroom.domain.GoalRoomRole;
+import co.kirikiri.goalroom.domain.vo.GoalRoomName;
+import co.kirikiri.goalroom.domain.vo.LimitedMemberCount;
+import co.kirikiri.goalroom.domain.vo.Period;
+import co.kirikiri.goalroom.persistence.GoalRoomMemberRepository;
+import co.kirikiri.goalroom.persistence.GoalRoomRepository;
+import co.kirikiri.member.domain.EncryptedPassword;
+import co.kirikiri.member.domain.Gender;
+import co.kirikiri.member.domain.Member;
+import co.kirikiri.member.domain.MemberProfile;
+import co.kirikiri.member.domain.vo.Identifier;
+import co.kirikiri.member.domain.vo.Nickname;
+import co.kirikiri.member.domain.vo.Password;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class CheckFeedCreateEventListenerTest {
+
+    private static final Member MEMBER = new Member(1L, new Identifier("identifier1"),
+            null, new EncryptedPassword(new Password("password1!")), new Nickname("닉네임"),
+            null, new MemberProfile(Gender.FEMALE, "kirikiri@email.com"));
+
+    @Mock
+    private CheckFeedRepository checkFeedRepository;
+
+    @Mock
+    private GoalRoomRepository goalRoomRepository;
+
+    @Mock
+    private GoalRoomMemberRepository goalRoomMemberRepository;
+
+    @InjectMocks
+    private CheckFeedCreateEventListener checkFeedCreateEventListener;
+
+    @Test
+    void 정상적으로_달성률을_업데이트한다() {
+        // given
+        final CheckFeed checkFeed = 인증_피드를_생성한다();
+        final GoalRoom goalRoom = 골룸을_생성한다(1L, 1L, 10);
+        final GoalRoomMember goalRoomMember = new GoalRoomMember(1L, GoalRoomRole.LEADER, LocalDateTime.now(), goalRoom,
+                MEMBER.getId());
+
+        given(checkFeedRepository.findById(anyLong()))
+                .willReturn(Optional.of(checkFeed));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+        given(goalRoomMemberRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoomMember));
+
+        // when
+        // then
+        assertDoesNotThrow(() -> checkFeedCreateEventListener.handleUpdateAccomplishmentRate(
+                new CheckFeedCreateEvent(1L, 1L)));
+    }
+
+    @Test
+    void 달성률_업데이트_시_존재하지_않은_인증피드이면_예외를_던진다() {
+        // given
+        given(checkFeedRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(
+                () -> checkFeedCreateEventListener.handleUpdateAccomplishmentRate(
+                        new CheckFeedCreateEvent(1L, 1L)))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 달성률_업데이트_시_존재하지_않은_골룸이면_예외를_던진다() {
+        // given
+        final CheckFeed checkFeed = 인증_피드를_생성한다();
+
+        given(checkFeedRepository.findById(anyLong()))
+                .willReturn(Optional.of(checkFeed));
+
+        // when
+        // then
+        assertThatThrownBy(
+                () -> checkFeedCreateEventListener.handleUpdateAccomplishmentRate(
+                        new CheckFeedCreateEvent(1L, 1L)))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 달성률_업데이트_시_존재하지_않은_골룸_멤버이면_예외를_던진다() {
+        // given
+        final CheckFeed checkFeed = 인증_피드를_생성한다();
+        final GoalRoom goalRoom = 골룸을_생성한다(1L, 1L, 10);
+
+        given(checkFeedRepository.findById(anyLong()))
+                .willReturn(Optional.of(checkFeed));
+        given(goalRoomRepository.findById(anyLong()))
+                .willReturn(Optional.of(goalRoom));
+
+        // when
+        // then
+        assertThatThrownBy(
+                () -> checkFeedCreateEventListener.handleUpdateAccomplishmentRate(
+                        new CheckFeedCreateEvent(1L, 1L)))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    private CheckFeed 인증_피드를_생성한다() {
+        return new CheckFeed("src/test/resources/testImage/originalFileName.jpeg", ImageContentType.JPEG,
+                "originalFileName.jpeg", "인증 피드 설명", 1L, MEMBER.getId());
+    }
+
+    private GoalRoom 골룸을_생성한다(final Long goalRoomId, final Long roadmapContentId,
+                              final Integer limitedMemberCount) {
+        return new GoalRoom(goalRoomId, new GoalRoomName("골룸 이름"), new LimitedMemberCount(limitedMemberCount),
+                roadmapContentId, 골룸_로드맵_노드들을_생성한다());
+    }
+
+    private GoalRoomRoadmapNodes 골룸_로드맵_노드들을_생성한다() {
+        return new GoalRoomRoadmapNodes(List.of(
+                new GoalRoomRoadmapNode(1L, new Period(LocalDate.now(), LocalDate.now().plusDays(10)), 5, 1L))
+        );
+    }
+}

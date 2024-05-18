@@ -2,14 +2,18 @@ package co.kirikiri.roadmap.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import co.kirikiri.common.exception.NotFoundException;
 import co.kirikiri.common.service.FileService;
+import co.kirikiri.common.service.dto.CustomScrollRequest;
 import co.kirikiri.common.type.ImageContentType;
-import co.kirikiri.domain.goalroom.GoalRoomStatus;
+import co.kirikiri.goalroom.domain.GoalRoomStatus;
 import co.kirikiri.member.domain.EncryptedPassword;
 import co.kirikiri.member.domain.Gender;
 import co.kirikiri.member.domain.Member;
@@ -39,6 +43,7 @@ import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomNumberDto;
 import co.kirikiri.roadmap.service.dto.RoadmapGoalRoomsOrderTypeDto;
 import co.kirikiri.roadmap.service.dto.request.RoadmapOrderTypeRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSearchRequest;
+import co.kirikiri.roadmap.service.dto.response.MemberRoadmapGoalRoomResponse;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.MemberRoadmapResponses;
 import co.kirikiri.roadmap.service.dto.response.RoadmapCategoryResponse;
@@ -51,12 +56,6 @@ import co.kirikiri.roadmap.service.dto.response.RoadmapNodeResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapReviewResponse;
 import co.kirikiri.roadmap.service.dto.response.RoadmapTagResponse;
-import co.kirikiri.service.dto.CustomScrollRequest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -65,6 +64,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class RoadmapReadServiceTest {
@@ -460,7 +464,8 @@ class RoadmapReadServiceTest {
     void 로드맵의_골룸_목록을_최신순으로_조회한다() {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "name1");
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, RoadmapStatus.CREATED,
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT,
+                RoadmapStatus.CREATED,
                 member1.getId(), new RoadmapCategory("it"), new RoadmapTags(new ArrayList<>()));
 
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "name2");
@@ -471,12 +476,14 @@ class RoadmapReadServiceTest {
                         new RoadmapGoalRoomResponse(2L, "goalroom2", GoalRoomStatus.RECRUITING.name(), 1, 10,
                                 LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
-                                new MemberResponse(member3.getId(), member3.getNickname().getValue(),
+                                new MemberRoadmapGoalRoomResponse(member3.getId(),
+                                        member3.getNickname().getValue(),
                                         "http://example.com/serverFilePath")),
                         new RoadmapGoalRoomResponse(1L, "goalroom1", GoalRoomStatus.RECRUITING.name(), 1, 10,
                                 LocalDateTime.now(),
                                 TODAY, TODAY.plusDays(20),
-                                new MemberResponse(member2.getId(), member2.getNickname().getValue(),
+                                new MemberRoadmapGoalRoomResponse(member2.getId(),
+                                        member2.getNickname().getValue(),
                                         "http://example.com/serverFilePath"))), false);
 
         given(roadmapRepository.findById(anyLong()))
@@ -514,7 +521,8 @@ class RoadmapReadServiceTest {
         // given
         final Member member1 = 사용자를_생성한다(1L, "identifier1", "리뷰어1");
         final Member member2 = 사용자를_생성한다(2L, "identifier2", "리뷰어2");
-        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT, RoadmapStatus.CREATED,
+        final Roadmap roadmap = new Roadmap(1L, "로드맵 제목", "로드맵 설명", 100, RoadmapDifficulty.DIFFICULT,
+                RoadmapStatus.CREATED,
                 member1.getId(), new RoadmapCategory("it"), new RoadmapTags(new ArrayList<>()));
 
         final RoadmapReview roadmapReview1 = new RoadmapReview("리뷰 내용", 5.0, member1.getId(), roadmap.getId());

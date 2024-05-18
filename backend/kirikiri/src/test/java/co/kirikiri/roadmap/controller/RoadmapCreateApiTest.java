@@ -1,14 +1,26 @@
 package co.kirikiri.roadmap.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,7 +29,8 @@ import co.kirikiri.common.exception.BadRequestException;
 import co.kirikiri.common.exception.ConflictException;
 import co.kirikiri.common.exception.ForbiddenException;
 import co.kirikiri.common.exception.NotFoundException;
-import co.kirikiri.controller.helper.ControllerTestHelper;
+import co.kirikiri.common.helper.ControllerTestHelper;
+import co.kirikiri.common.service.dto.ErrorResponse;
 import co.kirikiri.roadmap.service.RoadmapCreateService;
 import co.kirikiri.roadmap.service.RoadmapReadService;
 import co.kirikiri.roadmap.service.dto.request.RoadmapCategorySaveRequest;
@@ -26,8 +39,9 @@ import co.kirikiri.roadmap.service.dto.request.RoadmapNodeSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapReviewSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapSaveRequest;
 import co.kirikiri.roadmap.service.dto.request.RoadmapTagSaveRequest;
-import co.kirikiri.service.dto.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -41,8 +55,6 @@ import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.restdocs.snippet.Attributes.Attribute;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebMvcTest(RoadmapController.class)
 class RoadmapCreateApiTest extends ControllerTestHelper {
