@@ -25,13 +25,13 @@ export const NotFoundText = styled.h2`
   color: ${({ theme }) => theme.colors.gray300};
 `;
 
-export const SereverTitle = styled.h1`
+export const ForbiddenTitle = styled.h1`
   ${({ theme }) => theme.fonts.title_large};
   font-size: 4rem;
   color: ${({ theme }) => theme.colors.main_dark};
 `;
 
-export const ServerText = styled.h2`
+export const ForbiddenText = styled.h2`
   ${({ theme }) => theme.fonts.h2};
   color: ${({ theme }) => theme.colors.gray300};
 `;

@@ -8,8 +8,9 @@ import {
 } from '@apis/roadmap';
 import QUERY_KEYS from '@constants/@queryKeys/queryKeys';
 import { useSuspendedQuery } from '@hooks/queries/useSuspendedQuery';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useMutationWithKey } from './useMutationWithKey';
 
 export const useRoadmapList = ({
   categoryId,
@@ -79,12 +80,16 @@ export const useCreateRoadmap = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate } = useMutation((formData: FormData) => postCreateRoadmap(formData), {
-    async onSuccess() {
-      await queryClient.refetchQueries([QUERY_KEYS.roadmap.list]);
-      navigate('/roadmap-list');
-    },
-  });
+  const { mutate } = useMutationWithKey(
+    'CREATE_ROADMAP',
+    (formData: FormData) => postCreateRoadmap(formData),
+    {
+      async onSuccess() {
+        await queryClient.refetchQueries([QUERY_KEYS.roadmap.list]);
+        navigate('/roadmap-list');
+      },
+    }
+  );
 
   return {
     createRoadmap: mutate,

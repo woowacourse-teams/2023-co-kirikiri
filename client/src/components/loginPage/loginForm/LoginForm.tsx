@@ -1,23 +1,15 @@
 import SVGIcon from '@components/icons/SVGIcon';
 import { UserLoginRequest } from '@myTypes/user/remote';
 import { useLogin } from '@hooks/queries/user';
-import useFormInput from '@hooks/_common/useFormInput';
 import * as S from './LoginForm.styles';
+import { useForm } from 'react-lightweight-form';
 
 const LoginForm = () => {
-  const {
-    formState: loginData,
-    handleInputChange,
-    handleSubmit,
-  } = useFormInput<UserLoginRequest>({
-    identifier: '',
-    password: '',
-  });
-
+  const { register, handleSubmit } = useForm<UserLoginRequest>();
   const { login } = useLogin();
 
-  const onSubmit = () => {
-    login(loginData);
+  const onSubmit = (formData: UserLoginRequest) => {
+    login(formData);
   };
 
   return (
@@ -25,13 +17,12 @@ const LoginForm = () => {
       <S.FormItemContainer>
         <S.FormItem>
           <SVGIcon name='PersonIcon' />
-          <input name='identifier' onChange={handleInputChange} placeholder='아이디' />
+          <input {...register('identifier', { required: true })} placeholder='아이디' />
         </S.FormItem>
         <S.FormItem>
           <SVGIcon name='LockIcon' />
           <input
-            name='password'
-            onChange={handleInputChange}
+            {...register('password', { required: true })}
             placeholder='비밀번호'
             type='password'
           />

@@ -1,45 +1,43 @@
-import { createContext, PropsWithChildren, useRef, useState } from 'react';
+import { PropsWithChildren, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import SVGIcon from '@components/icons/SVGIcon';
 
-import * as S from './ToastProvider.styles';
-import { ToastContainerProps, ToastContextType } from '@myTypes/_common/toast';
+import * as S from './Toast.styles';
+import { ToastContainerProps } from '@myTypes/_common/toast';
+import { ToastContext } from '@/context/toastContext';
 
 export const ToastMessage = ({
-  isError = false,
   message,
+  indicator,
+  isError = false,
   onClickToast,
 }: ToastContainerProps) => {
   return (
     <S.ToastContainer isError={isError} onClick={onClickToast}>
+      {indicator}
       <S.ToastMessageContainer>
         <S.ToastMessage>{message}</S.ToastMessage>
-        <SVGIcon name='BackArrowIcon' />
       </S.ToastMessageContainer>
     </S.ToastContainer>
   );
 };
-
-export const ToastContext = createContext<ToastContextType>({
-  triggerToast: () => {},
-});
 
 const ToastProvider = (props: PropsWithChildren) => {
   const { children } = props;
 
   const timeout = useRef<NodeJS.Timeout | null>(null);
 
-  const [{ message, isError, isShow }, setMessage] = useState<
+  const [{ message, indicator, isError, isShow }, setMessage] = useState<
     Omit<ToastContainerProps, 'onClickToast'>
   >({
     message: '',
+    indicator: null,
     isError: false,
     isShow: null,
   });
 
-  const triggerToast = ({ message, isError = false }: ToastContainerProps) => {
+  const triggerToast = ({ message, indicator, isError = false }: ToastContainerProps) => {
     if (!timeout.current) {
-      setMessage((prev) => ({ ...prev, isError, message, isShow: true }));
+      setMessage((prev) => ({ ...prev, isError, message, indicator, isShow: true }));
 
       timeout.current = setTimeout(() => {
         setMessage((prev) => ({ ...prev, isShow: false }));
@@ -87,6 +85,7 @@ const ToastProvider = (props: PropsWithChildren) => {
             <S.ShowUpRoot role='status' aria-live='polite'>
               <ToastMessage
                 message={message}
+                indicator={indicator}
                 isError={isError}
                 onClickToast={onClickToast}
               />
@@ -96,6 +95,7 @@ const ToastProvider = (props: PropsWithChildren) => {
             <S.ShowDownRoot>
               <ToastMessage
                 message={message}
+                indicator={indicator}
                 isError={isError}
                 onClickToast={onClickToast}
               />

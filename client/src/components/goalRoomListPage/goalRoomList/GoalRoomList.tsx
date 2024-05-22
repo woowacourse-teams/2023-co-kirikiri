@@ -29,10 +29,21 @@ const GoalRoomList = () => {
     fetchNextPage,
   });
 
+  const RecruitingGoalRoomList = goalRoomList.filter(
+    (goalRoomInfo) => goalRoomInfo.status === 'RECRUITING'
+  );
+
   return (
     <S.ListContainer role='main' aria-label='골룸 리스트'>
       <S.FilterBar>
-        <p aria-live='polite'>모집중인 모임 {goalRoomList.length}개</p>
+        <p aria-live='polite'>
+          모집중인 모임{' '}
+          {
+            goalRoomList.filter((goalRoomInfo) => goalRoomInfo.status === 'RECRUITING')
+              .length
+          }
+          개
+        </p>
         <GoalRoomFilter>
           {(selectedOption) => {
             setSortedOption(selectedOption);
@@ -51,11 +62,18 @@ const GoalRoomList = () => {
           }}
         </GoalRoomFilter>
       </S.FilterBar>
-      <S.ListWrapper aria-label='골룸 리스트'>
-        {goalRoomList.map((goalRoomInfo) => {
-          return <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />;
-        })}
-      </S.ListWrapper>
+      {RecruitingGoalRoomList.length ? (
+        <S.ListWrapper aria-label='골룸 리스트'>
+          {RecruitingGoalRoomList.map((goalRoomInfo) => (
+            <GoalRoomItem key={goalRoomInfo.goalRoomId} {...goalRoomInfo} />
+          ))}
+        </S.ListWrapper>
+      ) : (
+        <S.NoContent>
+          <div>현재 모집중인 모임이 존재하지 않아요</div>
+          <div>모임을 생성해서 목표 달성을 함께 할 동료들을 모집 해 보세요!</div>
+        </S.NoContent>
+      )}
       {hasNext && <WavyLoading loadMoreRef={loadMoreRef} />}
       <Link to={`/roadmap/${Number(id)}/goalroom-create`}>
         <S.CreateGoalRoomButton>

@@ -1,16 +1,12 @@
 import { useRoadmapList } from '@hooks/queries/roadmap';
 import RoadmapItem from '@components/_common/roadmapItem/RoadmapItem';
 import * as S from './RoadmapList.styles';
-import { SelectedCategoryId } from '@myTypes/roadmap/internal';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useInfiniteScroll } from '@hooks/_common/useInfiniteScroll';
 import WavyLoading from '@/components/_common/wavyLoading/WavyLoading';
+import NoResult from '@components/roadmapListPage/roadmapSearch/NoResult';
 
-type RoadmapListProps = {
-  selectedCategoryId: SelectedCategoryId;
-};
-
-const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
+const RoadmapList = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const categoryId = queryParams.get('category');
@@ -29,9 +25,10 @@ const RoadmapList = ({ selectedCategoryId }: RoadmapListProps) => {
   const moveRoadmapCreatePage = () => {
     navigate('/roadmap-create');
   };
-  console.log(selectedCategoryId);
+
   return (
     <S.RoadmapList aria-label='로드맵 목록'>
+      {!roadmapListResponse.responses.length && <NoResult />}
       {roadmapListResponse.responses.map((item) => (
         <RoadmapItem key={item.roadmapId} item={item} roadmapId={item.roadmapId} />
       ))}

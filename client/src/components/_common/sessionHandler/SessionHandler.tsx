@@ -6,6 +6,7 @@ import {
   useUserInfoContext,
 } from '@components/_providers/UserInfoProvider';
 import { deleteCookie } from '@utils/_common/cookies';
+import SVGIcon from '@/components/icons/SVGIcon';
 
 const SessionHandler = (props: PropsWithChildren) => {
   const navigate = useNavigate();
@@ -17,7 +18,11 @@ const SessionHandler = (props: PropsWithChildren) => {
       deleteCookie('access_token');
       deleteCookie('refresh_token');
       setUserInfo(defaultUserInfo);
-      triggerToast({ message: '세션이 만료되었습니다. 재로그인 해주세요.' });
+      triggerToast({
+        message: '세션이 만료되었습니다. 재로그인 해주세요.',
+        indicator: <SVGIcon name='ErrorIcon' />,
+        isError: true,
+      });
       navigate('/login');
     };
 

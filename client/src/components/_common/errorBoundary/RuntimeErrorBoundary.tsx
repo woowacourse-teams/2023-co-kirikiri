@@ -1,15 +1,24 @@
 import { ErrorInfo } from 'react';
-import { Runtime } from '../error/ErrorComponents';
 import ErrorBoundary from './ErrorBoundary';
+import { Runtime } from '../fallback/Fallback';
 
 class RuntimeErrorBoundary extends ErrorBoundary {
-  componentDidCatch(_error: any, _errorInfo: ErrorInfo): void {}
+  static getDerivedStateFromError(error: Error): { didCatch: boolean; error: Error } {
+    return { didCatch: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    if (this.props.isCritical) throw error;
+
+    this.props.onError?.(error, errorInfo);
+  }
 
   render() {
     const { didCatch } = this.state;
-    const { children } = this.props;
+    const { children, fallback: customFallback } = this.props;
+
     if (didCatch) {
-      return <Runtime />;
+      return customFallback ?? <Runtime />;
     }
     return children;
   }

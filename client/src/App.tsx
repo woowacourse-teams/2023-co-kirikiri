@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import theme from '@styles/theme';
 import GlobalStyle from '@styles/GlobalStyle';
@@ -8,19 +8,17 @@ import SignUpPage from '@pages/signUpPage/SignUpPage';
 import LoginPage from '@pages/loginPage/LoginPage';
 import PageLayout from '@components/_common/pageLayout/PageLayout';
 import RoadmapListPage from '@pages/roadmapListPage/roadmapListPage';
-import Fallback from '@components/_common/fallback/Fallback';
 import RoadmapDetailPage from './pages/roadmapDetailPage/RoadmapDetailPage';
 import RoadmapCreatePage from './pages/roadmapCreatePage/RoadmapCreatePage';
-import ToastProvider from '@components/_common/toastProvider/ToastProvider';
+import ToastProvider from '@/components/_common/toast/Toast';
 import MyPage from '@pages/myPage/MyPage';
 import UserInfoProvider from './components/_providers/UserInfoProvider';
-import RoadmapSearchResult from './components/roadmapListPage/roadmapSearch/RoadmapSearchResult';
 import MainPage from '@pages/mainPage/MainPage';
 import OAuthRedirect from './components/loginPage/OAuthRedirect';
-import AsyncBoundary from './components/_common/errorBoundary/AsyncBoundary';
 import SessionHandler from '@components/_common/sessionHandler/SessionHandler';
 import RouteChangeTracker from '@components/_common/routeChangeTracker/RouteChangeTracker';
 import PrivateRouter from '@components/_common/privateRouter/PrivateRouter';
+import { CriticalErrorBoundary } from './components/_common/errorBoundary/CriticalErrorBoundary';
 
 const GoalRoomDashboardPage = lazy(
   () => import('@pages/goalRoomDashboardPage/GoalRoomDashboardPage')
@@ -40,29 +38,21 @@ const App = () => {
             <RouteChangeTracker>
               <ResponsiveContainer>
                 <PageLayout>
-                  <AsyncBoundary>
-                    <SessionHandler>
+                  <SessionHandler>
+                    <CriticalErrorBoundary>
                       <Routes>
                         <Route path='/' element={<MainPage />} />
                         <Route path='/login' element={<LoginPage />} />
                         <Route path='/join' element={<SignUpPage />} />
-                        <Route path='/roadmap-list' element={<RoadmapListPage />}>
-                          <Route
-                            path=':category/:search'
-                            element={<RoadmapSearchResult />}
-                          />
-                        </Route>
-                        <Route
-                          path='/roadmap/:id'
-                          element={
-                            <Suspense fallback={<Fallback />}>
-                              <RoadmapDetailPage />
-                            </Suspense>
-                          }
-                        />
+                        <Route path='/roadmap-list' element={<RoadmapListPage />} />
+                        <Route path='/roadmap/:id' element={<RoadmapDetailPage />} />
                         <Route
                           path='/roadmap/:id/goalroom-list'
-                          element={<GoalRoomListPage />}
+                          element={
+                            <Suspense>
+                              <GoalRoomListPage />
+                            </Suspense>
+                          }
                         />
                         <Route
                           path='/roadmap-create'
@@ -75,14 +65,20 @@ const App = () => {
                         <Route
                           path='/roadmap/:id/goalroom-create'
                           element={
-                            <PrivateRouter>
-                              <GoalRoomCreatePage />
-                            </PrivateRouter>
+                            <Suspense>
+                              <PrivateRouter>
+                                <GoalRoomCreatePage />
+                              </PrivateRouter>
+                            </Suspense>
                           }
                         />
                         <Route
                           path='/goalroom-dashboard/:goalroomId'
-                          element={<GoalRoomDashboardPage />}
+                          element={
+                            <Suspense>
+                              <GoalRoomDashboardPage />
+                            </Suspense>
+                          }
                         />
                         <Route
                           path='/myPage'
@@ -94,8 +90,8 @@ const App = () => {
                         />
                         <Route path='/oauth/redirect' element={<OAuthRedirect />} />
                       </Routes>
-                    </SessionHandler>
-                  </AsyncBoundary>
+                    </CriticalErrorBoundary>
+                  </SessionHandler>
                 </PageLayout>
               </ResponsiveContainer>
             </RouteChangeTracker>

@@ -144,3 +144,20 @@ export const FilterOption = styled.li`
 
   background-color: ${({ theme }) => theme.colors.main_dark};
 `;
+
+export const NoContent = styled.div`
+  ${({ theme }) => theme.fonts.h1}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-top: 8rem;
+
+  line-height: 3rem;
+
+  opacity: 0.6;
+
+  & > div:first-child {
+    margin-bottom: 2rem;
+  }
+`;

@@ -40,9 +40,7 @@ const MainPage = () => {
             alt='메인페이지 코끼리 이미지'
           />
         </picture>
-        <S.MainPageDesc>
-          우리들이 함께 만들어가는 로드맵 기반 스터디 플랫폼.
-        </S.MainPageDesc>
+        <S.MainPageDesc>우리들이 함께 만들어가는 로드맵 기반 모임 플랫폼.</S.MainPageDesc>
         <S.MainPageTitle>코끼리끼리</S.MainPageTitle>
         <S.GoalRoomListButton onClick={listButtonHandler}>
           지금 바로 로드맵 확인하러 가기

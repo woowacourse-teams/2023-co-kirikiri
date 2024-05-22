@@ -49,6 +49,7 @@ export type GoalRoomDetailType = {
   period: number;
   isJoined: boolean;
   goalRoomLeader: GoalRoomLeaderType;
+  status: GoalRoomRecruitmentStatus;
 };
 
 type GoalRoomNodesType = {
@@ -85,6 +86,8 @@ export type GoalRoomNodeType = {
   startData: string[];
   endDate: string[];
   checkCount: number;
+  description: string;
+  imageUrls: string[];
 };
 
 export type GoalRoomNodeListType = GoalRoomNodeType[];

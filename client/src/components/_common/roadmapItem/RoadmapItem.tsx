@@ -37,7 +37,7 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
   };
 
   return (
-    <S.RoadmapItem $hasBorder={hasBorder} aria-label='로드맵 항목'>
+    <S.RoadmapItem hasBorder={hasBorder} aria-label='로드맵 항목'>
       <div>
         <S.RoadmapTitle aria-label='로드맵 제목'>{item.roadmapTitle}</S.RoadmapTitle>
         <S.Description
@@ -48,7 +48,10 @@ const RoadmapItem = ({ item, hasBorder = true, roadmapId }: RoadmapItemProps) =>
           {item.introduction}
         </S.Description>
         {isHovered && (
-          <S.HoverDescription aria-label='로드맵 소개-description'>
+          <S.HoverDescription
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             {item.introduction}
           </S.HoverDescription>
         )}
