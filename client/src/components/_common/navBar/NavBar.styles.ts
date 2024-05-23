@@ -5,6 +5,7 @@ import { Link, NavLink } from 'react-router-dom';
 export const NavBar = styled.nav<{ isNavBarOpen: boolean }>`
   position: fixed;
   z-index: ${({ theme }) => theme.zIndex.navBar};
+  top: 0;
 
   width: ${({ isNavBarOpen }) => (isNavBarOpen ? '20rem' : '8rem')};
   height: 100vh;

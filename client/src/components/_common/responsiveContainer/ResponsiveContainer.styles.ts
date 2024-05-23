@@ -3,8 +3,10 @@ import BREAK_POINTS from '@constants/_common/breakPoints';
 
 export const Container = styled.div`
   width: 100%;
+  min-height: 100vh;
   margin-right: auto;
   margin-left: auto;
+
   background: ${({ theme }) => theme.colors.white};
 
   @media (min-width: ${BREAK_POINTS.TABLET}px) {
