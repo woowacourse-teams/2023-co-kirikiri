@@ -6,6 +6,7 @@ const SVGIcon = ({ name, size = '30', color = '#000', noFill = false }: svg) => 
 
   return (
     <SVGIconComponent
+      data-testid='my-svg-icon'
       width={size}
       fill={color}
       style={{ color: noFill ? color : 'inherit' }}
